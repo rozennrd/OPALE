@@ -2,6 +2,7 @@ import React from 'react';
 import TopBar from '../components/TopBar';
 import NbGroupesPromo from '../components/NbGroupesPromo';
 import DebFinCalendrier from '../components/DebFinCalendrier';
+import PeriodesAP from '../components/PeriodesAP';
 
 const Home: React.FC = () => {
     return (
@@ -9,6 +10,7 @@ const Home: React.FC = () => {
             <TopBar />
             <DebFinCalendrier />
             <NbGroupesPromo />
+            <PeriodesAP />
 
 
         </div>
