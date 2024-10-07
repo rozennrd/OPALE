@@ -1,0 +1,71 @@
+/* Container for the entire NbGroupesPromo component */
+.nb-groupes-promo {
+    padding: 20px;
+    background-color: #f9f9f9; /* Light background */
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 0 auto; /* Center the form horizontally */
+    text-align: center; /* Center the title */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.nb-groupes-promo h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Form styling */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between form fields */
+}
+
+/* Form control specific to Material-UI elements */
+.MuiFormControl-root {
+    width: 100%; /* Ensure full width for Material-UI components */
+}
+
+/* Input and label styles */
+.MuiInputLabel-root {
+    color: #333;
+    font-weight: bold;
+}
+
+.MuiSelect-root {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #fff;
+}
+
+.MuiOutlinedInput-notchedOutline {
+    border-color: #ccc; /* Default border color */
+}
+
+.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #007bff; /* Change border color on focus */
+}
+
+
+/* Styles for the button */
+button {
+    padding: 12px 20px;
+    background-color: #007bff; /* Primary button color */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
