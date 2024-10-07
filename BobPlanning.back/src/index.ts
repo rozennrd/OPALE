@@ -50,17 +50,6 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *     responses:
  *       200:
  *         description: The Excel file was generated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Excel file generated and saved on the server
- *                 filePath:
- *                   type: string
- *                   example: /path/to/generated/file.xlsx
  *       400:
  *         description: Missing or invalid startDate or endDate
  *       500:
