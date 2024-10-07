@@ -1,0 +1,67 @@
+/* Main container for DebFinCalendrier */
+.deb-fin-calendrier {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 0 auto; /* Center horizontally */
+    text-align: center;
+}
+
+.title {
+    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Date picker styling */
+.saisie-date {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.saisie-date-title {
+    text-align: center;
+}
+
+.date-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.label {
+    font-weight: bold;
+    color: #333;
+}
+
+.input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%; /* Ensure full width */
+    box-sizing: border-box; /* Ensure padding and border don't cause overflow */
+}
+
+.input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Add some padding or margin to ensure inputs don't stick to the edges */
+.date-input-container {
+    padding-right: 10px;
+}
+
+.result-container p {
+    font-size: 16px;
+    color: #555;
+    margin-top: 10px;
+}
