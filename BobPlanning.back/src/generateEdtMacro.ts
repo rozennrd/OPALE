@@ -1,9 +1,28 @@
 import ExcelJS from 'exceljs';
 import path from 'path';
 
-export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
-  let currentDate: Date = new Date(startDate);
+function getWeekNumber(date: Date): number {
+  const target = new Date(date.valueOf());
+  const dayNumber = (date.getUTCDay() + 6) % 7;
 
+  target.setUTCDate(target.getUTCDate() - dayNumber + 3);
+  const firstThursday = target.valueOf();
+
+  target.setUTCMonth(0, 1);
+  if (target.getUTCDay() !== 4) {
+      target.setUTCMonth(0, 1 + ((4 - target.getUTCDay()) + 7) % 7);
+  }
+
+  const weekNumber = 1 + Math.round(((firstThursday - target.valueOf()) / 86400000 - 3) / 7);
+  return weekNumber;
+}
+
+export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
+  // Set date to lundi
+  let currentDate: Date = new Date(startDate);
+  if (currentDate.getDay() !== 1) {
+    currentDate.setDate(currentDate.getDate() - (currentDate.getDay() - 1));
+  }
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('MultiPromo');
 
@@ -20,9 +39,9 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
 
   while (currentDate < endDate) {
 
-    //TODO verif currentDate = lundi
+   
     worksheet.addRow({
-      weekNumber: '',
+      weekNumber: getWeekNumber(currentDate),
       mondayDate: currentDate.toLocaleDateString("fr-FR"),
       pedagoJury: '',
       jury: '',
