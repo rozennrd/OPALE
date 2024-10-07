@@ -2,6 +2,8 @@ import ExcelJS from 'exceljs';
 import path from 'path';
 
 export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
+  let currentDate: Date = new Date(startDate);
+
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('MultiPromo');
 
@@ -16,6 +18,22 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
     { header: "Evenements Promo/ RE/conf/salon", key: "events", width: 20 },
   ];
 
+  while (currentDate < endDate) {
+
+    //TODO verif currentDate = lundi
+    worksheet.addRow({
+      weekNumber: '',
+      mondayDate: currentDate.toLocaleDateString("fr-FR"),
+      pedagoJury: '',
+      jury: '',
+      holidays: '',
+      cypreWeek: '',
+      examsNumber: '',
+      events: '',
+    });
+    currentDate.setDate(currentDate.getDate() + 7);
+  }
+  
   const filePath = path.join(__dirname, '../files', 'EdtMacro.xlsx');
 
   await workbook.xlsx.writeFile(filePath);
