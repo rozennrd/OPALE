@@ -1,0 +1,35 @@
+/* Styles for TopBar component */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    margin-left: 1%;
+    margin-right: 1%;
+    background-color: #333; /* Dark background */
+    color: #fff; /* White text color */
+    border-bottom: 2px solid #ccc; /* Bottom border */
+    border-radius: 0px 0px 20px 20px;
+}
+
+.logo {
+    width: 120px; /* Adjust logo size */
+    height: auto;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px; /* Space between navigation links */
+}
+
+.nav-links a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.nav-links a:hover {
+    color: #f0a500;
+    text-decoration: underline;
+}
