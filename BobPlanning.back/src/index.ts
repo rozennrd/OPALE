@@ -1,4 +1,4 @@
-import { generateEdtMacro } from './generateExcel';
+import { generateEdtMacro } from './generateEdtMacro';
 import express, { Request, Response } from 'express';
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
