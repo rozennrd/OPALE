@@ -8,4 +8,4 @@ To run the project :
  - For back : 
  Go to BobPlanning.back --> cd .\BobPlanning.back
  Install library --> npm i
- Run the project --> npx ts-node src/index.ts
+ Run the project --> npm run dev
