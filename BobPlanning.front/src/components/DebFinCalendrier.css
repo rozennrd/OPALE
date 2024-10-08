@@ -4,7 +4,7 @@
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
+    max-width: 900px;
     margin: 0 auto; /* Center horizontally */
     text-align: center;
 }
@@ -19,12 +19,14 @@
 /* Date picker styling */
 .saisie-date {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     gap: 20px;
+    flex-wrap: wrap;
 }
 
 .saisie-date-title {
     text-align: center;
+    width:  100%;
 }
 
 .date-input-container {
@@ -32,8 +34,8 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 5px;
-    width: 100%;
-    box-sizing: border-box;
+    width: 48%;
+    
 }
 
 .label {
@@ -55,10 +57,10 @@
     outline: none;
 }
 
-/* Add some padding or margin to ensure inputs don't stick to the edges */
+/* Add some padding or margin to ensure inputs don't stick to the edges
 .date-input-container {
     padding-right: 10px;
-}
+} */
 
 .result-container p {
     font-size: 16px;
