@@ -17,6 +17,30 @@ function getWeekNumber(date: Date): number {
   return weekNumber;
 }
 
+async function getPublicHolidays(startYear: number): Promise<Record<string, string>> {
+  const endYear = startYear + 1;
+  const urlFirstYear = `https://calendrier.api.gouv.fr/jours-feries/metropole/${startYear}.json`;
+  const urlLastYear = `https://calendrier.api.gouv.fr/jours-feries/metropole/${endYear}.json`;
+
+  let holidays: Record<string, string> = {}; // Use an object instead of an array
+
+  try {
+    const [holidays2023, holidays2024] = await Promise.all([
+      fetch(urlFirstYear).then((response) => response.json()),
+      fetch(urlLastYear).then((response) => response.json()),
+    ]);
+
+    // Combine both year holidays into a single object
+    holidays = { ...holidays2023, ...holidays2024 };
+
+  } catch (error) {
+    console.error("Error fetching public holidays: ", error);
+  }
+  return holidays;
+}
+
+ 
+
 export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
   // Set date to lundi
   let currentDate: Date = new Date(startDate);
@@ -37,15 +61,27 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
     { header: "Evenements Promo/ RE/conf/salon", key: "events", width: 20 },
   ];
 
-  while (currentDate < endDate) {
+  const publicHolidays = await getPublicHolidays(startDate.getFullYear());
 
-   
+  while (currentDate < endDate) {
+    let holidayDescription : string = "";
+
+    //Verif seulement sur jour ouvert (lundi au vendredi)
+    for (let i = 0; i < 5; i++) {
+      const currentWeekDate = new Date(currentDate);
+      currentWeekDate.setDate(currentWeekDate.getDate() + i);
+      if (publicHolidays[currentWeekDate.toISOString().split('T')[0]]) {;
+        holidayDescription += " " + publicHolidays[currentWeekDate.toISOString().split('T')[0]];
+      }
+    
+    }
+    
     worksheet.addRow({
       weekNumber: getWeekNumber(currentDate),
       mondayDate: currentDate.toLocaleDateString("fr-FR"),
       pedagoJury: '',
       jury: '',
-      holidays: '',
+      holidays: holidayDescription,
       cypreWeek: '',
       examsNumber: '',
       events: '',
