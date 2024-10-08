@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import SingleDropdown from './SingleDropdown';
 import DebCoursDate from './DebCoursDate';
+import PeriodesAP from './PeriodesAP';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -83,6 +84,10 @@ export default function FullWidthTabs() {
                     {/* Content of each TabPanel can be anything you want */}
                     <SingleDropdown/>
                     <DebCoursDate/> 
+                    {(promo === 'AP3' || promo === 'AP4' || promo === 'AP5') && (
+                        <PeriodesAP />
+                    )}
+
                 </TabPanel>
             ))}
         </Box>
