@@ -6,6 +6,7 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import SingleDropdown from './SingleDropdown';
+import DebCoursDate from './DebCoursDate';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -81,6 +82,7 @@ export default function FullWidthTabs() {
                 <TabPanel value={value} index={index} dir={theme.direction} key={index}>
                     {/* Content of each TabPanel can be anything you want */}
                     <SingleDropdown/>
+                    <DebCoursDate/> 
                 </TabPanel>
             ))}
         </Box>
