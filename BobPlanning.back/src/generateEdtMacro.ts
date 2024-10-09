@@ -92,28 +92,37 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
   let holydayStartDate = new Date(sortedHolidays[i].start_date);
   let holydayEndDate = new Date(sortedHolidays[i].end_date);
   while (currentDate < endDate) {
-    let holidayDescription : string = "";
+    let holidayDescription : string = "";  
 
-    //TODO gerer vacances scolaires
-    
-
+    //TODO GERER VACANCES TOUSSAINT UNE SEULE SEMAINE SUR JOURS FERIES
+    //gestion vacances scolaires
     if (currentDate > holydayStartDate && currentDate < holydayEndDate) {
-      holidayDescription += " " + sortedHolidays[i].description;
+      if (sortedHolidays[i].description === "Vacances de la Toussaint") {
+        for (let i = 0; i < 7; i++) {
+          const currentWeekDate = new Date(currentDate);
+          currentWeekDate.setDate(currentWeekDate.getDate() + i);
+          if (publicHolidays[currentWeekDate.toISOString().split('T')[0]]) {;
+            holidayDescription += "Vacances de la toussaint " + publicHolidays[currentWeekDate.toISOString().split('T')[0]];
+          } 
+        }
+      } else {
+        holidayDescription += " " + sortedHolidays[i].description;
+      }
+    } else {
+      //Verif seulement sur jour ouvert (lundi au vendredi)
+      for (let i = 0; i < 5; i++) {
+        const currentWeekDate = new Date(currentDate);
+        currentWeekDate.setDate(currentWeekDate.getDate() + i);
+        if (publicHolidays[currentWeekDate.toISOString().split('T')[0]]) {;
+          holidayDescription += " " + publicHolidays[currentWeekDate.toISOString().split('T')[0]];
+        } 
+      }
     }
 
     if (holydayEndDate < currentDate && i < sortedHolidays.length - 1) {
       i++;
       holydayStartDate = new Date(sortedHolidays[i].start_date);
       holydayEndDate = new Date(sortedHolidays[i].end_date);
-    }
-
-    //Verif seulement sur jour ouvert (lundi au vendredi)
-    for (let i = 0; i < 5; i++) {
-      const currentWeekDate = new Date(currentDate);
-      currentWeekDate.setDate(currentWeekDate.getDate() + i);
-      if (publicHolidays[currentWeekDate.toISOString().split('T')[0]]) {;
-        holidayDescription += " " + publicHolidays[currentWeekDate.toISOString().split('T')[0]];
-      }
     }
     
     worksheet.addRow({
