@@ -3,7 +3,7 @@ import TopBar from '../components/TopBar';
 import DebFinCalendrier from '../components/DebFinCalendrier';
 import FullWidthTabs from '../components/TabsPromos';
 
-const Home: React.FC = () => {
+const Parametres: React.FC = () => {
     return (
         <div>
             <TopBar />
@@ -13,4 +13,4 @@ const Home: React.FC = () => {
     );
 };
 
-export default Home;
+export default Parametres;
