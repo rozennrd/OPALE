@@ -27,12 +27,12 @@
 .saisie-date-title {
     text-align: center;
     width:  100%;
+    
 }
 
 .date-input-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
     gap: 5px;
     width: 48%;
     
