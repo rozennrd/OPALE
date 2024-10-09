@@ -2,7 +2,6 @@ import ExcelJS from 'exceljs';
 import path from 'path';
 import axios from 'axios';
 import { console } from 'inspector';
-import { s } from 'vite/dist/node/types.d-aGj9QkWt';
 
 function getWeekNumber(date: Date): number {
   const target = new Date(date.valueOf());
@@ -88,13 +87,14 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
   const holidays = await getHolidays("Bordeaux", startDate.getFullYear());
 
   let i: number = 0;
+  let isPublicHolliday: boolean = false;
   const sortedHolidays = holidays.sort((a: any, b: any) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
   let holydayStartDate = new Date(sortedHolidays[i].start_date);
   let holydayEndDate = new Date(sortedHolidays[i].end_date);
   while (currentDate < endDate) {
-    let holidayDescription : string = "";  
+    let holidayDescription : string = ""; 
+    isPublicHolliday = false; 
 
-    //TODO GERER VACANCES TOUSSAINT UNE SEULE SEMAINE SUR JOURS FERIES
     //gestion vacances scolaires
     if (currentDate > holydayStartDate && currentDate < holydayEndDate) {
       if (sortedHolidays[i].description === "Vacances de la Toussaint") {
@@ -102,7 +102,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
           const currentWeekDate = new Date(currentDate);
           currentWeekDate.setDate(currentWeekDate.getDate() + i);
           if (publicHolidays[currentWeekDate.toISOString().split('T')[0]]) {;
-            holidayDescription += "Vacances de la toussaint " + publicHolidays[currentWeekDate.toISOString().split('T')[0]];
+            holidayDescription += "Vacances de la toussaint ";
           } 
         }
       } else {
@@ -115,6 +115,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
         currentWeekDate.setDate(currentWeekDate.getDate() + i);
         if (publicHolidays[currentWeekDate.toISOString().split('T')[0]]) {;
           holidayDescription += " " + publicHolidays[currentWeekDate.toISOString().split('T')[0]];
+          isPublicHolliday = true;
         } 
       }
     }
@@ -125,7 +126,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
       holydayEndDate = new Date(sortedHolidays[i].end_date);
     }
     
-    worksheet.addRow({
+    let row = worksheet.addRow({
       weekNumber: getWeekNumber(currentDate),
       mondayDate: currentDate.toLocaleDateString("fr-FR"),
       pedagoJury: '',
@@ -135,6 +136,11 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
       examsNumber: '',
       events: '',
     });
+
+    if (isPublicHolliday) {
+      row.getCell('holidays').font = { color: { argb: 'FF0000' } }; // Set font color to red (ARGB format)
+    }
+
     currentDate.setDate(currentDate.getDate() + 7);
   }
   
