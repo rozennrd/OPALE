@@ -1,5 +1,8 @@
 import ExcelJS from 'exceljs';
 import path from 'path';
+import axios from 'axios';
+import { console } from 'inspector';
+import { s } from 'vite/dist/node/types.d-aGj9QkWt';
 
 function getWeekNumber(date: Date): number {
   const target = new Date(date.valueOf());
@@ -22,7 +25,7 @@ async function getPublicHolidays(startYear: number): Promise<Record<string, stri
   const urlFirstYear = `https://calendrier.api.gouv.fr/jours-feries/metropole/${startYear}.json`;
   const urlLastYear = `https://calendrier.api.gouv.fr/jours-feries/metropole/${endYear}.json`;
 
-  let holidays: Record<string, string> = {}; // Use an object instead of an array
+  let holidays: Record<string, string> = {};
 
   try {
     const [holidays2023, holidays2024] = await Promise.all([
@@ -30,7 +33,6 @@ async function getPublicHolidays(startYear: number): Promise<Record<string, stri
       fetch(urlLastYear).then((response) => response.json()),
     ]);
 
-    // Combine both year holidays into a single object
     holidays = { ...holidays2023, ...holidays2024 };
 
   } catch (error) {
@@ -39,7 +41,27 @@ async function getPublicHolidays(startYear: number): Promise<Record<string, stri
   return holidays;
 }
 
- 
+async function getHolidays(city: string = "Bordeaux", startYear: number): Promise<any> {
+  const scholarYear = `${startYear}-${startYear + 1}`;
+  const url = `https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?`;
+  
+  let holidays: Record<string, string>[] = [];
+
+  try {
+    console.log("Fetching school holidays...");
+    holidays = await axios.get(url, {
+      params: {
+        where: `location="${city}"`,
+        limit: 20,
+        refine: `annee_scolaire:${scholarYear}`,
+      }
+    }).then((response) => response.data.results);
+  } catch (error) {
+    console.error("Error fetching school holidays: ", error);
+  }
+
+  return holidays;
+}
 
 export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
   // Set date to lundi
@@ -63,17 +85,44 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
 
   const publicHolidays = await getPublicHolidays(startDate.getFullYear());
 
-  while (currentDate < endDate) {
-    let holidayDescription : string = "";
+  const holidays = await getHolidays("Bordeaux", startDate.getFullYear());
 
-    //Verif seulement sur jour ouvert (lundi au vendredi)
-    for (let i = 0; i < 5; i++) {
-      const currentWeekDate = new Date(currentDate);
-      currentWeekDate.setDate(currentWeekDate.getDate() + i);
-      if (publicHolidays[currentWeekDate.toISOString().split('T')[0]]) {;
-        holidayDescription += " " + publicHolidays[currentWeekDate.toISOString().split('T')[0]];
+  let i: number = 0;
+  const sortedHolidays = holidays.sort((a: any, b: any) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
+  let holydayStartDate = new Date(sortedHolidays[i].start_date);
+  let holydayEndDate = new Date(sortedHolidays[i].end_date);
+  while (currentDate < endDate) {
+    let holidayDescription : string = "";  
+
+    //TODO GERER VACANCES TOUSSAINT UNE SEULE SEMAINE SUR JOURS FERIES
+    //gestion vacances scolaires
+    if (currentDate > holydayStartDate && currentDate < holydayEndDate) {
+      if (sortedHolidays[i].description === "Vacances de la Toussaint") {
+        for (let i = 0; i < 7; i++) {
+          const currentWeekDate = new Date(currentDate);
+          currentWeekDate.setDate(currentWeekDate.getDate() + i);
+          if (publicHolidays[currentWeekDate.toISOString().split('T')[0]]) {;
+            holidayDescription += "Vacances de la toussaint " + publicHolidays[currentWeekDate.toISOString().split('T')[0]];
+          } 
+        }
+      } else {
+        holidayDescription += " " + sortedHolidays[i].description;
       }
-    
+    } else {
+      //Verif seulement sur jour ouvert (lundi au vendredi)
+      for (let i = 0; i < 5; i++) {
+        const currentWeekDate = new Date(currentDate);
+        currentWeekDate.setDate(currentWeekDate.getDate() + i);
+        if (publicHolidays[currentWeekDate.toISOString().split('T')[0]]) {;
+          holidayDescription += " " + publicHolidays[currentWeekDate.toISOString().split('T')[0]];
+        } 
+      }
+    }
+
+    if (holydayEndDate < currentDate && i < sortedHolidays.length - 1) {
+      i++;
+      holydayStartDate = new Date(sortedHolidays[i].start_date);
+      holydayEndDate = new Date(sortedHolidays[i].end_date);
     }
     
     worksheet.addRow({
