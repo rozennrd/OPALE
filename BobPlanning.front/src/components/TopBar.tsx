@@ -7,9 +7,9 @@ const TopBar = () => {
         <div className="top-bar">
             <img className='logo' src={Logo} alt="Logo_Bob_Planning" />
             <nav className="nav-links">
-                <a href="/home">Home</a>
-                <a href="/about">About</a>
-                <a href="/services">Services</a>
+                <a href="/">Home</a>
+                <a href="/parametres">Paramètres</a>
+                <a href="/calendriers">Calendriers</a>
                 <a href="/contact">Contact</a>
             </nav>
         </div>

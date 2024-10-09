@@ -1,10 +1,14 @@
 import React from 'react';
 import TopBar from '../components/TopBar';
+import DebFinCalendrier from '../components/DebFinCalendrier';
+import FullWidthTabs from '../components/TabsPromos';
+
 const Home: React.FC = () => {
     return (
         <div>
             <TopBar />
-            <h1>Home</h1>
+            <DebFinCalendrier />
+            <FullWidthTabs />
         </div>
     );
 };

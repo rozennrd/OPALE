@@ -4,7 +4,7 @@ const Home: React.FC = () => {
     return (
         <div>
             <TopBar />
-            <h1>Home</h1>
+            <h1>Calendrier</h1>
         </div>
     );
 };
