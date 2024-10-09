@@ -73,8 +73,13 @@ export default function FullWidthTabs() {
         ISEN5: ''
     });
 
-    const [startDate, setStartDate] = React.useState<string>('');
-    const [endDate, setEndDate] = React.useState<string>('');
+    const [periodesData, setPeriodesData] = React.useState<Record<string, {nombrePeriode: number, dates:string[], weeks: number[]}>>( {
+        AP3: {nombrePeriode: 5, dates: Array(5).fill(''), weeks: Array(5).fill(3)},
+        AP4: {nombrePeriode: 5, dates: Array(5).fill(''), weeks: Array(5).fill(3)},
+        AP5: {nombrePeriode: 5, dates: Array(5).fill(''), weeks: Array(5).fill(3)}  
+    });
+
+    
 
     const promos = [
         'ADI1', 'ADI2', 
@@ -98,6 +103,13 @@ export default function FullWidthTabs() {
         setStartDatesPerPromo((prev) => ({
             ...prev,
             [promo]: newValue
+        }));
+    }
+
+    const handlePeriodesChange = (promo: string, nombrePeriode: number, dates: string[], weeks: number[]) => {
+        setPeriodesData((prev) => ({
+            ...prev,
+            [promo]: {nombrePeriode, dates, weeks}      
         }));
     }
 
@@ -135,7 +147,12 @@ export default function FullWidthTabs() {
                         setStartDate={(date) => handleStartDateChange(promo, date)}
                     /> 
                     {(promo === 'AP3' || promo === 'AP4' || promo === 'AP5') && (
-                        <PeriodesAP />
+                        <PeriodesAP 
+                            nbPeriodesDefaultValue={periodesData[promo].nombrePeriode}
+                            dates={periodesData[promo].dates}
+                            weeks={periodesData[promo].weeks}
+                            onChange={(nombrePeriode, dates, weeks) => handlePeriodesChange(promo, nombrePeriode, dates, weeks)}
+                        />
                     )}
 
                 </TabPanel>
@@ -143,4 +160,5 @@ export default function FullWidthTabs() {
         </Box>
         </Box>
     );
-}
+}   
+
