@@ -19,6 +19,7 @@ const DebFinCalendrier: React.FC = () => {
       setErrorMessage('');
     }
   }
+  const getYear = (date: string) => date ? new Date(date).getFullYear() : '20XX';
 
 
 
@@ -27,7 +28,7 @@ return (
 
     <div className="saisie-date">
       <div className="saisie-date-title">
-        <h2>Calendrier 20XX-20XX</h2>
+        <h2>Calendrier {getYear(startDate)}-{getYear(endDate)}</h2>
       </div>
       <div className="date-input-container">
         <label htmlFor="start-date" className="label">Date de début </label>
