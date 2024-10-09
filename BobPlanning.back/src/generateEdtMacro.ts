@@ -63,14 +63,19 @@ async function getHolidays(city: string = "Bordeaux", startYear: number): Promis
 }
 
 export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: any[]) => {
+  
   // Set date to lundi
   let currentDate: Date = new Date(startDate);
   if (currentDate.getDay() !== 1) {
     currentDate.setDate(currentDate.getDate() - (currentDate.getDay() - 1));
   }
+
+  //Generate Excel
   const workbook = new ExcelJS.Workbook();
+  //Add a page to the Excel
   const worksheet = workbook.addWorksheet('MultiPromo');
 
+  //Add columns
   let columns = [
     { header: "Numéro de la semaine", key: "weekNumber", width: 20 },
     { header: "La semaine commence le lundi :", key: "mondayDate", width: 20 },
@@ -81,28 +86,31 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
     { header: "Nombre Epreuves surveillées semaine (cellule conditionnelle)", key: "examsNumber", width: 20 },
     { header: "Evenements Promo/ RE/conf/salon", key: "events", width: 20 },
   ];
-
   promos.forEach(promo => {
     columns.push({ header: promo.Name, key: promo.Name, width: 20 });
   });
-
   worksheet.columns = columns;
 
+  //Get holidays
   const publicHolidays = await getPublicHolidays(startDate.getFullYear());
-
   const holidays = await getHolidays("Bordeaux", startDate.getFullYear());
 
   let i: number = 0;
+
+  //Tri vacances par date
   let isPublicHolliday: boolean = false;
   const sortedHolidays = holidays.sort((a: any, b: any) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
   let holydayStartDate = new Date(sortedHolidays[i].start_date);
   let holydayEndDate = new Date(sortedHolidays[i].end_date);
+
+  //Loop through the weeks
   while (currentDate < endDate) {
     let holidayDescription : string = ""; 
     isPublicHolliday = false; 
 
     //gestion vacances scolaires
     if (currentDate > holydayStartDate && currentDate < holydayEndDate) {
+      // 1 seule semaine de vacances pour la toussaint (sur jours feries)
       if (sortedHolidays[i].description === "Vacances de la Toussaint") {
         for (let i = 0; i < 7; i++) {
           const currentWeekDate = new Date(currentDate);
@@ -111,11 +119,12 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
             holidayDescription += "Vacances de la toussaint ";
           } 
         }
+      //Ajout des vacances scolaires
       } else {
         holidayDescription += " " + sortedHolidays[i].description;
       }
     } else {
-      //Verif seulement sur jour ouvert (lundi au vendredi)
+      //Verif jours feries seulement sur jour ouvert (lundi au vendredi)
       for (let i = 0; i < 5; i++) {
         const currentWeekDate = new Date(currentDate);
         currentWeekDate.setDate(currentWeekDate.getDate() + i);
@@ -126,12 +135,14 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
       }
     }
 
+    // Si vacances terminé, on passe a la prochaine
     if (holydayEndDate < currentDate && i < sortedHolidays.length - 1) {
       i++;
       holydayStartDate = new Date(sortedHolidays[i].start_date);
       holydayEndDate = new Date(sortedHolidays[i].end_date);
     }
     
+    //Initialisation informations semaine
     let rowData: any = {
       weekNumber: getWeekNumber(currentDate),
       mondayDate: currentDate.toLocaleDateString("fr-FR"),
@@ -143,26 +154,31 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
       events: '',
     };
 
-    
-    if (holidayDescription.includes("Vacances")) {
-      promos.forEach(promo => {
-        if (promo.Name === "ADI1" || promo.Name === "ADI2" || promo.Name === "CIR1" || promo.Name === "CIR2") {
-          rowData[promo.Name] = "VACANCES"; 
-        }
-      });
-    }
+    //Information semaine par promo
+    promos.forEach(promo => {
+      if (promo.Name === "ADI1" || promo.Name === "ADI2" || promo.Name === "CIR1" || promo.Name === "CIR2") {
+        if (holidayDescription.includes("Vacances")) {
+          rowData[promo.Name] = "VACANCES";
+        } 
+      }
+    });
 
+    //Ajout ligne
     let row = worksheet.addRow(rowData);
 
+    // Jours feries en rouge
     if (isPublicHolliday) {
       row.getCell('holidays').font = { color: { argb: 'FF0000' } };
     }
 
+    // Go to next week
     currentDate.setDate(currentDate.getDate() + 7);
   }
   
+  //Chemin fichier
   const filePath = path.join(__dirname, '../files', 'EdtMacro.xlsx');
 
+  //Writes files
   await workbook.xlsx.writeFile(filePath);
 
   return filePath;
