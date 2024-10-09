@@ -62,7 +62,7 @@ async function getHolidays(city: string = "Bordeaux", startYear: number): Promis
   return holidays;
 }
 
-export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
+export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: any[]) => {
   // Set date to lundi
   let currentDate: Date = new Date(startDate);
   if (currentDate.getDay() !== 1) {
@@ -71,7 +71,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('MultiPromo');
 
-  worksheet.columns = [
+  let columns = [
     { header: "Numéro de la semaine", key: "weekNumber", width: 20 },
     { header: "La semaine commence le lundi :", key: "mondayDate", width: 20 },
     { header: "Pedago dont jurys", key: "pedagoJury", width: 20 },
@@ -81,6 +81,12 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
     { header: "Nombre Epreuves surveillées semaine (cellule conditionnelle)", key: "examsNumber", width: 20 },
     { header: "Evenements Promo/ RE/conf/salon", key: "events", width: 20 },
   ];
+
+  promos.forEach(promo => {
+    columns.push({ header: promo.Name, key: promo.Name, width: 20 });
+  });
+
+  worksheet.columns = columns;
 
   const publicHolidays = await getPublicHolidays(startDate.getFullYear());
 
@@ -138,7 +144,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date) => {
     });
 
     if (isPublicHolliday) {
-      row.getCell('holidays').font = { color: { argb: 'FF0000' } }; // Set font color to red (ARGB format)
+      row.getCell('holidays').font = { color: { argb: 'FF0000' } };
     }
 
     currentDate.setDate(currentDate.getDate() + 7);
