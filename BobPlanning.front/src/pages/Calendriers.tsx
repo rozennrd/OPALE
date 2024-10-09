@@ -1,6 +1,6 @@
 import React from 'react';
 import TopBar from '../components/TopBar';
-const Home: React.FC = () => {
+const Calendrier: React.FC = () => {
     return (
         <div>
             <TopBar />
@@ -9,4 +9,4 @@ const Home: React.FC = () => {
     );
 };
 
-export default Home;
+export default Calendrier;

@@ -5,7 +5,9 @@ import Logo from '../assets/Logo_Bob_Planning_Transparent.png'; // Make sure to 
 const TopBar = () => {
     return (
         <div className="top-bar">
+            <a href="/">
             <img className='logo' src={Logo} alt="Logo_Bob_Planning" />
+            </a>
             <nav className="nav-links">
                 <a href="/">Home</a>
                 <a href="/parametres">Paramètres</a>
