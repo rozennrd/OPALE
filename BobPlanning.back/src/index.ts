@@ -99,7 +99,7 @@ app.post('/generateEdtMacro', async (req: Request, res: Response) => {
     const workbook = await generateEdtMacro(start, end, Promos);
 
     res.status(200).json({
-      message: 'Excel file generated and saved on the server' + start + end + Promos,
+      message: 'Excel file generated and saved on the server',
       filePath: '../files/file.xlsx',
     });
 

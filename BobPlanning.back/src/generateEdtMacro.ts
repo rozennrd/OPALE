@@ -132,7 +132,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
       holydayEndDate = new Date(sortedHolidays[i].end_date);
     }
     
-    let row = worksheet.addRow({
+    let rowData: any = {
       weekNumber: getWeekNumber(currentDate),
       mondayDate: currentDate.toLocaleDateString("fr-FR"),
       pedagoJury: '',
@@ -141,7 +141,18 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
       cypreWeek: '',
       examsNumber: '',
       events: '',
-    });
+    };
+
+    
+    if (holidayDescription.includes("Vacances")) {
+      promos.forEach(promo => {
+        if (promo.Name === "ADI1" || promo.Name === "ADI2" || promo.Name === "CIR1" || promo.Name === "CIR2") {
+          rowData[promo.Name] = "VACANCES"; 
+        }
+      });
+    }
+
+    let row = worksheet.addRow(rowData);
 
     if (isPublicHolliday) {
       row.getCell('holidays').font = { color: { argb: 'FF0000' } };
