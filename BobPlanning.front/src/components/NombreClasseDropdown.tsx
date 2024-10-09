@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
-import './SingleDropdown.css';
+import './NombreClasseDropdown.css';
 
-const SingleDropdown: React.FC = () => {
-    const [selectedValue, setSelectedValue] = useState<string>('');
+interface NombreClasseDropdownProps {
+    promoName: string;
+    selectedValue: string;
+    onChange: (promo: string, value: string) => void;
+}
+
+const NombreClasseDropdown: React.FC<NombreClasseDropdownProps> = ({promoName, selectedValue,onChange}) => {
 
     const handleChange = (e: SelectChangeEvent<string>) => {
-        setSelectedValue(e.target.value);
+        onChange(promoName, e.target.value);
     };
 
     return (
     <div className="nombre-classes">
-      <label htmlFor="start-date" className="label-nombre-classe">Nombre de classes </label>
+      <label htmlFor="art-date" className="label-nombre-classe">Nombre de classes </label>
      
     
         <FormControl fullWidth variant="outlined" margin="normal">
@@ -25,7 +30,7 @@ const SingleDropdown: React.FC = () => {
                 label="Nombre de classes"
             >
                 <MenuItem value="">
-                    <em>promo</em>
+                    <em>None</em>
                 </MenuItem>
                 <MenuItem value="1">1</MenuItem>
                 <MenuItem value="2">2</MenuItem>
@@ -38,4 +43,4 @@ const SingleDropdown: React.FC = () => {
     );
 };
 
-export default SingleDropdown;
+export default NombreClasseDropdown;

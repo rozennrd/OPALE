@@ -5,9 +5,9 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import SingleDropdown from './SingleDropdown';
 import DebCoursDate from './DebCoursDate';
 import PeriodesAP from './PeriodesAP';
+import NombreClasseDropdown from './NombreClasseDropdown';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -47,6 +47,35 @@ export default function FullWidthTabs() {
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
     
+    const [classesPerPromo, setClassesPerPromo] = React.useState<Record<string,string>>({
+        ADI1: '',
+        ADI2: '',
+        CIR1: '',
+        CIR2: '',
+        AP3: '',
+        AP4: '',
+        AP5: '',
+        ISEN3: '',
+        ISEN4: '',
+        ISEN5: ''
+    });
+
+    const [startDatesPerPromo, setStartDatesPerPromo] = React.useState<Record<string, string>>({
+        ADI1: '',
+        ADI2: '',
+        CIR1: '',
+        CIR2: '',
+        AP3: '',
+        AP4: '',
+        AP5: '',
+        ISEN3: '',
+        ISEN4: '',
+        ISEN5: ''
+    });
+
+    const [startDate, setStartDate] = React.useState<string>('');
+    const [endDate, setEndDate] = React.useState<string>('');
+
     const promos = [
         'ADI1', 'ADI2', 
         'CIR1', 'CIR2', 
@@ -57,6 +86,20 @@ export default function FullWidthTabs() {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
+
+    const handleDropdownChange = (promo: string, selectedValue: string) => {
+        setClassesPerPromo((prev) => ({
+            ...prev,
+            [promo]: selectedValue
+        }));
+    }
+
+    const handleStartDateChange = (promo: string, newValue: string) => {
+        setStartDatesPerPromo((prev) => ({
+            ...prev,
+            [promo]: newValue
+        }));
+    }
 
     return (
         <Box sx={{
@@ -82,8 +125,15 @@ export default function FullWidthTabs() {
             {promos.map((promo, index) => (
                 <TabPanel value={value} index={index} dir={theme.direction} key={index}>
                     {/* Content of each TabPanel can be anything you want */}
-                    <SingleDropdown/>
-                    <DebCoursDate/> 
+                    <NombreClasseDropdown
+                        promoName={promo}
+                        selectedValue={classesPerPromo[promo]}
+                        onChange={handleDropdownChange}
+                    />
+                    <DebCoursDate
+                        startDate= {startDatesPerPromo[promo]}
+                        setStartDate={(date) => handleStartDateChange(promo, date)}
+                    /> 
                     {(promo === 'AP3' || promo === 'AP4' || promo === 'AP5') && (
                         <PeriodesAP />
                     )}
