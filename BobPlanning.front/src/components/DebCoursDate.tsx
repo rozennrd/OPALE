@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import './DebCoursDate.css'; 
 
-const DebCoursDate: React.FC = () => {
-  const [startDate, setStartDate] = useState<string>('');
+
+interface DebCoursDateProps {
+  startDate: string;
+  setStartDate: (date: string) => void;
+}
+
+const DebCoursDate: React.FC<DebCoursDateProps> = ({startDate,setStartDate }) => {
 
   return (
     <div className="date-debut-cours-container">
