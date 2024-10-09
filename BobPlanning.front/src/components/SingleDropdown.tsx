@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
+import './SingleDropdown.css';
 
 const SingleDropdown: React.FC = () => {
     const [selectedValue, setSelectedValue] = useState<string>('');
@@ -10,6 +11,10 @@ const SingleDropdown: React.FC = () => {
     };
 
     return (
+    <div className="nombre-classes">
+      <label htmlFor="start-date" className="label-nombre-classe">Nombre de classes </label>
+     
+    
         <FormControl fullWidth variant="outlined" margin="normal">
             <InputLabel id="nb-classes">Nombre de classes : </InputLabel>
             <Select
@@ -29,6 +34,7 @@ const SingleDropdown: React.FC = () => {
                 <MenuItem value="3">5</MenuItem>
             </Select>
         </FormControl>
+        </div>
     );
 };
 
