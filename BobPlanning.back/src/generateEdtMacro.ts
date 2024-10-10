@@ -91,6 +91,18 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
   });
   worksheet.columns = columns;
 
+ // Appliquer la couleur verte à la première ligne
+ const headerRow = worksheet.getRow(1);
+ const examsNumberCell = worksheet.getCell('G1');
+   examsNumberCell.fill = {
+     type: 'pattern',
+     pattern: 'solid',
+     fgColor: { argb: 'FF99FF99' }, // vert clair
+   };
+   
+ headerRow.height = 50; 
+ headerRow.alignment = { wrapText: true };
+
   //Get holidays
   const publicHolidays = await getPublicHolidays(startDate.getFullYear());
   const holidays = await getHolidays("Bordeaux", startDate.getFullYear());
