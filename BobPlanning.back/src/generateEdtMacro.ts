@@ -169,7 +169,13 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
     //Information semaine par promo
     promos.forEach(promo => {
       if (promo.Name === "ADI1" || promo.Name === "ADI2" || promo.Name === "CIR1" || promo.Name === "CIR2") {
-        if (holidayDescription.includes("Vacances")) {
+        if (new Date(promo.Periode[0].DateFinP) < currentDate) {
+          if (promo.Name === "ADI1" || promo.Name === "CIR1") {
+            rowData[promo.Name] = "Stage Exécutant 1 mois";
+          } else {
+            rowData[promo.Name] = "Stage International Break 2 mois";
+          }
+        } else if (holidayDescription.includes("Vacances")) {
           rowData[promo.Name] = "VACANCES";
         } 
       }
