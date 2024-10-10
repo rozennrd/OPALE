@@ -2,12 +2,12 @@ import React from "react";
 import './DebCoursDate.css'; 
 
 
-interface DebCoursDateProps {
-  startDate: string;
-  setStartDate: (date: string) => void;
+interface FinCoursDateProps {
+  endDate: string;
+  setEndDate: (date: string) => void;
 }
 
-const DebCoursDate: React.FC<DebCoursDateProps> = ({startDate,setStartDate }) => {
+const FinCoursDate: React.FC<FinCoursDateProps> = ({endDate,setEndDate }) => {
 
   return (
     <div className="date-debut-cours-container">
@@ -16,12 +16,12 @@ const DebCoursDate: React.FC<DebCoursDateProps> = ({startDate,setStartDate }) =>
         type="date"
         id="end-date"
         name="end-date"
-        value={startDate}
-        onChange={(e) => setStartDate(e.target.value)}
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
         className="input"
       />
     </div>
   );
 };
 
-export default DebCoursDate;
+export default FinCoursDate;
