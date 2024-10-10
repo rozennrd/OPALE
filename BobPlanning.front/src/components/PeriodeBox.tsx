@@ -3,7 +3,7 @@ import './PeriodeBox.css';
 
 interface PeriodeCardProps {
     index: number;                             // Index of the period
-    date: string;                              // The current date for the period
+    date: Date;                              // The current date for the period
     weeks: number;                             // Number of weeks for this period
     handleDateChange: (index: number, date: string) => void; // Function to handle date changes
     handleWeeksChange: (index: number, week: number) => void; // Function to handle weeks changes
