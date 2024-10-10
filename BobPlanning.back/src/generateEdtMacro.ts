@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs';
 import path from 'path';
 import axios from 'axios';
+import { c } from 'vite/dist/node/types.d-aGj9QkWt';
 
 function getWeekNumber(date: Date): number {
   const target = new Date(date.valueOf());
@@ -68,6 +69,12 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
     currentDate.setDate(currentDate.getDate() - (currentDate.getDay() - 1));
   }
 
+  //For column cypre
+  let weekCount = 1;
+  let adiStarted = false; 
+  let adiStartWeek = 1;
+  let endPeriodeInitial = new Date();
+
   //Generate Excel
   const workbook = new ExcelJS.Workbook();
   //Add a page to the Excel
@@ -90,6 +97,9 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
     if (Array.isArray(promo.Periode) && promo.Periode.length > 0) {
       promo.i = 0; 
       promo.Periode.sort((a: any, b: any) => new Date(a.DateDebutP).getTime() - new Date(b.DateDebutP).getTime());
+    };
+    if (promo.Name === "ADI1") {
+      endPeriodeInitial = new Date(promo.Periode[0].DateFinP);
     }
   });
   worksheet.columns = columns;
@@ -189,6 +199,10 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
         } else if (new Date(promo.Periode[0].DateDebutP) <= currentDate) {
           rowData[promo.Name] = "";
           promosEnCours.push(promo.Name);
+          if (!adiStarted) {
+            adiStarted = true; 
+            adiStartWeek = weekCount; // Capture the start week for ADI
+          }
         } else {
           //Pour bordure
           rowData[promo.Name] = "";
@@ -211,8 +225,23 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
       }
     });
 
+    if (adiStarted) {
+      if (holidayDescription.includes("Vacances") || holidayDescription.includes("Stage")) {
+        rowData.cypreWeek = ""; // Case vide si vacances
+      } else if (currentDate < endPeriodeInitial) {
+        rowData.cypreWeek = `Se${((weekCount - adiStartWeek) % 16) + 1}`; // Compter jusqu'à 16 puis repartir de 1
+      }
+    } else {
+      rowData.cypreWeek = ""; // Case vide si pas encore commencé
+    }
+  
+
     //Ajout ligne
     let row = worksheet.addRow(rowData);
+
+    if (adiStarted && !holidayDescription.includes("Vacances")) {
+      weekCount++;
+    }
 
     promosEnCours.forEach(promEnCours => {
       row.getCell(promEnCours).fill = {
