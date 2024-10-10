@@ -3,25 +3,28 @@ import './DebFinCalendrier.css';
 import ErrorIcon from '@mui/icons-material/Error';
 
 
-const DebFinCalendrier: React.FC = () => {
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
+interface DebFinCalendrierProps {
+  setPromosData: (data: any) => void;
+  promosData: { DateDeb: string; DateFin: string };
+}
+
+const DebFinCalendrier: React.FC<DebFinCalendrierProps> = ({ setPromosData, promosData }) => {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newEndDate = e.target.value;
 
-    if (startDate && new Date(newEndDate) < new Date(startDate)) {
+    if (promosData.DateDeb && new Date(newEndDate) < new Date(promosData.DateDeb)) {
       const message = 'La date de fin doit être postérieure à la date de début';
       setErrorMessage(message);
 
-    } else if (startDate == '') {
+    } else if (promosData.DateDeb == '') {
       const message = 'Veuillez d\'abord renseigner la date de début';
       setErrorMessage(message);
 
     } else {
 
-      setEndDate(newEndDate);
+      setPromosData({ ...promosData, DateFin: e.target.value })
       setErrorMessage('');
     }
   }
@@ -34,7 +37,7 @@ const DebFinCalendrier: React.FC = () => {
 
       <div className="saisie-date">
         <div className="saisie-date-title">
-          <h2>Calendrier {getYear(startDate)}-{getYear(endDate)}</h2>
+          <h2>Calendrier {getYear(promosData.DateDeb)}-{getYear(promosData.DateFin)}</h2>
         </div>
         <div className="date-input-container">
           <label htmlFor="start-date" className="label">Date de début </label>
@@ -42,8 +45,8 @@ const DebFinCalendrier: React.FC = () => {
             type="date"
             id="start-date"
             name="start-date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            value={promosData.DateDeb}
+            onChange={(e) => setPromosData({ ...promosData, DateDeb: e.target.value })}
             className="input"
           />
         </div>
@@ -53,7 +56,7 @@ const DebFinCalendrier: React.FC = () => {
             type="date"
             id="end-date"
             name="end-date"
-            value={endDate}
+            value={promosData.DateFin}
             onChange={handleEndDateChange}
             className="input"
           />
