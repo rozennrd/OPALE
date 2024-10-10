@@ -5,7 +5,7 @@
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     padding: 20px;              /* Padding inside the card */
     margin-bottom: 20px;        /* Space between cards */
-    max-width: 300px;           /* Max width for the card */
+    width: 25%;           /* Max width for the card */
     margin: 0 auto;             /* Center card horizontally */
     border: 1px solid #e0e0e0;  /* Light border to define the card */
 }

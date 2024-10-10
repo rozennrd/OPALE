@@ -1,5 +1,6 @@
-import React from 'react';
-import { useTheme } from '@mui/material/styles';
+import * as React from 'react';
+import { useTheme, styled } from '@mui/material/styles';
+
 import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -7,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import DebCoursDate from './DebCoursDate';
 import FinCoursDate from './FinCoursDate';
-import PeriodesAP from './PeriodesAP';
+import Periodes from './Periodes';
 import NombreClasseDropdown from './NombreClasseDropdown';
 
 interface TabPanelProps {
@@ -16,6 +17,28 @@ interface TabPanelProps {
     index: number;
     value: number;
 }
+
+const CustomTabs = styled(Tabs)(({ theme }) => ({
+    backgroundColor: '#333', // Tabs background color
+    '& .MuiTabs-indicator': {
+        backgroundColor: '#FF5722', // Customize the indicator color
+        height: '4px', // Increase the thickness of the indicator
+    },
+}));
+
+const CustomTab = styled(Tab)(({ theme }) => ({
+    textTransform: 'none', // Prevent uppercase
+    color: '#FFFFFF', // Default tab text color
+    fontSize: '16px', // Change font size
+    fontWeight: 'bold', // Change font weight
+    '&.Mui-selected': {
+        color: '#FFC107', // Color when the tab is selected
+    },
+    '&:hover': {
+        color: '#FFD700', // Hover color
+    },
+}));
+
 
 function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
@@ -52,8 +75,8 @@ interface FullWidthTabsProps {
 export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTabsProps & { setPromosData: React.Dispatch<React.SetStateAction<any>> }) {
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
-    
-    const [classesPerPromo, setClassesPerPromo] = React.useState<Record<string,string>>({
+
+    const [classesPerPromo, setClassesPerPromo] = React.useState<Record<string, string>>({
         ADI1: '',
         ADI2: '',
         CIR1: '',
@@ -98,9 +121,9 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
     });
 
     const promos = [
-        'ADI1', 'ADI2', 
-        'CIR1', 'CIR2', 
-        'AP3', 'AP4', 'AP5', 
+        'ADI1', 'ADI2',
+        'CIR1', 'CIR2',
+        'AP3', 'AP4', 'AP5',
         'ISEN3', 'ISEN4', 'ISEN5'
     ];
 
@@ -196,12 +219,12 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
     return (
         <Box sx={{
             display: 'flex',
-            justifyContent: 'center', 
-            minHeight: '100vh',       
+            justifyContent: 'center',
+            minHeight: '100vh',
         }}>
-            <Box sx={{ bgcolor: 'background.paper',width: 1000}}>
+            <Box sx={{ bgcolor: 'background.paper', width: 1050 }}>
                 <AppBar position="static">
-                    <Tabs
+                    <CustomTabs
                         value={value}
                         onChange={handleChange}
                         indicatorColor="secondary"
@@ -210,13 +233,25 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
                         aria-label="full width tabs example"
                     >
                         {promos.map((promo, index) => (
-                            <Tab label={promo} key={index} {...a11yProps(index)} />
+                            <CustomTab label={promo} key={index} {...a11yProps(index)} />
                         ))}
-                    </Tabs>
+                    </CustomTabs>
                 </AppBar>
                 {promos.map((promo, index) => (
                     <TabPanel value={value} index={index} dir={theme.direction} key={index}>
                         {/* Content of each TabPanel can be anything you want */}
+                        <Typography 
+                        variant="h4" 
+                        gutterBottom
+                        sx={{
+                            textAlign: 'left',     // Align text to the left
+                            color: '#FF5722',      // Change the color (you can customize the hex code)
+                            fontWeight: 'bold',    // Optional: Make it bold if you want
+                            marginBottom: '20px'   // Optional: Add space below the title
+                        }}
+                        >
+                            {promo}
+                        </Typography>
                         <NombreClasseDropdown
                             promoName={promo}
                             selectedValue={classesPerPromo[promo]}
@@ -236,14 +271,16 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
                         </>
                         )}
                         
+                       
                         {(promo === 'AP3' || promo === 'AP4' || promo === 'AP5') && (
-                            <PeriodesAP 
+                            <Periodes
                                 nbPeriodesDefaultValue={periodesData[promo].nombrePeriode}
                                 dates={periodesData[promo].dates}
                                 weeks={periodesData[promo].weeks}
                                 onChange={(nombrePeriode, dates, weeks) => handlePeriodesChange(promo, nombrePeriode, dates, weeks)}
                             />
                         )}
+
                     </TabPanel>
                 ))}
             </Box>

@@ -29,17 +29,11 @@ h2 {
 /* Container for PeriodeCard components */
 .periode-cards-container {
     display: flex;
-    flex-wrap: wrap; /* Allows wrapping to next line if cards don't fit */
-    gap: 20px;       /* Adds space between the cards */
-    justify-content: flex-start; /* Align items to the start */
+    flex-wrap: wrap; /* Ensures the items wrap if there isn't enough space */
+    gap: 20px; /* Adds spacing between the items */
+    justify-content: flex-start; /* Align items to the start of the container */
+    width: 100%; /* Ensure the container takes full width */
+    align-items: flex-start;
+    margin-top: 5%;
 }
 
-/* Example card style (from PeriodeBox.css) */
-.periode-card {
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 250px; /* Limit width of each card */
-    flex-grow: 1;
-}

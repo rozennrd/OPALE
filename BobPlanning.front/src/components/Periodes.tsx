@@ -5,14 +5,14 @@ import PeriodeCard from './PeriodeBox';
 
 interface PeriodesAPProps {
     nbPeriodesDefaultValue: number;
-    dates: string[];
+    dates: Date[];
     weeks: number[];
-    onChange: (nombrePeriode: number, dates: string[], weeks: number[]) => void;
+    onChange: (nombrePeriode: number, dates: Date[], weeks: number[]) => void;
 }
 
 export default function Periodes({ nbPeriodesDefaultValue, dates, weeks, onChange }: PeriodesAPProps) {
     const [numPeriods, setNumPeriods] = useState<number>(nbPeriodesDefaultValue); // Default to 5 periods if not provided
-    const [localDates, setLocalDates] = useState<string[]>(dates);
+    const [localDates, setLocalDates] = useState<Date[]>(dates);
     const [localWeeks, setLocalWeeks] = useState<number[]>(weeks); // Default to 3 weeks per period
 
     useEffect(() => {
@@ -28,7 +28,7 @@ export default function Periodes({ nbPeriodesDefaultValue, dates, weeks, onChang
 
     const handleDateChange = (index: number, value: string) => {
         const newDates = [...localDates];
-        newDates[index] = value;
+        newDates[index] = new Date(value);
         setLocalDates(newDates);
     };
 
@@ -40,7 +40,9 @@ export default function Periodes({ nbPeriodesDefaultValue, dates, weeks, onChang
 
     return (
         <>
+        <Divider className='divider' />
             <h2>Périodes</h2>
+            
             <div className='nombre-periodes'>
                 <label htmlFor="art-date" className="label-nombre-periodes">Nombre de périodes </label>
                 <FormControl fullWidth variant="outlined" margin="normal">
@@ -79,4 +81,3 @@ export default function Periodes({ nbPeriodesDefaultValue, dates, weeks, onChang
         </>
     );
 }
-    

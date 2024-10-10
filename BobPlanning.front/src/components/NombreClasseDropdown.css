@@ -10,14 +10,15 @@
   
   /* Label styling */
   .label-nombre-classe {
-    font-weight: bold;            /* Make the label bold */
-    font-size: 16px;
-
+    font-weight: bold;           /* Make the label bold */
+    margin-right: 10px;   
+    width: 200px;                /* Prevent the label from wrapping */
+    text-align: left;
   }
   
   /* FormControl styling for the dropdown */
   .MuiFormControl-root {
-    width: auto;                  /* Ensure the dropdown fits its content */
-    min-width: 200px;             /* Set a minimum width for the dropdown */
+    width: 150px;                  /* Ensure the dropdown fits its content */
+    max-width: 200px;             /* Set a minimum width for the dropdown */
   }
   
