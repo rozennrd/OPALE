@@ -1,7 +1,6 @@
 import ExcelJS from 'exceljs';
 import path from 'path';
 import axios from 'axios';
-import { console } from 'inspector';
 
 function getWeekNumber(date: Date): number {
   const target = new Date(date.valueOf());
@@ -47,7 +46,6 @@ async function getHolidays(city: string = "Bordeaux", startYear: number): Promis
   let holidays: Record<string, string>[] = [];
 
   try {
-    console.log("Fetching school holidays...");
     holidays = await axios.get(url, {
       params: {
         where: `location="${city}"`,
@@ -86,8 +84,13 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
     { header: "Nombre Epreuves surveillées semaine (cellule conditionnelle)", key: "examsNumber", width: 20 },
     { header: "Evenements Promo/ RE/conf/salon", key: "events", width: 20 },
   ];
-  promos.forEach(promo => {
+  promos.forEach(promo => {   
     columns.push({ header: promo.Name, key: promo.Name, width: 20 });
+    //Order periode
+    if (Array.isArray(promo.Periode) && promo.Periode.length > 0) {
+      promo.i = 0; 
+      promo.Periode.sort((a: any, b: any) => new Date(a.DateDebutP).getTime() - new Date(b.DateDebutP).getTime());
+    }
   });
   worksheet.columns = columns;
 
@@ -183,7 +186,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
           }
         } else if (holidayDescription.includes("Vacances")) {
           rowData[promo.Name] = "VACANCES";
-        } else if (new Date(promo.Periode[0].DateDebutP) < currentDate) {
+        } else if (new Date(promo.Periode[0].DateDebutP) <= currentDate) {
           rowData[promo.Name] = "";
           promosEnCours.push(promo.Name);
         } else {
@@ -192,7 +195,19 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
         }
       //Gestion formation continue  
       } else if (promo.Name === "AP3" || promo.Name === "AP4" || promo.Name === "AP5") {
-        rowData[promo.Name] = "";
+        if (new Date(promo.Periode[promo.i].DateDebutP) <= currentDate && new Date(promo.Periode[promo.i].DateFinP) >= currentDate) {
+          rowData[promo.Name] = "";
+          promosEnCours.push(promo.Name);
+        } else if (new Date(promo.Periode[promo.i].DateFinP) < currentDate) {
+          if (i < promo.Periode.length) {
+            promo.i++;
+          }
+          rowData[promo.Name] = "Entreprise";
+        } else if (new Date(promo.Periode[promo.i].DateDebutP) > currentDate) {
+          rowData[promo.Name] = "Entreprise";
+        } else {
+          rowData[promo.Name] = "";
+        }
       }
     });
 
