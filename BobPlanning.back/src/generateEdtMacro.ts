@@ -166,23 +166,42 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
       events: '',
     };
 
+    let promosEnCours : string[] = [];
+
     //Information semaine par promo
     promos.forEach(promo => {
-      if (promo.Name === "ADI1" || promo.Name === "ADI2" || promo.Name === "CIR1" || promo.Name === "CIR2") {
+      //Gestion formation initiale
+      if (promo.Name === "ADI1" || promo.Name === "ADI2" || promo.Name === "CIR1" || promo.Name === "CIR2" || promo.Name === "ISEN3" || promo.Name === "ISEN4" || promo.Name === "ISEN5") {
         if (new Date(promo.Periode[0].DateFinP) < currentDate) {
           if (promo.Name === "ADI1" || promo.Name === "CIR1") {
             rowData[promo.Name] = "Stage Exécutant 1 mois";
-          } else {
+          } else if (promo.Name === "ADI1" || promo.Name === "CIR1") {
             rowData[promo.Name] = "Stage International Break 2 mois";
+          } else {
+            //TODO gerer cas isen (voir avec damien cas précis)
           }
         } else if (holidayDescription.includes("Vacances")) {
           rowData[promo.Name] = "VACANCES";
-        } 
+        } else if (new Date(promo.Periode[0].DateDebutP) < currentDate) {
+          promosEnCours.push(promo.Name);
+        }
+      //Gestion formation continue  
+      } else if (promo.Name === "AP3" || promo.Name === "AP4" || promo.Name === "AP5") {
+
       }
     });
 
     //Ajout ligne
     let row = worksheet.addRow(rowData);
+
+    promosEnCours.forEach(promEnCours => {
+      row.getCell(promEnCours).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF99FF99' }, //TODO change color
+        
+      }
+    });
 
     // Jours feries en rouge
     if (isPublicHolliday) {
