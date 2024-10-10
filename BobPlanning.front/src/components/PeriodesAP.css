@@ -1,10 +1,7 @@
-/* Global styling for the PeriodesAP component */
+/* Main container for PeriodesAP */
 .periodes-ap {
-    padding: 20px;
-    background-color: #f9f9f9;
     border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
+    margin: 0 auto; /* Center the container */
     text-align: center;
 }
 
@@ -16,57 +13,67 @@
     font-weight: bold;
 }
 
-/* Grid container for the form elements */
-.MuiGrid-container {
-    align-items: center;
-    margin-bottom: 15px;
+/* Input container for each period */
+.periode {
+    display: flex;
+    flex-direction: column; /* Arrange label, input and select vertically */
+    gap: 10px; /* Add spacing between label, date input, and select */
+    margin-bottom: 20px;
 }
 
-/* Styling for the input of type date */
-input[type="date"].date-input {
-    width: 80%;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc; /* Standard border */
-    background-color: #fff; /* Background color */
+/* Divider between sections */
+.divider {
+    margin: 10px 0;
+    background-color: #ddd;
+    height: 1px;
+}
+
+/* Flex container for "Nombre de périodes" section */
+.nombre-periodes {
+    display: flex;             
+    align-items: center;       /* Vertically align the input and label */
+    justify-content: flex-start; /* Left-align the container */
+    gap: 10px;                 /* Add some space between the label and input */
+    max-width: 400px;          /* Limit the width to content */
+    margin-bottom: 10px;
+}
+
+/* Label styling for inputs and select */
+.label-nombre-periodes, .MuiInputLabel-root {
+    font-weight: bold;
     font-size: 16px;
+}
+
+/* Input field (type="date") */
+input[type="date"].date-input {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    font-size: 14px;
     color: #333;
+    width: auto; /* Auto-width based on content */
+    min-width: 200px; /* Optional: Ensures inputs are not too small */
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    appearance: none; /* Hide native date input styling (important for cross-browser consistency) */
 }
 
-/* Improve cross-browser appearance for date inputs */
-input[type="date"].date-input::-webkit-calendar-picker-indicator {
-    filter: invert(0.5); /* Optional: customize icon appearance */
-}
-
-/* Change color and shadow on focus */
+/* On focus for input */
 input[type="date"].date-input:focus {
     outline: none;
-    border-color: #007bff; /* Blue border on focus */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); /* Subtle shadow for focus */
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
-/* Placeholder text color for the date input */
-input[type="date"].date-input::placeholder {
-    color: #999;
-    font-style: italic;
-}
-
-/* Label for the form control */
-.MuiInputLabel-root {
-    color: #555;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-/* Select field customization (for the weeks, for consistency) */
+/* Select field customization (for weeks selection) */
 .MuiSelect-root {
     background-color: #fff;
-    padding: 10px;
-    font-size: 16px;
+    padding: 8px;
+    font-size: 14px;
+    width: auto; /* Auto-width based on content */
+    min-width: 100px; /* Ensure it's not too small */
 }
 
+/* Border colors for the select field */
 .MuiOutlinedInput-notchedOutline {
     border-color: #ccc; /* Default border color */
 }
@@ -75,18 +82,12 @@ input[type="date"].date-input::placeholder {
     border-color: #007bff; /* Blue border on focus */
 }
 
-/* Spacing for grid elements */
-.MuiGrid-item {
-    padding-bottom: 15px;
+/* Styling for the select control */
+.MuiFormControl-root {
+    width: auto; /* Auto width based on content */
 }
 
-.periode {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.divider {
-    padding: 5px;
+/* Custom input margin */
+.MuiFormControl-root + .MuiFormControl-root {
+    margin-top: 15px;
 }

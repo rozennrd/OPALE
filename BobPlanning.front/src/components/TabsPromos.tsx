@@ -7,6 +7,8 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import DebCoursDate from './DebCoursDate';
 import PeriodesAP from './PeriodesAP';
+import Periodes from './Periodes';
+
 import NombreClasseDropdown from './NombreClasseDropdown';
 
 interface TabPanelProps {
@@ -75,8 +77,8 @@ export default function FullWidthTabs() {
 
     const [periodesData, setPeriodesData] = React.useState<Record<string, {nombrePeriode: number, dates:string[], weeks: number[]}>>( {
         AP3: {nombrePeriode: 5, dates: Array(5).fill(''), weeks: Array(5).fill(3)},
-        AP4: {nombrePeriode: 5, dates: Array(5).fill(''), weeks: Array(5).fill(3)},
-        AP5: {nombrePeriode: 5, dates: Array(5).fill(''), weeks: Array(5).fill(3)}  
+        AP4: {nombrePeriode: 3, dates: Array(5).fill(''), weeks: Array(5).fill(3)},
+        AP5: {nombrePeriode: 2, dates: Array(5).fill(''), weeks: Array(5).fill(3)}  
     });
 
     
@@ -147,7 +149,7 @@ export default function FullWidthTabs() {
                         setStartDate={(date) => handleStartDateChange(promo, date)}
                     /> 
                     {(promo === 'AP3' || promo === 'AP4' || promo === 'AP5') && (
-                        <PeriodesAP 
+                        <Periodes 
                             nbPeriodesDefaultValue={periodesData[promo].nombrePeriode}
                             dates={periodesData[promo].dates}
                             weeks={periodesData[promo].weeks}

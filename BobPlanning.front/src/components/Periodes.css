@@ -1,0 +1,45 @@
+h2 {
+    text-align: start;
+    /* Aligns the text to the left (start) */
+}
+
+.nombre-periodes {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: auto; /* Let it size according to content */
+    max-width: 400px; /* Limit to 400px or adjust as needed */
+}
+
+/* Label styling */
+.label-nombre-periodes {
+    font-weight: bold;
+    font-size: 16px;
+    white-space: nowrap; /* Prevent the label from wrapping */
+}
+
+/* FormControl styling for the dropdown */
+.MuiFormControl-root {
+    width: max; /* Ensure the dropdown fits its content */
+    max-width: 250px; /* Set a maximum width to control the size */
+}
+
+
+/* Container for PeriodeCard components */
+.periode-cards-container {
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping to next line if cards don't fit */
+    gap: 20px;       /* Adds space between the cards */
+    justify-content: flex-start; /* Align items to the start */
+}
+
+/* Example card style (from PeriodeBox.css) */
+.periode-card {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 250px; /* Limit width of each card */
+    flex-grow: 1;
+}
