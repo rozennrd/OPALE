@@ -43,10 +43,11 @@ export default function PeriodesAP({ nbPeriodesDefaultValue, dates, weeks, onCha
             <Box className='periodes-ap'>
                 <h2>Périodes</h2>
                 {/* Select for the number of periods */}
-                <FormControl fullWidth margin="normal">
-                    <InputLabel id="num-periods-label">Nombre de périodes</InputLabel>
+                <label htmlFor="art-date" className="label-nombre-periodes">Nombre de périodes </label>
+                <FormControl   variant= "outlined" margin="normal">
+                    <InputLabel id="nb-periodes">Nombre de périodes</InputLabel>
                     <Select
-                        labelId="num-periods-label"
+                        labelId="nb-periodes"
                         value={numPeriods}
                         label="Nombre de périodes"
                         onChange={handleNumPeriodsChange}
@@ -63,17 +64,17 @@ export default function PeriodesAP({ nbPeriodesDefaultValue, dates, weeks, onCha
                 {dates.map((date, index) => (
                     <>
                         <div className='periode'>
-                            <FormControl fullWidth margin="normal">
+                            <FormControl  margin="normal">
                                 <InputLabel shrink>Date de début période {index + 1}</InputLabel>
                                 <TextField
                                     type="date"
                                     value={date}
                                     onChange={(e) => handleDateChange(index, e.target.value)}
-                                    fullWidth
+                                    
                                 />
                             </FormControl>
 
-                            <FormControl fullWidth margin="normal">
+                            <FormControl  margin="normal">
                                 <InputLabel id={`weeks-label-${index}`}>
                                     Nombre de semaines période {index + 1}
                                 </InputLabel>
@@ -82,7 +83,7 @@ export default function PeriodesAP({ nbPeriodesDefaultValue, dates, weeks, onCha
                                     value={weeks[index]}
                                     label={`Nombre de semaines période ${index + 1}`}
                                     onChange={(e) => handleWeeksChange(index, e.target.value as number)}
-                                    fullWidth
+                                    
                                 >
                                     {[3, 4, 5, 6].map(week => (
                                         <MenuItem key={week} value={week}>{week}</MenuItem>
