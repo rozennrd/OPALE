@@ -175,19 +175,24 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
         if (new Date(promo.Periode[0].DateFinP) < currentDate) {
           if (promo.Name === "ADI1" || promo.Name === "CIR1") {
             rowData[promo.Name] = "Stage Exécutant 1 mois";
-          } else if (promo.Name === "ADI1" || promo.Name === "CIR1") {
+          } else if (promo.Name === "ADI2" || promo.Name === "CIR2") {
             rowData[promo.Name] = "Stage International Break 2 mois";
           } else {
+            rowData[promo.Name] = "";
             //TODO gerer cas isen (voir avec damien cas précis)
           }
         } else if (holidayDescription.includes("Vacances")) {
           rowData[promo.Name] = "VACANCES";
         } else if (new Date(promo.Periode[0].DateDebutP) < currentDate) {
+          rowData[promo.Name] = "";
           promosEnCours.push(promo.Name);
+        } else {
+          //Pour bordure
+          rowData[promo.Name] = "";
         }
       //Gestion formation continue  
       } else if (promo.Name === "AP3" || promo.Name === "AP4" || promo.Name === "AP5") {
-
+        rowData[promo.Name] = "";
       }
     });
 
@@ -200,7 +205,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
         pattern: 'solid',
         fgColor: { argb: 'FF99FF99' }, //TODO change color
         
-      }
+      };
     });
 
     // Jours feries en rouge
@@ -211,6 +216,17 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
     // Go to next week
     currentDate.setDate(currentDate.getDate() + 7);
   }
+
+  worksheet.eachRow((row) => {
+    row.eachCell((cell) => {
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+    });
+  });
   
   //Chemin fichier
   const filePath = path.join(__dirname, '../files', 'EdtMacro.xlsx');
