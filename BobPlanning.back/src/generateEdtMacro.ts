@@ -187,7 +187,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
     promos.forEach(promo => {
       //Gestion formation initiale
       if (promo.Name === "ADI1" || promo.Name === "ADI2" || promo.Name === "CIR1" || promo.Name === "CIR2" || promo.Name === "ISEN3" || promo.Name === "ISEN4" || promo.Name === "ISEN5") {
-        if (promo.Periode && promo.Periode.length > 0) {  
+        if (promo.Periode && promo.Periode.length > 0) {
           if (new Date(promo.Periode[0].DateFinP) < currentDate) {
             if (promo.Name === "ADI1" || promo.Name === "CIR1") {
               rowData[promo.Name] = "Stage Exécutant 1 mois";
@@ -217,11 +217,27 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
       }
 
       //Gestion formation continue
+    
       else if (promo.Name === "AP3" || promo.Name === "AP4" || promo.Name === "AP5") {
+
+        // Remplir les semaines pour "AP3", "AP4", "AP5"
         if (promo.Periode && promo.Periode.length > 0 && new Date(promo.Periode[promo.i].DateDebutP) <= currentDate && new Date(promo.Periode[promo.i].DateFinP) >= currentDate) {
           rowData[promo.Name] = "";
           promosEnCours.push(promo.Name);
-        } else if (promo.Periode && new Date(promo.Periode[promo.i].DateFinP) < currentDate) {
+        }
+
+        // Cas spécifique pour "Mobilité Internationale" pour "AP4"
+        else if (promo.Name === "AP4" && promo.Periode && promo.i === promo.Periode.length - 1 && new Date(promo.Periode[promo.i].DateFinP) < currentDate) {
+          rowData[promo.Name] = "Mobilité Internationale";
+        }
+
+        // Cas spécifique pour "Projet de fin d'études" uniquement jusqu'à l'avant-dernière semaine
+        else if (promo.Name === "AP5" && promo.Periode && promo.i === promo.Periode.length - 1 && new Date(promo.Periode[promo.i].DateFinP) < currentDate && currentDate.getTime() < endDate.getTime() - 7 * 24 * 60 * 60 * 1000) {
+          rowData[promo.Name] = "Projet de fin d'études";
+        }
+
+        // Cas général pour "Entreprise"
+        else if (promo.Periode && new Date(promo.Periode[promo.i].DateFinP) < currentDate) {
           if (i < promo.Periode.length) {
             promo.i++;
           }
@@ -231,7 +247,13 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
         } else {
           rowData[promo.Name] = "";
         }
+
+        // Ajouter "Soutenance" uniquement pour la dernière semaine
+        if (promo.Name === "AP5" && currentDate.getTime() >= endDate.getTime() - 7 * 24 * 60 * 60 * 1000) {
+          rowData[promo.Name] = "Soutenance";
+        }
       }
+
     });
 
 
