@@ -6,7 +6,7 @@ export interface Period {
 export interface Promo {
     Name: string;
     Nombre: number;
-    Periodes: Period[];
+    Periode: Period[];
 }
 
 interface PromosData {

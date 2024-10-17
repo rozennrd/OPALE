@@ -33,17 +33,29 @@ const Parametres: React.FC = () => {
         {
           "Name": "AP3",
           "Nombre": 0,
-          "Periode": [{ dateDebutP: "", dateFinP: "" }]
+          "Periode": [{ dateDebutP: "", dateFinP: "", nbSemaineP: 4 },
+          { dateDebutP: "", dateFinP: "", nbSemaineP: 4 },
+          { dateDebutP: "", dateFinP: "", nbSemaineP: 4 },
+          { dateDebutP: "", dateFinP: "", nbSemaineP: 4 },
+          { dateDebutP: "", dateFinP: "", nbSemaineP: 4 }
+          ]
         },
         {
           "Name": "AP4",
           "Nombre": 0,
-          "Periode": [{ dateDebutP: "", dateFinP: "" }]
+          "Periode": [{ dateDebutP: "", dateFinP: "", nbSemaineP: 8 },
+          { dateDebutP: "", dateFinP: "", nbSemaineP: 8 },
+          { dateDebutP: "", dateFinP: "", nbSemaineP: 8 },
+          { dateDebutP: "", dateFinP: "", nbSemaineP: 8 }
+          ]
+
         },
         {
           "Name": "AP5",
           "Nombre": 0,
-          "Periode": [{ dateDebutP: "", dateFinP: "" }]
+          "Periode": [{ dateDebutP: "", dateFinP: "", nbSemaineP: 10 },
+          { dateDebutP: "", dateFinP: "", nbSemaineP: 10 }
+          ]
         }
         // ,
         // {
@@ -67,7 +79,7 @@ const Parametres: React.FC = () => {
     try {
       // Log des données envoyées
       console.log('Données envoyées :', JSON.stringify(promosData, null, 2));
-  
+
       const response = await fetch('http://localhost:3000/generateEdtMacro', {
         method: 'POST',
         headers: {
@@ -75,18 +87,18 @@ const Parametres: React.FC = () => {
         },
         body: JSON.stringify(promosData),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to submit Excel file');
       }
-  
+
       const data = await response.json();
       console.log('Réponse du serveur :', data);
     } catch (error) {
       console.error('Error:', error);
     }
   };
-  
+
   return (
     <div>
       <TopBar />
