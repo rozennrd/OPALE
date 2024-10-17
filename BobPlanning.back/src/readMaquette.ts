@@ -23,12 +23,13 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
     let td: number = -1;
     let tp: number = -1;
     let projet: number = -1;
+    
     worksheet.eachRow((row, rowNumber) => {
       const rowValues = row.values as string[];
       if (!rowValues) return;
 
       // Set table to know if we are in the table
-      if (rowValues.some((cell) => typeof cell === 'string' && cell.includes("SEMESTRE") && !cell.includes("TOTAL"))) {
+      if (rowValues.some((cell) => typeof cell === 'string' && (cell.includes("SEMESTRE") || cell.includes("Semestres")) && !cell.includes("TOTAL"))) {
         table = true;
         tableHeader = rowNumber + 2;
         semestre = rowValues[1];
@@ -42,7 +43,7 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
         rowValues.forEach((cell, index) => {
           if (cell.includes("Unité d'Enseignements (UE)")) {
             ue = index;
-          } else if (cell.includes("Module constituant l'UE")) {
+          } else if (cell.includes("Modules")) {
             modules = index;
           } else if (cell.includes("Nb Heures encadrées") || cell.includes("Nb Heures étudiant Module")) {
             nbHeures = index;
@@ -78,10 +79,15 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
           }
         }
 
+        if (rowValues[semestrePeriode] !== undefined) {
+          semestre = rowValues[semestrePeriode];
+        }
+
         //Add cours
         data.cours.push({
           name: rowValues[modules],
           UE: rowValues[ue],
+          semestrePeriode: semestre,
           heure: {
             total: parseInt(rowValues[nbHeures]),
             coursMagistral: parseInt(rowValues[coursMagistral]),
