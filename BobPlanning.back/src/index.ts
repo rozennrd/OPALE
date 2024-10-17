@@ -1,4 +1,5 @@
 import { generateEdtMacro } from './generateEdtMacro';
+import { generateEdtSquelette } from './generateEdtMicro';
 import express, { Request, Response } from 'express';
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
@@ -24,7 +25,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./src/index.ts'], 
+  apis: ['./src/index.ts'], // Met à jour ce chemin si nécessaire
 };
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -108,6 +109,83 @@ app.post('/generateEdtMacro', async (req: Request, res: Response) => {
     res.status(500).send('Internal server error' + error);
   }
 });
+
+/**
+ * @swagger
+ * /generateEdtSquelette:
+ *   post:
+ *     summary: Generate an Excel timetable skeleton based on provided data
+ *     description: Returns an Excel file representing the structure of a timetable, using the provided column names.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               columnsData:
+ *                 type: object
+ *                 description: The timetable data containing column names
+ *                 properties:
+ *                   nomsColonnes:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     description: The names of the columns to be added under each day of the week
+ *                     example: ["Mathématiques", "Sciences", "Histoire"]
+ *     responses:
+ *       200:
+ *         description: The Excel file was generated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Excel file generated and saved on the server
+ *                 filePath:
+ *                   type: string
+ *                   example: ../files/EdtSquelette.xlsx
+ *       400:
+ *         description: Missing or invalid data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Missing columnsData
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Internal server error
+ */
+app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
+  try {
+    const { columnsData } = req.body;
+
+    // Vérifiez que columnsData et nomsColonnes sont présents
+    if (!columnsData || !columnsData.nomsColonnes || !Array.isArray(columnsData.nomsColonnes)) {
+      res.status(400).send('Missing or invalid data: Ensure columnsData and nomsColonnes are provided.');
+      return;
+    }
+
+    const filePath = await generateEdtSquelette(columnsData);
+
+    res.status(200).json({
+      message: 'Excel file generated and saved on the server',
+      filePath,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Internal server error: ' + error);
+  }
+});
+
+
 
 // Start the server
 app.listen(PORT, () => {
