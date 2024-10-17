@@ -32,17 +32,17 @@ const [promosData, setPromosData] = React.useState<any>({
           {
             "Name": "AP3",
             "Nombre": 0,
-            "Periodes":[]
+            "Periodes":[{dateDebutP: "", dateFinP: ""}]
           },
           {
             "Name": "AP4",
             "Nombre": 0,
-            "Periodes":[]
+            "Periodes":[{dateDebutP: "", dateFinP: ""}]
           },
           {
             "Name": "AP5",
             "Nombre": 0,
-            "Periodes":[]
+            "Periodes":[{dateDebutP: "", dateFinP: ""}]
           },
           {
             "Name": "ISEN1",

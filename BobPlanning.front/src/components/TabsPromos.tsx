@@ -10,6 +10,7 @@ import DebCoursDate from './DebCoursDate';
 import FinCoursDate from './FinCoursDate';
 import Periodes from './Periodes';
 import NombreClasseDropdown from './NombreClasseDropdown';
+import PromosData from '../models/promosData';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -69,7 +70,7 @@ function a11yProps(index: number) {
 
 interface FullWidthTabsProps {
     setPromosData: React.Dispatch<React.SetStateAction<any>>;
-    promosData: any; // UseSate du composant parent
+    promosData: PromosData; // UseSate du composant parent
 }
 
 export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTabsProps & { setPromosData: React.Dispatch<React.SetStateAction<any>> }) {
@@ -113,12 +114,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
         ISEN4: '',
         ISEN5: ''
     });
-
-    const [periodesData, setPeriodesData] = React.useState<Record<string, {nombrePeriode: number, dates:Date[], weeks: number[]}>>( {
-        AP3: {nombrePeriode: 5, dates: Array(5).fill(''), weeks: Array(5).fill(3)},
-        AP4: {nombrePeriode: 4, dates: Array(4).fill(''), weeks: Array(4).fill(3)},
-        AP5: {nombrePeriode: 2, dates: Array(2).fill(''), weeks: Array(2).fill(3)}  
-    });
+    
 
     const promos = [
         'ADI1', 'ADI2',
@@ -144,8 +140,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
                     : promo // Laisser les autres promos inchangées
             ),
         }));
-        console.log('selectedValue:', selectedValue);
-        console.log('Promos Data:', promosData);
+        console.log("promosData : ", promosData);
     }
 
     const handleStartDateChange = (promoName: string, newValue: string) => {
@@ -274,11 +269,10 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
                        
                         {(promo === 'AP3' || promo === 'AP4' || promo === 'AP5') && (
                             <Periodes
-                                nbPeriodesDefaultValue={periodesData[promo].nombrePeriode}
-                                dates={periodesData[promo].dates}
-                                weeks={periodesData[promo].weeks}
-                                onChange={(nombrePeriode, dates, weeks) => handlePeriodesChange(promo, nombrePeriode, dates, weeks)}
-                            />
+                                promoName={promo}
+                                promosData={promosData}
+                                setPromosData={setPromosData}
+                       />
                         )}
 
                     </TabPanel>
