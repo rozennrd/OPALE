@@ -3,7 +3,7 @@ import { Select, MenuItem, FormControl, InputLabel, Divider, SelectChangeEvent }
 import './Periodes.css';
 import PeriodeCard from './PeriodeBox';
 import PromosData from '../models/promosData';
-import Period from '../models/promosData';
+import Promo from '../models/promosData';
 
 interface PeriodesAPProps {
     promosData: PromosData;
@@ -12,22 +12,33 @@ interface PeriodesAPProps {
 }
 
 export default function Periodes({ promosData, promoName, setPromosData }: PeriodesAPProps) {
+    const promo = promosData.Promos?.find((promo) => promo.Name === promoName);
     const [nbrPeriodes, setNbrPeriodes] = useState(promosData.Promos?.find((promo: { Name: string; }) => promo.Name === promoName)?.Periodes.length || 0);
     const [periodes, setPeriodes] = useState(promosData.Promos?.find((promo: { Name: string; }) => promo.Name === promoName)?.Periodes || []);
 
     useEffect(() => {
+        if (promo) {
+            setPeriodes(promo.Periodes);
+            setNbrPeriodes(promo.Periodes.length);
+        }
         console.log("Periodes : ", periodes);
     }, [periodes]);
 
-    const handleDateChange = (index: number, value: string) => {
+    const handleDateChange = (index: number, value: Date) => {
         setPromosData((prevData: any) => {
             const newPromosData = { ...prevData };
             const promo = newPromosData.Promos?.find((promo: { Name: string; }) => promo.Name === promoName);
             if (promo && promo.Periodes[index]) {
-                promo.Periodes[index].dateDebutP = new Date(value).toISOString().split('T')[0];
+                // Garde le format de date string
+                promo.Periodes[index].dateDebutP = value.toISOString().split('T')[0]; 
+                // Calculer dateFinP en ajoutant le nombre de semaines
+                const weeks = promo.Periodes[index].nbSemaineP; // Assurez-vous que nbSemaineP est défini
+                const endDate = new Date(value);
+                endDate.setDate(endDate.getDate() + weeks * 7); // Ajoute les semaines en jours
+                console.log("endDate : ", endDate," weeks : ", weeks);
+                promo.Periodes[index].dateFinP = endDate.toISOString().split('T')[0]; // Met à jour dateFinP
             }
-            setPeriodes(promo.Periodes); // Met à jour les périodes dans l'état local
-            return newPromosData;
+            return newPromosData; // Renvoie les données mises à jour
         });
     };
 
@@ -35,30 +46,23 @@ export default function Periodes({ promosData, promoName, setPromosData }: Perio
         setPromosData((prevData: any) => {
             const newPromosData = { ...prevData };
             const promo = newPromosData.Promos?.find((promo: { Name: string; }) => promo.Name === promoName);
-            if (promo && promo.Periodes[index]) {
-                promo.Periodes[index].nbSemaineP = value;
+            if (promo && promo.Periodes[index]&& promo.Periodes[index].dateFinP!='') {
+                // Met à jour le nombre de semaines
+                promo.Periodes[index].nbSemaineP = value; 
+                // Calculer la dateFinP en ajoutant le nombre de semaines à dateDebutP
+                const startDate = new Date(promo.Periodes[index].dateDebutP);
+                const endDate = new Date(startDate);
+                endDate.setDate(startDate.getDate() + value * 7); // Ajoute le nombre de semaines en jours
+                console.log("endDate : ", endDate);
+                promo.Periodes[index].dateFinP = endDate.toISOString().split('T')[0]; // Enregistrer dateFinP
             }
-            setPeriodes(promo.Periodes); // Met à jour les périodes dans l'état local
-            return newPromosData;
+            return newPromosData; // Renvoie les données mises à jour
         });
-    };
-
-    const nbSemaineBetween = (index: number) => {
-        const periode = periodes[index];
-        const dateDebutP = periode?.dateDebutP;
-        const dateFinP = periode?.dateFinP;
-
-        if (dateDebutP && dateFinP) {
-            const dateDebut = new Date(dateDebutP).getTime();
-            const dateFin = new Date(dateFinP).getTime();
-            return Math.abs((dateFin - dateDebut) / (1000 * 60 * 60 * 24 * 7)); // Prend la différence absolue
-        }
-        return 0;
     };
 
     const dateDebutPeriode = (index: number) => {
         const dateDebut = periodes[index]?.dateDebutP;
-        return dateDebut ? new Date(dateDebut) : new Date();
+        return dateDebut ? dateDebut : '';
     };
 
     const handleNbrPeriodesChange = (event: SelectChangeEvent<number>) => {
@@ -66,19 +70,29 @@ export default function Periodes({ promosData, promoName, setPromosData }: Perio
         setNbrPeriodes(newNbrPeriodes);
 
         // Ajuster les périodes si le nombre change
-        setPeriodes((prevPeriodes) => {
-            if (newNbrPeriodes > prevPeriodes.length) {
-                // Ajouter des périodes si le nombre augmente
-                const newPeriodes = [
-                    ...prevPeriodes,
-                    ...Array(newNbrPeriodes - prevPeriodes.length).fill({ dateDebutP: '', dateFinP: '', nbSemaineP: 4 }),
-                ];
-                return newPeriodes;
-            } else {
-                // Réduire le nombre de périodes si le nombre diminue
-                return prevPeriodes.slice(0, newNbrPeriodes);
+        setPromosData((prevData: any) => {
+            const updatedData = { ...prevData };
+            const promo = updatedData.Promos.find((p: Promo) => p.Name === promoName);
+            if (promo) {
+                // Ajouter ou supprimer des périodes en fonction du nouveau nombre
+                if (newNbrPeriodes > promo.Periodes.length) {
+                    const newPeriods = Array.from({ length: newNbrPeriodes }, (_, i) => ({
+                        dateDebutP: i < promo.Periodes.length ? promo.Periodes[i].dateDebutP : '',
+                        nbSemaineP: 4 // valeur par défaut ou autre
+                    }));
+                    promo.Periodes = newPeriods;
+                } else {
+                    promo.Periodes = promo.Periodes.slice(0, newNbrPeriodes);
+                }
             }
+            return updatedData;
         });
+    };
+
+    const nbSemainesBetween = (index: number) => {
+        const startDate = periodes[index]?.dateDebutP;
+        const endDate = periodes[index]?.dateFinP;
+        return startDate && endDate ? Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 3600 * 24 * 7)) : 0;
     };
 
     return (
@@ -110,9 +124,8 @@ export default function Periodes({ promosData, promoName, setPromosData }: Perio
                         key={index}
                         index={index}
                         dateDebutPeriode={dateDebutPeriode(index)}
-                        nbSemainePeriode={nbSemaineBetween(index)}
                         date={new Date(periodes[index].dateDebutP)}
-                        weeks={nbSemaineBetween(index)}
+                        RecupWeeks={nbSemainesBetween(index)}
                         handleDateChange={handleDateChange}
                         handleWeeksChange={handleWeeksChange}
                     />

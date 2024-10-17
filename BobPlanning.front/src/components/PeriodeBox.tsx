@@ -4,17 +4,15 @@ import './PeriodeBox.css';
 interface PeriodeCardProps {
     index: number;                             // Index of the period
     date: Date;                                // The current date for the period
-    weeks: number;                             // Number of weeks for this period
-    handleDateChange: (index: number, date: string) => void; // Function to handle date changes
+    RecupWeeks: number;                             // Number of weeks for this period
+    handleDateChange: (index: number, date: Date) => void; // Function to handle date changes
     handleWeeksChange: (index: number, week: number) => void; // Function to handle weeks changes
-    dateDebutPeriode: Date;
-    nbSemainePeriode: number;
+    dateDebutPeriode: string;
 }
 
 export default function PeriodeCard({
     index,
-    date,
-    weeks,  
+    RecupWeeks,  
     handleDateChange,
     handleWeeksChange,
     dateDebutPeriode
@@ -37,8 +35,8 @@ export default function PeriodeCard({
                     <TextField
                         id={`start-date-${index}`}
                         type="date"
-                        value={date ? date : dateDebutPeriode.toISOString().split('T')[0]}
-                        onChange={(e) => handleDateChange(index, e.target.value)}
+                        value={dateDebutPeriode? new Date(dateDebutPeriode).toISOString().split('T')[0] : ''}
+                        onChange={(e) => handleDateChange(index, new Date(e.target.value))}
                     />
                 </FormControl>
 
@@ -49,7 +47,7 @@ export default function PeriodeCard({
                 <FormControl margin="normal">
                     <Select
                         id={`weeks-${index}`}
-                        value={weeks} // Single week value
+                        value={RecupWeeks} // Single week value
                         onChange={(e) => handleWeeksChange(index, e.target.value as number)}
                     >
                         {[0,1,2,3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(week => (

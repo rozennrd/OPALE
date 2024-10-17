@@ -19,7 +19,7 @@ interface TabPanelProps {
     value: number;
 }
 
-const CustomTabs = styled(Tabs)(({ theme }) => ({
+const CustomTabs = styled(Tabs)(({ }) => ({
     backgroundColor: '#333', // Tabs background color
     '& .MuiTabs-indicator': {
         backgroundColor: '#FF5722', // Customize the indicator color
@@ -27,7 +27,7 @@ const CustomTabs = styled(Tabs)(({ theme }) => ({
     },
 }));
 
-const CustomTab = styled(Tab)(({ theme }) => ({
+const CustomTab = styled(Tab)(({ }) => ({
     textTransform: 'none', // Prevent uppercase
     color: '#FFFFFF', // Default tab text color
     fontSize: '16px', // Change font size
@@ -54,7 +54,7 @@ function TabPanel(props: TabPanelProps) {
         >
             {value === index && (
                 <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
+                    <div>{children}</div>
                 </Box>
             )}
         </div>
@@ -114,7 +114,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
         ISEN4: '',
         ISEN5: ''
     });
-    
+
 
     const promos = [
         'ADI1', 'ADI2',
@@ -123,7 +123,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
         'ISEN3', 'ISEN4', 'ISEN5'
     ];
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
@@ -135,7 +135,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
         setPromosData((prevData: any) => ({
             ...prevData,
             Promos: prevData.Promos.map((promo: any) =>
-                promo.Name === promoName 
+                promo.Name === promoName
                     ? { ...promo, Nombre: selectedValue } // Mise à jour du "Nombre" pour "AP4"
                     : promo // Laisser les autres promos inchangées
             ),
@@ -151,7 +151,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
         setPromosData((prevData: any) => ({
             ...prevData,
             Promos: prevData.Promos.map((promo: any) =>
-                promo.Name === promoName 
+                promo.Name === promoName
                     ? {
                         ...promo,
                         Periode: promo.Periode.map((periode: any, index: number) =>
@@ -161,8 +161,8 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
                     : promo
             ),
         }));
-        
-        
+
+
     }
 
     const handleEndDateChange = (promoName: string, newValue: string) => {
@@ -173,7 +173,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
         setPromosData((prevData: any) => ({
             ...prevData,
             Promos: prevData.Promos.map((promo: any) =>
-                promo.Name === promoName 
+                promo.Name === promoName
                     ? {
                         ...promo,
                         Periode: promo.Periode.map((periode: any, index: number) =>
@@ -183,33 +183,8 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
                     : promo
             ),
         }));
-        
-    }
 
-    const handlePeriodesChange = (promoName: string, nombrePeriode: number, startDate: Date[], weeks: number[]) => {
-        setPromosData((prevData: any) => ({
-            ...prevData,
-            Promos: prevData.Promos.map((promo: any) =>
-                promo.Name === promoName 
-                    ? {
-                        ...promo,
-                        Periode: Array.from({ length: nombrePeriode }, (_, index) => {
-                            const start = new Date(startDate[index]);
-                            start.setDate(start.getDate() + weeks.slice(0, index).reduce((acc, week) => acc + (week * 7), 0)); // Calculer la date de début de chaque période
-                            const end = new Date(start);
-                            end.setDate(end.getDate() + weeks[index] * 7); // Calculer la date de fin en fonction du nombre de semaines
-    
-                            return {
-                                DateDebutP: start.toLocaleDateString('fr-FR'), // Format dd/mm/yyyy
-                                DateFinP: end.toLocaleDateString('fr-FR'),     // Format dd/mm/yyyy
-                            };
-                        }),
-                    }
-                    : promo // Laisser les autres promos inchangées
-            ),
-        }));
-    };
-    
+    }
 
     return (
         <Box sx={{
@@ -235,44 +210,46 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
                 {promos.map((promo, index) => (
                     <TabPanel value={value} index={index} dir={theme.direction} key={index}>
                         {/* Content of each TabPanel can be anything you want */}
-                        <Typography 
-                        variant="h4" 
-                        gutterBottom
-                        sx={{
-                            textAlign: 'left',     // Align text to the left
-                            color: '#FF5722',      // Change the color (you can customize the hex code)
-                            fontWeight: 'bold',    // Optional: Make it bold if you want
-                            marginBottom: '20px'   // Optional: Add space below the title
-                        }}
-                        >
-                            {promo}
-                        </Typography>
-                        <NombreClasseDropdown
-                            promoName={promo}
-                            selectedValue={classesPerPromo[promo]}
-                            onChange={handleDropdownChange}
-                        />
+                        <Box>
+                            <Typography
+                                variant="h4"
+                                gutterBottom
+                                sx={{
+                                    textAlign: 'left',
+                                    color: '#FF5722',
+                                    fontWeight: 'bold',
+                                    marginBottom: '20px'
+                                }}
+                            >
+                                {promo}
+                            </Typography>
+                            <NombreClasseDropdown
+                                promoName={promo}
+                                selectedValue={classesPerPromo[promo]}
+                                onChange={handleDropdownChange}
+                            />
+                        </Box>
                         {(promo === 'ADI1' || promo === 'ADI2' || promo === 'CIR1' || promo === 'CIR2' || promo === 'ISEN3' || promo === 'ISEN4' || promo === 'ISEN5') && (
-                            
+
                             <>
-                            <DebCoursDate
-                            startDate={startDatesPerPromo[promo]}
-                            setStartDate={(date) => handleStartDateChange(promo, date)}
-                        /> 
-                            <FinCoursDate
-                            endDate={endDatesPerPromo[promo]}
-                            setEndDate={(date) => handleEndDateChange(promo, date)}
-                        /> 
-                        </>
+                                <DebCoursDate
+                                    startDate={startDatesPerPromo[promo]}
+                                    setStartDate={(date) => handleStartDateChange(promo, date)}
+                                />
+                                <FinCoursDate
+                                    endDate={endDatesPerPromo[promo]}
+                                    setEndDate={(date) => handleEndDateChange(promo, date)}
+                                />
+                            </>
                         )}
-                        
-                       
+
+
                         {(promo === 'AP3' || promo === 'AP4' || promo === 'AP5') && (
                             <Periodes
                                 promoName={promo}
                                 promosData={promosData}
                                 setPromosData={setPromosData}
-                       />
+                            />
                         )}
 
                     </TabPanel>
