@@ -1,7 +1,6 @@
 import ExcelJS from 'exceljs';
 import path from 'path';
 import axios from 'axios';
-import { c } from 'vite/dist/node/types.d-aGj9QkWt';
 
 function getWeekNumber(date: Date): number {
   const target = new Date(date.valueOf());
