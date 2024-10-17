@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import TopBar from '../components/TopBar';
 import DebFinCalendrier from '../components/DebFinCalendrier';
 import FullWidthTabs from '../components/TabsPromos';
+import Button from '@mui/material/Button'; 
 
 const Parametres: React.FC = () => {
   const [promosData, setPromosData] = React.useState<any>({
@@ -130,8 +131,21 @@ const Parametres: React.FC = () => {
       <TopBar />
       <DebFinCalendrier promosData={promosData} setPromosData={setPromosData} />
       <FullWidthTabs promosData={promosData} setPromosData={setPromosData} />
-      <button onClick={handleSubmit} disabled= {isButtonDisabled} >Valider</button>
-    </div>
+      <Button
+        variant="contained" 
+        onClick={handleSubmit}
+        disabled={isButtonDisabled} 
+        sx={{
+          backgroundColor: '#242424',  // Couleur d'arrière-plan personnalisée
+          color: '#FFFFFF',            // Couleur du texte
+          '&:hover': {
+            backgroundColor: '#E64A19',  // Couleur lorsque l'on survole le bouton
+          },
+          mt: 3,
+        }}
+      >
+        Générer Macro
+      </Button>    </div>
   );
 };
 

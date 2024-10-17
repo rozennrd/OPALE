@@ -38,27 +38,34 @@ const CustomTab = styled(Tab)(({ }) => ({
         color: '#FFD700', // Hover color
     },
 }));
-
-
 function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
-
+  
     return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`full-width-tabpanel-${index}`}
-            aria-labelledby={`full-width-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <div>{children}</div>
-                </Box>
-            )}
-        </div>
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`full-width-tabpanel-${index}`}
+        aria-labelledby={`full-width-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          <Box
+            sx={{
+              p: 3,
+              backgroundColor: '#F0F0F0',  // Couleur de fond ajoutée ici
+              borderRadius: '8px',  // Facultatif : arrondir les coins
+              minHeight: '100vh',  // Facultatif : fixer une hauteur minimale
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' 
+            }}
+          >
+            {children}
+          </Box>
+        )}
+      </div>
     );
-}
+  }
+  
 
 function a11yProps(index: number) {
     return {
