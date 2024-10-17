@@ -22,7 +22,7 @@ export default function Periode({ promosData, promoName, setPromosData }: Period
             setNbrPeriode(promo.Periode.length);
         }
         console.log("Periode : ", Periode);
-    }, [Periode]);
+    }, [Periode,promosData]);
 
     const handleDateChange = (index: number, value: Date) => {
         setPromosData((prevData: any) => {
@@ -68,26 +68,23 @@ export default function Periode({ promosData, promoName, setPromosData }: Period
     const handleNbrPeriodeChange = (event: SelectChangeEvent<number>) => {
         const newNbrPeriode = event.target.value as number;
         setNbrPeriode(newNbrPeriode);
-
-        // Ajuster les périodes si le nombre change
+    
+        // Adjust periods if the number changes
         setPromosData((prevData: any) => {
             const updatedData = { ...prevData };
             const promo = updatedData.Promos.find((p: Promo) => p.Name === promoName);
             if (promo) {
-                // Ajouter ou supprimer des périodes en fonction du nouveau nombre
-                if (newNbrPeriode > promo.Periode.length) {
-                    const newPeriods = Array.from({ length: newNbrPeriode }, (_, i) => ({
-                        dateDebutP: i < promo.Periode.length ? promo.Periode[i].dateDebutP : '',
-                        nbSemaineP: 4 // valeur par défaut ou autre
-                    }));
-                    promo.Periode = newPeriods;
-                } else {
-                    promo.Periode = promo.Periode.slice(0, newNbrPeriode);
-                }
+                // Create new periods array based on the new number
+                const newPeriods = Array.from({ length: newNbrPeriode }, (_, i) => ({
+                    dateDebutP: i < promo.Periode.length ? promo.Periode[i].dateDebutP : '', // Keep it empty for new periods
+                    nbSemaineP: 4 // Default value
+                }));
+                promo.Periode = newPeriods; // Update the promo.Periode with newPeriods
             }
-            return updatedData;
+            return updatedData; // Return the updated data to trigger a re-render
         });
     };
+    
 
     const nbSemainesBetween = (index: number) => {
         const startDate = Periode[index]?.dateDebutP;
