@@ -154,43 +154,115 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
             ...prev,
             [promoName]: newValue
         }));
-        setPromosData((prevData: any) => ({
-            ...prevData,
-            Promos: prevData.Promos.map((promo: any) =>
-                promo.Name === promoName
-                    ? {
-                        ...promo,
-                        Periode: promo.Periode.map((periode: any, index: number) =>
-                            index === 0 ? { ...periode, dateDebutP: newValue } : periode // Mise à jour de dateDebutP
-                        ),
-                    }
-                    : promo
-            ),
-        }));
-
-
-    }
-
+    
+        // Mise à jour des dates de début dans PromosData
+        setPromosData((prevData: any) => {
+            const newPromosData = {
+                ...prevData,
+                Promos: prevData.Promos.map((promo: any) =>
+                    promo.Name === promoName
+                        ? {
+                            ...promo,
+                            Periode: promo.Periode.map((periode: any, index: number) =>
+                                index === 0 ? { ...periode, dateDebutP: newValue } : periode
+                            ),
+                        }
+                        : promo
+                ),
+            };
+    
+            const firstDateDebutP = newValue;
+            const isFirstPromo = ["ADI1", "ADI2", "CIR1", "CIR2", "ISEN3", "ISEN4", "ISEN5"].includes(promoName);
+    
+            // Si c'est la première promo, propager les dates
+            if (isFirstPromo && firstDateDebutP) {
+                return propagateDatesToOtherPromos(newPromosData, firstDateDebutP, '');
+            }
+    
+            return newPromosData;
+        });
+    };
+    
     const handleEndDateChange = (promoName: string, newValue: string) => {
         setEndDatesPerPromo((prev) => ({
             ...prev,
             [promoName]: newValue
         }));
-        setPromosData((prevData: any) => ({
-            ...prevData,
-            Promos: prevData.Promos.map((promo: any) =>
-                promo.Name === promoName
-                    ? {
-                        ...promo,
-                        Periode: promo.Periode.map((periode: any, index: number) =>
-                            index === 0 ? { ...periode, dateFinP: newValue } : periode // Mise à jour de dateDebutP
-                        ),
+    
+        // Mise à jour des dates de fin dans PromosData
+        setPromosData((prevData: any) => {
+            const newPromosData = {
+                ...prevData,
+                Promos: prevData.Promos.map((promo: any) =>
+                    promo.Name === promoName
+                        ? {
+                            ...promo,
+                            Periode: promo.Periode.map((periode: any, index: number) =>
+                                index === 0 ? { ...periode, dateFinP: newValue } : periode
+                            ),
+                        }
+                        : promo
+                ),
+            };
+    
+            const firstDateFinP = newValue;
+            const isFirstPromo = ["ADI1", "ADI2", "CIR1", "CIR2", "ISEN3", "ISEN4", "ISEN5"].includes(promoName);
+    
+            // Si c'est la première promo, propager les dates
+            if (isFirstPromo && firstDateFinP) {
+                return propagateDatesToOtherPromos(newPromosData, '', firstDateFinP);
+            }
+    
+            return newPromosData;
+        });
+    };    
+    
+    const propagateDatesToOtherPromos = (
+        promosData: PromosData,
+        firstDateDebutP: string,
+        firstDateFinP: string
+    ) => {
+        const promoNames = ["ADI1", "ADI2", "CIR1", "CIR2", "ISEN3", "ISEN4", "ISEN5"];
+        
+        const updatedPromosData = { ...promosData };
+    
+        // Objets pour stocker les nouvelles valeurs des UseState
+        const newStartDatesPerPromo: Record<string, string> = {};
+        const newEndDatesPerPromo: Record<string, string> = {};
+    
+        promoNames.forEach((promoName) => {
+            const promo = updatedPromosData.Promos?.find((p: { Name: string }) => p.Name === promoName);
+            if (promo) {
+                promo.Periode.forEach((periode) => {
+                    // Mettre à jour uniquement si le champ est vide
+                    if (!periode.dateDebutP && firstDateDebutP) {
+                        periode.dateDebutP = firstDateDebutP;
+                        newStartDatesPerPromo[promoName] = firstDateDebutP;  // Mettre à jour le UseState localement
                     }
-                    : promo
-            ),
+                    if (!periode.dateFinP && firstDateFinP) {
+                        periode.dateFinP = firstDateFinP;
+                        newEndDatesPerPromo[promoName] = firstDateFinP;  // Mettre à jour le UseState localement
+                    }
+                });
+            }
+        });
+    
+        // Mise à jour des UseState après la boucle
+        setStartDatesPerPromo((prev) => ({
+            ...prev,
+            ...newStartDatesPerPromo,  // Ajouter les nouvelles valeurs pour les promos concernées
         }));
-
-    }
+    
+        setEndDatesPerPromo((prev) => ({
+            ...prev,
+            ...newEndDatesPerPromo,  // Ajouter les nouvelles valeurs pour les promos concernées
+        }));
+    
+        return updatedPromosData;
+    };
+    
+    
+    
 
     return (
         <Box sx={{
