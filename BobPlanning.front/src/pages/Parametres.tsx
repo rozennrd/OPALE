@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import TopBar from '../components/TopBar';
 import DebFinCalendrier from '../components/DebFinCalendrier';
 import FullWidthTabs from '../components/TabsPromos';
@@ -75,6 +75,32 @@ const Parametres: React.FC = () => {
         // }
       ]
   });
+
+
+  const [isButtonDisabled, setIsButtonDisabled] = React.useState(true);
+
+  const isAllDataFilled = () => {
+    const { DateDeb, DateFin, Promos } = promosData;
+
+    if (!DateDeb || !DateFin) {
+      return false;
+    }
+
+    for (const promo of Promos) {
+      if (promo.Nombre > 0) {
+        for (const periode of promo.Periode) {
+          if (!periode.dateDebutP || !periode.dateFinP || promo.Nombre === 0) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  useEffect(() => {
+    setIsButtonDisabled(!isAllDataFilled());
+  }, [promosData]);
   const handleSubmit = async () => {
     try {
       // Log des données envoyées
@@ -104,7 +130,7 @@ const Parametres: React.FC = () => {
       <TopBar />
       <DebFinCalendrier promosData={promosData} setPromosData={setPromosData} />
       <FullWidthTabs promosData={promosData} setPromosData={setPromosData} />
-      <button onClick={handleSubmit}>Valider</button>
+      <button onClick={handleSubmit} disabled= {isButtonDisabled} >Valider</button>
     </div>
   );
 };
