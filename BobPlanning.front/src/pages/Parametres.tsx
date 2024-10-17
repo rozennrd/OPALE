@@ -58,22 +58,22 @@ const Parametres: React.FC = () => {
           { dateDebutP: "", dateFinP: "", nbSemaineP: 10 }
           ]
         }
-        // ,
-        // {
-        //   "Name": "ISEN3",
-        //   "Nombre": 0,
-        //   "Periode": [{ dateDebutP: "", dateFinP: "" }]
-        // },
-        // {
-        //   "Name": "ISEN4",
-        //   "Nombre": 0,
-        //   "Periode": [{ dateDebutP: "", dateFinP: "" }]
-        // },
-        // {
-        //   "Name": "ISEN5",
-        //   "Nombre": 0,
-        //   "Periode": [{ dateDebutP: "", dateFinP: "" }]
-        // }
+        ,
+        {
+          "Name": "ISEN3",
+          "Nombre": 0,
+          "Periode": [{ dateDebutP: "", dateFinP: "" }]
+        },
+        {
+          "Name": "ISEN4",
+          "Nombre": 0,
+          "Periode": [{ dateDebutP: "", dateFinP: "" }]
+        },
+        {
+          "Name": "ISEN5",
+          "Nombre": 0,
+          "Periode": [{ dateDebutP: "", dateFinP: "" }]
+        }
       ]
   });
 
@@ -104,8 +104,6 @@ const Parametres: React.FC = () => {
   }, [promosData]);
   const handleSubmit = async () => {
     try {
-      // Log des données envoyées
-      console.log('Données envoyées :', JSON.stringify(promosData, null, 2));
 
       const response = await fetch('http://localhost:3000/generateEdtMacro', {
         method: 'POST',

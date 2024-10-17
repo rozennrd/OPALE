@@ -21,7 +21,6 @@ export default function Periode({ promosData, promoName, setPromosData }: Period
             setPeriode(promo.Periode);
             setNbrPeriode(promo.Periode.length);
         }
-        console.log("Periode : ", Periode);
     }, [Periode,promosData]);
 
 const handleDateChange = (index: number, value: Date) => {
@@ -64,7 +63,6 @@ const handleDateChange = (index: number, value: Date) => {
                 const startDate = new Date(promo.Periode[index].dateDebutP);
                 const endDate = new Date(startDate);
                 endDate.setDate(startDate.getDate() + value * 7); // Ajoute le nombre de semaines en jours
-                console.log("endDate : ", endDate);
                 promo.Periode[index].dateFinP = endDate.toISOString().split('T')[0]; // Enregistrer dateFinP
             }
             return newPromosData; // Renvoie les données mises à jour
