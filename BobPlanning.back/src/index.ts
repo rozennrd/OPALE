@@ -159,8 +159,6 @@ app.post('/generateEdtMacro', async (req: Request, res: Response) => {
  *                       semestrePeriode:
  *                         type: string
  *                       heure:
- *                         type: array
- *                         items:
  *                           type: object
  *                           properties:
  *                             total:
