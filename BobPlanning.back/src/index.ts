@@ -1,5 +1,6 @@
 import { generateEdtMacro } from './generateEdtMacro';
 import { readMaquette } from './readMaquette';
+import { MaquetteData } from './types/MaquetteData';
 import express, { Request, Response } from 'express';
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
@@ -155,6 +156,8 @@ app.post('/generateEdtMacro', async (req: Request, res: Response) => {
  *                         type: string
  *                       UE:
  *                         type: string
+ *                       semestrePeriode:
+ *                         type: string
  *                       heure:
  *                         type: array
  *                         items:
@@ -198,7 +201,8 @@ app.post('/readMaquette', upload.single('file'), async (req: Request, res: Respo
 }
 
 try {
-    const data = await readMaquette(req.file.buffer.toString('utf-8'));
+    let data : MaquetteData;
+    data = await readMaquette(req.file.buffer);
     res.json(data);
 } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la lecture du fichier Excel', error });
