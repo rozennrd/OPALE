@@ -231,6 +231,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
         const newEndDatesPerPromo: Record<string, string> = {};
     
         promoNames.forEach((promoName) => {
+            console.log("promoName : ", promoName, "firstDateDebutP : ", firstDateDebutP, "firstDateFinP : ", firstDateFinP);
             const promo = updatedPromosData.Promos?.find((p: { Name: string }) => p.Name === promoName);
             if (promo) {
                 promo.Periode.forEach((periode) => {
