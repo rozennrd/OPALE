@@ -15,17 +15,9 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
     '12h30', '13h', '13h30', '14h', '14h30', '15h', '15h30', '16h', '16h30', '17h', '17h30', '18h'
   ];
 
-  worksheet.getColumn(1).width = 10; 
-  heures.forEach((heure, index) => {
-    const row = worksheet.getRow(index + 4); 
-    row.getCell(1).value = heure;
-    row.getCell(1).alignment = { horizontal: 'center' };
-    row.getCell(1).font = { bold: true };
-  });
-
   const joursSemaine: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
   const nomsColonnes: string[] = columnsData.nomsColonnes.length > 0 ? columnsData.nomsColonnes : ['Colonne 1'];
-  const nombreColonnes = Math.max(nomsColonnes.length, 1); 
+  const nombreColonnes = Math.max(nomsColonnes.length, 1);
 
   const startDate: Date = new Date(currentDate);
   startDate.setDate(currentDate.getDate() + ((1 + 7 - currentDate.getDay()) % 7));
@@ -70,6 +62,32 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
     for (let i = 0; i < nombreColonnes; i++) {
       worksheet.getColumn(baseIndex + i).width = 15; 
     }
+  });
+
+  // Ajout de la colonne des heures à gauche
+  const hoursColumnLeftIndex = 1; // Index pour la colonne des heures à gauche (première colonne)
+  worksheet.getRow(4).getCell(hoursColumnLeftIndex).value = 'Heures';
+  worksheet.getRow(4).getCell(hoursColumnLeftIndex).alignment = { horizontal: 'center', vertical: 'middle' };
+  worksheet.getColumn(hoursColumnLeftIndex).width = 10;
+
+  heures.forEach((heure, index) => {
+    const row = worksheet.getRow(index + 5); // Ligne 5 et suivantes pour les heures
+    row.getCell(hoursColumnLeftIndex).value = heure;
+    row.getCell(hoursColumnLeftIndex).alignment = { horizontal: 'center' };
+    row.getCell(hoursColumnLeftIndex).font = { bold: true };
+  });
+
+  // Ajout de la colonne des heures à droite
+  const hoursColumnRightIndex = (joursSemaine.length * nombreColonnes) + 2; // Index pour la colonne des heures à droite
+  worksheet.getRow(4).getCell(hoursColumnRightIndex).value = 'Heures';
+  worksheet.getRow(4).getCell(hoursColumnRightIndex).alignment = { horizontal: 'center', vertical: 'middle' };
+  worksheet.getColumn(hoursColumnRightIndex).width = 10;
+
+  heures.forEach((heure, index) => {
+    const row = worksheet.getRow(index + 5); // Ligne 5 et suivantes pour les heures
+    row.getCell(hoursColumnRightIndex).value = heure;
+    row.getCell(hoursColumnRightIndex).alignment = { horizontal: 'center' };
+    row.getCell(hoursColumnRightIndex).font = { bold: true };
   });
 
   // Ajout de bordures aux cellules
