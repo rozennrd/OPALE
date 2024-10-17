@@ -154,7 +154,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
                 promo.Name === promoName 
                     ? {
                         ...promo,
-                        Periodes: promo.Periodes.map((periode: any, index: number) =>
+                        Periode: promo.Periode.map((periode: any, index: number) =>
                             index === 0 ? { ...periode, dateDebutP: newValue } : periode // Mise à jour de dateDebutP
                         ),
                     }
@@ -176,7 +176,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
                 promo.Name === promoName 
                     ? {
                         ...promo,
-                        Periodes: promo.Periodes.map((periode: any, index: number) =>
+                        Periode: promo.Periode.map((periode: any, index: number) =>
                             index === 0 ? { ...periode, dateFinP: newValue } : periode // Mise à jour de dateDebutP
                         ),
                     }
@@ -193,7 +193,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
                 promo.Name === promoName 
                     ? {
                         ...promo,
-                        Periodes: Array.from({ length: nombrePeriode }, (_, index) => {
+                        Periode: Array.from({ length: nombrePeriode }, (_, index) => {
                             const start = new Date(startDate[index]);
                             start.setDate(start.getDate() + weeks.slice(0, index).reduce((acc, week) => acc + (week * 7), 0)); // Calculer la date de début de chaque période
                             const end = new Date(start);
