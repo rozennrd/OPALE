@@ -4,7 +4,7 @@ export interface Heure {
   coursInteractif: number;
   td: number;
   tp: number;
-  autre: number;
+  projet: number;
 }
 
 export interface Cours {

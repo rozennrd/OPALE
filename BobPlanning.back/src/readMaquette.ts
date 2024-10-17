@@ -1,6 +1,10 @@
 import ExcelJS from 'exceljs';
 import { MaquetteData, Heure } from './types/MaquetteData';
 
+const cleanCellValue = (value: any): any => {
+  return typeof value === 'string' ? value.replace(/\n/g, ' ').trim() : value;
+};
+
 export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(buffer);
@@ -23,10 +27,12 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
     let td: number = -1;
     let tp: number = -1;
     let projet: number = -1;
-    
+
     worksheet.eachRow((row, rowNumber) => {
-      const rowValues = row.values as string[];
-      if (!rowValues) return;
+      const rowValuesWithN = row.values as any[];
+      if (!rowValuesWithN) return;
+
+      const rowValues = rowValuesWithN.map(cleanCellValue);
 
       // Set table to know if we are in the table
       if (rowValues.some((cell) => typeof cell === 'string' && (cell.includes("SEMESTRE") || cell.includes("Semestres")) && !cell.includes("TOTAL"))) {
@@ -45,7 +51,7 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
             ue = index;
           } else if (cell.includes("Modules")) {
             modules = index;
-          } else if (cell.includes("Nb Heures encadrées") || cell.includes("Nb Heures étudiant Module")) {
+          } else if (cell.includes("Nb Heures encadrées")) {
             nbHeures = index;
           } else if (cell.includes("Semestre / Période")) {
             semestrePeriode = index;
@@ -89,12 +95,12 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
           UE: rowValues[ue],
           semestrePeriode: semestre,
           heure: {
-            total: parseInt(rowValues[nbHeures]),
-            coursMagistral: parseInt(rowValues[coursMagistral]),
-            coursInteractif: parseInt(rowValues[coursInteractif]),
-            td: parseInt(rowValues[td]),
-            tp: parseInt(rowValues[tp]),
-            autre: parseInt(rowValues[projet])
+            total: parseFloat(rowValues[nbHeures].result),
+            coursMagistral: parseFloat(rowValues[coursMagistral]),
+            coursInteractif: parseFloat(rowValues[coursInteractif]),
+            td: parseFloat(rowValues[td]),
+            tp: parseFloat(rowValues[tp]),
+            projet: parseFloat(rowValues[projet])
           }
         });
       }
