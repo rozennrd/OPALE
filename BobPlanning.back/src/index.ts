@@ -1,8 +1,14 @@
 import { generateEdtMacro } from './generateEdtMacro';
+import { readMaquette } from './readMaquette';
+import { MaquetteData } from './types/MaquetteData';
 import express, { Request, Response } from 'express';
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
+const multer = require('multer');
 const swaggerJsdoc = require('swagger-jsdoc');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const app = express();
 const PORT = 3000;
@@ -107,6 +113,98 @@ app.post('/generateEdtMacro', async (req: Request, res: Response) => {
     console.log(error);
     res.status(500).send('Internal server error' + error);
   }
+});
+
+/**
+ * @swagger
+ * /readMaquette:
+ *   post:
+ *     summary: Read an Excel file and return UE and course data
+ *     tags:
+ *       - Excel
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Successfully read the Excel file and returned UE and course data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 UE:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                 cours:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       UE:
+ *                         type: string
+ *                       semestrePeriode:
+ *                         type: string
+ *                       heure:
+ *                           type: object
+ *                           properties:
+ *                             total:
+ *                               type: number
+ *                             coursMagistral:
+ *                               type: number
+ *                             coursInteractif:
+ *                               type: number
+ *                             td:
+ *                               type: number
+ *                             tp:
+ *                               type: number
+ *                             autre:
+ *                               type: number
+ *       400:
+ *         description: No file was uploaded
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: Aucun fichier n'a été téléchargé
+ *       500:
+ *         description: Internal server error while reading the file
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erreur lors de la lecture du fichier Excel
+ *                 error:
+ *                   type: string
+ */
+app.post('/readMaquette', upload.single('file'), async (req: Request, res: Response): Promise<any> => {
+  if (!req.file) {
+    return res.status(400).send('Aucun fichier n\'a été téléchargé');
+}
+
+try {
+    let data : MaquetteData;
+    data = await readMaquette(req.file.buffer);
+    res.json(data);
+} catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la lecture du fichier Excel', error });
+}
 });
 
 // Start the server
