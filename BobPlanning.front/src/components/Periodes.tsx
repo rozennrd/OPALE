@@ -24,23 +24,34 @@ export default function Periode({ promosData, promoName, setPromosData }: Period
         console.log("Periode : ", Periode);
     }, [Periode,promosData]);
 
-    const handleDateChange = (index: number, value: Date) => {
-        setPromosData((prevData: any) => {
-            const newPromosData = { ...prevData };
-            const promo = newPromosData.Promos?.find((promo: { Name: string; }) => promo.Name === promoName);
-            if (promo && promo.Periode[index]) {
-                // Garde le format de date string
-                promo.Periode[index].dateDebutP = value.toISOString().split('T')[0]; 
-                // Calculer dateFinP en ajoutant le nombre de semaines
-                const weeks = promo.Periode[index].nbSemaineP; // Assurez-vous que nbSemaineP est défini
-                const endDate = new Date(value);
-                endDate.setDate(endDate.getDate() + weeks * 7); // Ajoute les semaines en jours
-                console.log("endDate : ", endDate," weeks : ", weeks);
-                promo.Periode[index].dateFinP = endDate.toISOString().split('T')[0]; // Met à jour dateFinP
+const handleDateChange = (index: number, value: Date) => {
+    setPromosData((prevData: any) => {
+        const newPromosData = { ...prevData };
+        const promo = newPromosData.Promos?.find((promo: { Name: string }) => promo.Name === promoName);
+        if (promo && promo.Periode[index]) {
+            // Garde le format de date string
+            promo.Periode[index].dateDebutP = value.toISOString().split('T')[0]; 
+
+            // Calculer dateFinP en ajoutant le nombre de semaines
+            const weeks = promo.Periode[index].nbSemaineP || 0; // Assurez-vous que nbSemaineP est défini
+            const endDate = new Date(value);
+            endDate.setDate(endDate.getDate() + weeks * 7); // Ajoute les semaines en jours
+            promo.Periode[index].dateFinP = endDate.toISOString().split('T')[0]; // Met à jour dateFinP
+
+            // Si c'est la première promo qui a une date de début, propager les dates aux autres promos
+            const firstDateDebutP = promo.Periode[index].dateDebutP;
+            const firstDateFinP = promo.Periode[index].dateFinP;
+            const isFirstPromo = ["ADI1", "ADI2", "CIR1", "CIR2", "ISEN1", "ISEN2", "ISEN3"].includes(promoName);
+
+            if (isFirstPromo && firstDateDebutP && firstDateFinP) {
+                // Propager les dates aux autres promotions
+                return propagateDatesToOtherPromos(newPromosData, firstDateDebutP, firstDateFinP);
             }
-            return newPromosData; // Renvoie les données mises à jour
-        });
-    };
+        }
+        return newPromosData; // Renvoie les données mises à jour
+    });
+};
+
 
     const handleWeeksChange = (index: number, value: number) => {
         setPromosData((prevData: any) => {
@@ -91,6 +102,28 @@ export default function Periode({ promosData, promoName, setPromosData }: Period
         const endDate = Periode[index]?.dateFinP;
         return startDate && endDate ? Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 3600 * 24 * 7)) : 0;
     };
+
+    const propagateDatesToOtherPromos = (promosData: PromosData, firstDateDebutP: string, firstDateFinP: string) => {
+        const promoNames = ["ADI1", "ADI2", "CIR1", "CIR2", "ISEN1", "ISEN2", "ISEN3"];
+    
+        const updatedPromosData = { ...promosData };
+        
+        promoNames.forEach((promoName) => {
+            const promo = updatedPromosData.Promos?.find((p: { Name: string }) => p.Name === promoName);
+            if (promo) {
+                promo.Periode.forEach((periode) => {
+                    if (!periode.dateDebutP && !periode.dateFinP) {
+                        // Remplir les champs de date si vides
+                        periode.dateDebutP = firstDateDebutP;
+                        periode.dateFinP = firstDateFinP;
+                    }
+                });
+            }
+        });
+    
+        return updatedPromosData;
+    };
+    
 
     return (
         <>
