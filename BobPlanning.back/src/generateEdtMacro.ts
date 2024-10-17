@@ -142,7 +142,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
           currentWeekDate.setDate(currentWeekDate.getDate() + i);
           if (publicHolidays[currentWeekDate.toISOString().split('T')[0]]) {
             ;
-            holidayDescription += "Vacances de la toussaint ";
+            holidayDescription += "Vacances de la toussaint + toussaint";
           }
         }
         //Ajout des vacances scolaires
@@ -274,6 +274,16 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
     if (adiStarted && !holidayDescription.includes("Vacances")) {
       weekCount++;
     }
+    promos.forEach(promo => {
+      if (rowData[promo.Name] == "Soutenance") {
+        row.getCell(promo.Name).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFFF99CC' },
+        };
+        row.getCell(promo.Name).font = { bold: true };
+      }
+    });
 
     promosEnCours.forEach(promEnCours => {
       row.getCell(promEnCours).fill = {
