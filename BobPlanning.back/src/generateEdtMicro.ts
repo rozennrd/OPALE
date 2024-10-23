@@ -116,12 +116,19 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
           const cell = worksheet.getRow(startHourIndex + 5).getCell(columnIndex);
           cell.value = `${coursData.matiere}\nProf: ${coursData.professeur}`;
           cell.alignment = { wrapText: true, horizontal: 'center', vertical: 'middle' };
+
+          // Appliquer le fond vert pour les cellules contenant des cours
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: '00FF00' } // Vert
+          };
         });
       }
     });
   });
 
-  // Ajustement des largeurs des colonnes
+  // Ajustement des largeurs des colonnes et ajout des bordures
   joursSemaine.forEach((_, jourIndex) => {
     const baseIndex = jourIndex * nombreColonnes + 2; 
     for (let i = 0; i < nombreColonnes; i++) {
@@ -148,6 +155,61 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
       pattern: 'solid',
       fgColor: { argb: heureCouleurs[colorIndex] },
     };
+  });
+
+  // Ajout d'une colonne des heures à droite
+  const hoursColumnRightIndex = (nombreColonnes * joursSemaine.length + 2); // Position à droite de la dernière colonne
+  worksheet.getRow(4).getCell(hoursColumnRightIndex).value = 'Heures';
+  worksheet.getRow(4).getCell(hoursColumnRightIndex).alignment = { horizontal: 'center' };
+  worksheet.getColumn(hoursColumnRightIndex).width = 10;
+
+  heures.forEach((heure, index) => {
+    const row = worksheet.getRow(index + 5); 
+    const hourCell = row.getCell(hoursColumnRightIndex);
+    hourCell.value = heure;
+    hourCell.alignment = { horizontal: 'center' };
+
+    // Appliquer la couleur alternée uniquement sur la colonne des heures
+    const colorIndex = Math.floor(index / 2) % 2;
+    hourCell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: heureCouleurs[colorIndex] },
+    };
+  });
+
+  // Appliquer des bordures fines à toutes les cellules
+  const totalRows = worksheet.rowCount;
+  const totalColumns = worksheet.columnCount;
+
+  for (let rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
+    for (let colIndex = 1; colIndex <= totalColumns; colIndex++) {
+      const cell = worksheet.getRow(rowIndex).getCell(colIndex);
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+    }
+  }
+
+  // Appliquer des bordures médium pour la séparation entre les jours
+  joursSemaine.forEach((_, jourIndex) => {
+    const borderColumnIndex = jourIndex * nombreColonnes + 2 + nombreColonnes; // Colonne de séparation
+    for (let rowIndex = 4; rowIndex <= totalRows; rowIndex++) { // Commencer à la ligne 4
+      const cell = worksheet.getRow(rowIndex).getCell(borderColumnIndex);
+      cell.border.left = { style: 'medium' }; // Bordure médium à gauche
+    }
+  });
+
+  // Ajouter une bordure médium pour la séparation verticale entre les colonnes de jours
+  joursSemaine.forEach((_, jourIndex) => {
+    const borderColumnIndex = jourIndex * nombreColonnes + 2 + nombreColonnes; // Colonne de séparation
+    for (let rowIndex = 2; rowIndex <= totalRows; rowIndex++) { // Commencer à la ligne 2
+      const cell = worksheet.getRow(rowIndex).getCell(borderColumnIndex);
+      cell.border.left = { style: 'medium' }; // Bordure médium à gauche
+    }
   });
 
   const filePath: string = path.join(__dirname, '../files', 'EdtSquelette.xlsx');
