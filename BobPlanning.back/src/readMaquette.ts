@@ -95,7 +95,7 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
           UE: rowValues[ue],
           semestrePeriode: semestre,
           heure: {
-            total: parseFloat(rowValues[nbHeures].result),
+            total: rowValues[nbHeures] && typeof rowValues[nbHeures] === 'object' && rowValues[nbHeures].hasOwnProperty('result') ? parseFloat(rowValues[nbHeures].result) : parseFloat(rowValues[nbHeures]),
             coursMagistral: parseFloat(rowValues[coursMagistral]),
             coursInteractif: parseFloat(rowValues[coursInteractif]),
             td: parseFloat(rowValues[td]),
