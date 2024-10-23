@@ -115,24 +115,53 @@ app.post('/generateEdtMacro', async (req: Request, res: Response) => {
  * /generateEdtSquelette:
  *   post:
  *     summary: Generate an Excel timetable skeleton based on provided data
- *     description: Returns an Excel file representing the structure of a timetable, using the provided column names.
+ *     description: Returns an Excel file representing the structure of a timetable, using the provided classes and their respective courses.
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               columnsData:
- *                 type: object
- *                 description: The timetable data containing column names
- *                 properties:
- *                   nomsColonnes:
- *                     type: array
- *                     items:
- *                       type: string
- *                     description: The names of the columns to be added under each day of the week
- *                     example: ["Mathématiques", "Sciences", "Histoire"]
+ *             type: array
+ *             description: List of classes with their respective courses
+ *             items:
+ *               type: object
+ *               properties:
+ *                 nomClasse:
+ *                   type: string
+ *                   description: The name of the class
+ *                   example: "Classe 1"
+ *                 semaine:
+ *                   type: array
+ *                   description: List of days of the week with their respective courses
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       jour:
+ *                         type: string
+ *                         description: The day of the week
+ *                         example: "Lundi"
+ *                       cours:
+ *                         type: array
+ *                         description: List of courses for the day
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             matiere:
+ *                               type: string
+ *                               description: The subject of the course
+ *                               example: "Mathématiques"
+ *                             heureDebut:
+ *                               type: string
+ *                               description: The start time of the course
+ *                               example: "9h"
+ *                             heureFin:
+ *                               type: string
+ *                               description: The end time of the course
+ *                               example: "10h"
+ *                             professeur:
+ *                               type: string
+ *                               description: The teacher of the course
+ *                               example: "M. Dupont"
  *     responses:
  *       200:
  *         description: The Excel file was generated successfully
@@ -143,36 +172,49 @@ app.post('/generateEdtMacro', async (req: Request, res: Response) => {
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Excel file generated and saved on the server
+ *                   example: "Excel file generated and saved on the server"
  *                 filePath:
  *                   type: string
- *                   example: ../files/EdtSquelette.xlsx
+ *                   example: "../files/EdtSquelette.xlsx"
  *       400:
  *         description: Missing or invalid data
  *         content:
  *           application/json:
  *             schema:
  *               type: string
- *               example: Missing columnsData
+ *               example: "Missing classes"
  *       500:
  *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
  *               type: string
- *               example: Internal server error
+ *               example: "Internal server error"
  */
+
 app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
   try {
-    const { columnsData } = req.body;
+    const classes = req.body;
 
-    // Vérifiez que columnsData et nomsColonnes sont présents
-    if (!columnsData || !columnsData.nomsColonnes || !Array.isArray(columnsData.nomsColonnes)) {
-      res.status(400).send('Missing or invalid data: Ensure columnsData and nomsColonnes are provided.');
+    // Vérifiez que les classes sont présentes
+    if (!classes || !Array.isArray(classes)) {
+      res.status(400).send('Missing or invalid data: Ensure classes are provided.');
       return;
     }
 
-    const filePath = await generateEdtSquelette(columnsData);
+    // Assurez-vous que chaque classe a les jours et les cours correspondants
+    const validClasses = classes.every((classe: any) => 
+      classe.nomClasse && Array.isArray(classe.semaine) &&
+      classe.semaine.every((jour: any) => jour.jour && Array.isArray(jour.cours))
+    );
+
+    if (!validClasses) {
+      res.status(400).send('Invalid data: Ensure each class has a valid nomClasse, semaine, and courses for each day.');
+      return;
+    }
+
+    // Appel de la fonction pour générer le fichier Excel (mise à jour pour s'adapter à la nouvelle structure)
+    const filePath = await generateEdtSquelette({ classes });
 
     res.status(200).json({
       message: 'Excel file generated and saved on the server',
