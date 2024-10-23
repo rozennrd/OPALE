@@ -128,6 +128,8 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
   let holydayStartDate = new Date(sortedHolidays[i].start_date);
   let holydayEndDate = new Date(sortedHolidays[i].end_date);
 
+  let rattrapageFirstSemester = true;
+  let rattrapageSecondSemester = true;
   //Loop through the weeks
   while (currentDate < endDate) {
     let holidayDescription: string = "";
@@ -183,13 +185,19 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
 
     let promosEnCours: string[] = [];
 
+    let setFirstRattrapage = true; 
+    let setSecondRattrapage = true;
     //Information semaine par promo
     promos.forEach(promo => {
+
       //Gestion formation initiale
       if (promo.Name === "ADI1" || promo.Name === "ADI2" || promo.Name === "CIR1" || promo.Name === "CIR2" || promo.Name === "ISEN3" || promo.Name === "ISEN4" || promo.Name === "ISEN5") {
         if (promo.Periode && promo.Periode.length > 0) {
           if (new Date(promo.Periode[0].DateFinP) < currentDate) {
-            if (promo.Name === "ADI1" || promo.Name === "CIR1") {
+            if (rattrapageSecondSemester) {
+              setSecondRattrapage = false;
+              rowData[promo.Name] = "Rattrapage semestre 2 ou 4";
+            } else if (promo.Name === "ADI1" || promo.Name === "CIR1") {
               rowData[promo.Name] = "Stage Exécutant 1 mois";
             } else if (promo.Name === "ADI2" || promo.Name === "CIR2") {
               rowData[promo.Name] = "Stage International Break 2 mois";
@@ -198,7 +206,12 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
               //TODO gerer cas isen (voir avec damien cas précis)
             }
           } else if (holidayDescription.includes("Vacances")) {
-            rowData[promo.Name] = "VACANCES";
+            if (rattrapageFirstSemester && holidayDescription.includes("Vacances d'Hiver")) {
+                setFirstRattrapage = false;
+                rowData[promo.Name] = "Rattrapage semestre 1 ou 3";
+            } else {
+              rowData[promo.Name] = "VACANCES";
+            }
           } else if (new Date(promo.Periode[0].DateDebutP) <= currentDate) {
             rowData[promo.Name] = "";
             promosEnCours.push(promo.Name);
@@ -255,6 +268,12 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
       }
 
     });
+    if (!setFirstRattrapage) {
+      rattrapageFirstSemester = false;
+    }
+    if (!setSecondRattrapage) {
+      rattrapageSecondSemester = false;
+    }
 
 
     if (adiStarted) {
@@ -280,6 +299,17 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
           type: 'pattern',
           pattern: 'solid',
           fgColor: { argb: 'FFFF99CC' },
+        };
+        row.getCell(promo.Name).font = { bold: true };
+      }
+    });
+
+    promos.forEach(promo => {
+      if (rowData[promo.Name].includes("Rattrapage semestre")) {
+        row.getCell(promo.Name).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFFFFF00' },
         };
         row.getCell(promo.Name).font = { bold: true };
       }
