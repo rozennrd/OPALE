@@ -2,6 +2,8 @@ import { generateEdtMacro } from './generateEdtMacro';
 import { readMaquette } from './readMaquette';
 import { MaquetteData } from './types/MaquetteData';
 import express, { Request, Response } from 'express';
+import * as mysql from 'mysql2';
+import getDBConfig from './getDBConfig';
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const multer = require('multer');
@@ -10,10 +12,28 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+const dbConfig = getDBConfig();
+
 const app = express();
 const PORT = 3000;
 app.use(express.json());
 app.use(cors());
+
+const connection = mysql.createConnection({
+  host: dbConfig.DB_HOST,
+  user: dbConfig.DB_USER,
+  password: dbConfig.DB_PASSWORD,
+  database: dbConfig.DB_NAME,
+  port: dbConfig.DB_PORT
+});
+
+connection.connect((err: any) => {
+  if (err) {
+    console.error('Erreur de connexion à la base de données:', err);
+  } else {
+    console.log('Connecté à la base de données');
+  }
+});
 
 // Swagger options
 const swaggerOptions = {
@@ -34,6 +54,214 @@ const swaggerOptions = {
 };
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+/**
+ * @swagger
+ * /getPromosData:
+ *   get:
+ *     summary: Récupérer les données des promotions
+ *     description: Retourne toutes les données des promotions.
+ *     responses:
+ *       200:
+ *         description: Une liste d'objets promotionnels
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   Name:
+ *                     type: string
+ *                     example: "ADI1"
+ *                   Nombre:
+ *                     type: integer
+ *                     example: 0
+ *                   Periode:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         dateDebutP:
+ *                           type: string
+ *                           format: date
+ *                           example: "2024-01-01"
+ *                         dateFinP:
+ *                           type: string
+ *                           format: date
+ *                           example: "2024-01-31"
+ *       500:
+ *         description: Une erreur est survenue
+ */
+
+app.get('/getPromosData', (req, res) => {
+  interface Promo {
+    Name: string;
+    Nombre: number;
+    Periode: {
+      dateDebutP: string;
+      dateFinP: string;
+      nbSemaineP?: number; // Cette clé est optionnelle
+    }[];
+  }
+
+  const promosData: { DateDeb: string; DateFin: string; Promos: Promo[] } = {
+    DateDeb: "",
+    DateFin: "",
+    Promos: []
+  };
+
+  const sql = 'SELECT Name, Nombre, Periode FROM promosData';
+  connection.query(sql, (error: any, results: any[]) => {
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    // Conversion de `Periode` en tableau d'objets JSON
+    const parsedResults = results.map((promo) => ({
+      ...promo,
+      Periode: promo.Periode ? JSON.parse(promo.Periode) : [] // Conversion de la chaîne JSON
+    }));
+    promosData.Promos = parsedResults;
+
+    // Récupération des données du calendrier
+    const calendarSql = 'SELECT dateDeb, dateFin FROM calendrier LIMIT 1';
+    connection.query(calendarSql, (error: any, calendarResults: any) => {
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+      if (calendarResults.length > 0  && calendarResults[0].dateDeb && calendarResults[0].dateFin) {
+        promosData.DateDeb = calendarResults[0].dateDeb.toLocaleDateString('fr-FR', { 
+          year: 'numeric', 
+          month: '2-digit', 
+          day: '2-digit' 
+      }).split('/').reverse().join('-'); // Inverser le format pour obtenir yyyy-mm-dd
+
+        promosData.DateFin = calendarResults[0].dateFin.toLocaleDateString('fr-FR', { 
+          year: 'numeric', 
+          month: '2-digit', 
+          day: '2-digit' 
+      }).split('/').reverse().join('-'); // Inverser le format pour obtenir yyyy-mm-dd
+
+        console.log('calendarResults datedeb:', calendarResults[0].dateDeb);
+        console.log('calendarResults dateFin:', calendarResults[0].dateFin);
+        console.log('DateDeb:', promosData.DateDeb);
+        console.log('DateFin:', promosData.DateFin);
+      }
+
+      res.json(promosData);
+    });
+  });
+});
+
+/**
+ * @swagger
+ * /setPromosData:
+ *   post:
+ *     summary: Ajouter des données de promotions
+ *     description: Cette route permet d'ajouter des données de promotions à la base de données.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               DateDeb:
+ *                 type: string
+ *                 format: date
+ *                 description: La date de début des promotions.
+ *                 example: "2024-01-01"  # Exemple de date
+ *               DateFin:
+ *                 type: string
+ *                 format: date
+ *                 description: La date de fin des promotions.
+ *                 example: "2024-12-31"  # Exemple de date
+ *               Promos:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     Name:
+ *                       type: string
+ *                       description: Le nom de la promotion.
+ *                       example: "AP5"  # Exemple de nom de promotion
+ *                     Nombre:
+ *                       type: integer
+ *                       description: Le nombre d'éléments de la promotion.
+ *                       example: 5  # Exemple de nombre
+ *                     Periode:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           dateDebutP:
+ *                             type: string
+ *                             format: date
+ *                             description: La date de début de la période.
+ *                             example: "2024-01-01"  # Exemple de date
+ *                           dateFinP:
+ *                             type: string
+ *                             format: date
+ *                             description: La date de fin de la période.
+ *                             example: "2024-01-31"  # Exemple de date
+ *     responses:
+ *       200:
+ *         description: Données de promotions ajoutées avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Données de promotions ajoutées avec succès."
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
+
+app.post('/setPromosData', (req, res) => {
+  const { DateDeb, DateFin, Promos } = req.body;
+  console.log('req.body', req.body);
+
+  const dateDeb = DateDeb || null;
+  const dateFin = DateFin || null;
+  const sql = 'UPDATE calendrier SET dateDeb = ?, dateFin = ?';
+  connection.query(sql, [dateDeb, dateFin], (error: any) => {
+    if (error) {
+      console.log('1. error', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    // Tableau de promesses pour chaque requête de mise à jour de promo
+    const updatePromises = Promos.map((promo: { Nombre: any; Periode: any; Name: any; }) => {
+      const updatePromosSql = 'UPDATE promosData SET Nombre = ?, Periode = ? WHERE Name = ?';
+      return new Promise<void>((resolve, reject) => {
+        connection.query(updatePromosSql, [promo.Nombre, JSON.stringify(promo.Periode), promo.Name], (error: any) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve();
+        });
+      });
+    });
+
+    // Attendre que toutes les requêtes soient terminées avant d'envoyer une réponse
+    Promise.all(updatePromises)
+      .then(() => {
+        res.json({ DateDeb, DateFin, Promos });
+      })
+      .catch((error) => {
+        console.log('2. error', error);
+        res.status(500).json({ error: error.message });
+      });
+  });
+});
+
+
 
 /**
  * @swagger
@@ -90,6 +318,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *       500:
  *         description: Internal server error
  */
+
 app.post('/generateEdtMacro', async (req: Request, res: Response) => {
   try {
     const { DateDeb, DateFin, Promos } = req.body;

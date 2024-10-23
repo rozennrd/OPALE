@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import TopBar from '../components/TopBar';
 import DebFinCalendrier from '../components/DebFinCalendrier';
 import FullWidthTabs from '../components/TabsPromos';
-import Button from '@mui/material/Button'; 
+import Button from '@mui/material/Button';
 
 const Parametres: React.FC = () => {
   const [promosData, setPromosData] = React.useState<any>({
@@ -13,72 +13,72 @@ const Parametres: React.FC = () => {
         {
           "Name": "ADI1",
           "Nombre": 0,
-          "Periode": [{ dateDebutP: "", dateFinP: "" }]
+          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
         },
         {
           "Name": "ADI2",
           "Nombre": 0,
-          "Periode": [{ dateDebutP: "", dateFinP: "" }]
+          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
         },
         {
           "Name": "CIR1",
           "Nombre": 0,
-          "Periode": [{ dateDebutP: "", dateFinP: "" }]
+          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
         }
         ,
         {
           "Name": "CIR2",
           "Nombre": 0,
-          "Periode": [{ dateDebutP: "", dateFinP: "" }]
+          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
         },
         {
           "Name": "AP3",
           "Nombre": 0,
-          "Periode": [{ dateDebutP: "", dateFinP: "", nbSemaineP: 4 },
-          { dateDebutP: "", dateFinP: "", nbSemaineP: 4 },
-          { dateDebutP: "", dateFinP: "", nbSemaineP: 4 },
-          { dateDebutP: "", dateFinP: "", nbSemaineP: 4 },
-          { dateDebutP: "", dateFinP: "", nbSemaineP: 4 }
+          "Periode": [{ "dateDebutP": "", "dateFinP": "", "nbSemaineP": 4 },
+          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 4 },
+          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 4 },
+          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 4 },
+          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 4 }
           ]
         },
         {
           "Name": "AP4",
           "Nombre": 0,
-          "Periode": [{ dateDebutP: "", dateFinP: "", nbSemaineP: 8 },
-          { dateDebutP: "", dateFinP: "", nbSemaineP: 8 },
-          { dateDebutP: "", dateFinP: "", nbSemaineP: 8 },
-          { dateDebutP: "", dateFinP: "", nbSemaineP: 8 }
+          "Periode": [{ "dateDebutP": "", "dateFinP": "", "nbSemaineP": 8 },
+          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 8 },
+          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 8 },
+          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 8 }
           ]
 
         },
         {
           "Name": "AP5",
           "Nombre": 0,
-          "Periode": [{ dateDebutP: "", dateFinP: "", nbSemaineP: 10 },
-          { dateDebutP: "", dateFinP: "", nbSemaineP: 10 }
+          "Periode": [{ "dateDebutP": "", "dateFinP": "", "nbSemaineP": 10 },
+          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 10 }
           ]
         }
         ,
         {
           "Name": "ISEN3",
           "Nombre": 0,
-          "Periode": [{ dateDebutP: "", dateFinP: "" }]
+          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
         },
         {
           "Name": "ISEN4",
           "Nombre": 0,
-          "Periode": [{ dateDebutP: "", dateFinP: "" }]
+          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
         },
         {
           "Name": "ISEN5",
           "Nombre": 0,
-          "Periode": [{ dateDebutP: "", dateFinP: "" }]
+          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
         }
       ]
   });
 
-
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(true);
+  const [loading, setLoading] = React.useState(true); // État pour le chargement
 
   const isAllDataFilled = () => {
     const { DateDeb, DateFin, Promos } = promosData;
@@ -100,11 +100,59 @@ const Parametres: React.FC = () => {
   }
 
   useEffect(() => {
+    const fetchPromosData = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/getPromosData');
+        const data = await response.json();
+        setPromosData(data);
+      } catch (error) {
+        console.error('Error fetching promos data:', error);
+      } finally {
+        setLoading(false); // Met à jour l'état de chargement
+      }
+    };
+
+    fetchPromosData();
+  }, []); // Appel à l'API backend au premier rendu
+
+  const isInitialMount = useRef(0);
+
+  useEffect(() => {
+    // Incrémente le compteur à chaque rendu
+    isInitialMount.current += 1;
+
+    // Si le compteur est inférieur à 3, ne pas exécuter le code
+    if (isInitialMount.current < 3) {
+      return;
+    }
+
     setIsButtonDisabled(!isAllDataFilled());
+
+    const majPromosData = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/setPromosData', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(promosData)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+      } catch (error) {
+        console.error('Error fetching promos data:', error);
+      }
+    };
+
+    majPromosData();
   }, [promosData]);
+
+
+
   const handleSubmit = async () => {
     try {
-
       const response = await fetch('http://localhost:3000/generateEdtMacro', {
         method: 'POST',
         headers: {
@@ -124,27 +172,31 @@ const Parametres: React.FC = () => {
     }
   };
 
-  return (
-    <div>
-      <TopBar />
-      <DebFinCalendrier promosData={promosData} setPromosData={setPromosData} />
-      <FullWidthTabs promosData={promosData} setPromosData={setPromosData} />
-      <Button
-        variant="contained" 
-        onClick={handleSubmit}
-        disabled={isButtonDisabled} 
-        sx={{
-          backgroundColor: '#242424',  // Couleur d'arrière-plan personnalisée
-          color: '#FFFFFF',            // Couleur du texte
-          '&:hover': {
-            backgroundColor: '#E64A19',  // Couleur lorsque l'on survole le bouton
-          },
-          mt: 3,
-        }}
-      >
-        Générer Macro
-      </Button>    </div>
-  );
-};
+  if (!loading) {
+    return (
+      <div>
+        <TopBar />
+        <DebFinCalendrier promosData={promosData} setPromosData={setPromosData} />
+        <FullWidthTabs promosData={promosData} setPromosData={setPromosData} />
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={isButtonDisabled}
+          sx={{
+            backgroundColor: '#242424',  // Couleur d'arrière-plan personnalisée
+            color: '#FFFFFF',            // Couleur du texte
+            '&:hover': {
+              backgroundColor: '#E64A19',  // Couleur lorsque l'on survole le bouton
+            },
+            mt: 3,
+          }}
+        >
+          Générer Macro
+        </Button>    </div>
+    );
+  } else {
+    return <div>Chargement...</div>;
+  };
+}
 
 export default Parametres;
