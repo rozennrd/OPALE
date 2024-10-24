@@ -92,20 +92,22 @@ const Home: React.FC = () => {
                 </motion.div>
 
                 {/* Damien Ponassie section */}
-                <motion.div
-                    whileHover={{ scale: 1.2, rotate: 10 }} // Animation quand on survole l'image
-                    transition={{ type: 'spring', stiffness: 300 }}
-                >
-                    <Box className="damien-section">
+
+                <Box className="damien-section">
+                    <motion.div
+                        whileHover={{ scale: 1.2, rotate: 10 }} // Animation quand on survole l'image
+                        transition={{ type: 'spring', stiffness: 300 }}
+                    >
                         <img src={damienImage} alt="Damien Ponassie" className="damien-image" />
-                        <Typography variant="h3" className="damien-title">
-                            Damien Ponassie
-                        </Typography>
-                        <Typography variant="body2" className="damien-description">
-                            Le génie derrière l'organisation. Son expertise et sa vision ont façonné Bob Planning pour devenir la solution idéale pour tous les maîtres des plannings.
-                        </Typography>
-                    </Box>
-                </motion.div>
+
+                    </motion.div>
+                    <Typography variant="h3" className="damien-title">
+                        Damien Ponassie
+                    </Typography>
+                    <Typography variant="body2" className="damien-description">
+                        Le génie derrière l'organisation. Son expertise et sa vision ont façonné Bob Planning pour devenir la solution idéale pour tous les maîtres des plannings.
+                    </Typography>
+                </Box>
 
                 {/* Action Buttons Section */}
                 <Grid container spacing={2} className="home-actions">
