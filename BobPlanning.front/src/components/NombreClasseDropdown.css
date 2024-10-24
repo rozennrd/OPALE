@@ -6,6 +6,7 @@
     gap: 10px;                   /* Add some space between the label and input */
     max-width: 400px;            /* Set a fixed width for the container */
     padding: 10px 0;              /* Prevent the container from overflowing its parent */
+    color: #333; 
   }
   
   /* Label styling */
