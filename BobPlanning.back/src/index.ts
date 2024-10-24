@@ -97,7 +97,6 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *       500:
  *         description: Une erreur est survenue
  */
-
 app.get('/getPromosData', (req, res) => {
   interface Promo {
     Name: string;
@@ -223,7 +222,6 @@ app.get('/getPromosData', (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
-
 app.post('/setPromosData', (req, res) => {
   const { DateDeb, DateFin, Promos } = req.body;
   console.log('req.body', req.body);
@@ -261,8 +259,6 @@ app.post('/setPromosData', (req, res) => {
       });
   });
 });
-
-
 
 /**
  * @swagger
@@ -319,7 +315,6 @@ app.post('/setPromosData', (req, res) => {
  *       500:
  *         description: Internal server error
  */
-
 app.post('/generateEdtMacro', async (req: Request, res: Response) => {
   try {
     const { DateDeb, DateFin, Promos } = req.body;
@@ -518,7 +513,6 @@ try {
  *               type: string
  *               example: "Internal server error"
  */
-
 app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
   try {
     const classes = req.body;
@@ -553,8 +547,6 @@ app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
     res.status(500).send('Internal server error: ' + error);
   }
 });
-
-
 
 // Start the server
 app.listen(PORT, () => {
