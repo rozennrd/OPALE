@@ -182,23 +182,30 @@ app.post('/generateEdtMacro', async (req: Request, res: Response) => {
  *               type: string
  *               example: Aucun fichier n'a été téléchargé
  *       500:
- *         description: Internal server error while reading the file 
- *             example: Erreur lors de la lecture du fichier Excel
+ *         description: Internal server error while reading the file
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erreur lors de la lecture du fichier Excel
  *                 error:
  *                   type: string
  */
 app.post('/readMaquette', upload.single('file'), async (req: Request, res: Response): Promise<any> => {
   if (!req.file) {
     return res.status(400).send('Aucun fichier n\'a été téléchargé');
-  }
+}
 
-  try {
-      let data : MaquetteData;
-      data = await readMaquette(req.file.buffer);
-      res.json(data);
-  } catch (error) {
-      res.status(500).json({ message: 'Erreur lors de la lecture du fichier Excel', error });
-  }
+try {
+    let data : MaquetteData;
+    data = await readMaquette(req.file.buffer);
+    res.json(data);
+} catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la lecture du fichier Excel', error });
+}
 });
 
 /**
