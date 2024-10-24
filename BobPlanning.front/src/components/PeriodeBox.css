@@ -16,6 +16,7 @@
     font-weight: bold;          /* Bold font for the title */
     text-align: center;         /* Center the title text */
     margin-bottom: 15px;        /* Space below the title */
+    color: #333;
 }
 
 /* Content within the card (arranged vertically) */

@@ -1,22 +1,25 @@
 h2 {
     text-align: start;
     /* Aligns the text to the left (start) */
+    color: #333; 
 }
 
-.nombre-periodes {
+.nombre-Periode {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 10px;
     width: auto; /* Let it size according to content */
     max-width: 400px; /* Limit to 400px or adjust as needed */
+ 
 }
 
 /* Label styling */
-.label-nombre-periodes {
+.label-nombre-Periode {
     font-weight: bold;
     font-size: 16px;
     white-space: nowrap; /* Prevent the label from wrapping */
+    color: #333; 
 }
 
 /* FormControl styling for the dropdown */
