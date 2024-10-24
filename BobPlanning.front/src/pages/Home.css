@@ -1,8 +1,10 @@
+/* Styles principaux pour la page */
 .home-container {
     padding: 20px;
     text-align: center;
     background-color: #f4f4f9;
     min-height: 100vh;
+    animation: glow-bg 3s infinite alternate; /* Animation de fond */
 }
 
 .home-header {
@@ -22,11 +24,13 @@
     font-size: 2.5rem;
     color: #333;
     font-weight: bold;
+    animation: text-glow 2s infinite alternate; /* Texte brillant */
 }
 
 .home-welcome {
     font-size: 1.8rem;
     color: #007bff;
+    animation: text-glow 2s infinite alternate;
 }
 
 .home-description {
@@ -34,11 +38,13 @@
     margin: 20px 0;
     color: #555;
     padding: 0 10px;
+    animation: text-glow 2s infinite alternate;
 }
 
 .damien-section {
     margin: 40px 0;
     text-align: center;
+    animation: section-pulse 3s infinite alternate; /* Animation pimpante */
 }
 
 .damien-image {
@@ -67,4 +73,105 @@ button {
     font-size: 1rem;
     font-weight: bold;
     padding: 12px;
+    animation: button-glow 2s infinite alternate; /* Animation pour les boutons */
+}
+
+/* Feux d'artifice */
+@keyframes firework {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(3); /* Plus grand feu d'artifice */
+    }
+}
+
+.fireworks {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 40px; /* Taille plus grande */
+    height: 40px; /* Taille plus grande */
+    border-radius: 50%;
+    background-color: red;
+    animation: firework 2.5s ease-out infinite;
+    opacity: 0;
+}
+
+/* Feux d'artifice avec des couleurs et des délais différents */
+.fireworks:nth-child(1) {
+    background-color: red;
+    top: 40%;
+    left: 40%;
+    animation-delay: 0.2s;
+}
+.fireworks:nth-child(2) {
+    background-color: yellow;
+    top: 45%;
+    left: 60%;
+    animation-delay: 0.4s;
+}
+.fireworks:nth-child(3) {
+    background-color: blue;
+    top: 60%;
+    left: 50%;
+    animation-delay: 0.6s;
+}
+.fireworks:nth-child(4) {
+    background-color: green;
+    top: 55%;
+    left: 45%;
+    animation-delay: 0.8s;
+}
+.fireworks:nth-child(5) {
+    background-color: purple;
+    top: 50%;
+    left: 55%;
+    animation-delay: 1s;
+}
+
+/* Animation brillante pour le texte */
+@keyframes text-glow {
+    0% {
+        text-shadow: 0 0 10px #fff, 0 0 20px #007bff, 0 0 30px #007bff, 0 0 40px #007bff;
+    }
+    100% {
+        text-shadow: 0 0 20px #fff, 0 0 30px #ff00ff, 0 0 40px #ff00ff, 0 0 50px #ff00ff;
+    }
+}
+
+/* Animation pimpante pour les sections */
+@keyframes section-pulse {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.05);
+    }
+}
+
+/* Animation brillante pour les boutons */
+@keyframes button-glow {
+    0% {
+        box-shadow: 0 0 10px red, 0 0 20px red, 0 0 30px red;
+    }
+    100% {
+        box-shadow: 0 0 10px blue, 0 0 20px blue, 0 0 30px blue;
+    }
+}
+
+/* Animation de fond scintillant */
+@keyframes glow-bg {
+    0% {
+        background-color: #f4f4f9;
+    }
+    100% {
+        background-color: #ffe4e1;
+    }
 }
