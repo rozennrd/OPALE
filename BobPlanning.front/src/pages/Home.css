@@ -156,16 +156,6 @@ button {
     }
 }
 
-/* Animation brillante pour les boutons */
-@keyframes button-glow {
-    0% {
-        box-shadow: 0 0 10px red, 0 0 20px red, 0 0 30px red;
-    }
-    100% {
-        box-shadow: 0 0 10px blue, 0 0 20px blue, 0 0 30px blue;
-    }
-}
-
 /* Animation de fond scintillant */
 @keyframes glow-bg {
     0% {
