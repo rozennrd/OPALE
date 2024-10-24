@@ -86,11 +86,11 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *                     items:
  *                       type: object
  *                       properties:
- *                         dateDebutP:
+ *                         DateDebutP:
  *                           type: string
  *                           format: date
  *                           example: "2024-01-01"
- *                         dateFinP:
+ *                         DateFinP:
  *                           type: string
  *                           format: date
  *                           example: "2024-01-31"
@@ -102,8 +102,8 @@ app.get('/getPromosData', (req, res) => {
     Name: string;
     Nombre: number;
     Periode: {
-      dateDebutP: string;
-      dateFinP: string;
+      DateDebutP: string;
+      DateFinP: string;
       nbSemaineP?: number; // Cette clé est optionnelle
     }[];
   }
@@ -198,12 +198,12 @@ app.get('/getPromosData', (req, res) => {
  *                       items:
  *                         type: object
  *                         properties:
- *                           dateDebutP:
+ *                           DateDebutP:
  *                             type: string
  *                             format: date
  *                             description: La date de début de la période.
  *                             example: "2024-01-01"  # Exemple de date
- *                           dateFinP:
+ *                           DateFinP:
  *                             type: string
  *                             format: date
  *                             description: La date de fin de la période.

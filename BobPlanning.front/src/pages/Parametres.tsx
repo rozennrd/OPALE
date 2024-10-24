@@ -13,66 +13,66 @@ const Parametres: React.FC = () => {
         {
           "Name": "ADI1",
           "Nombre": 0,
-          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
+          "Periode": [{ "DateDebutP": "", "DateFinP": "" }]
         },
         {
           "Name": "ADI2",
           "Nombre": 0,
-          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
+          "Periode": [{ "DateDebutP": "", "DateFinP": "" }]
         },
         {
           "Name": "CIR1",
           "Nombre": 0,
-          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
+          "Periode": [{ "DateDebutP": "", "DateFinP": "" }]
         }
         ,
         {
           "Name": "CIR2",
           "Nombre": 0,
-          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
+          "Periode": [{ "DateDebutP": "", "DateFinP": "" }]
         },
         {
           "Name": "AP3",
           "Nombre": 0,
-          "Periode": [{ "dateDebutP": "", "dateFinP": "", "nbSemaineP": 4 },
-          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 4 },
-          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 4 },
-          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 4 },
-          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 4 }
+          "Periode": [{ "DateDebutP": "", "DateFinP": "", "nbSemaineP": 4 },
+          { "DateDebutP": "", "DateFinP": "", "nbSemaineP": 4 },
+          { "DateDebutP": "", "DateFinP": "", "nbSemaineP": 4 },
+          { "DateDebutP": "", "DateFinP": "", "nbSemaineP": 4 },
+          { "DateDebutP": "", "DateFinP": "", "nbSemaineP": 4 }
           ]
         },
         {
           "Name": "AP4",
           "Nombre": 0,
-          "Periode": [{ "dateDebutP": "", "dateFinP": "", "nbSemaineP": 8 },
-          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 8 },
-          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 8 },
-          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 8 }
+          "Periode": [{ "DateDebutP": "", "DateFinP": "", "nbSemaineP": 8 },
+          { "DateDebutP": "", "DateFinP": "", "nbSemaineP": 8 },
+          { "DateDebutP": "", "DateFinP": "", "nbSemaineP": 8 },
+          { "DateDebutP": "", "DateFinP": "", "nbSemaineP": 8 }
           ]
 
         },
         {
           "Name": "AP5",
           "Nombre": 0,
-          "Periode": [{ "dateDebutP": "", "dateFinP": "", "nbSemaineP": 10 },
-          { "dateDebutP": "", "dateFinP": "", "nbSemaineP": 10 }
+          "Periode": [{ "DateDebutP": "", "DateFinP": "", "nbSemaineP": 10 },
+          { "DateDebutP": "", "DateFinP": "", "nbSemaineP": 10 }
           ]
         }
         ,
         {
           "Name": "ISEN3",
           "Nombre": 0,
-          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
+          "Periode": [{ "DateDebutP": "", "DateFinP": "" }]
         },
         {
           "Name": "ISEN4",
           "Nombre": 0,
-          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
+          "Periode": [{ "DateDebutP": "", "DateFinP": "" }]
         },
         {
           "Name": "ISEN5",
           "Nombre": 0,
-          "Periode": [{ "dateDebutP": "", "dateFinP": "" }]
+          "Periode": [{ "DateDebutP": "", "DateFinP": "" }]
         }
       ]
   });
@@ -90,7 +90,7 @@ const Parametres: React.FC = () => {
     for (const promo of Promos) {
       if (promo.Nombre > 0) {
         for (const periode of promo.Periode) {
-          if (!periode.dateDebutP || !periode.dateFinP || promo.Nombre === 0) {
+          if (!periode.DateDebutP || !periode.DateFinP || promo.Nombre === 0) {
             return false;
           }
         }
