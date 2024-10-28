@@ -82,7 +82,7 @@ const Parametres: React.FC = () => {
 
   const isAllDataFilled = () => {
     const { DateDeb, DateFin, Promos } = promosData;
-
+ console.log("Vérification des données:", { DateDeb, DateFin, Promos });
     if (!DateDeb || !DateFin) {
       return false;
     }
@@ -90,7 +90,7 @@ const Parametres: React.FC = () => {
     for (const promo of Promos) {
       if (promo.Nombre > 0) {
         for (const periode of promo.Periode) {
-          if (!periode.DateDebutP || !periode.DateFinP || promo.Nombre === 0) {
+          if (!periode.DateDebutP || !periode.DateFinP || promo.Nombre === 0 ) {
             return false;
           }
         }
@@ -115,16 +115,16 @@ const Parametres: React.FC = () => {
     fetchPromosData();
   }, []); // Appel à l'API backend au premier rendu
 
-  const isInitialMount = useRef(0);
+  //const isInitialMount = useRef(0);
 
   useEffect(() => {
     // Incrémente le compteur à chaque rendu
-    isInitialMount.current += 1;
+    //isInitialMount.current += 1;
 
     // Si le compteur est inférieur à 3, ne pas exécuter le code
-    if (isInitialMount.current < 3) {
-      return;
-    }
+    // if (isInitialMount.current < 3) {
+    //   return;
+    // }
 
     setIsButtonDisabled(!isAllDataFilled());
 

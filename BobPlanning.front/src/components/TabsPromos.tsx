@@ -97,28 +97,28 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
     });
 
     const [startDatesPerPromo, setStartDatesPerPromo] = React.useState<Record<string, string>>({
-        ADI1:  String(promosData.Promos[0].Periode[0].dateDebutP),
-                ADI2:  String(promosData.Promos[1].Periode[0].dateDebutP),
-                CIR1:  String(promosData.Promos[2].Periode[0].dateDebutP),
-                CIR2:  String(promosData.Promos[3].Periode[0].dateDebutP),
-                AP3:   String(promosData.Promos[4].Periode[0].dateDebutP),
-                AP4:   String(promosData.Promos[5].Periode[0].dateDebutP),
-                AP5:   String(promosData.Promos[6].Periode[0].dateDebutP),
-                ISEN3: String(promosData.Promos[7].Periode[0].dateDebutP),
-                ISEN4: String(promosData.Promos[8].Periode[0].dateDebutP),
-                ISEN5: String(promosData.Promos[9].Periode[0].dateDebutP)
+        ADI1:  String(promosData.Promos[0].Periode[0].DateDebutP),
+                ADI2:  String(promosData.Promos[1].Periode[0].DateDebutP),
+                CIR1:  String(promosData.Promos[2].Periode[0].DateDebutP),
+                CIR2:  String(promosData.Promos[3].Periode[0].DateDebutP),
+                AP3:   String(promosData.Promos[4].Periode[0].DateDebutP),
+                AP4:   String(promosData.Promos[5].Periode[0].DateDebutP),
+                AP5:   String(promosData.Promos[6].Periode[0].DateDebutP),
+                ISEN3: String(promosData.Promos[7].Periode[0].DateDebutP),
+                ISEN4: String(promosData.Promos[8].Periode[0].DateDebutP),
+                ISEN5: String(promosData.Promos[9].Periode[0].DateDebutP)
     });
     const [endDatesPerPromo, setEndDatesPerPromo] = React.useState<Record<string, string>>({
-        ADI1:  String(promosData.Promos[0].Periode[0].dateFinP),
-            ADI2:  String(promosData.Promos[1].Periode[0].dateFinP),
-            CIR1:  String(promosData.Promos[2].Periode[0].dateFinP),
-            CIR2:  String(promosData.Promos[3].Periode[0].dateFinP),
-            AP3:   String(promosData.Promos[4].Periode[0].dateFinP),
-            AP4:   String(promosData.Promos[5].Periode[0].dateFinP),
-            AP5:   String(promosData.Promos[6].Periode[0].dateFinP),
-            ISEN3: String(promosData.Promos[7].Periode[0].dateFinP),
-            ISEN4: String(promosData.Promos[8].Periode[0].dateFinP),
-            ISEN5: String(promosData.Promos[9].Periode[0].dateFinP)
+        ADI1:  String(promosData.Promos[0].Periode[0].DateFinP),
+            ADI2:  String(promosData.Promos[1].Periode[0].DateFinP),
+            CIR1:  String(promosData.Promos[2].Periode[0].DateFinP),
+            CIR2:  String(promosData.Promos[3].Periode[0].DateFinP),
+            AP3:   String(promosData.Promos[4].Periode[0].DateFinP),
+            AP4:   String(promosData.Promos[5].Periode[0].DateFinP),
+            AP5:   String(promosData.Promos[6].Periode[0].DateFinP),
+            ISEN3: String(promosData.Promos[7].Periode[0].DateFinP),
+            ISEN4: String(promosData.Promos[8].Periode[0].DateFinP),
+            ISEN5: String(promosData.Promos[9].Periode[0].DateFinP)
     });
 
     React.useEffect(() => {
@@ -138,29 +138,29 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
     
         setStartDatesPerPromo(
             {
-                ADI1:  String(promosData.Promos[0].Periode[0].dateDebutP),
-                ADI2:  String(promosData.Promos[1].Periode[0].dateDebutP),
-                CIR1:  String(promosData.Promos[2].Periode[0].dateDebutP),
-                CIR2:  String(promosData.Promos[3].Periode[0].dateDebutP),
-                AP3:   String(promosData.Promos[4].Periode[0].dateDebutP),
-                AP4:   String(promosData.Promos[5].Periode[0].dateDebutP),
-                AP5:   String(promosData.Promos[6].Periode[0].dateDebutP),
-                ISEN3: String(promosData.Promos[7].Periode[0].dateDebutP),
-                ISEN4: String(promosData.Promos[8].Periode[0].dateDebutP),
-                ISEN5: String(promosData.Promos[9].Periode[0].dateDebutP)
+                ADI1:  String(promosData.Promos[0].Periode[0].DateDebutP),
+                ADI2:  String(promosData.Promos[1].Periode[0].DateDebutP),
+                CIR1:  String(promosData.Promos[2].Periode[0].DateDebutP),
+                CIR2:  String(promosData.Promos[3].Periode[0].DateDebutP),
+                AP3:   String(promosData.Promos[4].Periode[0].DateDebutP),
+                AP4:   String(promosData.Promos[5].Periode[0].DateDebutP),
+                AP5:   String(promosData.Promos[6].Periode[0].DateDebutP),
+                ISEN3: String(promosData.Promos[7].Periode[0].DateDebutP),
+                ISEN4: String(promosData.Promos[8].Periode[0].DateDebutP),
+                ISEN5: String(promosData.Promos[9].Periode[0].DateDebutP)
             }
         );
         setEndDatesPerPromo({
-            ADI1:  String(promosData.Promos[0].Periode[0].dateFinP),
-            ADI2:  String(promosData.Promos[1].Periode[0].dateFinP),
-            CIR1:  String(promosData.Promos[2].Periode[0].dateFinP),
-            CIR2:  String(promosData.Promos[3].Periode[0].dateFinP),
-            AP3:   String(promosData.Promos[4].Periode[0].dateFinP),
-            AP4:   String(promosData.Promos[5].Periode[0].dateFinP),
-            AP5:   String(promosData.Promos[6].Periode[0].dateFinP),
-            ISEN3: String(promosData.Promos[7].Periode[0].dateFinP),
-            ISEN4: String(promosData.Promos[8].Periode[0].dateFinP),
-            ISEN5: String(promosData.Promos[9].Periode[0].dateFinP)
+            ADI1:  String(promosData.Promos[0].Periode[0].DateFinP),
+            ADI2:  String(promosData.Promos[1].Periode[0].DateFinP),
+            CIR1:  String(promosData.Promos[2].Periode[0].DateFinP),
+            CIR2:  String(promosData.Promos[3].Periode[0].DateFinP),
+            AP3:   String(promosData.Promos[4].Periode[0].DateFinP),
+            AP4:   String(promosData.Promos[5].Periode[0].DateFinP),
+            AP5:   String(promosData.Promos[6].Periode[0].DateFinP),
+            ISEN3: String(promosData.Promos[7].Periode[0].DateFinP),
+            ISEN4: String(promosData.Promos[8].Periode[0].DateFinP),
+            ISEN5: String(promosData.Promos[9].Periode[0].DateFinP)
         });
     }, [promosData]);
     
@@ -209,7 +209,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
                         ? {
                             ...promo,
                             Periode: promo.Periode.map((periode: any, index: number) =>
-                                index === 0 ? { ...periode, dateDebutP: newValue } : periode
+                                index === 0 ? { ...periode, DateDebutP: newValue } : periode
                             ),
                         }
                         : promo
@@ -243,7 +243,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
                         ? {
                             ...promo,
                             Periode: promo.Periode.map((periode: any, index: number) =>
-                                index === 0 ? { ...periode, dateFinP: newValue } : periode
+                                index === 0 ? { ...periode, DateFinP: newValue } : periode
                             ),
                         }
                         : promo
@@ -280,12 +280,12 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
             if (promo) {
                 promo.Periode.forEach((periode) => {
                     // Mettre à jour uniquement si le champ est vide
-                    if (!periode.dateDebutP && firstDateDebutP) {
-                        periode.dateDebutP = firstDateDebutP;
+                    if (!periode.DateDebutP && firstDateDebutP) {
+                        periode.DateDebutP = firstDateDebutP;
                         newStartDatesPerPromo[promoName] = firstDateDebutP;  // Mettre à jour le UseState localement
                     }
-                    if (!periode.dateFinP && firstDateFinP) {
-                        periode.dateFinP = firstDateFinP;
+                    if (!periode.DateFinP && firstDateFinP) {
+                        periode.DateFinP = firstDateFinP;
                         newEndDatesPerPromo[promoName] = firstDateFinP;  // Mettre à jour le UseState localement
                     }
                 });
