@@ -1,0 +1,56 @@
+.contact-container {
+    padding: 20px;
+    background-color: #333; /* Couleur de fond sombre */
+    color: white; /* Texte en blanc */
+}
+
+.contact-container h1,
+.contact-container h2 {
+    color: white; /* Titre en blanc */
+}
+
+.contact-info {
+    margin: 20px 0;
+}
+
+.info-item {
+    margin: 10px 0;
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.contact-form label {
+    margin: 5px 0;
+    color: white; /* Labels en blanc */
+}
+
+.contact-form input,
+.contact-form textarea {
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc; /* Bordure légère pour les champs */
+    border-radius: 4px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    background-color: #555; /* Fond des champs d'entrée sombre */
+    color: white; /* Texte en blanc dans les champs */
+}
+
+.contact-form button {
+    padding: 10px;
+    background-color: #007BFF; /* Couleur du bouton */
+    color: white; /* Texte du bouton en blanc */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.contact-form button:hover {
+    background-color: #0056b3; /* Couleur du bouton au survol */
+}

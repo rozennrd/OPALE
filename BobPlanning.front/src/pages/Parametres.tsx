@@ -3,6 +3,7 @@ import TopBar from '../components/TopBar';
 import DebFinCalendrier from '../components/DebFinCalendrier';
 import FullWidthTabs from '../components/TabsPromos';
 import Button from '@mui/material/Button';
+import { set } from 'react-datepicker/dist/date_utils';
 
 const Parametres: React.FC = () => {
   const [promosData, setPromosData] = React.useState<any>({
@@ -80,9 +81,12 @@ const Parametres: React.FC = () => {
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(true);
   const [loading, setLoading] = React.useState(true); // État pour le chargement
 
+  const [message, setMessage] = React.useState<string | null>(null);
+  const [fileUrl, setFileUrl] = React.useState<string | null>(null);
+
   const isAllDataFilled = () => {
     const { DateDeb, DateFin, Promos } = promosData;
- console.log("Vérification des données:", { DateDeb, DateFin, Promos });
+    console.log("Vérification des données:", { DateDeb, DateFin, Promos });
     if (!DateDeb || !DateFin) {
       return false;
     }
@@ -90,7 +94,7 @@ const Parametres: React.FC = () => {
     for (const promo of Promos) {
       if (promo.Nombre > 0) {
         for (const periode of promo.Periode) {
-          if (!periode.DateDebutP || !periode.DateFinP || promo.Nombre === 0 ) {
+          if (!periode.DateDebutP || !periode.DateFinP || promo.Nombre === 0) {
             return false;
           }
         }
@@ -167,8 +171,12 @@ const Parametres: React.FC = () => {
 
       const data = await response.json();
       console.log('Réponse du serveur :', data);
+      setMessage('Le fichier a été généré avec succès !');
+      setFileUrl(data.fileUrl);
+
     } catch (error) {
       console.error('Error:', error);
+      setMessage('Erreur lors de la génération du fichier.');
     }
   };
 
@@ -192,7 +200,15 @@ const Parametres: React.FC = () => {
           }}
         >
           Générer Macro
-        </Button>    </div>
+        </Button>
+        {/* Afficher le message et le lien de téléchargement */}
+        {message && <div>{message}</div>}
+        {fileUrl && (
+          <a href={fileUrl} download="EdtMacro.xlsx">
+            Télécharger le fichier généré
+          </a>
+        )}
+      </div>
     );
   } else {
     return <div>Chargement...</div>;
