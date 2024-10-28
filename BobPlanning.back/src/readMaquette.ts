@@ -21,12 +21,14 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
     let ue: number = -1;
     let modules: number = -1;
     let nbHeures: number = -1;
+    let nbHeuresAvecProf: number = -1;
     let semestrePeriode: number = -1;
     let coursMagistral: number = -1;
     let coursInteractif: number = -1;
     let td: number = -1;
     let tp: number = -1;
     let projet: number = -1;
+    let elearning: number = -1;
 
     worksheet.eachRow((row, rowNumber) => {
       const rowValuesWithN = row.values as any[];
@@ -51,8 +53,10 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
             ue = index;
           } else if (cell.includes("Modules")) {
             modules = index;
-          } else if (cell.includes("Nb Heures encadrées")) {
+          } else if (cell.includes("Nb Heures étudiant")) {
             nbHeures = index;
+          } else if (cell.includes("Nb Heures encadrées")) {
+            nbHeuresAvecProf = index;
           } else if (cell.includes("Semestre / Période")) {
             semestrePeriode = index;
           } else if (cell.includes("Cours magistral")) {
@@ -65,6 +69,8 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
             tp = index;
           } else if (cell.includes("Projet")) {
             projet = index;
+          } else if (cell.includes("E-learning")) {
+            elearning = index;
           }
         });
       } else if (table) {
@@ -96,11 +102,13 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
           semestrePeriode: semestre,
           heure: {
             total: rowValues[nbHeures] && typeof rowValues[nbHeures] === 'object' && rowValues[nbHeures].hasOwnProperty('result') ? parseFloat(rowValues[nbHeures].result) : parseFloat(rowValues[nbHeures]),
+            totalAvecProf: rowValues[nbHeuresAvecProf] && typeof rowValues[nbHeuresAvecProf] === 'object' && rowValues[nbHeuresAvecProf].hasOwnProperty('result') ? parseFloat(rowValues[nbHeuresAvecProf].result) : parseFloat(rowValues[nbHeuresAvecProf]),
             coursMagistral: parseFloat(rowValues[coursMagistral]),
             coursInteractif: parseFloat(rowValues[coursInteractif]),
             td: parseFloat(rowValues[td]),
             tp: parseFloat(rowValues[tp]),
-            projet: parseFloat(rowValues[projet])
+            projet: parseFloat(rowValues[projet]),
+            elearning: parseFloat(rowValues[elearning])
           }
         });
       }

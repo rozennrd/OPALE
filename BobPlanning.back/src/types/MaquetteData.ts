@@ -1,10 +1,12 @@
 export interface Heure {
   total: number;
+  totalAvecProf: number;
   coursMagistral: number;
   coursInteractif: number;
   td: number;
   tp: number;
   projet: number;
+  elearning: number;
 }
 
 export interface Cours {
