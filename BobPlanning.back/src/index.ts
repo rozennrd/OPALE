@@ -1,10 +1,10 @@
-import { generateEdtMacro } from './generateEdtMacro';
-import { readMaquette } from './readMaquette';
+import { generateEdtMacro } from './macro/generateEdtMacro';
+import { readMaquette } from './micro/readMaquette';
 import { MaquetteData } from './types/MaquetteData';
-import { generateEdtSquelette } from './generateEdtMicro';
+import { generateEdtSquelette } from './micro/generateEdtSquelette';
 import express, { Request, Response } from 'express';
 import * as mysql from 'mysql2';
-import getDBConfig from './getDBConfig';
+import getDBConfig from './database/getDBConfig';
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const multer = require('multer');

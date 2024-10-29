@@ -1,5 +1,5 @@
 import ExcelJS from 'exceljs';
-import { MaquetteData, Heure } from './types/MaquetteData';
+import { MaquetteData, Heure } from '../types/MaquetteData';
 
 const cleanCellValue = (value: any): any => {
   return typeof value === 'string' ? value.replace(/\n/g, ' ').trim() : value;
