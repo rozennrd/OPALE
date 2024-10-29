@@ -1,11 +1,12 @@
 import ExcelJS from 'exceljs';
 import path from 'path';
 import { getWeekNumber, getPublicHolidays, getHolidays } from '../tools/holidaysAndWeek';
+import { EdtMacroData } from '../types/EdtMacroData';
 
-export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: any[]) => {
+export const generateEdtMacro = async (data: EdtMacroData) => {
 
   // Set date to lundi
-  let currentDate: Date = new Date(startDate);
+  let currentDate: Date = new Date(data.DateDeb);
   if (currentDate.getDay() !== 1) {
     currentDate.setDate(currentDate.getDate() - (currentDate.getDay() - 1));
   }
@@ -32,7 +33,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
     { header: "Nombre Epreuves surveillées semaine (cellule conditionnelle)", key: "examsNumber", width: 20 },
     { header: "Evenements Promo/ RE/conf/salon", key: "events", width: 20 },
   ];
-  promos.forEach(promo => {
+  data.Promos.forEach(promo => {
     columns.push({ header: promo.Name, key: promo.Name, width: 20 });
     //Order periode
     if (Array.isArray(promo.Periode) && promo.Periode.length > 0) {
@@ -59,8 +60,8 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
   headerRow.alignment = { wrapText: true };
 
   //Get holidays
-  const publicHolidays = await getPublicHolidays(startDate.getFullYear());
-  const holidays = await getHolidays("Bordeaux", startDate.getFullYear());
+  const publicHolidays = await getPublicHolidays(data.DateDeb.getFullYear());
+  const holidays = await getHolidays("Bordeaux", data.DateDeb.getFullYear());
 
   let i: number = 0;
 
@@ -73,7 +74,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
   let rattrapageFirstSemester = true;
   let rattrapageSecondSemester = true;
   //Loop through the weeks
-  while (currentDate < endDate) {
+  while (currentDate < data.DateFin) {
     let holidayDescription: string = "";
     isPublicHolliday = false;
 
@@ -130,7 +131,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
     let setFirstRattrapage = true; 
     let setSecondRattrapage = true;
     //Information semaine par promo
-    promos.forEach(promo => {
+    data.Promos.forEach(promo => {
 
       //Gestion formation initiale
       if (promo.Name === "ADI1" || promo.Name === "ADI2" || promo.Name === "CIR1" || promo.Name === "CIR2" || promo.Name === "ISEN3" || promo.Name === "ISEN4" || promo.Name === "ISEN5") {
@@ -187,7 +188,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
         }
 
         // Cas spécifique pour "Projet de fin d'études" uniquement jusqu'à l'avant-dernière semaine
-        else if (promo.Name === "AP5" && promo.Periode && promo.i === promo.Periode.length - 1 && new Date(promo.Periode[promo.i].DateFinP) < currentDate && currentDate.getTime() < endDate.getTime() - 7 * 24 * 60 * 60 * 1000) {
+        else if (promo.Name === "AP5" && promo.Periode && promo.i === promo.Periode.length - 1 && new Date(promo.Periode[promo.i].DateFinP) < currentDate && currentDate.getTime() < data.DateFin.getTime() - 7 * 24 * 60 * 60 * 1000) {
           rowData[promo.Name] = "Projet de fin d'études";
         }
 
@@ -204,7 +205,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
         }
 
         // Ajouter "Soutenance" uniquement pour la dernière semaine
-        if (promo.Name === "AP5" && currentDate.getTime() >= endDate.getTime() - 7 * 24 * 60 * 60 * 1000) {
+        if (promo.Name === "AP5" && currentDate.getTime() >= data.DateFin.getTime() - 7 * 24 * 60 * 60 * 1000) {
           rowData[promo.Name] = "Soutenance";
         }
       }
@@ -235,7 +236,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
     if (adiStarted && !holidayDescription.includes("Vacances")) {
       weekCount++;
     }
-    promos.forEach(promo => {
+    data.Promos.forEach(promo => {
       if (rowData[promo.Name] == "Soutenance") {
         row.getCell(promo.Name).fill = {
           type: 'pattern',
@@ -246,7 +247,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
       }
     });
 
-    promos.forEach(promo => {
+    data.Promos.forEach(promo => {
       if (rowData[promo.Name].includes("Rattrapage semestre")) {
         row.getCell(promo.Name).fill = {
           type: 'pattern',
@@ -287,7 +288,7 @@ export const generateEdtMacro = async (startDate: Date, endDate: Date, promos: a
   });
 
   //Chemin fichier
-  const filePath = path.join(__dirname, '../files', 'EdtMacro.xlsx');
+  const filePath = path.join(__dirname, '../../files', 'EdtMacro.xlsx');
 
   //Writes files
   await workbook.xlsx.writeFile(filePath);

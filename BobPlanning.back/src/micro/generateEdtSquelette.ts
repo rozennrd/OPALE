@@ -183,7 +183,7 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
     }
   });
 
-  const filePath: string = path.join(__dirname, '../files', 'EdtSquelette.xlsx');
+  const filePath: string = path.join(__dirname, '../../files', 'EdtSquelette.xlsx');
   await workbook.xlsx.writeFile(filePath);
 
   return filePath;

@@ -18,7 +18,7 @@ export interface Promo {
   semaine: Semaine[];
 }
 
-export interface EdtMacro {
+export interface EdtMicro {
   dateDebut: string;
   promos: Promo[];
 }

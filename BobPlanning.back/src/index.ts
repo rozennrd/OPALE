@@ -329,7 +329,7 @@ app.post('/generateEdtMacro', async (req: Request, res: Response) => {
     const start = new Date(DateDeb as string);
     const end = new Date(DateFin as string);
 
-    const workbook = await generateEdtMacro(start, end, Promos);
+    const workbook = await generateEdtMacro({DateDeb: start, DateFin: end, Promos: Promos});
 
 
 
