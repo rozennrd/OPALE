@@ -29,13 +29,13 @@ const handleDateChange = (index: number, value: Date) => {
         const promo = newPromosData.Promos?.find((promo: { Name: string }) => promo.Name === promoName);
         if (promo && promo.Periode[index]) {
             // Garde le format de date string
-            promo.Periode[index].dateDebutP = value.toISOString().split('T')[0]; 
+            promo.Periode[index].DateDebutP = value.toISOString().split('T')[0]; 
 
-            // Calculer dateFinP en ajoutant le nombre de semaines
+            // Calculer DateFinP en ajoutant le nombre de semaines
             const weeks = promo.Periode[index].nbSemaineP || 0; // Assurez-vous que nbSemaineP est défini
             const endDate = new Date(value);
             endDate.setDate(endDate.getDate() + weeks * 7); // Ajoute les semaines en jours
-            promo.Periode[index].dateFinP = endDate.toISOString().split('T')[0]; // Met à jour dateFinP
+            promo.Periode[index].DateFinP = endDate.toISOString().split('T')[0]; // Met à jour DateFinP
 
         }
         return newPromosData; // Renvoie les données mises à jour
@@ -47,21 +47,21 @@ const handleDateChange = (index: number, value: Date) => {
         setPromosData((prevData: any) => {
             const newPromosData = { ...prevData };
             const promo = newPromosData.Promos?.find((promo: { Name: string; }) => promo.Name === promoName);
-            if (promo && promo.Periode[index]&& promo.Periode[index].dateFinP!='') {
+            if (promo && promo.Periode[index]&& promo.Periode[index].DateFinP!='') {
                 // Met à jour le nombre de semaines
                 promo.Periode[index].nbSemaineP = value; 
-                // Calculer la dateFinP en ajoutant le nombre de semaines à dateDebutP
-                const startDate = new Date(promo.Periode[index].dateDebutP);
+                // Calculer la DateFinP en ajoutant le nombre de semaines à DateDebutP
+                const startDate = new Date(promo.Periode[index].DateDebutP);
                 const endDate = new Date(startDate);
                 endDate.setDate(startDate.getDate() + value * 7); // Ajoute le nombre de semaines en jours
-                promo.Periode[index].dateFinP = endDate.toISOString().split('T')[0]; // Enregistrer dateFinP
+                promo.Periode[index].DateFinP = endDate.toISOString().split('T')[0]; // Enregistrer DateFinP
             }
             return newPromosData; // Renvoie les données mises à jour
         });
     };
 
     const dateDebutPeriode = (index: number) => {
-        const dateDebut = Periode[index]?.dateDebutP;
+        const dateDebut = Periode[index]?.DateDebutP;
         return dateDebut ? dateDebut : '';
     };
 
@@ -76,7 +76,7 @@ const handleDateChange = (index: number, value: Date) => {
             if (promo) {
                 // Create new periods array based on the new number
                 const newPeriods = Array.from({ length: newNbrPeriode }, (_, i) => ({
-                    dateDebutP: i < promo.Periode.length ? promo.Periode[i].dateDebutP : '', // Keep it empty for new periods
+                    DateDebutP: i < promo.Periode.length ? promo.Periode[i].DateDebutP : '', // Keep it empty for new periods
                     nbSemaineP: 4 // Default value
                 }));
                 promo.Periode = newPeriods; // Update the promo.Periode with newPeriods
@@ -87,8 +87,8 @@ const handleDateChange = (index: number, value: Date) => {
     
 
     const nbSemainesBetween = (index: number) => {
-        const startDate = Periode[index]?.dateDebutP;
-        const endDate = Periode[index]?.dateFinP;
+        const startDate = Periode[index]?.DateDebutP;
+        const endDate = Periode[index]?.DateFinP;
         return startDate && endDate ? Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 3600 * 24 * 7)) : 0;
     };
     
@@ -122,7 +122,7 @@ const handleDateChange = (index: number, value: Date) => {
                         key={index}
                         index={index}
                         dateDebutPeriode={dateDebutPeriode(index)}
-                        date={new Date(Periode[index].dateDebutP)}
+                        date={new Date(Periode[index].DateDebutP)}
                         RecupWeeks={nbSemainesBetween(index)}
                         handleDateChange={handleDateChange}
                         handleWeeksChange={handleWeeksChange}

@@ -1,6 +1,6 @@
 export interface Period {
-    dateDebutP: string;
-    dateFinP: string;
+    DateDebutP: string;
+    DateFinP: string;
 }
 
 export interface Promo {

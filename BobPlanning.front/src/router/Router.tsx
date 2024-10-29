@@ -4,6 +4,7 @@ import Home from "../pages/Home";
 import Parametres from "../pages/Parametres";
 import Calendriers from "../pages/Calendriers";
 import ErrorPage from "../pages/404";
+import Contact from "../pages/Contact";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
         path: "/calendriers",
         element: <Calendriers />,
       },
+      {
+        path: "/Contact",
+        element: <Contact />,
+      }
     ],
   },
 ]);

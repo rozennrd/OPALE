@@ -5,6 +5,8 @@ import { generateEdtSquelette } from './micro/generateEdtSquelette';
 import express, { Request, Response } from 'express';
 import * as mysql from 'mysql2';
 import getDBConfig from './database/getDBConfig';
+import path from 'path';
+
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const multer = require('multer');
@@ -329,9 +331,11 @@ app.post('/generateEdtMacro', async (req: Request, res: Response) => {
 
     const workbook = await generateEdtMacro(start, end, Promos);
 
+
+
     res.status(200).json({
       message: 'Excel file generated and saved on the server',
-      filePath: '../files/file.xlsx',
+       fileUrl: `http://localhost:${PORT}/download/EdtMacro`,
     });
 
   } catch (error) {
@@ -339,7 +343,16 @@ app.post('/generateEdtMacro', async (req: Request, res: Response) => {
     res.status(500).send('Internal server error' + error);
   }
 });
-
+// Route pour télécharger le fichier Excel
+app.get('/download/EdtMacro', (req, res) => {
+  const filePath = path.join(__dirname, '..', 'files', 'EdtMacro.xlsx');
+  res.download(filePath, 'EdtMacro.xlsx', (err) => {
+    if (err) {
+      console.error('Erreur lors du téléchargement du fichier:', err);
+      res.status(500).send('Erreur lors du téléchargement du fichier');
+    }
+  });
+});
 /**
  * @swagger
  * /readMaquette:
