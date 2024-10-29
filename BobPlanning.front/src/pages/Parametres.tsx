@@ -4,8 +4,11 @@ import DebFinCalendrier from '../components/DebFinCalendrier';
 import FullWidthTabs from '../components/TabsPromos';
 import Button from '@mui/material/Button';
 import { set } from 'react-datepicker/dist/date_utils';
+import { useNavigate } from 'react-router-dom';
+
 
 const Parametres: React.FC = () => {
+  const navigate = useNavigate();
   const [promosData, setPromosData] = React.useState<any>({
     "DateDeb": "",
     "DateFin": "",
@@ -183,7 +186,9 @@ const Parametres: React.FC = () => {
   };
 
   if (!loading) {
+    
     return (
+      
       <div>
         <TopBar />
         <DebFinCalendrier promosData={promosData} setPromosData={setPromosData} />
@@ -212,7 +217,8 @@ const Parametres: React.FC = () => {
         )}
         <Button
           variant="contained"
-          onClick={handleSubmit}
+          //Redirects to the Micro page
+          onClick={() =>  navigate('/parametresMicro', { state: { promosData } })  }
           disabled={isMicroButtonDisabled}
           sx={{
             backgroundColor: '#242424',  // Couleur d'arrière-plan personnalisée

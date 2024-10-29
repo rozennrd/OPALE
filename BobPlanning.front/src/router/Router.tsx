@@ -5,6 +5,7 @@ import Parametres from "../pages/Parametres";
 import Calendriers from "../pages/Calendriers";
 import ErrorPage from "../pages/404";
 import Contact from "../pages/Contact";
+import ParametresMicro from "../pages/ParametresMicro";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "/Contact",
         element: <Contact />,
+      },
+      {
+        path: "/parametresMicro",
+        element: <ParametresMicro />,
       }
     ],
   },
