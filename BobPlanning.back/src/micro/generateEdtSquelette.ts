@@ -41,15 +41,8 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
   const jourCouleurs = ['FFDDDD', 'DDFFDD', 'DDDDFF', 'FFFFDD', 'FFDDEE'];
 
   // Fonction pour générer une couleur hexadécimale unique
-  const generateRandomColor = (): string => {
-    const letters = '0123456789ABCDEF';
-    let color = '';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  };
-
+  generateRandomColor();
+  
   const matiereCouleurs: { [matiere: string]: string } = {};
 
   joursSemaine.forEach((jour, jourIndex) => {
@@ -194,4 +187,14 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
   await workbook.xlsx.writeFile(filePath);
 
   return filePath;
+};
+
+// Fonction pour générer une couleur hexadécimale unique
+const generateRandomColor = (): string => {
+  const letters = '0123456789ABCDEF';
+  let color = '';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
 };
