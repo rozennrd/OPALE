@@ -45,161 +45,168 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
   ];
 
   const joursSemaine: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
-  const edtMicro = columnsData.EdtMicro[0];
-  const startDate = new Date(edtMicro.DateDebut);
-  const promos = edtMicro.Promo;
-  const nombreColonnes = promos.length;
 
-  const jourCouleurs = ['FFDDDD', 'DDFFDD', 'DDDDFF', 'FFFFDD', 'FFDDEE'];
-  const matiereCouleurs: { [matiere: string]: string } = {};
+  let startRow = 1; // Ligne de départ pour le premier tableau
 
-  joursSemaine.forEach((jour, jourIndex) => {
-    const dateCellIndex = jourIndex * nombreColonnes + 2;
-    const currentDayDate = new Date(startDate);
-    currentDayDate.setDate(startDate.getDate() + jourIndex);
+  for (const edtMicro of columnsData.EdtMicro) {
+    const startDate = new Date(edtMicro.DateDebut);
+    const promos = edtMicro.Promo;
+    const nombreColonnes = promos.length;
 
-    worksheet.getRow(2).getCell(dateCellIndex).value = currentDayDate.toLocaleDateString("fr-FR");
-    worksheet.getRow(2).getCell(dateCellIndex).alignment = { horizontal: 'center' };
-    worksheet.getRow(2).getCell(dateCellIndex).font = { bold: true };
+    const jourCouleurs = ['FFDDDD', 'DDFFDD', 'DDDDFF', 'FFFFDD', 'FFDDEE'];
+    const matiereCouleurs: { [matiere: string]: string } = {};
 
-    worksheet.getRow(3).getCell(dateCellIndex).value = jour;
-    worksheet.getRow(3).getCell(dateCellIndex).alignment = { horizontal: 'center' };
-    worksheet.getRow(3).getCell(dateCellIndex).font = { bold: true };
-    worksheet.getRow(3).getCell(dateCellIndex).fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: jourCouleurs[jourIndex] },
-    };
+    joursSemaine.forEach((jour, jourIndex) => {
+      const dateCellIndex = jourIndex * nombreColonnes + 2;
+      const currentDayDate = new Date(startDate);
+      currentDayDate.setDate(startDate.getDate() + jourIndex);
 
-    if (nombreColonnes > 1) {
-      worksheet.mergeCells(2, dateCellIndex, 2, dateCellIndex + nombreColonnes - 1);
-      worksheet.mergeCells(3, dateCellIndex, 3, dateCellIndex + nombreColonnes - 1);
-    }
+      worksheet.getRow(startRow).getCell(dateCellIndex).value = currentDayDate.toLocaleDateString("fr-FR");
+      worksheet.getRow(startRow).getCell(dateCellIndex).alignment = { horizontal: 'center' };
+      worksheet.getRow(startRow).getCell(dateCellIndex).font = { bold: true };
 
-    promos.forEach((promo, promoIndex) => {
-      const promoIndexCell = dateCellIndex + promoIndex;
-      worksheet.getRow(4).getCell(promoIndexCell).value = promo.Name;
-      worksheet.getRow(4).getCell(promoIndexCell).alignment = { horizontal: 'center' };
-      worksheet.getRow(4).getCell(promoIndexCell).fill = {
+      worksheet.getRow(startRow + 1).getCell(dateCellIndex).value = jour;
+      worksheet.getRow(startRow + 1).getCell(dateCellIndex).alignment = { horizontal: 'center' };
+      worksheet.getRow(startRow + 1).getCell(dateCellIndex).font = { bold: true };
+      worksheet.getRow(startRow + 1).getCell(dateCellIndex).fill = {
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: jourCouleurs[jourIndex] },
       };
 
-      const semaine = promo.Semaine.find((s) => s.Jour === jour);
-      if (semaine) {
-        const startHourIndex = 1; // Index de 7h30
-        const endHourIndex = heures.length - 1; // Index de 19h
+      if (nombreColonnes > 1) {
+        worksheet.mergeCells(startRow, dateCellIndex, startRow, dateCellIndex + nombreColonnes - 1);
+        worksheet.mergeCells(startRow + 1, dateCellIndex, startRow + 1, dateCellIndex + nombreColonnes - 1);
+      }
 
-        // Afficher le message sur toutes les cellules si EnCours est false
-        if (!semaine.EnCours) {
-          worksheet.mergeCells(startHourIndex + 5, promoIndexCell, endHourIndex + 4, promoIndexCell);
-          const messageCell = worksheet.getRow(startHourIndex + 5).getCell(promoIndexCell);
-          messageCell.value = semaine.Message || "journée sans cours";
-          messageCell.alignment = { horizontal: 'center', vertical: 'middle' };
-          messageCell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'CCCCCC' },
-          };
-          return; // Passer à la journée suivante
+      promos.forEach((promo, promoIndex) => {
+        const promoIndexCell = dateCellIndex + promoIndex;
+        worksheet.getRow(startRow + 2).getCell(promoIndexCell).value = promo.Name;
+        worksheet.getRow(startRow + 2).getCell(promoIndexCell).alignment = { horizontal: 'center' };
+        worksheet.getRow(startRow + 2).getCell(promoIndexCell).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: jourCouleurs[jourIndex] },
+        };
+
+        const semaine = promo.Semaine.find((s) => s.Jour === jour);
+        if (semaine) {
+          const startHourIndex = 1; // Index de 7h30
+          const endHourIndex = heures.length - 1; // Index de 19h
+
+          // Afficher le message sur toutes les cellules si EnCours est false
+          if (!semaine.EnCours) {
+            worksheet.mergeCells(startHourIndex + startRow + 3, promoIndexCell, endHourIndex + startRow + 2, promoIndexCell);
+            const messageCell = worksheet.getRow(startHourIndex + startRow + 3).getCell(promoIndexCell);
+            messageCell.value = semaine.Message || "journée sans cours";
+            messageCell.alignment = { horizontal: 'center', vertical: 'middle' };
+            messageCell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'CCCCCC' },
+            };
+            return; // Passer à la journée suivante
+          }
+
+          // Afficher les cours si EnCours est true
+          semaine.Cours.forEach((coursData) => {
+            if (!matiereCouleurs[coursData.Matiere]) {
+              matiereCouleurs[coursData.Matiere] = generateLightColor();
+            }
+            const matiereColor = matiereCouleurs[coursData.Matiere];
+
+            const startHourIndex = heures.indexOf(coursData.HeureDebut);
+            const endHourIndex = heures.indexOf(coursData.HeureFin);
+
+            worksheet.mergeCells(startHourIndex + startRow + 3, promoIndexCell, endHourIndex + startRow + 2, promoIndexCell);
+
+            const cell = worksheet.getRow(startHourIndex + startRow + 3).getCell(promoIndexCell);
+            const duration = endHourIndex - startHourIndex;
+
+            if (duration >= 3) {
+              cell.value = `${coursData.Matiere}\nProf: ${coursData.Professeur}\nSalle: ${coursData.Salle}`;
+            } else {
+              cell.value = `${coursData.Matiere} | Prof: ${coursData.Professeur} | Salle: ${coursData.Salle}`;
+            }
+            cell.alignment = { wrapText: true, horizontal: 'center', vertical: 'middle' };
+            cell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: matiereColor },
+            };
+          });
         }
+      });
+    });
 
-        // Afficher les cours si EnCours est true
-        semaine.Cours.forEach((coursData) => {
-          if (!matiereCouleurs[coursData.Matiere]) {
-            matiereCouleurs[coursData.Matiere] = generateLightColor();
-          }
-          const matiereColor = matiereCouleurs[coursData.Matiere];
-
-          const startHourIndex = heures.indexOf(coursData.HeureDebut);
-          const endHourIndex = heures.indexOf(coursData.HeureFin);
-
-          worksheet.mergeCells(startHourIndex + 5, promoIndexCell, endHourIndex + 4, promoIndexCell);
-
-          const cell = worksheet.getRow(startHourIndex + 5).getCell(promoIndexCell);
-          const duration = endHourIndex - startHourIndex;
-
-          if (duration >= 3) {
-            cell.value = `${coursData.Matiere}\nProf: ${coursData.Professeur}\nSalle: ${coursData.Salle}`;
-          } else {
-            cell.value = `${coursData.Matiere} | Prof: ${coursData.Professeur} | Salle: ${coursData.Salle}`;
-          }
-          cell.alignment = { wrapText: true, horizontal: 'center', vertical: 'middle' };
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: matiereColor },
-          };
-        });
+    // Ajuster la largeur des colonnes
+    joursSemaine.forEach((_, jourIndex) => {
+      const baseIndex = jourIndex * nombreColonnes + 2;
+      for (let i = 0; i < nombreColonnes; i++) {
+        worksheet.getColumn(baseIndex + i).width = 25;
       }
     });
-  });
 
-  joursSemaine.forEach((_, jourIndex) => {
-    const baseIndex = jourIndex * nombreColonnes + 2;
-    for (let i = 0; i < nombreColonnes; i++) {
-      worksheet.getColumn(baseIndex + i).width = 25;
-    }
-  });
+    // Colonne des heures à gauche
+    const hoursColumnLeftIndex = 1;
+    worksheet.getRow(startRow + 2).getCell(hoursColumnLeftIndex).value = 'Heures';
+    worksheet.getRow(startRow + 2).getCell(hoursColumnLeftIndex).alignment = { horizontal: 'center' };
+    worksheet.getColumn(hoursColumnLeftIndex).width = 10;
 
-  // Colonne des heures à gauche
-  const hoursColumnLeftIndex = 1;
-  worksheet.getRow(4).getCell(hoursColumnLeftIndex).value = 'Heures';
-  worksheet.getRow(4).getCell(hoursColumnLeftIndex).alignment = { horizontal: 'center' };
-  worksheet.getColumn(hoursColumnLeftIndex).width = 10;
-
-  heures.forEach((heure, index) => {
-    const row = worksheet.getRow(index + 5);
-    const hourCell = row.getCell(hoursColumnLeftIndex);
-    hourCell.value = heure;
-    hourCell.alignment = { horizontal: 'center' };
-    const colorIndex = Math.floor(index / 2) % 2;
-    hourCell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: ['FFFFFF', 'DDDDDD'][colorIndex] },
-    };
-  });
-
-  // Colonne des heures à droite du dernier jour (vendredi)
-  const hoursColumnRightIndex = (joursSemaine.length * nombreColonnes + 2); // Index à droite
-  worksheet.getRow(4).getCell(hoursColumnRightIndex).value = 'Heures';
-  worksheet.getRow(4).getCell(hoursColumnRightIndex).alignment = { horizontal: 'center' };
-  worksheet.getColumn(hoursColumnRightIndex).width = 10;
-
-  heures.forEach((heure, index) => {
-    const row = worksheet.getRow(index + 5);
-    const hourCell = row.getCell(hoursColumnRightIndex);
-    hourCell.value = heure;
-    hourCell.alignment = { horizontal: 'center' };
-    const colorIndex = Math.floor(index / 2) % 2;
-    hourCell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: ['FFFFFF', 'DDDDDD'][colorIndex] },
-    };
-  });
-
-  const totalRows = worksheet.rowCount;
-  const totalColumns = worksheet.columnCount;
-
-  for (let rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
-    for (let colIndex = 1; colIndex <= totalColumns; colIndex++) {
-      const cell = worksheet.getRow(rowIndex).getCell(colIndex);
-      cell.border = {
-        top: { style: 'thin' },
-        left: { style: 'thin' },
-        bottom: { style: 'thin' },
-        right: { style: 'thin' },
+    heures.forEach((heure, index) => {
+      const row = worksheet.getRow(index + startRow + 3);
+      const hourCell = row.getCell(hoursColumnLeftIndex);
+      hourCell.value = heure;
+      hourCell.alignment = { horizontal: 'center' };
+      const colorIndex = Math.floor(index / 2) % 2;
+      hourCell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: ['FFFFFF', 'DDDDDD'][colorIndex] },
       };
+    });
+
+    // Colonne des heures à droite du dernier jour (vendredi)
+    const hoursColumnRightIndex = (joursSemaine.length * nombreColonnes + 2); // Index à droite
+    worksheet.getRow(startRow + 2).getCell(hoursColumnRightIndex).value = 'Heures';
+    worksheet.getRow(startRow + 2).getCell(hoursColumnRightIndex).alignment = { horizontal: 'center' };
+    worksheet.getColumn(hoursColumnRightIndex).width = 10;
+
+    heures.forEach((heure, index) => {
+      const row = worksheet.getRow(index + startRow + 3);
+      const hourCell = row.getCell(hoursColumnRightIndex);
+      hourCell.value = heure;
+      hourCell.alignment = { horizontal: 'center' };
+      const colorIndex = Math.floor(index / 2) % 2;
+      hourCell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: ['FFFFFF', 'DDDDDD'][colorIndex] },
+      };
+    });
+
+    // Appliquer les bordures à toutes les cellules
+    const totalRows = worksheet.rowCount;
+    const totalColumns = worksheet.columnCount;
+
+    for (let rowIndex = startRow; rowIndex <= totalRows; rowIndex++) {
+      for (let colIndex = 1; colIndex <= totalColumns; colIndex++) {
+        const cell = worksheet.getRow(rowIndex).getCell(colIndex);
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+      }
     }
+
+    // Ajouter de l'espace après chaque tableau (ajuster selon le besoin)
+    startRow += Math.max(5, heures.length + 3) + 2; // 2 lignes d'espace supplémentaires
   }
 
-    // Enregistrement du fichier
-    const filePath = path.resolve(__dirname, '../..//files/EdtMicro.xlsx');
-    await workbook.xlsx.writeFile(filePath);
-    
-    return filePath;
-  };
+  const filePath = path.resolve(__dirname, '../..//files/EdtMicro.xlsx');
+  await workbook.xlsx.writeFile(filePath);
   
+  return filePath;
+};
