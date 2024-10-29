@@ -12,7 +12,8 @@ export interface Heure {
 export interface Cours {
   name: string;
   UE: string;
-  semestrePeriode: string;
+  semestre: number[];
+  periode: number[];
   heure: Heure;
 }
 
