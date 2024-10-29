@@ -224,6 +224,7 @@ app.get('/getPromosData', (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
+
 app.post('/setPromosData', (req, res) => {
   const { DateDeb, DateFin, Promos } = req.body;
   console.log('req.body', req.body);
@@ -353,6 +354,7 @@ app.get('/download/EdtMacro', (req, res) => {
     }
   });
 });
+
 /**
  * @swagger
  * /readMaquette:
@@ -446,7 +448,7 @@ try {
 });
 
 /**
- * @swagger 
+ * @swagger
  * /generateEdtSquelette:
  *   post:
  *     summary: Generate an Excel timetable skeleton based on provided data
@@ -456,47 +458,71 @@ try {
  *       content:
  *         application/json:
  *           schema:
- *             type: array
- *             description: List of classes with their respective courses
- *             items:
- *               type: object
- *               properties:
- *                 nomClasse:
- *                   type: string
- *                   description: The name of the class
- *                   example: "Classe 1"
- *                 semaine:
- *                   type: array
- *                   description: List of days of the week with their respective courses
- *                   items:
- *                     type: object
- *                     properties:
- *                       jour:
- *                         type: string
- *                         description: The day of the week
- *                         example: "Lundi"
- *                       cours:
- *                         type: array
- *                         description: List of courses for the day
- *                         items:
- *                           type: object
- *                           properties:
- *                             matiere:
- *                               type: string
- *                               description: The subject of the course
- *                               example: "Mathématiques"
- *                             heureDebut:
- *                               type: string
- *                               description: The start time of the course
- *                               example: "9h"
- *                             heureFin:
- *                               type: string
- *                               description: The end time of the course
- *                               example: "10h"
- *                             professeur:
- *                               type: string
- *                               description: The teacher of the course
- *                               example: "M. Dupont"
+ *             type: object
+ *             properties:
+ *               EdtMicro:
+ *                 type: array
+ *                 description: Array of timetable micros, each with start date and class details
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     DateDebut:
+ *                       type: string
+ *                       format: date
+ *                       description: Start date of the timetable
+ *                       example: "2023-10-01"
+ *                     Promo:
+ *                       type: array
+ *                       description: Array of classes with schedules
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           Name:
+ *                             type: string
+ *                             description: Name of the class
+ *                             example: "Classe 1"
+ *                           Semaine:
+ *                             type: array
+ *                             description: Weekly schedule with courses
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 Jour:
+ *                                   type: string
+ *                                   description: Day of the week
+ *                                   example: "Lundi"
+ *                                 EnCours:
+ *                                   type: boolean
+ *                                   description: Indicates if courses are scheduled on this day
+ *                                 Message:
+ *                                   type: string
+ *                                   description: Additional message or note for the day
+ *                                 Cours:
+ *                                   type: array
+ *                                   description: List of courses scheduled for the day
+ *                                   items:
+ *                                     type: object
+ *                                     properties:
+ *                                       Matiere:
+ *                                         type: string
+ *                                         description: Subject of the course
+ *                                         example: "Mathématiques"
+ *                                       HeureDebut:
+ *                                         type: string
+ *                                         description: Start time of the course
+ *                                         example: "9h"
+ *                                       HeureFin:
+ *                                         type: string
+ *                                         description: End time of the course
+ *                                         example: "10h"
+ *                                       Professeur:
+ *                                         type: string
+ *                                         description: Teacher of the course
+ *                                         example: "M. Dupont"
+ *                                       Salle:
+ *                                         type: string
+ *                                         description: Room where the course is held
+ *                                         example: "Salle 101"
  *     responses:
  *       200:
  *         description: The Excel file was generated successfully
@@ -526,29 +552,38 @@ try {
  *               type: string
  *               example: "Internal server error"
  */
+
+
 app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
   try {
-    const classes = req.body;
+    const edtMicro = req.body; // Changement effectué ici
 
-    // Vérifiez que les classes sont présentes
-    if (!classes || !Array.isArray(classes)) {
-      res.status(400).send('Missing or invalid data: Ensure classes are provided.');
+    // Check if edtMicro is present and valid
+    if (!edtMicro || !Array.isArray(edtMicro.EdtMicro)) { // Changement effectué ici
+      res.status(400).send('Missing or invalid data: Ensure EdtMicro is provided.'); // Changement effectué ici
       return;
     }
 
-    // Assurez-vous que chaque classe a les jours et les cours correspondants
-    const validClasses = classes.every((classe: any) => 
-      classe.nomClasse && Array.isArray(classe.semaine) &&
-      classe.semaine.every((jour: any) => jour.jour && Array.isArray(jour.cours))
+    // Validate structure of edtMicro data
+    const isValid = edtMicro.EdtMicro.every((macro: any) => // Changement effectué ici
+      macro.DateDebut &&
+      Array.isArray(macro.Promo) &&
+      macro.Promo.every((promo: any) => 
+        promo.Name && 
+        Array.isArray(promo.Semaine) &&
+        promo.Semaine.every((semaine: any) => 
+          semaine.Jour && typeof semaine.EnCours === 'boolean' && Array.isArray(semaine.Cours)
+        )
+      )
     );
 
-    if (!validClasses) {
-      res.status(400).send('Invalid data: Ensure each class has a valid nomClasse, semaine, and courses for each day.');
+    if (!isValid) {
+      res.status(400).send('Invalid data: Ensure EdtMicro structure follows the required format.'); // Changement effectué ici
       return;
     }
 
-    // Appel de la fonction pour générer le fichier Excel (mise à jour pour s'adapter à la nouvelle structure)
-    const filePath = await generateEdtSquelette({ classes });
+    // Call function to generate the Excel file
+    const filePath = await generateEdtSquelette(edtMicro); // Changement effectué ici
 
     res.status(200).json({
       message: 'Excel file generated and saved on the server',
@@ -556,10 +591,12 @@ app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
     });
 
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send('Internal server error: ' + error);
   }
 });
+
+
 
 // Start the server
 app.listen(PORT, () => {
