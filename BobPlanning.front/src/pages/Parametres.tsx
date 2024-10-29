@@ -79,6 +79,7 @@ const Parametres: React.FC = () => {
   });
 
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(true);
+  const [isMicroButtonDisabled, setIsMicroButtonDisabled] = React.useState(true);
   const [loading, setLoading] = React.useState(true); // État pour le chargement
 
   const [message, setMessage] = React.useState<string | null>(null);
@@ -131,6 +132,7 @@ const Parametres: React.FC = () => {
     // }
 
     setIsButtonDisabled(!isAllDataFilled());
+    setIsMicroButtonDisabled(!isAllDataFilled());
 
     const majPromosData = async () => {
       try {
@@ -208,6 +210,20 @@ const Parametres: React.FC = () => {
             Télécharger le fichier généré
           </a>
         )}
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={isMicroButtonDisabled}
+          sx={{
+            backgroundColor: '#242424',  // Couleur d'arrière-plan personnalisée
+            color: '#FFFFFF',            // Couleur du texte
+            '&:hover': {
+              backgroundColor: '#E64A19',  // Couleur lorsque l'on survole le bouton
+            },
+            mt: 3,
+          }} >
+          Paramètres Micro → 
+        </Button>
       </div>
     );
   } else {
