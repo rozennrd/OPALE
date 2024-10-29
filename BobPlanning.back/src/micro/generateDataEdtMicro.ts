@@ -8,6 +8,10 @@ export const generateDataEdtMicro = async (macro: EdtMacroData,  maquette: Maque
   let micro: EdtMicro[] = [];
   let promo: Promo[] = [];
   let semaine: Semaine[] = [];
+  let enCours: boolean = true;
+  let enCoursWeek: boolean = true;  
+  let message: string = "";
+  let messageWeek: string = "";
 
   macro.DateDeb = new Date(macro.DateDeb);
   macro.DateFin = new Date(macro.DateFin);
@@ -34,14 +38,55 @@ export const generateDataEdtMicro = async (macro: EdtMacroData,  maquette: Maque
     promo = [];
     macro.Promos.forEach(promoMacro => {
       semaine = [];
-      let currentWeek: Date = new Date(currentDate);
+      enCoursWeek = true;
+      messageWeek = "";
 
-      while (currentWeek < new Date(currentDate.getDate() + 5)) {
+      if (currentDate > holydayStartDate && currentDate < holydayEndDate) {
+        // 1 seule semaine de vacances pour la toussaint (sur jours feries)
+        if (sortedHolidays[i].description === "Vacances de la Toussaint") {
+          for (let i = 0; i < 7; i++) {
+            const currentWeekDate = new Date(currentDate);
+            currentWeekDate.setDate(currentWeekDate.getDate() + i);
+            if (publicHolidays[currentWeekDate.toISOString().split('T')[0]]) {
+              enCoursWeek = false;
+              messageWeek = "Vacances de la toussaint + toussaint";
+            }
+          }
+          //Ajout des vacances scolaires
+        } else {
+          enCoursWeek = false;
+          messageWeek = sortedHolidays[i].description;
+        }
+      }       
 
+      for (let i = 0; i < 5; i++) {
+        //Verif si jour ferie
+        let currentWeek = new Date(currentDate);
+        currentWeek.setDate(currentWeek.getDate() + i);
+        enCours = true;
+        message = "";
+        if (enCoursWeek === true) {
+          if (publicHolidays[currentWeek.toISOString().split('T')[0]]) {
+            enCours = false;
+            message = publicHolidays[currentWeek.toISOString().split('T')[0]];
+          } else {
+            // Algorithme cours a appeller ici
+          }
+        } else {
+          enCours = false;
+          message = messageWeek;
+        }
+
+        semaine.push({jour: currentWeek.toISOString(), enCours: enCours, message: message, cours: []});
         currentWeek.setDate(currentWeek.getDate() + 1);
       }
 
-
+      if (holydayEndDate < currentDate && i < sortedHolidays.length - 1) {
+        i++;
+        holydayStartDate = new Date(sortedHolidays[i].start_date);
+        holydayEndDate = new Date(sortedHolidays[i].end_date);
+      }
+  
       promo.push({name: promoMacro.Name, semaine: semaine});
     });
 
