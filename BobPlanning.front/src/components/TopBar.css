@@ -2,19 +2,18 @@
 
 .top-bar {
     padding: 0 20px 0px 20px;
-    
-    width: 98%;
+    width: 90%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: var(--secondary-color);
     color: var(--text-color);
-    
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     position: fixed;
     top: 0;
     left: 0;
     z-index: 1000;
+    padding-right: 10%;
 }
 .logo {
     width: 100px; /* Taille du logo ajustée pour plus de lisibilité */

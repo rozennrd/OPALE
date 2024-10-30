@@ -15,7 +15,7 @@ h2.periode-title {
 
 /* Label styling */
 .label-nombre-Periode {
-    font-weight: bold;
+
     font-size: 16px;
     white-space: nowrap; /* Prevent the label from wrapping */
     color: #333; 
