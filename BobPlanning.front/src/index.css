@@ -28,7 +28,7 @@ a:hover {
 
 body {
   margin: 0;
-  padding-top: 200px; /* Décaler le contenu de la hauteur de la TopBar */
+  padding-top: 140px; /* Décaler le contenu de la hauteur de la TopBar */
   background-color: var(--background-color); /* Couleur de fond des sections */
   font-family: var(--font-family);
   color: var(--text-color);

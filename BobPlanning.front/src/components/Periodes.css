@@ -1,7 +1,6 @@
-h2 {
+h2.periode-title {
     text-align: start;
-    /* Aligns the text to the left (start) */
-    color: #333; 
+    margin-top: 20px; 
 }
 
 .nombre-Periode {

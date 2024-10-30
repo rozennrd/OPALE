@@ -34,7 +34,6 @@
     flex-direction: column;
     align-items: center;
     gap: 10rem; 
-    padding: 2rem;
     background-color: var(--section-color); 
     width: 100%;
   }
@@ -78,14 +77,14 @@
   }
   
   .learn-more-link {
-    color: #007bff;
+    color: var(--primary-color); /* Utiliser la couleur primaire globale */
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 500; /* Pour aligner avec le style global */
     margin-top: 1rem;
     display: inline-block;
-  }
-  
-  .learn-more-link:hover {
+}
+
+.learn-more-link:hover {
+    color: var(--accent-color); /* Utiliser la couleur d'accentuation globale au survol */
     text-decoration: underline;
-  }
-  
+}

@@ -1,4 +1,3 @@
-import React from "react";
 import './TrueHome.css';
 import ReactPlayer from 'react-player';
 

@@ -17,7 +17,7 @@
     z-index: 1000;
 }
 .logo {
-    width: 140px; /* Taille du logo ajustée pour plus de lisibilité */
+    width: 100px; /* Taille du logo ajustée pour plus de lisibilité */
     height: auto;
     transition: transform 0.3s ease; /* Transition douce pour l'effet de survol */
 }
@@ -34,7 +34,7 @@
 .nav-links a {
     color: var(--text-color-dark-bg); /* Utilisation de la couleur de texte principale */
     text-decoration: none;
-    font-size: var(--font-size-medium); /* Taille de police définie dans la charte */
+    font-size: var(--font-size-small); /* Taille de police définie dans la charte */
     font-weight: 400;
     transition: color 0.3s ease, text-decoration 0.3s ease; /* Effets de transition pour les interactions */
 }

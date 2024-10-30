@@ -96,7 +96,7 @@ const handleDateChange = (index: number, value: Date) => {
     return (
         <>
             <Divider className="divider" />
-            <h2>Périodes</h2>
+            <h2 className="periode-title">Périodes</h2>
 
             <div className="nombre-Periode">
                 <label htmlFor="art-date" className="label-nombre-Periode">Nombre de périodes </label>
