@@ -38,6 +38,7 @@ const Home: React.FC = () => {
             transition={{ duration: 0.5, loop: Infinity }} // L'animation fait des boucles infinies
         >
 
+
             {/* Feux d'artifice */}
             {showFireworks && (
                 <div>
