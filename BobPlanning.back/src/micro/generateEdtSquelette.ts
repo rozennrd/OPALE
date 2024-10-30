@@ -1,41 +1,13 @@
 import ExcelJS from 'exceljs';
 import path from 'path';
-
-interface Cours {
-  Matiere: string;
-  HeureDebut: string;
-  HeureFin: string;
-  Professeur: string;
-  Salle: string;
-}
-
-interface Semaine {
-  Jour: string;
-  EnCours: boolean;
-  Message: string;
-  Cours: Cours[];
-}
-
-interface Promo {
-  Name: string;
-  Semaine: Semaine[];
-}
-
-interface EdtMicro {
-  DateDebut: string;
-  Promo: Promo[];
-}
-
-interface ColumnsData {
-  EdtMicro: EdtMicro[];
-}
+import { EdtMicro } from '../types/EdtMicroData';
 
 const generateLightColor = (): string => {
   const colors = ['FFDDDD', 'DDFFDD', 'DDDDFF', 'FFFFDD', 'FFDDEE'];
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
-export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<string> => {
+export const generateEdtSquelette = async (micro: EdtMicro[]): Promise<string> => {
   const workbook: ExcelJS.Workbook = new ExcelJS.Workbook();
   const worksheet: ExcelJS.Worksheet = workbook.addWorksheet('Emploi du Temps');
 
@@ -48,9 +20,9 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
 
   let startRow = 1; // Ligne de départ pour le premier tableau
 
-  for (const edtMicro of columnsData.EdtMicro) {
-    const startDate = new Date(edtMicro.DateDebut);
-    const promos = edtMicro.Promo;
+  for (const edtMicro of micro) {
+    const startDate = new Date(edtMicro.dateDebut);
+    const promos = edtMicro.promos;
     const nombreColonnes = promos.length;
 
     const jourCouleurs = ['FFDDDD', 'DDFFDD', 'DDDDFF', 'FFFFDD', 'FFDDEE'];
@@ -81,7 +53,7 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
 
       promos.forEach((promo, promoIndex) => {
         const promoIndexCell = dateCellIndex + promoIndex;
-        worksheet.getRow(startRow + 2).getCell(promoIndexCell).value = promo.Name;
+        worksheet.getRow(startRow + 2).getCell(promoIndexCell).value = promo.name;
         worksheet.getRow(startRow + 2).getCell(promoIndexCell).alignment = { horizontal: 'center' };
         worksheet.getRow(startRow + 2).getCell(promoIndexCell).fill = {
           type: 'pattern',
@@ -89,16 +61,16 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
           fgColor: { argb: jourCouleurs[jourIndex] },
         };
 
-        const semaine = promo.Semaine.find((s) => s.Jour === jour);
+        const semaine = promo.semaine.find((s) => s.jour === jour);
         if (semaine) {
           const startHourIndex = 1; // Index de 7h30
           const endHourIndex = heures.length - 1; // Index de 19h
 
           // Afficher le message sur toutes les cellules si EnCours est false
-          if (!semaine.EnCours) {
+          if (!semaine.enCours) {
             worksheet.mergeCells(startHourIndex + startRow + 3, promoIndexCell, endHourIndex + startRow + 2, promoIndexCell);
             const messageCell = worksheet.getRow(startHourIndex + startRow + 3).getCell(promoIndexCell);
-            messageCell.value = semaine.Message || "journée sans cours";
+            messageCell.value = semaine.message || "journée sans cours";
             messageCell.alignment = { horizontal: 'center', vertical: 'middle' };
             messageCell.fill = {
               type: 'pattern',
@@ -109,14 +81,14 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
           }
 
           // Afficher les cours si EnCours est true
-          semaine.Cours.forEach((coursData) => {
-            if (!matiereCouleurs[coursData.Matiere]) {
-              matiereCouleurs[coursData.Matiere] = generateLightColor();
+          semaine.cours.forEach((coursData) => {
+            if (!matiereCouleurs[coursData.matiere]) {
+              matiereCouleurs[coursData.matiere] = generateLightColor();
             }
-            const matiereColor = matiereCouleurs[coursData.Matiere];
+            const matiereColor = matiereCouleurs[coursData.matiere];
 
-            const startHourIndex = heures.indexOf(coursData.HeureDebut);
-            const endHourIndex = heures.indexOf(coursData.HeureFin);
+            const startHourIndex = heures.indexOf(coursData.heureDebut);
+            const endHourIndex = heures.indexOf(coursData.heureFin);
 
             worksheet.mergeCells(startHourIndex + startRow + 3, promoIndexCell, endHourIndex + startRow + 2, promoIndexCell);
 
@@ -124,9 +96,9 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
             const duration = endHourIndex - startHourIndex;
 
             if (duration >= 3) {
-              cell.value = `${coursData.Matiere}\nProf: ${coursData.Professeur}\nSalle: ${coursData.Salle}`;
+              cell.value = `${coursData.matiere}\nProf: ${coursData.professeur}\nSalle: ${coursData.salleDeCours}`;
             } else {
-              cell.value = `${coursData.Matiere} | Prof: ${coursData.Professeur} | Salle: ${coursData.Salle}`;
+              cell.value = `${coursData.matiere} | Prof: ${coursData.professeur} | Salle: ${coursData.salleDeCours}`;
             }
             cell.alignment = { wrapText: true, horizontal: 'center', vertical: 'middle' };
             cell.fill = {
@@ -205,7 +177,7 @@ export const generateEdtSquelette = async (columnsData: ColumnsData): Promise<st
     startRow += Math.max(5, heures.length + 3) + 2; // 2 lignes d'espace supplémentaires
   }
 
-  const filePath = path.resolve(__dirname, '../..//files/EdtMicro.xlsx');
+  const filePath = path.resolve(__dirname, '../../files/EdtMicro.xlsx');
   await workbook.xlsx.writeFile(filePath);
   
   return filePath;

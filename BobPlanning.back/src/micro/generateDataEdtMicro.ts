@@ -5,6 +5,7 @@ import { getHolidays, getPublicHolidays } from '../tools/holidaysAndWeek';
 
 export const generateDataEdtMicro = async (macro: EdtMacroData,  maquette: MaquetteData[]) : Promise<EdtMicro[]> => {
 
+  let days: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
   let micro: EdtMicro[] = [];
   let promo: Promo[] = [];
   let semaine: Semaine[] = [];
@@ -77,7 +78,7 @@ export const generateDataEdtMicro = async (macro: EdtMacroData,  maquette: Maque
           message = messageWeek;
         }
 
-        semaine.push({jour: currentWeek.toISOString(), enCours: enCours, message: message, cours: []});
+        semaine.push({jour: days[i], enCours: enCours, message: message, cours: []});
         currentWeek.setDate(currentWeek.getDate() + 1);
       }
 
