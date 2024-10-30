@@ -8,6 +8,7 @@ import express, { Request, Response } from 'express';
 import * as mysql from 'mysql2';
 import getDBConfig from './database/getDBConfig';
 import path from 'path';
+import { EdtMicro } from './types/EdtMicroData';
 
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
@@ -226,7 +227,6 @@ app.get('/getPromosData', (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
-
 app.post('/setPromosData', (req, res) => {
   const { DateDeb, DateFin, Promos } = req.body;
   console.log('req.body', req.body);
@@ -459,71 +459,68 @@ try {
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               EdtMicro:
- *                 type: array
- *                 description: Array of timetable micros, each with start date and class details
- *                 items:
- *                   type: object
- *                   properties:
- *                     DateDebut:
- *                       type: string
- *                       format: date
- *                       description: Start date of the timetable
- *                       example: "2023-10-01"
- *                     Promo:
- *                       type: array
- *                       description: Array of classes with schedules
- *                       items:
- *                         type: object
- *                         properties:
- *                           Name:
- *                             type: string
- *                             description: Name of the class
- *                             example: "Classe 1"
- *                           Semaine:
- *                             type: array
- *                             description: Weekly schedule with courses
- *                             items:
- *                               type: object
- *                               properties:
- *                                 Jour:
- *                                   type: string
- *                                   description: Day of the week
- *                                   example: "Lundi"
- *                                 EnCours:
- *                                   type: boolean
- *                                   description: Indicates if courses are scheduled on this day
- *                                 Message:
- *                                   type: string
- *                                   description: Additional message or note for the day
- *                                 Cours:
- *                                   type: array
- *                                   description: List of courses scheduled for the day
- *                                   items:
- *                                     type: object
- *                                     properties:
- *                                       Matiere:
- *                                         type: string
- *                                         description: Subject of the course
- *                                         example: "Mathématiques"
- *                                       HeureDebut:
- *                                         type: string
- *                                         description: Start time of the course
- *                                         example: "9h"
- *                                       HeureFin:
- *                                         type: string
- *                                         description: End time of the course
- *                                         example: "10h"
- *                                       Professeur:
- *                                         type: string
- *                                         description: Teacher of the course
- *                                         example: "M. Dupont"
- *                                       Salle:
- *                                         type: string
- *                                         description: Room where the course is held
- *                                         example: "Salle 101"
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 dateDebut:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Start date of the timetable
+ *                   example: "2024-01-01T00:00:00.000Z"
+ *                 promos:
+ *                   type: array
+ *                   description: Array of classes with schedules
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         description: Name of the class
+ *                         example: "Promo 2024"
+ *                       semaine:
+ *                         type: array
+ *                         description: Weekly schedule with courses
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             jour:
+ *                               type: string
+ *                               format: date-time
+ *                               description: Date of the day
+ *                               example: "2024-01-01T00:00:00.000Z"
+ *                             enCours:
+ *                               type: boolean
+ *                               description: Indicates if courses are scheduled on this day
+ *                             message:
+ *                               type: string
+ *                               description: Additional message or note for the day
+ *                             cours:
+ *                               type: array
+ *                               description: List of courses scheduled for the day
+ *                               items:
+ *                                 type: object
+ *                                 properties:
+ *                                   matiere:
+ *                                     type: string
+ *                                     description: Subject of the course
+ *                                     example: "Mathématiques"
+ *                                   heureDebut:
+ *                                     type: string
+ *                                     description: Start time of the course
+ *                                     example: "09:00"
+ *                                   heureFin:
+ *                                     type: string
+ *                                     description: End time of the course
+ *                                     example: "11:00"
+ *                                   professeur:
+ *                                     type: string
+ *                                     description: Teacher of the course
+ *                                     example: "Mme Dupont"
+ *                                   salleDeCours:
+ *                                     type: string
+ *                                     description: Room where the course is held
+ *                                     example: "Salle 101"
  *     responses:
  *       200:
  *         description: The Excel file was generated successfully
@@ -553,38 +550,45 @@ try {
  *               type: string
  *               example: "Internal server error"
  */
-
-
 app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
   try {
-    const edtMicro = req.body; // Changement effectué ici
+    const edtMicroArray : EdtMicro[] = req.body;
 
-    // Check if edtMicro is present and valid
-    if (!edtMicro || !Array.isArray(edtMicro.EdtMicro)) { // Changement effectué ici
-      res.status(400).send('Missing or invalid data: Ensure EdtMicro is provided.'); // Changement effectué ici
+    // Check if edtMicroArray is an array of objects
+    if (!Array.isArray(edtMicroArray)) {
+      res.status(400).send('Invalid data format: Expected an array of timetable entries.');
       return;
     }
 
-    // Validate structure of edtMicro data
-    const isValid = edtMicro.EdtMicro.every((macro: any) => // Changement effectué ici
-      macro.DateDebut &&
-      Array.isArray(macro.Promo) &&
-      macro.Promo.every((promo: any) => 
-        promo.Name && 
-        Array.isArray(promo.Semaine) &&
-        promo.Semaine.every((semaine: any) => 
-          semaine.Jour && typeof semaine.EnCours === 'boolean' && Array.isArray(semaine.Cours)
+    // Validate structure of each object in edtMicroArray
+    const isValid = edtMicroArray.every((edtMicro: EdtMicro) =>
+      edtMicro.dateDebut &&
+      Array.isArray(edtMicro.promos) &&
+      edtMicro.promos.every((promo: any) =>
+        promo.name &&
+        Array.isArray(promo.semaine) &&
+        promo.semaine.every((semaine: any) =>
+          semaine.jour &&
+          typeof semaine.enCours === 'boolean' &&
+          Array.isArray(semaine.cours) &&
+          semaine.cours.every((cours: any) =>
+            cours.matiere &&
+            cours.heureDebut &&
+            cours.heureFin &&
+            cours.professeur &&
+            cours.salleDeCours
+          )
         )
       )
     );
 
     if (!isValid) {
-      res.status(400).send('Invalid data: Ensure EdtMicro structure follows the required format.'); // Changement effectué ici
+      res.status(400).send('Invalid data: Ensure EdtMicro structure follows the required format.');
       return;
     }
 
     // Call function to generate the Excel file
-    const filePath = await generateEdtSquelette(edtMicro); // Changement effectué ici
+    const filePath = await generateEdtSquelette(edtMicroArray);
 
     res.status(200).json({
       message: 'Excel file generated and saved on the server',
