@@ -124,7 +124,6 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
         }
 
         if (rowValues[semestrePeriode] !== undefined) { 
-          console.log(rowValues[semestrePeriode]);
           if (typeof rowValues[semestrePeriode] === 'number') {
             semestre = [rowValues[semestrePeriode]];
             periode = [];
