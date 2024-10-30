@@ -47,7 +47,7 @@ const handleDateChange = (index: number, value: Date) => {
         setPromosData((prevData: any) => {
             const newPromosData = { ...prevData };
             const promo = newPromosData.Promos?.find((promo: { Name: string; }) => promo.Name === promoName);
-            if (promo && promo.Periode[index]&& promo.Periode[index].DateFinP!='') {
+            if (promo && promo.Periode[index]&& promo.Periode[index].DateFinP!='' && promo.Periode[index].DateDebutP) {
                 // Met à jour le nombre de semaines
                 promo.Periode[index].nbSemaineP = value; 
                 // Calculer la DateFinP en ajoutant le nombre de semaines à DateDebutP
