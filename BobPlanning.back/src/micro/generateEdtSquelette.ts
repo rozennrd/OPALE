@@ -61,9 +61,7 @@ export const generateEdtSquelette = async (micro: EdtMicro[]): Promise<string> =
           fgColor: { argb: jourCouleurs[jourIndex] },
         };
 
-        console.log(promo.semaine);
         const semaine = promo.semaine.find((s) => s.jour === jour);
-        console.log(semaine);
         if (semaine) {
           const startHourIndex = 1; // Index de 7h30
           const endHourIndex = heures.length - 1; // Index de 19h
