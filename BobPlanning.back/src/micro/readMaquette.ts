@@ -5,6 +5,37 @@ const cleanCellValue = (value: any): any => {
   return typeof value === 'string' ? value.replace(/\n/g, ' ').trim() : value;
 };
 
+function extractSemesterAndPeriodNumbers(input: string): { semesters: number[], periods: number[] } {
+  // Ensure the input is a string
+  if (typeof input !== 'string') {
+      throw new TypeError('Input must be a string');
+  }
+
+  const semesters: number[] = [];
+  const periods: number[] = [];
+
+  // Split the input by spaces or 'et'
+  const parts = input.split(/[\s]+et[\s]+|[\s]+/);
+  
+  parts.forEach(part => {
+      // Check for semesters starting with 'S'
+      const semesterMatch = part.match(/S(\d+)/);
+      if (semesterMatch) {
+          semesters.push(Number(semesterMatch[1]));
+      }
+
+      // Check for periods starting with 'P', allowing for commas
+      const periodMatches = part.match(/P(\d+)/g);
+      if (periodMatches) {
+          periodMatches.forEach(period => {
+              periods.push(Number(period.substring(1))); // Remove 'P' and convert to number
+          });
+      }
+  });
+
+  return { semesters, periods };
+}
+
 export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(buffer);
@@ -17,7 +48,8 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
   workbook.eachSheet((worksheet) => {
     let table: boolean = false;
     let tableHeader: number = -1;
-    let semestre: string = "";
+    let semestre: number[] = [];
+    let periode: number[] = [];
     let ue: number = -1;
     let modules: number = -1;
     let nbHeures: number = -1;
@@ -40,7 +72,7 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
       if (rowValues.some((cell) => typeof cell === 'string' && (cell.includes("SEMESTRE") || cell.includes("Semestres")) && !cell.includes("TOTAL"))) {
         table = true;
         tableHeader = rowNumber + 2;
-        semestre = rowValues[1];
+        semestre = [rowValues[3].toString().split(' ')[1]];
         return;
       } else if (rowValues.some((cell) => typeof cell === 'string' && cell.includes("TOTAL"))) {
         table = false;
@@ -91,15 +123,22 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
           }
         }
 
-        if (rowValues[semestrePeriode] !== undefined) {
-          semestre = rowValues[semestrePeriode];
+        if (rowValues[semestrePeriode] !== undefined) { 
+          if (typeof rowValues[semestrePeriode] === 'number') {
+            semestre = [rowValues[semestrePeriode]];
+            periode = [];
+          } else {
+            semestre = extractSemesterAndPeriodNumbers(rowValues[semestrePeriode].toString()).semesters;
+            periode = extractSemesterAndPeriodNumbers(rowValues[semestrePeriode].toString()).periods;
+          }
         }
 
         //Add cours
         data.cours.push({
           name: rowValues[modules],
           UE: rowValues[ue],
-          semestrePeriode: semestre,
+          semestre: semestre,
+          periode: periode,
           heure: {
             total: rowValues[nbHeures] && typeof rowValues[nbHeures] === 'object' && rowValues[nbHeures].hasOwnProperty('result') ? parseFloat(rowValues[nbHeures].result) : parseFloat(rowValues[nbHeures]),
             totalAvecProf: rowValues[nbHeuresAvecProf] && typeof rowValues[nbHeuresAvecProf] === 'object' && rowValues[nbHeuresAvecProf].hasOwnProperty('result') ? parseFloat(rowValues[nbHeuresAvecProf].result) : parseFloat(rowValues[nbHeuresAvecProf]),
