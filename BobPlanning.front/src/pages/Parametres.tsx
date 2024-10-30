@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import TopBar from '../components/TopBar';
 import DebFinCalendrier from '../components/DebFinCalendrier';
-import FullWidthTabs from '../components/TabsPromos';
+import TabsPromos from '../components/TabsPromos';
 import Button from '@mui/material/Button';
 import { set } from 'react-datepicker/dist/date_utils';
 import { useNavigate } from 'react-router-dom';
-
+import './Parametres.css';
+import Bouton from '../components/Bouton';
+import DownloadButton from '../components/DownloadButton';
 
 const Parametres: React.FC = () => {
   const navigate = useNavigate();
@@ -123,16 +124,16 @@ const Parametres: React.FC = () => {
     fetchPromosData();
   }, []); // Appel à l'API backend au premier rendu
 
-  //const isInitialMount = useRef(0);
+  const isInitialMount = useRef(0);
 
   useEffect(() => {
     // Incrémente le compteur à chaque rendu
-    //isInitialMount.current += 1;
+    isInitialMount.current += 1;
 
     // Si le compteur est inférieur à 3, ne pas exécuter le code
-    // if (isInitialMount.current < 3) {
-    //   return;
-    // }
+    if (isInitialMount.current < 3) {
+      return;
+    }
 
     setIsButtonDisabled(!isAllDataFilled());
     setIsMicroButtonDisabled(!isAllDataFilled());
@@ -186,50 +187,39 @@ const Parametres: React.FC = () => {
   };
 
   if (!loading) {
-    
+
     return (
-      
-      <div>
-        <TopBar />
+
+      <div className="container">
         <DebFinCalendrier promosData={promosData} setPromosData={setPromosData} />
-        <FullWidthTabs promosData={promosData} setPromosData={setPromosData} />
-        <Button
-          variant="contained"
-          onClick={handleSubmit}
-          disabled={isButtonDisabled}
-          sx={{
-            backgroundColor: '#242424',  // Couleur d'arrière-plan personnalisée
-            color: '#FFFFFF',            // Couleur du texte
-            '&:hover': {
-              backgroundColor: '#E64A19',  // Couleur lorsque l'on survole le bouton
-            },
-            mt: 3,
-          }}
-        >
-          Générer Macro
-        </Button>
+        <TabsPromos promosData={promosData} setPromosData={setPromosData} />
+
+        <div className="buttons-container">
+
+
+          <Bouton
+            onClick={handleSubmit}
+            disabled={isButtonDisabled}
+            variant="contained"
+          >
+            Générer la Macro
+          </Bouton>
+
+
+
+          <Bouton
+            onClick={() => navigate('/parametresMicro', { state: { promosData } })}
+            disabled={isMicroButtonDisabled}
+            variant="contained"
+            className="secondary-button"
+          > Paramètres Micro →
+          </Bouton>
+        </div>
         {/* Afficher le message et le lien de téléchargement */}
-        {message && <div>{message}</div>}
+        {message && <div className='message-success'>{message}</div>}
         {fileUrl && (
-          <a href={fileUrl} download="EdtMacro.xlsx">
-            Télécharger le fichier généré
-          </a>
+          <DownloadButton fileUrl={fileUrl} label="Télécharger le fichier" />
         )}
-        <Button
-          variant="contained"
-          //Redirects to the Micro page
-          onClick={() =>  navigate('/parametresMicro', { state: { promosData } })  }
-          disabled={isMicroButtonDisabled}
-          sx={{
-            backgroundColor: '#242424',  // Couleur d'arrière-plan personnalisée
-            color: '#FFFFFF',            // Couleur du texte
-            '&:hover': {
-              backgroundColor: '#E64A19',  // Couleur lorsque l'on survole le bouton
-            },
-            mt: 3,
-          }} >
-          Paramètres Micro → 
-        </Button>
       </div>
     );
   } else {

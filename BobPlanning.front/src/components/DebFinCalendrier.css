@@ -1,86 +1,64 @@
 /* Main container for DebFinCalendrier */
 .deb-fin-calendrier {
     padding: 20px;
-    background-color: #f9f9f9;
     border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 1000px;
-    margin: 0 auto; /* Center horizontally */
-    text-align: center;
+    margin: 20px auto;
+    display: flex;
+    flex-wrap: wrap
 }
 
-.title {
-    color: #333;
-    font-size: 24px;
+/* Header containing title and date inputs */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 100px;
+}
+
+/* Title styling */
+.header h2 {
+    color: var(--text-color);
+    font-size: var(--font-size-medium);
     font-weight: bold;
-    margin-bottom: 20px;
+    margin: 0;
 }
 
 /* Date picker styling */
-.saisie-date {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.saisie-date-title {
-    text-align: center;
-    width:  100%;
-    color: #333; 
-    
-}
-
 .date-input-container {
-    flex-direction: row;
+    display: flex;
+    gap: 10px;
     align-items: center;
-    gap: 5px;
-    width: 48%;
-    
+    flex-wrap: wrap;
 }
 
 .label {
     font-weight: bold;
-    color: #333;
+    color: var(--text-color);
 }
 
 .input {
-    padding: 10px;
-    font-size: 16px;
+    padding: 8px;
+    font-size: var(--font-size-small);
     border: 1px solid #ccc;
     border-radius: 4px;
-    width: 100%; /* Ensure full width */
-    box-sizing: border-box; /* Ensure padding and border don't cause overflow */
+    background-color: #ffffff;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
 }
 
 .input:focus {
-    border-color: #007bff;
+    border-color: var(--primary-color);
     outline: none;
 }
 
-/* Add some padding or margin to ensure inputs don't stick to the edges
-.date-input-container {
-    padding-right: 10px;
-} */
-
-.result-container p {
-    font-size: 16px;
-    color: #555;
-    margin-top: 10px;
-}
-
-
+/* Error message styling */
 .error-message {
-    display: flex; 
+    display: flex;
     align-items: center;
-    background-color: #f8d7da;
-    color: #721c24;
+    color: #d4051a;
     padding: 10px;
     border-radius: 4px;
-    border: 1px solid #f5c6cb;
-    margin-top: 20px;
-    text-align: center;
-    max-width: 600px;
-    margin: 20px auto; /* Center the box */
+    justify-content: center;
     gap: 10px;
 }

@@ -6,7 +6,7 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import PromosData from '../models/promosData';
-import InputFileUpload from './InputFileUpload'; 
+import InputFileUpload from './InputFileUpload';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -15,26 +15,39 @@ interface TabPanelProps {
   value: number;
 }
 
-const CustomTabs = styled(Tabs)(({ }) => ({
-  backgroundColor: '#333', // Tabs background color
-  '& .MuiTabs-indicator': {
-    backgroundColor: '#FF5722', // Customize the indicator color
-    height: '4px', // Increase the thickness of the indicator
-  },
-}));
+const CustomTabs = styled(Tabs)(() => {
+  const rootStyles = getComputedStyle(document.documentElement);
+  const primaryColor = rootStyles.getPropertyValue('--primary-color').trim();
+  const secondaryColor = rootStyles.getPropertyValue('--secondary-color').trim();
 
-const CustomTab = styled(Tab)(({ }) => ({
-  textTransform: 'none', // Prevent uppercase
-  color: '#FFFFFF', // Default tab text color
-  fontSize: '16px', // Change font size
-  fontWeight: 'bold', // Change font weight
-  '&.Mui-selected': {
-    color: '#FFC107', // Color when the tab is selected
-  },
-  '&:hover': {
-    color: '#FFD700', // Hover color
-  },
-}));
+  return {
+    backgroundColor: secondaryColor,
+    '& .MuiTabs-indicator': {
+      backgroundColor: primaryColor,
+      height: '4px',
+    },
+  };
+});
+
+const CustomTab = styled(Tab)(() => {
+  const rootStyles = getComputedStyle(document.documentElement);
+  const textColor = rootStyles.getPropertyValue('--text-color-dark-bg').trim();
+  const textColorDark = rootStyles.getPropertyValue('--text-color').trim();
+  const primaryColor = rootStyles.getPropertyValue('--primary-color').trim();
+
+  return {
+    textTransform: 'none',
+    color: textColor,
+    fontSize: '16px',
+
+    '&.Mui-selected': {
+      color: primaryColor,
+    },
+    '&:hover': {
+      color: textColorDark,
+    },
+  };
+});
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -51,10 +64,7 @@ function TabPanel(props: TabPanelProps) {
         <Box
           sx={{
             p: 3,
-            backgroundColor: '#F0F0F0',  // Couleur de fond ajoutée ici
-            borderRadius: '8px',  // Facultatif : arrondir les coins
-            minHeight: '100vh',  // Facultatif : fixer une hauteur minimale
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+
           }}
         >
           {children}
@@ -83,20 +93,24 @@ export default function TabPromosMicro({ promosData }: FullWidthTabsProps) {
     'ADI1', 'ADI2',
     'CIR1', 'CIR2',
     'AP3', 'AP4', 'AP5',
-    'ISEN3', 'ISEN4', 'ISEN5'
+    'ISEN3', 'ISEN4', 'ISEN5',
   ];
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-
+  const getPromoName = (promo: string) => promo.slice(0, -1);
   return (
-    <Box sx={{
-      display: 'flex',
-      justifyContent: 'center',
-      minHeight: '100vh',
-    }}>
-      <Box sx={{ bgcolor: 'background.paper', width: 1050 }}>
+
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+
+        width: '100%',
+      }}
+    >
+      <Box sx={{ width: '100%' }}>
         <AppBar position="static">
           <CustomTabs
             value={value}
@@ -113,35 +127,27 @@ export default function TabPromosMicro({ promosData }: FullWidthTabsProps) {
         </AppBar>
         {promos.map((promo, index) => (
           <TabPanel value={value} index={index} dir={theme.direction} key={index}>
-            {/* Empty Content - No components here */}
             <Typography
               variant="h4"
               gutterBottom
               sx={{
                 textAlign: 'left',
-                color: '#FF5722',
+                color: 'var(--primary-color)',
                 fontWeight: 'bold',
-                marginBottom: '20px'
+                marginBottom: '20px',
               }}
             >
               {promo}
             </Typography>
-            <Typography     
-                variant="h6"
-                gutterBottom
-                sx={{
-                    textAlign: 'left',
-                    color: '#333',
-                    fontWeight: 'bold',
-                    marginBottom: '20px'
-                }}      
-            >   
-            Importer maquette 
-            </Typography>
-            <InputFileUpload />
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flexDirection: 'column' }}>
+              <h4>Importer la maquette  {getPromoName(promo)}  </h4>
+              <InputFileUpload />
+            </div>
+
           </TabPanel>
         ))}
       </Box>
     </Box>
+
   );
 }

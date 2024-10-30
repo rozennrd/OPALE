@@ -1,0 +1,30 @@
+.container {
+    max-width: 1200px; /* Set a maximum width or adjust as needed */
+    margin: 0 auto 50px; /* Center the container */
+    padding: 20px; /* Add some padding */
+    background-color: var(--section-color); /* Set a background color */
+    border-radius: 8px; /* Optional: add rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Optional: add a box shadow for depth */
+  }
+  
+  
+  .secondary-button {
+    background-color: var(--secondary-color);
+    color: var(--text-color-dark-bg); /* Couleur de texte pour le fond sombre */
+  }
+  
+  .secondary-button:hover {
+    background-color: var(--accent-color);
+  }
+  
+
+  .buttons-container {
+    display: flex;
+    justify-content: center; /* Centrer horizontalement les boutons */
+    gap: 150px; /* Ajouter de l'espace entre les boutons */
+    margin-top: 20px; /* Ajouter un espace au-dessus du conteneur */
+  }
+
+  .message-success{
+    padding-top: 20px;
+  }

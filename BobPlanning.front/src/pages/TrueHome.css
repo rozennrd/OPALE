@@ -1,0 +1,91 @@
+.home-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--background-color);
+  }
+  
+  .text-section {
+    width: 100%;
+    padding: 2rem;
+    background-color: var(--background-color);
+    text-align: center;
+  }
+  
+  .first-text {
+    font-size: var(--font-size-large);
+    color: var(--text-color);
+    line-height: 1.2;
+  }
+  
+  .highlight {
+    color: var(--primary-color);
+  }
+  
+  .second-text {
+    font-size: var(--font-size-medium);
+    color: var(--text-color);
+    margin-top: 1rem;
+  }
+
+  .tutos-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10rem; 
+    padding: 2rem;
+    background-color: var(--section-color); 
+    width: 100%;
+  }
+  
+  .tuto-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 80%; 
+    gap: 2rem; 
+    padding: 1.5rem;
+  }
+  
+  .tuto-video {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+ 
+  .play-button {
+    font-size: 2rem;
+    color: white;
+  }
+  
+  .tuto-text {
+    flex: 2;
+    color: #333;
+  }
+  
+  .tuto-text h2 {
+    font-size: 1.5rem;
+    color: #000;
+  }
+  
+  .tuto-text p {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-top: 0.5rem;
+  }
+  
+  .learn-more-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 1rem;
+    display: inline-block;
+  }
+  
+  .learn-more-link:hover {
+    text-decoration: underline;
+  }
+  

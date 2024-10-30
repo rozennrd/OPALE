@@ -18,26 +18,43 @@ interface TabPanelProps {
     value: number;
 }
 
-const CustomTabs = styled(Tabs)(({ }) => ({
-    backgroundColor: '#333', // Tabs background color
-    '& .MuiTabs-indicator': {
-        backgroundColor: '#FF5722', // Customize the indicator color
-        height: '4px', // Increase the thickness of the indicator
-    },
-}));
+const CustomTabs = styled(Tabs)(() => {
+  // Récupérer les variables CSS définies dans :root
+  const rootStyles = getComputedStyle(document.documentElement);
+  const primaryColor = rootStyles.getPropertyValue('--primary-color').trim();
+  const secondaryColor = rootStyles.getPropertyValue('--secondary-color').trim();
 
-const CustomTab = styled(Tab)(({ }) => ({
-    textTransform: 'none', // Prevent uppercase
-    color: '#FFFFFF', // Default tab text color
-    fontSize: '16px', // Change font size
-    fontWeight: 'bold', // Change font weight
-    '&.Mui-selected': {
-        color: '#FFC107', // Color when the tab is selected
+  return {
+    backgroundColor: secondaryColor, // Utiliser la couleur secondaire
+    '& .MuiTabs-indicator': {
+      backgroundColor: primaryColor, // Utiliser la couleur principale pour l'indicateur
+      height: '4px', // Épaisseur de l'indicateur
     },
-    '&:hover': {
-        color: '#FFD700', // Hover color
-    },
-}));
+  };
+});
+
+
+const CustomTab = styled(Tab)(() => {
+    // Récupérer les variables CSS définies dans :root
+    const rootStyles = getComputedStyle(document.documentElement);
+    const textColor = rootStyles.getPropertyValue('--text-color-dark-bg').trim();
+    const textColorDark = rootStyles.getPropertyValue('--text-color').trim();
+    const primaryColor = rootStyles.getPropertyValue('--primary-color').trim();
+  
+    return {
+      textTransform: 'none', // Empêcher la mise en majuscule
+      color: textColor, // Couleur par défaut du texte des onglets
+      fontSize: '16px', // Changer la taille de police
+      '&.Mui-selected': {
+        color: primaryColor, // Couleur lorsque l'onglet est sélectionné
+      },
+      '&:hover': {
+        color: textColorDark, // Couleur au survol
+      },
+    };
+  });
+  
+
 function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
   
@@ -53,10 +70,7 @@ function TabPanel(props: TabPanelProps) {
           <Box
             sx={{
               p: 3,
-              backgroundColor: '#F0F0F0',  // Couleur de fond ajoutée ici
-              borderRadius: '8px',  // Facultatif : arrondir les coins
-              minHeight: '100vh',  // Facultatif : fixer une hauteur minimale
-              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' 
+              
             }}
           >
             {children}
@@ -79,7 +93,7 @@ interface FullWidthTabsProps {
     promosData: PromosData; // UseSate du composant parent
 }
 
-export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTabsProps & { setPromosData: React.Dispatch<React.SetStateAction<any>> }) {
+export default function TabsPromos({ setPromosData, promosData }: FullWidthTabsProps & { setPromosData: React.Dispatch<React.SetStateAction<any>> }) {
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
 
@@ -313,9 +327,9 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
         <Box sx={{
             display: 'flex',
             justifyContent: 'center',
-            minHeight: '100vh',
+            width: '100%'
         }}>
-            <Box sx={{ bgcolor: 'background.paper', width: 1050 }}>
+            <Box sx={{width: '100%'}}>
                 <AppBar position="static">
                     <CustomTabs
                         value={value}
@@ -339,7 +353,7 @@ export default function FullWidthTabs({ setPromosData, promosData }: FullWidthTa
                                 gutterBottom
                                 sx={{
                                     textAlign: 'left',
-                                    color: '#FF5722',
+                                    color: 'var(--primary-color)',
                                     fontWeight: 'bold',
                                     marginBottom: '20px'
                                 }}

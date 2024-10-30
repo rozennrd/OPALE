@@ -5,7 +5,6 @@ import './Contact.css'; // Assurez-vous d'importer le fichier CSS
 const Contact: React.FC = () => {
     return (
         <div className="contact-container">
-            <TopBar />
             <h1>Contactez-nous</h1>
             <p>
                 N'hésitez pas à nous contacter via l'un des moyens ci-dessous ou en remplissant le formulaire de contact.

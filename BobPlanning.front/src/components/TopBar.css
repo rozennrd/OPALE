@@ -1,35 +1,45 @@
 /* Styles for TopBar component */
+
 .top-bar {
+    padding: 0 20px 0px 20px;
+    
+    width: 98%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    margin-left: 1%;
-    margin-right: 1%;
-    background-color: #333; /* Dark background */
-    color: #fff; /* White text color */
-    border-bottom: 2px solid #ccc; /* Bottom border */
-    border-radius: 0px 0px 20px 20px;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+.logo {
+    width: 140px; /* Taille du logo ajustée pour plus de lisibilité */
+    height: auto;
+    transition: transform 0.3s ease; /* Transition douce pour l'effet de survol */
 }
 
-.logo {
-    width: 120px; /* Adjust logo size */
-    height: auto;
+.logo:hover {
+    transform: scale(1.05); /* Légère mise en avant du logo lors du survol */
 }
 
 .nav-links {
     display: flex;
-    gap: 20px; /* Space between navigation links */
+    gap: 25px; /* Espacement légèrement augmenté entre les liens */
 }
 
 .nav-links a {
-    color: #fff;
+    color: var(--text-color-dark-bg); /* Utilisation de la couleur de texte principale */
     text-decoration: none;
-    font-size: 16px;
-    font-weight: bold;
+    font-size: var(--font-size-medium); /* Taille de police définie dans la charte */
+    font-weight: 400;
+    transition: color 0.3s ease, text-decoration 0.3s ease; /* Effets de transition pour les interactions */
 }
 
 .nav-links a:hover {
-    color: #f0a500;
-    text-decoration: underline;
+    color: var(--primary-color); /* Survol utilisant la couleur primaire */
+    text-decoration: none;
 }

@@ -37,8 +37,6 @@ const Home: React.FC = () => {
             animate={{ opacity: 1, scale: [1, 1.05, 0.95, 1] }} // Effet de zoom oscillant
             transition={{ duration: 0.5, loop: Infinity }} // L'animation fait des boucles infinies
         >
-            {/* TopBar component */}
-            <TopBar />
 
             {/* Feux d'artifice */}
             {showFireworks && (

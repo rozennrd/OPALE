@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { styled } from '@mui/material/styles';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -23,6 +23,14 @@ export default function InputFileUpload() {
       variant="contained"
       tabIndex={-1}
       startIcon={<CloudUploadIcon />}
+      sx={{
+        backgroundColor: 'var(--secondary-color)',
+        color: '#FFFFFF',
+        '&:hover': {
+          backgroundColor: 'var(--primary-color)',
+        },
+        mt: 3,
+      }}
     >
       Upload file
       <VisuallyHiddenInput

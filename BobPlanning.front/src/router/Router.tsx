@@ -6,6 +6,7 @@ import Calendriers from "../pages/Calendriers";
 import ErrorPage from "../pages/404";
 import Contact from "../pages/Contact";
 import ParametresMicro from "../pages/ParametresMicro";
+import TrueHome from "../pages/TrueHome";
 
 const router = createBrowserRouter([
   {
@@ -13,9 +14,13 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <ErrorPage />,
     children: [
+      // {
+      //   path: "/",
+      //   element: <Home />,
+      // },
       {
         path: "/",
-        element: <Home />,
+        element: <TrueHome />,
       },
       {
         path: "/parametres",
@@ -26,7 +31,7 @@ const router = createBrowserRouter([
         element: <Calendriers />,
       },
       {
-        path: "/Contact",
+        path: "/contact",
         element: <Contact />,
       },
       {
