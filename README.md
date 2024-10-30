@@ -6,7 +6,7 @@ To run the project :
  Run the project --> npm run dev 
 
  - For back : 
- Ajouter un fichier db.conf dans src/config
+ Ajouter un fichier db.conf dans src/database/config
  *--------Fichier db.conf--------*
     DB_HOST=Hôte
     DB_USER=User
