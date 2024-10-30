@@ -10,7 +10,7 @@ interface PeriodeCardProps {
     dateDebutPeriode: string;
 }
 
-export default function PeriodeCard({
+export default function PeriodeBox({
     index,
     RecupWeeks,  
     handleDateChange,
@@ -20,44 +20,43 @@ export default function PeriodeCard({
 
     return (
         <Box className="periode-card">
-            <div className="periode-content">
-
-                {/* Card Title */}
-                <Typography variant="h5" className="periode-title" gutterBottom>
-                    Période {index + 1}
-                </Typography>
-
+            <Typography variant="h6" className="periode-title" gutterBottom>
+                Période {index + 1}
+            </Typography>
+            
+            {/* Horizontal Layout for Date and Weeks */}
+            <Box display="flex" alignItems="center" justifyContent="space-between" gap={2}>
                 {/* Date input with custom label */}
-                <label htmlFor={`start-date-${index}`} className="label-nombre-periodes">
-                    Date de début période {index + 1}
-                </label>
-                <FormControl margin="normal">
+                <FormControl margin="normal" className="periode-input">
+                    <label htmlFor={`start-date-${index}`} className="label-nombre-periodes">
+                        Date de début période {index + 1}
+                    </label>
                     <TextField
                         id={`start-date-${index}`}
                         type="date"
-                        value={dateDebutPeriode? new Date(dateDebutPeriode).toISOString().split('T')[0] : ''}
+                        value={dateDebutPeriode ? new Date(dateDebutPeriode).toISOString().split('T')[0] : ''}
                         onChange={(e) => handleDateChange(index, new Date(e.target.value))}
                     />
                 </FormControl>
 
                 {/* Weeks input with custom label */}
-                <label htmlFor={`weeks-${index}`} className="label-nombre-periodes">
-                    Nombre de semaines période {index + 1}
-                </label>
-                <FormControl margin="normal">
+                <FormControl margin="normal" className="periode-input">
+                    <label htmlFor={`weeks-${index}`} className="label-nombre-periodes">
+                        Nombre de semaines période {index + 1}
+                    </label>
                     <Select
                         id={`weeks-${index}`}
                         value={RecupWeeks} // Single week value
                         onChange={(e) => handleWeeksChange(index, e.target.value as number)}
                     >
-                        {[0,1,2,3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(week => (
+                        {[...Array(15).keys()].map(week => (
                             <MenuItem key={week} value={week}>
                                 {week}
                             </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
-            </div>
+            </Box>
         </Box>
     );
 }

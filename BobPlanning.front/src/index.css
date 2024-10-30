@@ -1,11 +1,14 @@
 :root {
-  --primary-color: #FF5722; /* Orange que nous voulons utiliser pour le site */
-  --secondary-color: #333333; /* Couleur de fond ou secondaire */
-  --accent-color: #FF7043; /* Accentuation et survols */
-  --background-color: #F5F5F5; /* Fond des sections */
-  --text-color: #4A4A4A; /* Couleur du texte principal */
-  --text-color-dark-bg: #bfbfbf; /* Couleur du texte sur fond sombre */
-  --section-color: #ffe6cf ;
+
+
+  --primary-color: #D32F2F; /* Rouge que nous voulons utiliser pour le site */
+  --secondary-color: #212121; /* Couleur de fond ou secondaire */
+  --accent-color: #F44336; /* Accentuation et survols */
+  --background-color: #E0E0E0; /* Fond des sections */
+  --text-color: #3C3C3C; /* Couleur du texte principal */
+  --text-color-dark-bg: #D5D5D5; /* Couleur du texte sur fond sombre */
+  --section-color: #ffffffb5; /* Fond des sections */
+
   --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   --font-size-large: 3.2em;
   --font-size-medium: 1.5em;
@@ -25,7 +28,7 @@ a:hover {
 
 body {
   margin: 0;
-  padding-top: 150px; /* Décaler le contenu de la hauteur de la TopBar */
+  padding-top: 200px; /* Décaler le contenu de la hauteur de la TopBar */
   background-color: var(--background-color); /* Couleur de fond des sections */
   font-family: var(--font-family);
   color: var(--text-color);

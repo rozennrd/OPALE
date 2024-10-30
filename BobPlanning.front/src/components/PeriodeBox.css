@@ -1,65 +1,22 @@
-/* Styling for the entire card */
 .periode-card {
-    background-color: #f9f9f9;  /* Light background for the card */
-    border-radius: 8px;         /* Rounded corners */
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    padding: 20px;              /* Padding inside the card */
-    margin-bottom: 20px;        /* Space between cards */
-    width: 25%;           /* Max width for the card */
-    margin: 0 auto;             /* Center card horizontally */
-    border: 1px solid #e0e0e0;  /* Light border to define the card */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    
 }
 
-/* Title styling */
 .periode-title {
-    font-size: 20px;            /* Font size for the title */
-    font-weight: bold;          /* Bold font for the title */
-    text-align: center;         /* Center the title text */
-    margin-bottom: 15px;        /* Space below the title */
-    color: #333;
+    text-align: center;
 }
 
-/* Content within the card (arranged vertically) */
-.periode-content {
-    display: flex;
-    flex-direction: column;     /* Stack elements vertically */
-           text-align: start;       /* Space between form fields */
-}
-
-/* Label styling before each input field */
 .label-nombre-periodes {
-    font-weight: bold;          /* Make the label bold */
-    font-size: 16px;            /* Font size for labels */
-    margin-bottom: 5px;         /* Space below the label */
-    color: #333;                /* Dark color for labels */
-    display: block;             /* Ensure it takes full width above the input */
+    display: block;
+    margin-bottom: 4px;
 }
 
-/* Input and select field styling */
-.MuiTextField-root, .MuiSelect-root {
-    background-color: #fff;     /* White background for form fields */
-    font-size: 14px;            /* Font size for inputs and select */
-    border-radius: 4px;         /* Rounded corners for inputs */
-    width: 100%;                /* Ensure full width in their container */
+.periode-input {
+    flex: 1; /* Permet d'ajuster la largeur automatiquement */
+    margin-right: 16px;
 }
 
-/* Select dropdown specific styling */
-.MuiSelect-root {
-    padding: 10px;              /* Padding inside the select dropdown */
-}
 
-/* Border colors for inputs and selects */
-.MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
-    border-color: #ccc;         /* Default border color for inputs */
-}
-
-.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline,
-.MuiSelect-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: #007bff;      /* Blue border when input/select is focused */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); /* Add a subtle shadow on focus */
-}
-
-/* Add some margin to the bottom of form controls */
-.MuiFormControl-root {
-    margin-bottom: 20px;        /* Space between form controls */
-}

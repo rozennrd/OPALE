@@ -1,5 +1,5 @@
 .container {
-    max-width: 1200px; /* Set a maximum width or adjust as needed */
+    max-width: 80%; /* Set a maximum width or adjust as needed */
     margin: 0 auto 50px; /* Center the container */
     padding: 20px; /* Add some padding */
     background-color: var(--section-color); /* Set a background color */
@@ -27,4 +27,9 @@
 
   .message-success{
     padding-top: 20px;
+  }
+
+  .loading-container {
+    display: flex;
+    justify-content: center;  
   }

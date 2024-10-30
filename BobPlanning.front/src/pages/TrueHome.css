@@ -8,9 +8,9 @@
   
   .text-section {
     width: 100%;
-    padding: 2rem;
     background-color: var(--background-color);
     text-align: center;
+    padding-bottom: 2.5em;
   }
   
   .first-text {

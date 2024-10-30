@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import './Parametres.css';
 import Bouton from '../components/Bouton';
 import DownloadButton from '../components/DownloadButton';
+import Loading from '../components/Loading';
 
 const Parametres: React.FC = () => {
   const navigate = useNavigate();
@@ -88,6 +89,7 @@ const Parametres: React.FC = () => {
 
   const [message, setMessage] = React.useState<string | null>(null);
   const [fileUrl, setFileUrl] = React.useState<string | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const isAllDataFilled = () => {
     const { DateDeb, DateFin, Promos } = promosData;
@@ -162,6 +164,7 @@ const Parametres: React.FC = () => {
 
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch('http://localhost:3000/generateEdtMacro', {
         method: 'POST',
@@ -183,6 +186,8 @@ const Parametres: React.FC = () => {
     } catch (error) {
       console.error('Error:', error);
       setMessage('Erreur lors de la génération du fichier.');
+    } finally {
+      setIsLoading(false); // Fin du chargement
     }
   };
 
@@ -215,6 +220,11 @@ const Parametres: React.FC = () => {
           > Paramètres Micro →
           </Bouton>
         </div>
+        {isLoading &&
+          <div className="loading-container">
+            <Loading />
+          </div>}
+
         {/* Afficher le message et le lien de téléchargement */}
         {message && <div className='message-success'>{message}</div>}
         {fileUrl && (
@@ -223,7 +233,9 @@ const Parametres: React.FC = () => {
       </div>
     );
   } else {
-    return <div>Chargement...</div>;
+    return <div className="loading-container">
+      <Loading />
+    </div>
   };
 }
 

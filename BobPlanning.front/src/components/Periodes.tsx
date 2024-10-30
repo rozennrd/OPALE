@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Select, MenuItem, FormControl, InputLabel, Divider, SelectChangeEvent } from '@mui/material';
-import PeriodeCard from './PeriodeBox';
 import PromosData from '../models/promosData';
 import Promo from '../models/promosData';
 import './Periodes.css';
+import PeriodeBox from './PeriodeBox';
 
 interface PeriodeAPProps {
     promosData: PromosData;
@@ -118,7 +118,7 @@ const handleDateChange = (index: number, value: Date) => {
 
             <div className="periode-cards-container">
                 {Periode.map((_, index) => (
-                    <PeriodeCard
+                    <PeriodeBox
                         key={index}
                         index={index}
                         dateDebutPeriode={dateDebutPeriode(index)}
