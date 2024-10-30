@@ -23,7 +23,8 @@ const DebCoursDate: React.FC<DebCoursDateProps> = ({ startDate, setStartDate }) 
 
   return (
     <div className="date-debut-cours-container">
-      <label htmlFor="start-date" className="label">Date de début des cours</label>
+      
+      <label className="label-date-debut">Date de début des cours</label>
       <input
         type="date"
         id="start-date"

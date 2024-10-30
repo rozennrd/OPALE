@@ -354,7 +354,7 @@ export default function TabsPromos({ setPromosData, promosData }: FullWidthTabsP
                                 sx={{
                                     textAlign: 'left',
                                     color: 'var(--primary-color)',
-                                    fontWeight: 'bold',
+                                    
                                     marginBottom: '20px'
                                 }}
                             >

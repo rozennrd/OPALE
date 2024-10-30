@@ -20,9 +20,9 @@ const TrueHome = () => {
                 <div className="tuto-container">
                     <div className="tuto-video">
                         <ReactPlayer
-                            url='/videos/vido-tuto.mp4'  // The relative path to the video in the public folder
+                            url='https://www.youtube.com/watch?v=uXlWYZ022zU'  // The relative path to the video in the public folder
                             playing={true}               // Autoplay video
-                            
+                            loop={true}   
                         />
 
                     </div>
@@ -52,9 +52,9 @@ const TrueHome = () => {
                     <div className="tuto-video">
                         {/* Placez ici une balise <img> ou un composant vidéo */}
                         <ReactPlayer
-                           url='/videos/vido-tuto.mp4'  // The relative path to the video in the public folder
+                           url='https://www.youtube.com/watch?v=kQcq3rpne78'  // The relative path to the video in the public folder
                            playing={true}               // Autoplay video
-                        
+                           loop={true}   
                         />
                     </div>
                 </div>

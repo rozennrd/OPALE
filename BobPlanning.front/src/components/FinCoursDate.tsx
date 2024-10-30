@@ -23,7 +23,7 @@ const FinCoursDate: React.FC<FinCoursDateProps> = ({ endDate, setEndDate }) => {
 
   return (
     <div className="date-debut-cours-container">
-      <label htmlFor="end-date" className="label">Date de fin des cours</label>
+      <label  className="label-date-debut">Date de fin des cours</label>
       <input
         type="date"
         id="end-date"
