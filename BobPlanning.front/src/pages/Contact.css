@@ -1,12 +1,26 @@
+.page {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 .contact-container {
     padding: 20px;
-    background-color: #333; /* Couleur de fond sombre */
-    color: white; /* Texte en blanc */
+    background-color: var(--section-color);
+    /* Utiliser la couleur de fond global */
+    color: var(--text-color);
+    /* Utiliser la couleur de texte global */
+    width: 40%;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Ajout d'une ombre */
 }
 
 .contact-container h1,
 .contact-container h2 {
-    color: white; /* Titre en blanc */
+    color: var(--text-color);
+    /* Titre en utilisant la couleur de texte global */
+    font-weight: 500;
 }
 
 .contact-info {
@@ -17,6 +31,12 @@
     margin: 10px 0;
 }
 
+.info-item span {
+    color: var(--text-color);
+    /* Couleur du texte des informations */
+    font-weight: 500;
+}
+
 .contact-form {
     display: flex;
     flex-direction: column;
@@ -25,32 +45,36 @@
 
 .contact-form label {
     margin: 5px 0;
-    color: white; /* Labels en blanc */
+    color: var(--text-color);
+    /* Labels avec la couleur de texte global */
+    display: flex;
 }
 
 .contact-form input,
 .contact-form textarea {
     padding: 10px;
     margin: 5px 0;
-    border: 1px solid #ccc; /* Bordure légère pour les champs */
     border-radius: 4px;
-}
-
-.contact-form input,
-.contact-form textarea {
-    background-color: #555; /* Fond des champs d'entrée sombre */
-    color: white; /* Texte en blanc dans les champs */
+    color: var(--text-color);
+    /* Texte en clair dans les champs */
+    font-family: var(--font-family);
+    /* Utiliser la police globale */
 }
 
 .contact-form button {
     padding: 10px;
-    background-color: #007BFF; /* Couleur du bouton */
-    color: white; /* Texte du bouton en blanc */
+    background-color: var(--primary-color);
+    /* Couleur du bouton */
+    color: white;
+    /* Texte du bouton en blanc */
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: var(--font-family);
 }
 
 .contact-form button:hover {
-    background-color: #0056b3; /* Couleur du bouton au survol */
+    background-color: var(--accent-color);
+    /* Couleur du bouton au survol */
 }

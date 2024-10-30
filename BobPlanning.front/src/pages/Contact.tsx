@@ -1,9 +1,8 @@
 import React from 'react';
-import TopBar from '../components/TopBar';
-import './Contact.css'; // Assurez-vous d'importer le fichier CSS
-
+import './Contact.css'; 
 const Contact: React.FC = () => {
     return (
+        <div className='page'>
         <div className="contact-container">
             <h1>Contactez-nous</h1>
             <p>
@@ -36,6 +35,7 @@ const Contact: React.FC = () => {
                 <button type="submit">Envoyer</button>
             </form>
         </div>
+    </div>
     );
 };
 
