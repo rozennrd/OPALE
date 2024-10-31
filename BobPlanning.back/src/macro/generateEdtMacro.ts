@@ -211,6 +211,8 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
       }
 
     });
+
+    
     if (!setFirstRattrapage) {
       rattrapageFirstSemester = false;
     }
