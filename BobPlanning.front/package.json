@@ -16,6 +16,7 @@
     "@mui/material": "^6.1.2",
     "@types/react-datepicker": "^7.0.0",
     "animate.css": "^4.1.1",
+    "axios": "^1.7.9",
     "bobplanning-front": "file:",
     "framer-motion": "^11.11.9",
     "react": "^18.3.1",
