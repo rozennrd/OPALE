@@ -2,6 +2,7 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
+import axios from 'axios';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -16,6 +17,25 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function InputFileUpload() {
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await axios.post('http://localhost:3000/readMaquette', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        console.log('Uploading file successful', response.data);
+      } catch (error) {
+        console.error('Error uploading file : ', error);
+      }
+    }
+  }
   return (
     <Button
       component="label"
@@ -35,7 +55,7 @@ export default function InputFileUpload() {
       Upload file
       <VisuallyHiddenInput
         type="file"
-        onChange={(event) => console.log(event.target.files)}
+        onChange={handleUpload}
         multiple
       />
     </Button>
