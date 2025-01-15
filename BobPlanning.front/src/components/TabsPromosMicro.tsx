@@ -8,13 +8,21 @@ import Box from '@mui/material/Box';
 import PromosData from '../models/promosData';
 import InputFileUpload from './InputFileUpload';
 
+// Liste des noms de promotions
+const promos = [
+  'ADI1', 'ADI2',
+  'CIR1', 'CIR2',
+  'AP3', 'AP4', 'AP5',
+  'ISEN3', 'ISEN4', 'ISEN5',
+];
+
 interface TabPanelProps {
   children?: React.ReactNode;
   dir?: string;
   index: number;
   value: number;
 }
-
+// Composant stylé pour les onglets
 const CustomTabs = styled(Tabs)(() => {
   const rootStyles = getComputedStyle(document.documentElement);
   const primaryColor = rootStyles.getPropertyValue('--primary-color').trim();
@@ -29,6 +37,7 @@ const CustomTabs = styled(Tabs)(() => {
   };
 });
 
+// Composant stylé pour un onglet individuel
 const CustomTab = styled(Tab)(() => {
   const rootStyles = getComputedStyle(document.documentElement);
   const textColor = rootStyles.getPropertyValue('--text-color-dark-bg').trim();
@@ -49,6 +58,7 @@ const CustomTab = styled(Tab)(() => {
   };
 });
 
+// Composant pour afficher le contenu d'un onglet
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
@@ -74,6 +84,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
+// Propriétés pour les onglets accessibles
 function a11yProps(index: number) {
   return {
     id: `full-width-tab-${index}`,
@@ -81,25 +92,72 @@ function a11yProps(index: number) {
   };
 }
 
+// Propriétés du composant principal
 interface FullWidthTabsProps {
   promosData: PromosData; // UseState du composant parent
 }
 
+// Composant principal
 export default function TabPromosMicro({ promosData }: FullWidthTabsProps) {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
-  const promos = [
-    'ADI1', 'ADI2',
-    'CIR1', 'CIR2',
-    'AP3', 'AP4', 'AP5',
-    'ISEN3', 'ISEN4', 'ISEN5',
-  ];
 
+
+  // État pour stocker les fichiers importés pour chaque promo
+  const [uploadedFiles, setUploadedFiles] = React.useState<Record<string, File | null>>({
+    ADI1: null,
+    ADI2: null,
+    CIR1: null,
+    CIR2: null,
+    AP3: null,
+    AP4: null,
+    AP5: null,
+    ISEN3: null,
+    ISEN4: null,
+    ISEN5: null,
+  });
+
+  //fonction callback pour gérer l'importation  de fichiers
+  const handleFileUpload = (promo: string, file: File) => {
+    setUploadedFiles((prev) => ({
+      ...prev,
+      [promo]: file,
+    }));
+
+  };
+
+  //objet pour stocker les données de réponse de l'API
+  const [responseData, setResponseData] = React.useState<Record<string, any>>({
+    ADI1: null,
+    ADI2: null,
+    CIR1: null,
+    CIR2: null,
+    AP3: null,
+    AP4: null,
+    AP5: null,
+    ISEN3: null,
+    ISEN4: null,
+    ISEN5: null,
+  });
+
+  //fonction callback pour gérer les données de réponse de l'API
+  const handleResponseData = (promo: string, data: any) => {
+    setResponseData((prev) => ({
+      ...prev,
+      [promo]: data,
+    }));
+  };
+
+
+// Gestion du changement d'onglet
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  // Récupérer le nom de promo sans le dernier caractère
   const getPromoName = (promo: string) => promo.slice(0, -1);
+
   return (
 
     <Box
@@ -141,7 +199,12 @@ export default function TabPromosMicro({ promosData }: FullWidthTabsProps) {
             </Typography>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flexDirection: 'column' }}>
               <h4>Importer la maquette  {getPromoName(promo)}  </h4>
-              <InputFileUpload />
+              <InputFileUpload
+                onFileUpload={(file) => handleFileUpload(promo, file)}
+                uploadedFile={uploadedFiles[promo]}
+                responseData={responseData[promo]}
+                onResponseData={(date) => handleResponseData(promo, date)}
+              />
             </div>
 
           </TabPanel>

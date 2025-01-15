@@ -17,14 +17,20 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-export default function InputFileUpload() {
-  const [filename, setFilename] = React.useState<string | null>(null);
-  const [responseData, setResponseData] = React.useState<any | null>(null);
+//props
+interface InputFileUploadProps {
+  onFileUpload: (file: File) => void;
+  uploadedFile : File | null;
+  responseData: any | null;
+  onResponseData: (data: any) => void;
+}
+
+
+export default function InputFileUpload({ onFileUpload , uploadedFile, responseData, onResponseData}: InputFileUploadProps) {
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-      setFilename(file.name);
       const formData = new FormData();
       formData.append('file', file);
 
@@ -36,14 +42,16 @@ export default function InputFileUpload() {
         });
 
         console.log('Uploading file successful', response.data);
-        setResponseData(response.data);
+        //callback
+        onFileUpload(file);
+        onResponseData(response.data);
       } catch (error) {
         console.error('Error uploading file : ', error);
       }
     }
   }
   return (
-    <div  style={{ display: 'contents' }}>
+    <div style={{ display: 'contents' }}>
       <Button
         component="label"
         role={undefined}
@@ -66,10 +74,8 @@ export default function InputFileUpload() {
           multiple
         />
       </Button>
-      {filename &&
-       <p> Fichier importé : {filename}</p>
-       }
-       {responseData && <MaquetteDisplay data={responseData} />}
+      {uploadedFile && <p>Fichier importé : {uploadedFile.name}</p>}
+      {responseData && <MaquetteDisplay data={responseData} />}
     </div>
   );
 }
