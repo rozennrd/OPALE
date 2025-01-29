@@ -10,6 +10,9 @@ import getDBConfig from './database/getDBConfig';
 import path from 'path';
 import { EdtMicro } from './types/EdtMicroData';
 import bodyParser from 'body-parser';
+import { getLogin } from './database/getLogin';
+import jwt from 'jsonwebtoken'; // Si tu utilises JWT pour l'authentification
+
 
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
@@ -61,6 +64,7 @@ const swaggerOptions = {
 };
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 /**
  * @swagger
@@ -265,6 +269,86 @@ app.post('/setPromosData', (req, res) => {
       });
   });
 });
+
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     summary: Authentifie un utilisateur et renvoie un cookie JWT
+ *     description: Vérifie les identifiants et génère un token JWT stocké dans un cookie sécurisé.
+ *     tags:
+ *       - Authentification
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: L'adresse email de l'utilisateur
+ *                 example: "test@example.com"
+ *               password:
+ *                 type: string
+ *                 description: Le mot de passe hashé de l'utilisateur
+ *                 example: "$2b$10$1234567890abcdef"
+ *     responses:
+ *       200:
+ *         description: Connexion réussie, cookie envoyé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Connexion réussie"
+ *                 userId:
+ *                   type: string
+ *                   example: "123"
+ *       400:
+ *         description: Email ou mot de passe manquant
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Email et mot de passe requis"
+ *       401:
+ *         description: Identifiants incorrects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Identifiants incorrects"
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Erreur serveur"
+ */
+app.post('/login', async (req: Request, res: Response) => {
+  try {
+    await getLogin(req, res, connection); // Connexion passée en paramètre
+  } catch (error) {
+    console.error('Erreur de connexion:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+
+
 
 /**
  * @swagger
@@ -890,6 +974,7 @@ app.post('/generateDataEdtMicro', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Erreur lors de la génération des données EdtMicro', error });
   }
 });
+
 
 // Start the server
 app.listen(PORT, () => {
