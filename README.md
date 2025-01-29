@@ -18,3 +18,12 @@ To run the project :
  Go to BobPlanning.back --> cd .\BobPlanning.back
  Install library --> npm i
  Run the project --> npm run dev
+
+ - For microService : 
+ Go to BobPlanning.microService --> cd .\BobPlanning.microService
+ Create a env mode for python (only the first time) --> python -m venv venv
+ Go in env mode for python : 
+   If you are a linux user --> source venv/bin/activate 
+   If you are a Windows user --> .\venv\Scripts\activate
+ Install library --> pip install -r requirements.txt
+ Run the project --> uvicorn main:app --port 3001 --reload
