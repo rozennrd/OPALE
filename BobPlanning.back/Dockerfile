@@ -10,8 +10,8 @@ COPY package*.json ./
 # Installation des dépendances
 RUN npm install && npm run build
 
-# Copie du reste du projet
-#COPY . .
+# Copie le db.conf
+COPY ../../bobPlanning.db/db.conf ./dist/database/config/
 
 # Exposition du port de l'application
 EXPOSE 3000
