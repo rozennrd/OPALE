@@ -11,7 +11,7 @@ COPY package*.json ./
 RUN npm install && npm run build
 
 # Copie du reste du projet
-COPY . .
+#COPY . .
 
 # Exposition du port de l'application
 EXPOSE 3000
