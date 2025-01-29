@@ -1,9 +1,7 @@
 import React from 'react';
-import TopBar from '../components/TopBar';
 import TabPromosMicro from '../components/TabsPromosMicro';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import Button from '@mui/material/Button';
 import './ParametresMicro.css';
 import Bouton from '../components/Bouton';
 const ParametresMicro: React.FC = () => {

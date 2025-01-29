@@ -1,18 +1,18 @@
 import './TopBar.css'; 
 import Logo from '../assets/Logo_Bob_Planning_Transparent.png'; 
-
+import { Link } from 'react-router-dom';  // Importez Link
 
 const TopBar = () => {
     return (
         <div className="top-bar">
-            <a href="/">
-            <img className='logo' src={Logo} alt="Logo_Bob_Planning" />
-            </a>
+            <Link to="/">  {/* Utilisez Link au lieu de a */}
+                <img className='logo' src={Logo} alt="Logo_Bob_Planning" />
+            </Link>
             <nav className="nav-links">
-                <a href="/">Home</a>    
-                <a href="/parametres">Paramètres</a>
-                <a href="/calendriers">Calendriers</a>
-                <a href="/contact">Contact</a>
+                <Link to="/">Home</Link>    
+                <Link to="/parametres">Paramètres</Link>
+                <Link to="/calendriers">Calendriers</Link>
+                <Link to="/contact">Contact</Link>
             </nav>
         </div>
     );

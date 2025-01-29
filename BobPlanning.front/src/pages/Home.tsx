@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Box, Typography, Grid } from '@mui/material';
-import TopBar from '../components/TopBar';
 import { motion } from 'framer-motion';
 import Confetti from 'react-confetti'; // Importation de Confetti
 import './Home.css';

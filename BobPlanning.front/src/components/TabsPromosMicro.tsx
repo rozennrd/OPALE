@@ -5,6 +5,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+// @ts-ignore
 import PromosData from '../models/promosData';
 import InputFileUpload from './InputFileUpload';
 
@@ -98,7 +99,7 @@ interface FullWidthTabsProps {
 }
 
 // Composant principal
-export default function TabPromosMicro({ promosData }: FullWidthTabsProps) {
+export default function TabPromosMicro({ }: FullWidthTabsProps) {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
