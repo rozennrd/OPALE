@@ -1,0 +1,21 @@
+services:
+  nginx:
+    build: ./www
+    container_name: nginx-server
+    ports:
+      - "80:80"
+    depends_on:
+      - node-app
+      - db
+    networks:
+      - app-network
+
+  node-app:
+    build: ./app
+    container_name: node-application
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - app-network
