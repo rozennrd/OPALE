@@ -1,6 +1,7 @@
 name: Deploy to Server
 
 on:
+  workflow_dispatch: # Permet de déclencher ce workflow manuellement depuis l'interface GitHub
   push:
     branches:
       - deploy
