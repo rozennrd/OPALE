@@ -1,6 +1,6 @@
 services:
   nginx:
-    build: ./www
+    build: ./
     container_name: nginx-server
     ports:
       - "80:80"
@@ -11,7 +11,7 @@ services:
       - app-network
 
   node-app:
-    build: ./app
+    build: ./
     container_name: node-application
     ports:
       - "3000:3000"
