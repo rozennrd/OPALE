@@ -455,6 +455,8 @@ try {
  *   post:
  *     summary: Generate an Excel timetable skeleton based on provided data
  *     description: Returns an Excel file representing the structure of a timetable, using the provided classes and their respective courses.
+ *     tags:
+ *       - Test
  *     requestBody:
  *       required: true
  *       content:

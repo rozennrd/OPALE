@@ -27,3 +27,5 @@ To run the project :
    If you are a Windows user --> .\venv\Scripts\activate
  Install library --> pip install -r requirements.txt
  Run the project --> uvicorn main:app --port 3001 --reload
+
+ Pour mettre à jour les installations de lib --> pip freeze > requirements.txt
