@@ -177,6 +177,7 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
       else if (promo.Name === "AP3" || promo.Name === "AP4" || promo.Name === "AP5") {
 
         // Remplir les semaines pour "AP3", "AP4", "AP5"
+        console.log("promo.name : "+promo.Name+"promo.Periode[promo.i] : "+ JSON.stringify(promo.Periode[promo.i]))
         if (promo.Periode && promo.Periode.length > 0 && new Date(promo.Periode[promo.i].DateDebutP) <= currentDate && new Date(promo.Periode[promo.i].DateFinP) >= currentDate) {
           rowData[promo.Name] = "";
           promosEnCours.push(promo.Name);
