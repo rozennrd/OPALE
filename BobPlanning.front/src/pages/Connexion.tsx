@@ -2,27 +2,22 @@ import React, { useState } from 'react';
 import { Button, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; // Pour la redirection
 import CryptoJS from 'crypto-js'; // Pour le hachage du mot de passe
-import truehome from './TrueHome'; // Page d'accueil après connexion
 import './Connexion.css'; // Style de la page
 
 const Connexion: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [numTryConnection, setNumTryConnection] = useState(0); // Nombre de tentatives
   const navigate = useNavigate(); // Utilisation de navigate pour rediriger
 
   // Fonction pour hacher le mot de passe
   const hashPassword = (password: string) => {
-    // Hachage avec SHA-256 (attention : CryptoJS produit un hash hexadécimal)
-    return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex); 
+    return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
   };
 
-  // Fonction de connexion (envoi de la requête POST avec le mot de passe haché)
+  // Fonction de connexion
   const handleLogin = async () => {
-    // Affichage du mot de passe haché pour le debug
-    console.log('Mot de passe haché:', hashPassword(password)); // debug
-
-    // Hash le mot de passe avant de l'envoyer
     const hashedPassword = hashPassword(password);
 
     try {
@@ -30,24 +25,29 @@ const Connexion: React.FC = () => {
       const response = await fetch('http://localhost:3000/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', // Indiquer que le corps de la requête est en JSON
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email: email,
-          password: hashedPassword, // Le mot de passe haché est envoyé
+          password: hashedPassword,
         }),
       });
-      // Si la réponse du backend est OK (code 200)
+
       if (response.ok) {
-        const data = await response.json(); // On récupère le token JWT renvoyé
-        // Si la connexion réussie, on stocke le token dans le localStorage
+        const data = await response.json(); // Récupérer le token JWT renvoyé
+        setNumTryConnection(0); // Réinitialise le nombre de tentatives après succès
         localStorage.setItem('authToken', data.token);
-        // Ensuite, on redirige vers la page d'accueil ou une page protégée
-        navigate('/TrueHome'); // Redirection vers la page 'home'
+        navigate('/TrueHome'); // Redirection vers la page d'accueil
       } else {
-        // Si la réponse du backend n'est pas OK, on récupère et affiche l'erreur
         const errorData = await response.json();
-        setError(errorData.message); // Affichage du message d'erreur
+        
+        // Si l'utilisateur est bloqué, afficher le message de blocage
+        if (errorData.message === 'Votre compte est bloqué. Veuillez contacter l\'administrateur.') {
+          setError(errorData.message); // Message spécifique de blocage
+        } else {
+          setNumTryConnection(prev => prev + 1); // Incrémente le nombre de tentatives
+          setError(errorData.message); // Autres erreurs (par exemple, mot de passe incorrect)
+        }
       }
     } catch (err) {
       console.error('Erreur de connexion:', err);
