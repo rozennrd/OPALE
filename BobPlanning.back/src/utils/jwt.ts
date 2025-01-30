@@ -8,7 +8,7 @@ const generateToken = (user: any) => {
   };
 
   // On signe le token avec une clé secrète
-  return jwt.sign(payload, 'votreCléSecrète', { expiresIn: '1h' });
+  return jwt.sign(payload, 'votreCléSecrète', { expiresIn: '12h' });
 };
 
 export { generateToken };

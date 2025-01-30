@@ -37,7 +37,6 @@ const Connexion: React.FC = () => {
           password: hashedPassword, // Le mot de passe haché est envoyé
         }),
       });
-
       // Si la réponse du backend est OK (code 200)
       if (response.ok) {
         const data = await response.json(); // On récupère le token JWT renvoyé
