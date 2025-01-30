@@ -25,11 +25,6 @@ jobs:
       run: |
           cd /home/bob/bobPlanning.app
           git pull origin deploy
-          cd BobPlanning.back/
-          npm i
-          npm audit fix
-          npm run build
-          cd ../
           docker-compose down
           docker-compose build
           docker-compose up -d
