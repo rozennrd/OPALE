@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost
--- Généré le : mer. 29 jan. 2025 à 10:29
+-- Généré le : jeu. 30 jan. 2025 à 08:11
 -- Version du serveur : 10.11.6-MariaDB
 -- Version de PHP : 8.0.30
 
@@ -43,6 +43,36 @@ INSERT INTO `calendrier` (`id`, `dateDeb`, `dateFin`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `Cours`
+--
+
+CREATE TABLE `Cours` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `UE` varchar(255) NOT NULL,
+  `Semestre` text NOT NULL,
+  `Periode` int(11) DEFAULT NULL,
+  `Prof` int(11) DEFAULT NULL,
+  `typeSalle` enum('classique','electronique','informatique','projet') DEFAULT NULL,
+  `heure` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`heure`))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Professeurs`
+--
+
+CREATE TABLE `Professeurs` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `type` enum('EXT','INT') NOT NULL,
+  `dispo` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `promosData`
 --
 
@@ -69,6 +99,40 @@ INSERT INTO `promosData` (`id`, `Name`, `Nombre`, `Periode`) VALUES
 (9, 'ISEN4', 0, '[{\"DateDebutP\":\"2024-09-02\",\"DateFinP\":\"2025-05-27\"}]'),
 (10, 'ISEN5', 0, '[{\"DateDebutP\":\"2024-09-02\",\"DateFinP\":\"2025-05-27\"}]');
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Salles`
+--
+
+CREATE TABLE `Salles` (
+  `id` int(11) NOT NULL,
+  `type` enum('classique','electronique','informatique','projet') NOT NULL,
+  `capacite` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Utilisateurs`
+--
+
+CREATE TABLE `Utilisateurs` (
+  `IdUtilisateur` int(11) NOT NULL,
+  `Login` varchar(255) NOT NULL,
+  `Email` varchar(255) NOT NULL,
+  `Password` varchar(255) NOT NULL,
+  `Bloque` tinyint(1) DEFAULT NULL,
+  `DateBlocage` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+--
+-- Déchargement des données de la table `Utilisateurs`
+--
+
+INSERT INTO `Utilisateurs` (`IdUtilisateur`, `Login`, `Email`, `Password`, `Bloque`, `DateBlocage`) VALUES
+(1, 'A', 'A', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533', 0, '2025-01-29 00:00:00');
+
 --
 -- Index pour les tables déchargées
 --
@@ -80,10 +144,35 @@ ALTER TABLE `calendrier`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Index pour la table `Cours`
+--
+ALTER TABLE `Cours`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_profs` (`Prof`);
+
+--
+-- Index pour la table `Professeurs`
+--
+ALTER TABLE `Professeurs`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Index pour la table `promosData`
 --
 ALTER TABLE `promosData`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `Salles`
+--
+ALTER TABLE `Salles`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `Utilisateurs`
+--
+ALTER TABLE `Utilisateurs`
+  ADD PRIMARY KEY (`IdUtilisateur`);
 
 --
 -- AUTO_INCREMENT pour les tables déchargées
@@ -96,10 +185,44 @@ ALTER TABLE `calendrier`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT pour la table `Cours`
+--
+ALTER TABLE `Cours`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `Professeurs`
+--
+ALTER TABLE `Professeurs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT pour la table `promosData`
 --
 ALTER TABLE `promosData`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT pour la table `Salles`
+--
+ALTER TABLE `Salles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `Utilisateurs`
+--
+ALTER TABLE `Utilisateurs`
+  MODIFY `IdUtilisateur` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `Cours`
+--
+ALTER TABLE `Cours`
+  ADD CONSTRAINT `fk_profs` FOREIGN KEY (`Prof`) REFERENCES `Professeurs` (`id`) ON DELETE SET NULL;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
