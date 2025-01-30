@@ -3,7 +3,7 @@ services:
     build: ./BobPlanning.front
     container_name: nginx-server
     volumes:
-      - .BobPlanning.front/dockerization/nginx.conf:/etc/nginx/nginx.conf
+      - ./BobPlanning.front/dockerization/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "80:80"
     depends_on:
