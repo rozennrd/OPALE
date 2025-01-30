@@ -8,6 +8,8 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Installation des dépendances
+RUN cd /home/bob/bobPlanning.app/bobPlanning.back
+RUN ls -l
 RUN npm install
 RUN npm audit fix
 RUN npm run build
