@@ -7,10 +7,17 @@ on:
       - deploy
 
 jobs:
+
   deploy:
     runs-on: self-hosted
 
     steps:
+    - name: Check Node.js version
+      run: node -v
+
+    - name: Check npm version
+      run: npm -v
+
     - name: Récupérer le code
       uses: actions/checkout@v3
 
