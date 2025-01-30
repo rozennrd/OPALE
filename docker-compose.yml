@@ -18,7 +18,8 @@ services:
     depends_on:
       - db
     volumes:
-      - ./BobPlanning.back/dist:/usr/src/app
+      - ./BobPlanning.back:/usr/src/app
+
     networks:
       - app-network
 
