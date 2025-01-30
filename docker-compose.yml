@@ -38,6 +38,16 @@ services:
     networks:
       - app-network
 
+phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql-database
+      MYSQL_ROOT_PASSWORD: rootpassword
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
