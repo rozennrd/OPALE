@@ -20,7 +20,7 @@ jobs:
           git pull origin deploy
           cd BobPlanning.back/
           npm i
-          npm fix audit
+          npm audit fix
           npm run build
           cd ../
           docker-compose down
