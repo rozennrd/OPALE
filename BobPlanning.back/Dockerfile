@@ -9,7 +9,8 @@ COPY package*.json ./
 
 # Installation des dépendances
 RUN npm install
-RUN npm run build
+# Compilation du code TypeScript en JavaScript
+RUN npx tsc
 
 # Copie le db.conf
 COPY ../../bobPlanning.db/db.conf ./dist/database/config/
