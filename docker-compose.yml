@@ -35,7 +35,7 @@ services:
       MYSQL_USER: bob
       MYSQL_PASSWORD: thisIsBobPlanning!
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - ../bobPlaning.db:/var/lib/mysql
     networks:

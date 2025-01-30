@@ -8,11 +8,10 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Installation des dépendances
-RUN node -v
-RUN npm -v
 RUN npm i
 RUN npm audit fix
-RUN npm run build --verbose
+RUN npm run build --verbose || tail -n 20 /root/.npm/_logs/*.log
+
 
 
 # Copie le db.conf
