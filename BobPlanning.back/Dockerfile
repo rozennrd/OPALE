@@ -8,10 +8,12 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Installation des dépendances
-RUN ls -l
-RUN npm install
+RUN node -v
+RUN npm -v
+RUN npm i
 RUN npm audit fix
-RUN npm run build
+RUN npm run build --verbose
+
 
 # Copie le db.conf
 COPY ../../bobPlanning.db/db.conf ./dist/database/config/
