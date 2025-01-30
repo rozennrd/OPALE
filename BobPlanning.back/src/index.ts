@@ -9,7 +9,6 @@ import * as mysql from 'mysql2';
 import getDBConfig from './database/getDBConfig';
 import path from 'path';
 import { EdtMicro } from './types/EdtMicroData';
-import bodyParser from 'body-parser';
 
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
@@ -466,7 +465,51 @@ app.post('/readMaquette', upload.single('file'), async (req: Request, res: Respo
  *       required: true
  */
 app.post('/generateEdtMicro', async (req: Request, res: Response) => {
+  try {
+    //Generate Data EdtMicro
+    const { macro, maquette }: { macro: EdtMacroData; maquette: MaquetteData[] } = req.body;
+    const calendrier = await generateDataEdtMicro(macro, maquette);
 
+    //Call solver from microservice
+    const edtMicroArray : any[] = [];
+
+    //Generate Excel file
+    if (!Array.isArray(edtMicroArray)) {
+      res.status(400).send('Invalid data format: Expected an array of timetable entries.');
+      return;
+    }
+
+    // Validate structure of each object in edtMicroArray
+    const isValid = edtMicroArray.every((edtMicro: EdtMicro) =>
+      edtMicro.dateDebut &&
+      Array.isArray(edtMicro.promos) &&
+      edtMicro.promos.every((promo: any) =>
+        promo.name &&
+        Array.isArray(promo.semaine) &&
+        promo.semaine.every((semaine: any) =>
+          semaine.jour &&
+          typeof semaine.enCours === 'boolean' &&
+          Array.isArray(semaine.cours) &&
+          semaine.cours.every((cours: any) =>
+            cours.matiere &&
+            cours.heureDebut &&
+            cours.heureFin &&
+            cours.professeur &&
+            cours.salleDeCours
+          )
+        )
+      )
+    );
+
+    const filePath = await generateEdtSquelette(edtMicroArray);
+
+    res.status(200).json({
+      message: 'Excel file generated and saved on the server',
+      filePath,
+    });
+  } catch (error) {
+    res.status(500).send('Internal server error: ' + error);
+  }
 });
 
 /**
