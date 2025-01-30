@@ -9,7 +9,6 @@ import * as mysql from 'mysql2';
 import getDBConfig from './database/getDBConfig';
 import path from 'path';
 import { EdtMicro } from './types/EdtMicroData';
-import bodyParser from 'body-parser';
 
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
@@ -67,6 +66,8 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  * /getPromosData:
  *   get:
  *     summary: Récupérer les données des promotions
+ *     tags:
+ *       - DB
  *     description: Retourne toutes les données des promotions.
  *     responses:
  *       200:
@@ -168,6 +169,8 @@ app.get('/getPromosData', (req, res) => {
  * /setPromosData:
  *   post:
  *     summary: Ajouter des données de promotions
+ *     tags:
+ *       - DB
  *     description: Cette route permet d'ajouter des données de promotions à la base de données.
  *     requestBody:
  *       required: true
@@ -271,6 +274,8 @@ app.post('/setPromosData', (req, res) => {
  * /generateEdtMacro:
  *   post:
  *     summary: Generate an Excel file based on provided data
+ *     tags:
+ *       - Macro
  *     description: Returns an Excel file for the provided date range and promotions data.
  *     requestBody:
  *       required: true
@@ -363,7 +368,7 @@ app.get('/download/EdtMacro', (req, res) => {
  *   post:
  *     summary: Read an Excel file and return UE and course data
  *     tags:
- *       - Excel
+ *       - Maquette
  *     requestBody:
  *       required: true
  *       content:
@@ -438,15 +443,73 @@ app.get('/download/EdtMacro', (req, res) => {
 app.post('/readMaquette', upload.single('file'), async (req: Request, res: Response): Promise<any> => {
   if (!req.file) {
     return res.status(400).send('Aucun fichier n\'a été téléchargé');
-}
+  }
 
-try {
-    let data : MaquetteData;
-    data = await readMaquette(req.file.buffer);
-    res.json(data);
-} catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la lecture du fichier Excel', error });
-}
+  try {
+      let data : MaquetteData;
+      data = await readMaquette(req.file.buffer);
+      res.json(data);
+  } catch (error) {
+      res.status(500).json({ message: 'Erreur lors de la lecture du fichier Excel', error });
+  }
+});
+
+/**
+ * @swagger
+ * /generateEdtMicro:
+ *  post:
+ *     summary: Generate excel micro file
+ *     tags:
+ *       - Micro
+ *     requestBody:
+ *       required: true
+ */
+app.post('/generateEdtMicro', async (req: Request, res: Response) => {
+  try {
+    //Generate Data EdtMicro
+    const { macro, maquette }: { macro: EdtMacroData; maquette: MaquetteData[] } = req.body;
+    const calendrier = await generateDataEdtMicro(macro, maquette);
+
+    //Call solver from microservice
+    const edtMicroArray : any[] = [];
+
+    //Generate Excel file
+    if (!Array.isArray(edtMicroArray)) {
+      res.status(400).send('Invalid data format: Expected an array of timetable entries.');
+      return;
+    }
+
+    // Validate structure of each object in edtMicroArray
+    const isValid = edtMicroArray.every((edtMicro: EdtMicro) =>
+      edtMicro.dateDebut &&
+      Array.isArray(edtMicro.promos) &&
+      edtMicro.promos.every((promo: any) =>
+        promo.name &&
+        Array.isArray(promo.semaine) &&
+        promo.semaine.every((semaine: any) =>
+          semaine.jour &&
+          typeof semaine.enCours === 'boolean' &&
+          Array.isArray(semaine.cours) &&
+          semaine.cours.every((cours: any) =>
+            cours.matiere &&
+            cours.heureDebut &&
+            cours.heureFin &&
+            cours.professeur &&
+            cours.salleDeCours
+          )
+        )
+      )
+    );
+
+    const filePath = await generateEdtSquelette(edtMicroArray);
+
+    res.status(200).json({
+      message: 'Excel file generated and saved on the server',
+      filePath,
+    });
+  } catch (error) {
+    res.status(500).send('Internal server error: ' + error);
+  }
 });
 
 /**
@@ -601,98 +664,6 @@ app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal server error: ' + error);
-  }
-});
-
-/**
- * @swagger
- * /readMaquette:
- *   post:
- *     summary: Read an Excel file and return UE and course data
- *     tags:
- *       - Test
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               file:
- *                 type: string
- *                 format: binary
- *     responses:
- *       200:
- *         description: Successfully read the Excel file and returned UE and course data
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 UE:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       name:
- *                         type: string
- *                 cours:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       name:
- *                         type: string
- *                       UE:
- *                         type: string
- *                       semestrePeriode:
- *                         type: string
- *                       heure:
- *                           type: object
- *                           properties:
- *                             total:
- *                               type: number
- *                             coursMagistral:
- *                               type: number
- *                             coursInteractif:
- *                               type: number
- *                             td:
- *                               type: number
- *                             tp:
- *                               type: number
- *                             autre:
- *                               type: number
- *       400:
- *         description: No file was uploaded
- *         content:
- *           text/plain:
- *             schema:
- *               type: string
- *               example: Aucun fichier n'a été téléchargé
- *       500:
- *         description: Internal server error while reading the file
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Erreur lors de la lecture du fichier Excel
- *                 error:
- *                   type: string
- */
-app.post('/readMaquette', upload.single('file'), async (req: Request, res: Response): Promise<any> => {
-  if (!req.file) {
-    return res.status(400).send('Aucun fichier n\'a été téléchargé');
-  }
-
-  try {
-      let data : MaquetteData;
-      data = await readMaquette(req.file.buffer);
-      res.json(data);
-  } catch (error) {
-      res.status(500).json({ message: 'Erreur lors de la lecture du fichier Excel', error });
   }
 });
 
