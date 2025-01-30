@@ -38,7 +38,7 @@ services:
     networks:
       - app-network
 
-phpmyadmin:
+  phpmyadmin:
     image: phpmyadmin
     container_name: phpmyadmin
     restart: always
