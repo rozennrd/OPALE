@@ -38,7 +38,7 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - ../bobPlaning.db:/var/lib/mysql
+      - ../bobPlanning.db:/var/lib/mysql
     networks:
       - app-network
 
