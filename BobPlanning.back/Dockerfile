@@ -12,10 +12,6 @@ RUN npm i
 RUN npm audit fix
 RUN npm run build --verbose || tail -n 20 /root/.npm/_logs/*.log
 
-
-# Copie le db.conf
-COPY ../../bobPlanning.db/db.conf ./dist/database/config/
-
 # Exposition du port de l'application
 EXPOSE 3000
 
