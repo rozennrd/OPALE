@@ -7,6 +7,7 @@ WORKDIR /usr/src/app
 # Copie des fichiers package.json et package-lock.json
 COPY package*.json ./
 
+
 # Installation des dépendances
 RUN npm i
 RUN npm audit fix
