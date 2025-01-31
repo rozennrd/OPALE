@@ -9,14 +9,14 @@ class Heure(BaseModel):
     """
     Represents different types of class hours in a course.
     """
-    total: int
-    totalAvecProf: int
-    coursMagistral: int
-    coursInteractif: int
-    td: int
-    tp: int
-    projet: int
-    elearning: int
+    total: Optional[float] = None
+    totalAvecProf: Optional[float] = None
+    coursMagistral: Optional[float] = None
+    coursInteractif: Optional[float] = None
+    td: Optional[float] = None
+    tp: Optional[float] = None
+    projet: Optional[float] = None
+    elearning: Optional[float] = None
 
 class CoursInput(BaseModel):
     """
@@ -24,11 +24,11 @@ class CoursInput(BaseModel):
     """
     name: str  # Course name
     UE: str  # Teaching unit
-    Semestre: List[int]  # Semester numbers
-    Periode: List[int]  # Period numbers
-    Prof: str  # Assigned professor
-    typeSalle: str  # Type of classroom required
-    Heure: List[Heure]  # Hour breakdown for the course
+    semestre: List[int]  # Semester numbers
+    periode: List[int]  # Period numbers
+    #Prof: str  # Assigned professor
+    #typeSalle: str  # Type of classroom required
+    heure: List[Heure]  # Hour breakdown for the course
 
 class PromoInput(BaseModel):
     """
@@ -69,14 +69,14 @@ class PromoCalendrierInput(BaseModel):
     Contains the weekly schedule for a promotion.
     """
     name: str  # Promotion name
-    Semaine: List[JourCalendrierInput]  # List of scheduled days
+    semaine: List[JourCalendrierInput]  # List of scheduled days
 
 class CalendrierInput(BaseModel):
     """
     Represents the overall schedule.
     """
     dateDebut: datetime  # Schedule start date
-    promo: List[PromoCalendrierInput]  # List of promotions included
+    promos: List[PromoCalendrierInput]  # List of promotions included
 
 class RequestData(BaseModel):
     """

@@ -1,0 +1,1501 @@
+{
+    "Promos": [
+        {
+            "name": "ADI1",
+            "nombreEtudiants": "20",
+            "Cours": [
+                {
+                    "name": "Maths 1 : ensembles, applications, logiques, équations et inéquations, dénombrement et combinatoire, proba discrètes",
+                    "UE": "Mathématiques 1",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": [
+                        {
+                            "total": 18,
+                            "totalAvecProf": 9,
+                            "coursMagistral": null,
+                            "coursInteractif": 9,
+                            "td": null,
+                            "tp": null,
+                            "projet": null,
+                            "elearning": null
+                        }
+                    ]
+                },
+                {
+                    "name": "Maths 2 : suites, fonctions usuelles, matrices",
+                    "UE": "Mathématiques 1",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": [
+                        {
+                            "total": 30,
+                            "totalAvecProf": 15,
+                            "coursMagistral": null,
+                            "coursInteractif": 15,
+                            "td": null,
+                            "tp": null,
+                            "projet": null,
+                            "elearning": null
+                        }
+                    ]
+                },
+                {
+                    "name": "Maths 3 : calcul différentiel et intégral, analyse asymptotique",
+                    "UE": "Mathématiques 1",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": [
+                        {
+                            "total": 42,
+                            "totalAvecProf": 21,
+                            "coursMagistral": null,
+                            "coursInteractif": 21,
+                            "td": null,
+                            "tp": null,
+                            "projet": null,
+                            "elearning": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "ADI2",
+            "nombreEtudiants": "20",
+            "Cours": [
+                {
+                    "name": "Maths 1 : ensembles, applications, logiques, équations et inéquations, dénombrement et combinatoire, proba discrètes",
+                    "UE": "Mathématiques 1",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": [
+                        {
+                            "total": 18,
+                            "totalAvecProf": 9,
+                            "coursMagistral": null,
+                            "coursInteractif": 9,
+                            "td": null,
+                            "tp": null,
+                            "projet": null,
+                            "elearning": null
+                        }
+                    ]
+                },
+                {
+                    "name": "Maths 2 : suites, fonctions usuelles, matrices",
+                    "UE": "Mathématiques 1",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": [
+                        {
+                            "total": 30,
+                            "totalAvecProf": 15,
+                            "coursMagistral": null,
+                            "coursInteractif": 15,
+                            "td": null,
+                            "tp": null,
+                            "projet": null,
+                            "elearning": null
+                        }
+                    ]
+                },
+                {
+                    "name": "Maths 3 : calcul différentiel et intégral, analyse asymptotique",
+                    "UE": "Mathématiques 1",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": [
+                        {
+                            "total": 42,
+                            "totalAvecProf": 21,
+                            "coursMagistral": null,
+                            "coursInteractif": 21,
+                            "td": null,
+                            "tp": null,
+                            "projet": null,
+                            "elearning": null
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "Salles": [
+        {
+            "ID": "J001",
+            "type": "TPelec",
+            "capacite": 30
+        },
+        {
+            "ID": "J002",
+            "type": "Interactif",
+            "capacite": 20
+        },
+        {
+            "ID": "J003",
+            "type": "TPinfo",
+            "capacite": 30
+        },
+        {
+            "ID": "J004",
+            "type": "TPinfo",
+            "capacite": 20
+        },
+        {
+            "ID": "J005",
+            "type": "Classique",
+            "capacite": 20
+        },
+        {
+            "ID": "J006",
+            "type": "TPelec",
+            "capacite": 20
+        },
+        {
+            "ID": "J101",
+            "type": "Interactif",
+            "capacite": 30
+        },
+        {
+            "ID": "J102",
+            "type": "TPinfo",
+            "capacite": 20
+        },
+        {
+            "ID": "J103",
+            "type": "Interactif",
+            "capacite": 20
+        },
+        {
+            "ID": "J104",
+            "type": "TPinfo",
+            "capacite": 12
+        },
+        {
+            "ID": "J105",
+            "type": "Classique",
+            "capacite": 30
+        },
+        {
+            "ID": "J106",
+            "type": "TPelec",
+            "capacite": 12
+        },
+        {
+            "ID": "J107",
+            "type": "Classique",
+            "capacite": 30
+        },
+        {
+            "ID": "J108",
+            "type": "TPinfo",
+            "capacite": 20
+        },
+        {
+            "ID": "J109",
+            "type": "Fablab",
+            "capacite": 20
+        },
+        {
+            "ID": "J110",
+            "type": "Classique",
+            "capacite": 12
+        },
+        {
+            "ID": "J111",
+            "type": "Fablab",
+            "capacite": 20
+        },
+        {
+            "ID": "J203",
+            "type": "TPinfo",
+            "capacite": 30
+        },
+        {
+            "ID": "J204",
+            "type": "TPelec",
+            "capacite": 30
+        },
+        {
+            "ID": "J205",
+            "type": "TPelec",
+            "capacite": 20
+        },
+        {
+            "ID": "J206",
+            "type": "Interactif",
+            "capacite": 20
+        }
+    ],
+    "Profs": [
+        {
+            "ID": "INT1",
+            "name": "Emma Bernard",
+            "type": "Externe",
+            "dispo": []
+        },
+        {
+            "ID": "INT2",
+            "name": "Nadia Martin",
+            "type": "Externe",
+            "dispo": []
+        },
+        {
+            "ID": "INT3",
+            "name": "Clara Durand",
+            "type": "Interne",
+            "dispo": []
+        },
+        {
+            "ID": "INT4",
+            "name": "Marie Lemoine",
+            "type": "Externe",
+            "dispo": []
+        },
+        {
+            "ID": "INT5",
+            "name": "Jean Dupont",
+            "type": "Interne",
+            "dispo": []
+        },
+        {
+            "ID": "EXT6",
+            "name": "Luc Dupont",
+            "type": "Externe",
+            "dispo": []
+        },
+        {
+            "ID": "EXT7",
+            "name": "Jean Leclerc",
+            "type": "Externe",
+            "dispo": []
+        },
+        {
+            "ID": "EXT8",
+            "name": "Paul Morel",
+            "type": "Interne",
+            "dispo": []
+        },
+        {
+            "ID": "EXT9",
+            "name": "Luc Bernard",
+            "type": "Externe",
+            "dispo": []
+        }
+    ],
+    "Calendrier": [
+        {
+            "dateDebut": "2024-07-29T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-08-05T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-08-12T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Assomption",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Assomption",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-08-19T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-08-26T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-09-02T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-09-09T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-09-16T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-09-23T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-09-30T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-10-07T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-10-14T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-10-21T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-10-28T01:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Vacances de la Toussaint + Toussaint",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Vacances de la Toussaint + Toussaint",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Vacances de la Toussaint + Toussaint",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Vacances de la Toussaint + Toussaint",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Toussaint",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Vacances de la Toussaint + Toussaint",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Vacances de la Toussaint + Toussaint",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Vacances de la Toussaint + Toussaint",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Vacances de la Toussaint + Toussaint",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Toussaint",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-11-04T01:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-11-11T01:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "11 novembre",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "11 novembre",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
