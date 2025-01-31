@@ -15,11 +15,6 @@ jobs:
         runner: [bob, ubuntu-1]  # Remplace par tes labels de runners
 
     steps:
-    - name: Check Node.js version
-      run: node -v
-
-    - name: Check npm version
-      run: npm -v
 
     - name: Récupérer le code
       uses: actions/checkout@v3
