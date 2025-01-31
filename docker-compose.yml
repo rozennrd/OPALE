@@ -21,7 +21,7 @@ services:
       - db
     volumes:
       - ./BobPlanning.back:/usr/src/app
-      - /home/bob/bobPlanning.db/db.conf:./dist/database/config/db.conf
+      - /home/bob/bobPlanning.db/db.conf:/BobPlanning.back/dist/database/config/db.conf
 
     networks:
       - app-network
