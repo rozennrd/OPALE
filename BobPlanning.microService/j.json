@@ -1,0 +1,71 @@
+{
+    "Promos": [
+      {
+        "name": "string",
+        "nombreEtudiants": 0,
+        "Cours": [
+          {
+            "name": "string",
+            "UE": "string",
+            "semestre": [
+              0
+            ],
+            "periode": [
+              0
+            ],
+            "Prof": "string",
+            "typeSalle": "string",
+            "heure": [
+              {
+                "total": 0,
+                "totalAvecProf": 0,
+                "coursMagistral": 0,
+                "coursInteractif": 0,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "Salles": [
+      {
+        "ID": "string",
+        "type": "string",
+        "capacite": 0
+      }
+    ],
+    "Profs": [
+      {
+        "ID": "string",
+        "name": "string",
+        "type": "string",
+        "dispo": [
+          "string"
+        ]
+      }
+    ],
+    "Calendrier": [
+      {
+        "dateDebut": "2025-01-29T14:57:00.715Z",
+        "promos": [
+          {
+            "name": "string",
+            "Semaine": [
+              {
+                "jour": "string",
+                "enCours": true,
+                "message": "string",
+                "cours": [
+                  "string"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
