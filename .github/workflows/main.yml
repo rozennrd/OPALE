@@ -19,6 +19,9 @@ jobs:
     - name: Récupérer le code
       uses: actions/checkout@v3
 
+    - name: Ajouter le répertoire comme sûr
+      run: git config --global --add safe.directory /home/bob/bobPlanning.app
+
     - name: Deploy on server
       run: |
           cd /home/bob/bobPlanning.app
