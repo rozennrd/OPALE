@@ -3,7 +3,7 @@ import { MaquetteData } from '../types/MaquetteData';
 import { EdtMacroData } from '../types/EdtMacroData';
 import { getHolidays, getPublicHolidays } from '../tools/holidaysAndWeek';
 
-export const generateDataEdtMicro = async (macro: EdtMacroData,  maquette: MaquetteData[]) : Promise<EdtMicro[]> => {
+export const generateDataEdtMicro = async (macro: EdtMacroData) : Promise<EdtMicro[]> => {
 
   let days: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
   let micro: EdtMicro[] = [];

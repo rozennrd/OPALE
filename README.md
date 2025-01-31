@@ -21,7 +21,7 @@ To run the project :
 
  - For microService : 
  Go to BobPlanning.microService --> cd .\BobPlanning.microService
- Create a env mode for python (only the first time) --> python -m venv venv
+ Create a env mode for python --> python -m venv venv
  Go in env mode for python : 
    If you are a linux user --> source venv/bin/activate 
    If you are a Windows user --> .\venv\Scripts\activate

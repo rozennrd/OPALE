@@ -9,6 +9,7 @@ import * as mysql from 'mysql2';
 import getDBConfig from './database/getDBConfig';
 import path from 'path';
 import { EdtMicro } from './types/EdtMicroData';
+import { generateEdtMicro } from './micro/generateEdtMicro';
 
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
@@ -351,7 +352,14 @@ app.post('/generateEdtMacro', async (req: Request, res: Response) => {
   }
 });
 
-// Route pour télécharger le fichier Excel
+/**
+ * @swagger
+ * /download/EdtMacro:
+ *  get:
+ *     summary: Download excel macro file
+ *     tags:
+ *       - Macro
+ */
 app.get('/download/EdtMacro', (req, res) => {
   const filePath = path.join(__dirname, '..', 'files', 'EdtMacro.xlsx');
   res.download(filePath, 'EdtMacro.xlsx', (err) => {
@@ -466,43 +474,7 @@ app.post('/readMaquette', upload.single('file'), async (req: Request, res: Respo
  */
 app.post('/generateEdtMicro', async (req: Request, res: Response) => {
   try {
-    //Generate Data EdtMicro
-    const { macro, maquette }: { macro: EdtMacroData; maquette: MaquetteData[] } = req.body;
-    const calendrier = await generateDataEdtMicro(macro, maquette);
-
-    //Call solver from microservice
-    const edtMicroArray : any[] = [];
-
-    //Generate Excel file
-    if (!Array.isArray(edtMicroArray)) {
-      res.status(400).send('Invalid data format: Expected an array of timetable entries.');
-      return;
-    }
-
-    // Validate structure of each object in edtMicroArray
-    const isValid = edtMicroArray.every((edtMicro: EdtMicro) =>
-      edtMicro.dateDebut &&
-      Array.isArray(edtMicro.promos) &&
-      edtMicro.promos.every((promo: any) =>
-        promo.name &&
-        Array.isArray(promo.semaine) &&
-        promo.semaine.every((semaine: any) =>
-          semaine.jour &&
-          typeof semaine.enCours === 'boolean' &&
-          Array.isArray(semaine.cours) &&
-          semaine.cours.every((cours: any) =>
-            cours.matiere &&
-            cours.heureDebut &&
-            cours.heureFin &&
-            cours.professeur &&
-            cours.salleDeCours
-          )
-        )
-      )
-    );
-
-    const filePath = await generateEdtSquelette(edtMicroArray);
-
+    const filePath = await generateEdtMicro(connection);
     res.status(200).json({
       message: 'Excel file generated and saved on the server',
       filePath,
@@ -510,6 +482,24 @@ app.post('/generateEdtMicro', async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).send('Internal server error: ' + error);
   }
+});
+
+/**
+ * @swagger
+ * /download/EdtMicro:
+ *  get:
+ *     summary: Download excel micro file
+ *     tags:
+ *       - Micro
+ */
+app.get('/download/EdtMicro', (req, res) => {
+  const filePath = path.join(__dirname, '..', 'files', 'EdtMicro.xlsx');
+  res.download(filePath, 'EdtMicro.xlsx', (err) => {
+    if (err) {
+      console.error('Erreur lors du téléchargement du fichier:', err);
+      res.status(500).send('Erreur lors du téléchargement du fichier');
+    }
+  });
 });
 
 /**
@@ -684,10 +674,6 @@ app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
  *             properties:
  *               macro:
  *                 $ref: '#/components/schemas/EdtMacroData'
- *               maquette:
- *                 type: array
- *                 items:
- *                   $ref: '#/components/schemas/MaquetteData'
  *     responses:
  *       200:
  *         description: Données EdtMicro générées avec succès
@@ -750,68 +736,6 @@ app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
  *           type: number
  *           example: 15
  *
- *     MaquetteData:
- *       type: object
- *       properties:
- *         UE:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/UE'
- *         cours:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Cours'
- * 
- *     UE:
- *       type: object
- *       properties:
- *         name:
- *           type: string
- *           example: "Mathématiques 1"
- * 
- *     Cours:
- *       type: object
- *       properties:
- *         name:
- *           type: string
- *           example: "Algèbre Linéaire"
- *         UE:
- *           type: string
- *           example: "Mathématiques 1"
- *         semestrePeriode:
- *           type: string
- *           example: "Semestre 1"
- *         heure:
- *           $ref: '#/components/schemas/Heure'
- * 
- *     Heure:
- *       type: object
- *       properties:
- *         total:
- *           type: number
- *           example: 30
- *         totalAvecProf:
- *           type: number
- *           example: 28
- *         coursMagistral:
- *           type: number
- *           example: 15
- *         coursInteractif:
- *           type: number
- *           example: 10
- *         td:
- *           type: number
- *           example: 5
- *         tp:
- *           type: number
- *           example: 0
- *         projet:
- *           type: number
- *           example: 0
- *         elearning:
- *           type: number
- *           example: 0
- *
  *     EdtMicro:
  *       type: object
  *       properties:
@@ -853,9 +777,9 @@ app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
  */
 app.post('/generateDataEdtMicro', async (req: Request, res: Response) => {
   try {
-    const { macro, maquette }: { macro: EdtMacroData; maquette: MaquetteData[] } = req.body;
+    const { macro }: { macro: EdtMacroData } = req.body;
 
-    const result = await generateDataEdtMicro(macro, maquette);
+    const result = await generateDataEdtMicro(macro);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la génération des données EdtMicro', error });
