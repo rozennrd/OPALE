@@ -10,6 +10,9 @@ jobs:
 
   deploy:
     runs-on: self-hosted
+  strategy:
+      matrix:
+        runner: [bob, ubuntu-1]  # Remplace par tes labels de runners
 
     steps:
     - name: Check Node.js version
