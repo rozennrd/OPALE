@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from typing import List
 from datetime import datetime
 from data import RequestData, CalendrierOutput, CoursOutput, JourCalendrierOutput, PromoCalendrierOutput
+from generatorEDT import generate_schedule  # Import the function from the appropriate module
 
 
 app = FastAPI(
@@ -33,6 +34,6 @@ def get_data_edt_micro(data: RequestData):
     **Response Format:**
     - Returns a structured schedule with courses, professors, and rooms for each day.
     """
-    result = []
+    result = generate_schedule(data)
 
     return result

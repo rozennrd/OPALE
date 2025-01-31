@@ -1,0 +1,363 @@
+{
+    "Promos": [
+        {
+            "name": "ADI1",
+            "nombreEtudiants": "20",
+            "Cours": [
+                {
+                    "name": "Maths 1",
+                    "UE": "Mathématiques 1",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": [
+                        {
+                            "total": 10,
+                            "totalAvecProf": null,
+                            "coursMagistral": null,
+                            "coursInteractif": null,
+                            "td": null,
+                            "tp": null,
+                            "projet": null,
+                            "elearning": null
+                        }
+                    ]
+                },
+                {
+                    "name": "Maths 2",
+                    "UE": "Mathématiques 1",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": [
+                        {
+                            "total": 10,
+                            "totalAvecProf": null,
+                            "coursMagistral": null,
+                            "coursInteractif": null,
+                            "td": null,
+                            "tp": null,
+                            "projet": null,
+                            "elearning": null
+                        }
+                    ]
+                },
+                {
+                    "name": "Maths 3",
+                    "UE": "Mathématiques 1",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": [
+                        {
+                            "total": 5,
+                            "totalAvecProf": null,
+                            "coursMagistral": null,
+                            "coursInteractif": null,
+                            "td": null,
+                            "tp": null,
+                            "projet": null,
+                            "elearning": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "ADI2",
+            "nombreEtudiants": "20",
+            "Cours": [
+                {
+                    "name": "Maths 1",
+                    "UE": "Mathématiques 1",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": [
+                        {
+                            "total": 10,
+                            "totalAvecProf": null,
+                            "coursMagistral": null,
+                            "coursInteractif": null,
+                            "td": null,
+                            "tp": null,
+                            "projet": null,
+                            "elearning": null
+                        }
+                    ]
+                },
+                {
+                    "name": "Maths 2",
+                    "UE": "Mathématiques 1",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": [
+                        {
+                            "total": 10,
+                            "totalAvecProf": null,
+                            "coursMagistral": null,
+                            "coursInteractif": null,
+                            "td": null,
+                            "tp": null,
+                            "projet": null,
+                            "elearning": null
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "Salles": [
+        {
+            "ID": "J001",
+            "type": "TPelec",
+            "capacite": 30
+        },
+        {
+            "ID": "J002",
+            "type": "Interactif",
+            "capacite": 20
+        },
+        {
+            "ID": "J003",
+            "type": "TPinfo",
+            "capacite": 30
+        },
+        {
+            "ID": "J004",
+            "type": "TPinfo",
+            "capacite": 20
+        },
+        {
+            "ID": "J005",
+            "type": "Classique",
+            "capacite": 20
+        },
+        {
+            "ID": "J006",
+            "type": "TPelec",
+            "capacite": 20
+        },
+        {
+            "ID": "J101",
+            "type": "Interactif",
+            "capacite": 30
+        },
+        {
+            "ID": "J102",
+            "type": "TPinfo",
+            "capacite": 20
+        },
+        {
+            "ID": "J103",
+            "type": "Interactif",
+            "capacite": 20
+        },
+        {
+            "ID": "J104",
+            "type": "TPinfo",
+            "capacite": 12
+        },
+        {
+            "ID": "J105",
+            "type": "Classique",
+            "capacite": 30
+        }
+    ],
+    "Profs": [
+        {
+            "ID": "INT1",
+            "name": "Emma Bernard",
+            "type": "Externe",
+            "dispo": []
+        },
+        {
+            "ID": "INT2",
+            "name": "Nadia Martin",
+            "type": "Externe",
+            "dispo": []
+        },
+        {
+            "ID": "INT3",
+            "name": "Clara Durand",
+            "type": "Interne",
+            "dispo": []
+        },
+        {
+            "ID": "INT4",
+            "name": "Marie Lemoine",
+            "type": "Externe",
+            "dispo": []
+        },
+        {
+            "ID": "INT5",
+            "name": "Jean Dupont",
+            "type": "Interne",
+            "dispo": []
+        },
+        {
+            "ID": "EXT6",
+            "name": "Luc Dupont",
+            "type": "Externe",
+            "dispo": []
+        }
+    ],
+    "Calendrier": [
+        {
+            "dateDebut": "2024-07-29T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-08-05T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
