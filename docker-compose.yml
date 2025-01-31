@@ -35,6 +35,11 @@ services:
       MYSQL_DATABASE: bobPlanning
       MYSQL_USER: bob
       MYSQL_PASSWORD: thisIsBobPlanning!
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_INITDB_SKIP_TZINFO: 1
+      MYSQL_TCP_PORT: 3306
+      MYSQL_WAIT_TIMEOUT: 28800  # Temps d'attente en secondes
+      MYSQL_INTERACTIVE_TIMEOUT: 28800  # Temps d'attente pour les connexions interactives
     ports:
       - "3307:3306"
     volumes:
