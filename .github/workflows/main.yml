@@ -10,7 +10,7 @@ jobs:
 
   deploy:
     runs-on: self-hosted
-  strategy:
+    strategy:
       matrix:
         runner: [bob, ubuntu-1]  # Remplace par tes labels de runners
 
