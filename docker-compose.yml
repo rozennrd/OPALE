@@ -49,8 +49,12 @@ services:
     environment:
       PMA_HOST: mysql-database
       MYSQL_ROOT_PASSWORD: rootpassword
+      PMA_ARBITRARY: 1  # Autorise d'autres connexions MySQL si nécessaire
+    ports:
+      - "8080:80"  # PhpMyAdmin sera accessible via http://localhost:8080
     networks:
       - app-network
+
 
 networks:
   app-network:
