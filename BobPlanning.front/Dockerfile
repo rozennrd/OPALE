@@ -11,6 +11,9 @@ COPY . .
 # Construire l'application frontend
 RUN npm run build --verbose
 
+# Vérifier que le dossier dist existe
+RUN ls -l /app/dist
+
 # Étape 2 : Serveur Nginx
 FROM nginx:latest
 
