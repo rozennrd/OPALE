@@ -11,8 +11,10 @@ COPY . .
 # Construire l'application frontend
 RUN npm run build --verbose
 
-# Vérifier que le dossier dist existe
-RUN ls -l /app/dist
+# Garder l'image Node.js (optionnel)
+# Ce conteneur sera préservé et accessible si nécessaire
+FROM node:18 AS node-container
+COPY --from=build /app/dist /app/dist
 
 # Étape 2 : Serveur Nginx
 FROM nginx:latest
