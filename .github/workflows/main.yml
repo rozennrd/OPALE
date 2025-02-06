@@ -17,6 +17,9 @@ jobs:
 
     steps:
 
+    - name: Set up debugging
+      run: echo "ACTIONS_RUNNER_DEBUG=true" >> $GITHUB_ENV
+
     - name: Récupérer le code
       uses: actions/checkout@v3
 
