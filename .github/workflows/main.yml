@@ -45,11 +45,6 @@ jobs:
         cd /home/bob/bobPlanning.app
         git pull origin deploy
 
-    - name: Vérifier et corriger les permissions
-      run: |
-        sudo chown -R bob:bob /home/bob/bobPlanning.app
-        sudo chmod -R 755 /home/bob/bobPlanning.app
-
     - name: Activer Docker BuildKit
       run: export DOCKER_BUILDKIT=1
 
