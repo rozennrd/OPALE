@@ -55,6 +55,7 @@ services:
       PMA_HOST: mysql-database
       MYSQL_ROOT_PASSWORD: rootpassword
       PMA_ARBITRARY: 1  # Autorise d'autres connexions MySQL si nécessaire
+      PMA_ABSOLUTE_URI: http://10.40.150.2:8100/phpmyadmin/
     ports:
       - "8080:80"  # PhpMyAdmin sera accessible via http://localhost:8080
     networks:
