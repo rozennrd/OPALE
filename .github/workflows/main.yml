@@ -11,6 +11,7 @@ jobs:
   deploy:
     runs-on: self-hosted
     strategy:
+      fail-fast: false  # Ne pas annuler les autres runners si l'un plante
       matrix:
         runner: [bob, ubuntu-1]  # Remplace par tes labels de runners
 
