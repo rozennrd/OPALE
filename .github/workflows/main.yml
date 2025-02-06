@@ -1,7 +1,7 @@
 name: Deploy to Server
 
 on:
-  workflow_dispatch: # Permet de déclencher ce workflow manuellement depuis l'interface GitHub
+  workflow_dispatch:
   push:
     branches:
       - deploy
@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false  # Ne pas annuler les autres runners si l'un plante
       matrix:
-        runner: [bob, ubuntu-1]  # Remplace par tes labels de runners
+        runner: [bob, ubuntu-1]
 
     steps:
 
@@ -23,12 +23,39 @@ jobs:
     - name: Ajouter le répertoire comme sûr
       run: git config --global --add safe.directory /home/bob/bobPlanning.app
 
-    - name: Deploy on server
+    - name: Debug Git
+      run: |
+        whoami
+        ls -lah /home/bob/bobPlanning.app/.git || echo "Dossier .git introuvable"
+        git status || echo "Git status indisponible"
+        git branch || echo "Impossible de récupérer les branches"
+
+    - name: Vérifier et cloner le dépôt si nécessaire
+      run: |
+        if [ ! -d "/home/bob/bobPlanning.app/.git" ]; then
+          echo "Dépôt absent, clonage en cours..."
+          rm -rf /home/bob/bobPlanning.app
+          git clone -b deploy https://github.com/Whythem/BobPlanning.git /home/bob/bobPlanning.app
+        else
+          echo "Dépôt trouvé, on continue..."
+        fi
+
+    - name: Mettre à jour le dépôt
+      run: |
+        cd /home/bob/bobPlanning.app
+        git pull origin deploy
+
+    - name: Vérifier et corriger les permissions
+      run: |
+        sudo chown -R bob:bob /home/bob/bobPlanning.app
+        sudo chmod -R 755 /home/bob/bobPlanning.app
+
+    - name: Activer Docker BuildKit
+      run: export DOCKER_BUILDKIT=1
+
+    - name: Déployer l’application
       run: |
           cd /home/bob/bobPlanning.app
-          whoami
-          ls -lah /home/bob/bobPlanning.app/.git/FETCH_HEAD
-          git pull origin deploy
           docker-compose down
           docker-compose build
           docker-compose up -d
