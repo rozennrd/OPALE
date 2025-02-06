@@ -25,6 +25,8 @@ jobs:
     - name: Deploy on server
       run: |
           cd /home/bob/bobPlanning.app
+          whoami
+          ls -lah /home/bob/bobPlanning.app/.git/FETCH_HEAD
           git pull origin deploy
           docker-compose down
           docker-compose build
