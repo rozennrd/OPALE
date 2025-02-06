@@ -10,6 +10,8 @@ jobs:
 
   deploy:
     runs-on: self-hosted
+    env:
+      ACTIONS_STEP_DEBUG: true
     strategy:
       fail-fast: false  # Ne pas annuler les autres runners si l'un plante
       matrix:
