@@ -5,7 +5,7 @@
             "nombreEtudiants": "20",
             "Cours": [
                 {
-                    "name": "Maths 1",
+                    "name": "Math",
                     "UE": "Mathématiques 1",
                     "semestre": [
                         1
@@ -25,7 +25,7 @@
                     ]
                 },
                 {
-                    "name": "Maths 2",
+                    "name": "Phy",
                     "UE": "Mathématiques 1",
                     "semestre": [
                         1
@@ -45,7 +45,7 @@
                     ]
                 },
                 {
-                    "name": "Maths 3",
+                    "name": "Info",
                     "UE": "Mathématiques 1",
                     "semestre": [
                         1
@@ -71,7 +71,7 @@
             "nombreEtudiants": "20",
             "Cours": [
                 {
-                    "name": "Maths 1",
+                    "name": "Math",
                     "UE": "Mathématiques 1",
                     "semestre": [
                         1
@@ -91,7 +91,7 @@
                     ]
                 },
                 {
-                    "name": "Maths 2",
+                    "name": "Phy",
                     "UE": "Mathématiques 1",
                     "semestre": [
                         1
