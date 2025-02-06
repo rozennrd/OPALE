@@ -30,12 +30,6 @@ jobs:
         git status || echo "Git status indisponible"
         git branch || echo "Impossible de récupérer les branches"
 
-    - name: Mettre à jour le dépôt
-      run: |
-        cd /home/bob/bobPlanning.app
-        docker-compose down
-        git pull origin deploy
-
     - name: Activer Docker BuildKit
       run: export DOCKER_BUILDKIT=1
 
@@ -43,5 +37,6 @@ jobs:
       run: |
           cd /home/bob/bobPlanning.app
           docker-compose down
+          git pull origin deploy
           docker-compose build
           docker-compose up -d
