@@ -23,19 +23,9 @@ jobs:
     - name: Ajouter le répertoire comme sûr
       run: git config --global --add safe.directory /home/bob/bobPlanning.app
 
-    - name: Debug Git
-      run: |
-        whoami
-        ls -lah /home/bob/bobPlanning.app/.git || echo "Dossier .git introuvable"
-        git status || echo "Git status indisponible"
-        git branch || echo "Impossible de récupérer les branches"
-
-    - name: Activer Docker BuildKit
-      run: export DOCKER_BUILDKIT=1
-
     - name: Déployer l’application
       run: |
-          cd /home/bob/bobPlanning.app/
+          cd /home/bob/bobPlanning.app
           docker-compose down
           git pull origin deploy
           docker-compose build
