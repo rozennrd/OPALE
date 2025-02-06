@@ -35,7 +35,7 @@ jobs:
 
     - name: Déployer l’application
       run: |
-          cd /home/bob/bobPlanning.app
+          cd /home/bob/bobPlanning.app/
           docker-compose down
           git pull origin deploy
           docker-compose build
