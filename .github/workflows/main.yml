@@ -30,19 +30,10 @@ jobs:
         git status || echo "Git status indisponible"
         git branch || echo "Impossible de récupérer les branches"
 
-    - name: Vérifier et cloner le dépôt si nécessaire
-      run: |
-        if [ ! -d "/home/bob/bobPlanning.app/.git" ]; then
-          echo "Dépôt absent, clonage en cours..."
-          rm -rf /home/bob/bobPlanning.app
-          git clone -b deploy https://github.com/Whythem/BobPlanning.git /home/bob/bobPlanning.app
-        else
-          echo "Dépôt trouvé, on continue..."
-        fi
-
     - name: Mettre à jour le dépôt
       run: |
         cd /home/bob/bobPlanning.app
+        docker-compose down
         git pull origin deploy
 
     - name: Activer Docker BuildKit
