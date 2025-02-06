@@ -3,7 +3,6 @@ from typing import List
 from datetime import datetime
 from data import RequestData, CalendrierOutput, CoursOutput, JourCalendrierOutput, PromoCalendrierOutput
 
-
 app = FastAPI(
     title="Planning Microservice",
     description="API for OR-Tools optimization",
@@ -11,11 +10,6 @@ app = FastAPI(
     docs_url="/swagger", 
     redoc_url="/api-docs" 
 )
-
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the OR-Tools planning API"}
-
 
 # -------------------------------------
 # API Endpoint
