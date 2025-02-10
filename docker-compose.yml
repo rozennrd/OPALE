@@ -7,7 +7,7 @@ services:
       - ./phpmyadmin:/usr/share/phpmyadmin
 
   nginx:
-    image: nginx:latest
+    build: ./BobPlanning.front
     networks:
       - app-network
     volumes:
