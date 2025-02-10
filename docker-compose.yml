@@ -37,15 +37,15 @@ services:
     image: mysql:8.0
     container_name: mysql-database
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: bobPlanning
-      MYSQL_USER: bob
-      MYSQL_PASSWORD: thisIsBobPlanning!
-      MYSQL_ROOT_HOST: '%'
-      MYSQL_INITDB_SKIP_TZINFO: 1
-      MYSQL_TCP_PORT: 3306
-      MYSQL_WAIT_TIMEOUT: 28800  # Temps d'attente en secondes
-      MYSQL_INTERACTIVE_TIMEOUT: 28800  # Temps d'attente pour les connexions interactives
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
+      MYSQL_INITDB_SKIP_TZINFO: ${MYSQL_INITDB_SKIP_TZINFO}
+      MYSQL_TCP_PORT: ${MYSQL_TCP_PORT}
+      MYSQL_WAIT_TIMEOUT: ${MYSQL_WAIT_TIMEOUT}
+      MYSQL_INTERACTIVE_TIMEOUT: ${MYSQL_INTERACTIVE_TIMEOUT}
     ports:
       - "3307:3306"
     volumes:
@@ -59,7 +59,7 @@ services:
     restart: always
     environment:
       PMA_HOST: mysql-database
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       PMA_ARBITRARY: 1  # Autorise d'autres connexions MySQL si nécessaire
       PMA_ABSOLUTE_URI: http://10.40.150.2:8100/phpmyadmin/
     ports:
