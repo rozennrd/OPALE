@@ -24,7 +24,7 @@ FROM nginx:latest
 RUN rm /etc/nginx/conf.d/default.conf
 
 # Copier les fichiers construits depuis l'étape 1
-COPY --from=build /app/dist/. /usr/share/nginx/html
+COPY --from=node-container /app/dist /usr/share/nginx/html
 
 # Exposer le port 80
 EXPOSE 80
