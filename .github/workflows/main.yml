@@ -15,7 +15,12 @@ jobs:
     strategy:
       fail-fast: false  # Ne pas annuler les autres runners si l'un plante
       matrix:
-        runner: [bob]
+        runner: [bob, ubuntu-1]
+        include:
+          - runner: bob
+            next_runner: ubuntu-1
+          - runner: ubuntu-1
+            next_runner: null  # Aucun runner suivant pour le dernier
 
     steps:
 
