@@ -32,6 +32,7 @@ jobs:
       run: |
           cd /home/bob/bobPlanning.app
           docker-compose down
+          docker builder prune --all
           git pull origin deploy
           docker-compose build
           docker-compose up -d
