@@ -81,7 +81,7 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
     promo_courses_info = extract_courses_info(data)  # Infos sur les cours
     
     # Créneaux horaires disponibles (1h chacun)
-    creneaux_horaires = [f"{h}h00-{h+1}h00" for h in range(8, 18) if h != 12]
+    creneaux_horaires = [f"{h}h-{h+1}h" for h in range(8, 18) if h != 12]
     
     
     
