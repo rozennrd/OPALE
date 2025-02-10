@@ -103,7 +103,7 @@ class JourCalendrierOutput(BaseModel):
     """
     Represents a day's schedule in the response.
     """
-    jour: datetime
+    jour: str
     enCours: bool
     message: str
     cours: List[CoursOutput]

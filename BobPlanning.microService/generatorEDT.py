@@ -5,13 +5,18 @@ from data import RequestData, CalendrierOutput, PromoCalendrierOutput, JourCalen
 from typing import List, Dict
 from ortools.sat.python import cp_model
 
-# Fonction pour convertir "Lundi", "Mardi", etc. en un vrai datetime
-def convertir_jour_en_datetime(jour_str: str, base_date: datetime) -> datetime:
-    jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-    if jour_str not in jours:
-        raise ValueError(f"Jour inconnu : {jour_str}")  # Sécurise contre une erreur
-    delta = jours.index(jour_str)  # Trouve le décalage par rapport à base_date
-    return base_date + timedelta(days=delta)
+
+
+jours_semaine = {
+    "Monday": "Lundi",
+    "Tuesday": "Mardi",
+    "Wednesday": "Mercredi",
+    "Thursday": "Jeudi",
+    "Friday": "Vendredi",
+    "Saturday": "Samedi",
+    "Sunday": "Dimanche"
+}
+
 
 def extract_calendar_info(data: RequestData) -> Dict[str, List[JourCalendrierOutput]]:
     """
@@ -36,7 +41,7 @@ def extract_calendar_info(data: RequestData) -> Dict[str, List[JourCalendrierOut
             
             jours_travailles_output = [
                 JourCalendrierOutput(
-                    jour=convertir_jour_en_datetime(jour.jour, base_date),
+                    jour=jour.jour,
                     enCours=jour.enCours, 
                     message=jour.message, 
                     cours=[]  # On laisse vide pour être rempli après
@@ -46,7 +51,7 @@ def extract_calendar_info(data: RequestData) -> Dict[str, List[JourCalendrierOut
             promo_plannings[promo_cal.name].extend(jours_travailles_output)
 
             # Affichage des jours travaillés
-            jours_formates = [jour.jour.strftime("%A %d-%m-%Y") for jour in jours_travailles_output]
+            jours_formates = [jour.jour for jour in jours_travailles_output]
             print(f"📌 Promo : {promo_cal.name} - Jours travaillés : {jours_formates if jours_formates else '⚠️ Aucun jour travaillé'}")
 
     return promo_plannings
@@ -76,7 +81,7 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
     promo_courses_info = extract_courses_info(data)  # Infos sur les cours
     
     # Créneaux horaires disponibles (1h chacun)
-    creneaux_horaires = [f"{h}:00-{h+1}:00" for h in range(8, 18)]
+    creneaux_horaires = [f"{h}h00-{h+1}h00" for h in range(8, 18) if h != 12]
     
     
     
@@ -101,7 +106,9 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                     # Variable binaire : 1 si le cours est placé dans ce créneau, 0 sinon
                     var_creneau_name = f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"
                     cours_par_creneau[var_creneau_name] = model.NewBoolVar(var_creneau_name)
+
     
+            
     # ✅ Contraintes : Volume horaire respecté
     for promo, courses in promo_courses_info.items():
         jours_travailles = promo_calendar_info[promo]
@@ -130,9 +137,75 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                 total_heure_du_jour = sum(
                     cours_par_creneau[f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"]
                     for creneau_index in range(len(creneaux_horaires))
+                    if f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}" in cours_par_creneau
                 )
+
+
                 model.Add(total_heure_du_jour == heures_par_jour[f"heures_{promo}_{course_name}_jour_{jour_index}"])
             
+    # ✅ Contraintes : Un seul cours par créneau (par promo)
+    for promo, jours_travailles in promo_calendar_info.items():
+        for jour_index in range(len(jours_travailles)):
+            for creneau_index in range(len(creneaux_horaires)):
+                # La somme des cours assignés à ce créneau pour une promo ne doit pas dépasser 1
+                model.Add(
+                    sum(
+                        cours_par_creneau[f"creneau_{promo}_{course['cours']}_jour_{jour_index}_creneau_{creneau_index}"]
+                        for course in promo_courses_info[promo]
+                    ) <= 1
+                )
+    
+    # ✅ Contraintes : Pas plus de 4 heures consécutives de cours
+    for promo, jours_travailles in promo_calendar_info.items():
+        for jour_index in range(len(jours_travailles)):
+            for course in promo_courses_info[promo]:
+                course_name = course["cours"]
+
+                for start in range(len(creneaux_horaires) - 4):
+                    # Somme des 5 créneaux consécutifs
+                    model.Add(
+                        sum(
+                            cours_par_creneau[f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"]
+                            for creneau_index in range(start, start + 5)
+                            if f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}" in cours_par_creneau
+                        ) <= 4  # Maximum 4 créneaux consécutifs
+                    )
+    
+    # ✅ Objectif 1 : Privilégier les matinées
+    objectif_heure = sum(
+        creneau_index * cours_par_creneau[f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"]
+        for promo, jours_travailles in promo_calendar_info.items()
+        for jour_index in range(len(jours_travailles))
+        for course in promo_courses_info[promo]
+        for creneau_index in range(len(creneaux_horaires))
+        if f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}" in cours_par_creneau
+    )
+
+    # ✅ Objectif 2 : Éviter les trous entre créneaux d'un même cours
+    penalite_sauts = []
+    for promo, jours_travailles in promo_calendar_info.items():
+        for jour_index in range(len(jours_travailles)):
+            for course in promo_courses_info[promo]:
+                course_name = course["cours"]
+
+                for creneau_index in range(1, len(creneaux_horaires)):  # Comparer avec le créneau précédent
+                    var_current = cours_par_creneau.get(f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}", None)
+                    var_prev = cours_par_creneau.get(f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index - 1}", None)
+
+                    if var_current is not None and var_prev is not None:
+
+                        saut_detecte = model.NewBoolVar(f"saut_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}")
+                        
+                        # saut_detecte = 1 si var_current est actif mais var_prev est inactif
+                        model.Add(var_current - var_prev <= saut_detecte)
+                        model.Add(saut_detecte <= 1 - var_prev)
+                        
+                        penalite_sauts.append(saut_detecte)
+
+    # ✅ Minimisation combinée des objectifs
+    model.Minimize(objectif_heure + 5 * sum(penalite_sauts))  # 5 = coefficient de pénalité pour les trous
+
+
     # ✅ Résolution du modèle
     solver = cp_model.CpSolver()
     status = solver.Solve(model)
@@ -150,7 +223,7 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                 for jour_index, jour in enumerate(promo_calendar_info[promo]):
                     heures_assignees = solver.Value(heures_par_jour[f"heures_{promo}_{course_name}_jour_{jour_index}"])
                     if heures_assignees > 0:
-                        print(f"    - {jour.jour.strftime('%A %d-%m-%Y')}: {heures_assignees}h")
+                        print(f"    - {jour.jour}: {heures_assignees}h")
                         
                     # 🔹 Affichage des créneaux utilisés
                     creneaux_utilises = [
@@ -183,13 +256,32 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                             ]
 
                             # Ajouter le cours avec créneaux assignés
-                            cours_results.append(CoursOutput(
-                                matiere=course_name,
-                                heureDebut=creneaux_assignes[0].split("-")[0] if creneaux_assignes else "",
-                                heureFin=creneaux_assignes[-1].split("-")[1] if creneaux_assignes else "",
-                                professeur="Prof inconnu",  # À adapter si nécessaire
-                                salleDeCours="Salle inconnue"  # À adapter si nécessaire
-                            ))
+                            # Segmentation des créneaux en groupes continus
+                            if creneaux_assignes:
+                                grouped_creneaux = []
+                                temp_group = [creneaux_assignes[0]]
+
+                                for i in range(1, len(creneaux_assignes)):
+                                    heure_precedente = int(temp_group[-1].split("h")[0])
+                                    heure_actuelle = int(creneaux_assignes[i].split("h")[0])
+
+                                    if heure_actuelle == heure_precedente + 1:  # Créneau consécutif
+                                        temp_group.append(creneaux_assignes[i])
+                                    else:
+                                        grouped_creneaux.append(temp_group)
+                                        temp_group = [creneaux_assignes[i]]
+
+                                grouped_creneaux.append(temp_group)  # Ajouter le dernier groupe
+
+                                for group in grouped_creneaux:
+                                    cours_results.append(CoursOutput(
+                                        matiere=course_name,
+                                        heureDebut=group[0].split("-")[0],
+                                        heureFin=group[-1].split("-")[1],
+                                        professeur="Prof inconnu",
+                                        salleDeCours="Salle inconnue"
+                                    ))
+
 
                     # Construire la structure du jour
                     jours_results.append(JourCalendrierOutput(
@@ -214,4 +306,4 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
     else:
         print("\n❌ Aucune solution trouvée.")
     
-    return calendrier_resultat  # TODO: Remplir la structure de retour correcte
+    return calendrier_resultat  

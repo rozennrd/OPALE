@@ -9,7 +9,22 @@
               "jour": "2024-07-29T00:00:00Z",
               "enCours": true,
               "message": "Pas cours",
-              "cours": []
+              "cours": [
+                {
+                  "matiere": "Phy",
+                  "heureDebut": "13:00",
+                  "heureFin": "16:00",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Info",
+                  "heureDebut": "8:00",
+                  "heureFin": "13:00",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                }
+              ]
             },
             {
               "jour": "2024-07-30T00:00:00Z",
@@ -17,9 +32,16 @@
               "message": "Pas cours",
               "cours": [
                 {
-                  "matiere": "Info",
+                  "matiere": "Math",
+                  "heureDebut": "15:00",
+                  "heureFin": "16:00",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Phy",
                   "heureDebut": "8:00",
-                  "heureFin": "9:00",
+                  "heureFin": "15:00",
                   "professeur": "Prof inconnu",
                   "salleDeCours": "Salle inconnue"
                 }
@@ -31,16 +53,9 @@
               "message": "Pas cours",
               "cours": [
                 {
-                  "matiere": "Phy",
+                  "matiere": "Math",
                   "heureDebut": "8:00",
-                  "heureFin": "12:00",
-                  "professeur": "Prof inconnu",
-                  "salleDeCours": "Salle inconnue"
-                },
-                {
-                  "matiere": "Info",
-                  "heureDebut": "8:00",
-                  "heureFin": "12:00",
+                  "heureFin": "16:00",
                   "professeur": "Prof inconnu",
                   "salleDeCours": "Salle inconnue"
                 }
@@ -54,14 +69,7 @@
                 {
                   "matiere": "Math",
                   "heureDebut": "8:00",
-                  "heureFin": "10:00",
-                  "professeur": "Prof inconnu",
-                  "salleDeCours": "Salle inconnue"
-                },
-                {
-                  "matiere": "Phy",
-                  "heureDebut": "8:00",
-                  "heureFin": "14:00",
+                  "heureFin": "9:00",
                   "professeur": "Prof inconnu",
                   "salleDeCours": "Salle inconnue"
                 }
@@ -71,15 +79,7 @@
               "jour": "2024-08-02T00:00:00Z",
               "enCours": true,
               "message": "Pas cours",
-              "cours": [
-                {
-                  "matiere": "Math",
-                  "heureDebut": "8:00",
-                  "heureFin": "16:00",
-                  "professeur": "Prof inconnu",
-                  "salleDeCours": "Salle inconnue"
-                }
-              ]
+              "cours": []
             }
           ]
         },
@@ -90,13 +90,36 @@
               "jour": "2024-07-29T00:00:00Z",
               "enCours": true,
               "message": "Pas cours",
-              "cours": []
+              "cours": [
+                {
+                  "matiere": "Phy",
+                  "heureDebut": "8:00",
+                  "heureFin": "16:00",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                }
+              ]
             },
             {
               "jour": "2024-07-30T00:00:00Z",
               "enCours": true,
               "message": "Pas cours",
-              "cours": []
+              "cours": [
+                {
+                  "matiere": "Math",
+                  "heureDebut": "10:00",
+                  "heureFin": "16:00",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Phy",
+                  "heureDebut": "8:00",
+                  "heureFin": "10:00",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                }
+              ]
             },
             {
               "jour": "2024-07-31T00:00:00Z",
@@ -104,7 +127,7 @@
               "message": "Pas cours",
               "cours": [
                 {
-                  "matiere": "Phy",
+                  "matiere": "Math",
                   "heureDebut": "8:00",
                   "heureFin": "12:00",
                   "professeur": "Prof inconnu",
@@ -116,36 +139,13 @@
               "jour": "2024-08-01T00:00:00Z",
               "enCours": true,
               "message": "Pas cours",
-              "cours": [
-                {
-                  "matiere": "Math",
-                  "heureDebut": "8:00",
-                  "heureFin": "10:00",
-                  "professeur": "Prof inconnu",
-                  "salleDeCours": "Salle inconnue"
-                },
-                {
-                  "matiere": "Phy",
-                  "heureDebut": "8:00",
-                  "heureFin": "14:00",
-                  "professeur": "Prof inconnu",
-                  "salleDeCours": "Salle inconnue"
-                }
-              ]
+              "cours": []
             },
             {
               "jour": "2024-08-02T00:00:00Z",
               "enCours": true,
               "message": "Pas cours",
-              "cours": [
-                {
-                  "matiere": "Math",
-                  "heureDebut": "8:00",
-                  "heureFin": "16:00",
-                  "professeur": "Prof inconnu",
-                  "salleDeCours": "Salle inconnue"
-                }
-              ]
+              "cours": []
             }
           ]
         }
@@ -161,7 +161,22 @@
               "jour": "2024-07-29T00:00:00Z",
               "enCours": true,
               "message": "Pas cours",
-              "cours": []
+              "cours": [
+                {
+                  "matiere": "Phy",
+                  "heureDebut": "13:00",
+                  "heureFin": "16:00",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Info",
+                  "heureDebut": "8:00",
+                  "heureFin": "13:00",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                }
+              ]
             },
             {
               "jour": "2024-07-30T00:00:00Z",
@@ -169,9 +184,16 @@
               "message": "Pas cours",
               "cours": [
                 {
-                  "matiere": "Info",
+                  "matiere": "Math",
+                  "heureDebut": "15:00",
+                  "heureFin": "16:00",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Phy",
                   "heureDebut": "8:00",
-                  "heureFin": "9:00",
+                  "heureFin": "15:00",
                   "professeur": "Prof inconnu",
                   "salleDeCours": "Salle inconnue"
                 }
@@ -183,16 +205,9 @@
               "message": "Pas cours",
               "cours": [
                 {
-                  "matiere": "Phy",
+                  "matiere": "Math",
                   "heureDebut": "8:00",
-                  "heureFin": "12:00",
-                  "professeur": "Prof inconnu",
-                  "salleDeCours": "Salle inconnue"
-                },
-                {
-                  "matiere": "Info",
-                  "heureDebut": "8:00",
-                  "heureFin": "12:00",
+                  "heureFin": "16:00",
                   "professeur": "Prof inconnu",
                   "salleDeCours": "Salle inconnue"
                 }
@@ -206,14 +221,7 @@
                 {
                   "matiere": "Math",
                   "heureDebut": "8:00",
-                  "heureFin": "10:00",
-                  "professeur": "Prof inconnu",
-                  "salleDeCours": "Salle inconnue"
-                },
-                {
-                  "matiere": "Phy",
-                  "heureDebut": "8:00",
-                  "heureFin": "14:00",
+                  "heureFin": "9:00",
                   "professeur": "Prof inconnu",
                   "salleDeCours": "Salle inconnue"
                 }
@@ -223,15 +231,7 @@
               "jour": "2024-08-02T00:00:00Z",
               "enCours": true,
               "message": "Pas cours",
-              "cours": [
-                {
-                  "matiere": "Math",
-                  "heureDebut": "8:00",
-                  "heureFin": "16:00",
-                  "professeur": "Prof inconnu",
-                  "salleDeCours": "Salle inconnue"
-                }
-              ]
+              "cours": []
             }
           ]
         },
@@ -242,13 +242,36 @@
               "jour": "2024-07-29T00:00:00Z",
               "enCours": true,
               "message": "Pas cours",
-              "cours": []
+              "cours": [
+                {
+                  "matiere": "Phy",
+                  "heureDebut": "8:00",
+                  "heureFin": "16:00",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                }
+              ]
             },
             {
               "jour": "2024-07-30T00:00:00Z",
               "enCours": true,
               "message": "Pas cours",
-              "cours": []
+              "cours": [
+                {
+                  "matiere": "Math",
+                  "heureDebut": "10:00",
+                  "heureFin": "16:00",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Phy",
+                  "heureDebut": "8:00",
+                  "heureFin": "10:00",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                }
+              ]
             },
             {
               "jour": "2024-07-31T00:00:00Z",
@@ -256,7 +279,7 @@
               "message": "Pas cours",
               "cours": [
                 {
-                  "matiere": "Phy",
+                  "matiere": "Math",
                   "heureDebut": "8:00",
                   "heureFin": "12:00",
                   "professeur": "Prof inconnu",
@@ -268,36 +291,13 @@
               "jour": "2024-08-01T00:00:00Z",
               "enCours": true,
               "message": "Pas cours",
-              "cours": [
-                {
-                  "matiere": "Math",
-                  "heureDebut": "8:00",
-                  "heureFin": "10:00",
-                  "professeur": "Prof inconnu",
-                  "salleDeCours": "Salle inconnue"
-                },
-                {
-                  "matiere": "Phy",
-                  "heureDebut": "8:00",
-                  "heureFin": "14:00",
-                  "professeur": "Prof inconnu",
-                  "salleDeCours": "Salle inconnue"
-                }
-              ]
+              "cours": []
             },
             {
               "jour": "2024-08-02T00:00:00Z",
               "enCours": true,
               "message": "Pas cours",
-              "cours": [
-                {
-                  "matiere": "Math",
-                  "heureDebut": "8:00",
-                  "heureFin": "16:00",
-                  "professeur": "Prof inconnu",
-                  "salleDeCours": "Salle inconnue"
-                }
-              ]
+              "cours": []
             }
           ]
         }
