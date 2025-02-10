@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false  # Ne pas annuler les autres runners si l'un plante
       matrix:
-        runner: [bob, ubuntu-1]
+        runner: [bob]
 
     steps:
 
@@ -34,5 +34,5 @@ jobs:
           docker-compose down
           docker builder prune --all
           git pull origin deploy
-          docker-compose build
+          docker-compose build --no-cache
           docker-compose up -d
