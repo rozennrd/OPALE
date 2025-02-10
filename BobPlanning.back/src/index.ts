@@ -533,7 +533,7 @@ app.get('/download/EdtMicro', (req, res) => {
  *                       name:
  *                         type: string
  *                         description: Name of the class
- *                         example: "Promo 2024"
+ *                         example: "ADI 1"
  *                       semaine:
  *                         type: array
  *                         description: Weekly schedule with courses
@@ -542,9 +542,8 @@ app.get('/download/EdtMicro', (req, res) => {
  *                           properties:
  *                             jour:
  *                               type: string
- *                               format: date-time
- *                               description: Date of the day
- *                               example: "2024-01-01T00:00:00.000Z"
+ *                               description: Day
+ *                               example: "Lundi"
  *                             enCours:
  *                               type: boolean
  *                               description: Indicates if courses are scheduled on this day
@@ -564,11 +563,11 @@ app.get('/download/EdtMicro', (req, res) => {
  *                                   heureDebut:
  *                                     type: string
  *                                     description: Start time of the course
- *                                     example: "09:00"
+ *                                     example: "09h"
  *                                   heureFin:
  *                                     type: string
  *                                     description: End time of the course
- *                                     example: "11:00"
+ *                                     example: "11h30"
  *                                   professeur:
  *                                     type: string
  *                                     description: Teacher of the course
