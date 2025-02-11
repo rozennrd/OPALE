@@ -171,20 +171,133 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                         ) <= 4  # Maximum 4 créneaux consécutifs
                     )
     
-    # ✅ Objectif 1 : Privilégier les matinées
-    objectif_heure = sum(
-        creneau_index * cours_par_creneau[f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"]
-        for promo, jours_travailles in promo_calendar_info.items()
-        for jour_index in range(len(jours_travailles))
-        for course in promo_courses_info[promo]
-        for creneau_index in range(len(creneaux_horaires))
-        if f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}" in cours_par_creneau
-    )
+    
+    # Définition des variables pour les blocs de 4h, 3h et 2h
+    bloc_4h, bloc_3h, bloc_2h = [], [], []
 
-    # ✅ Objectif 2 : Éviter les trous entre créneaux d'un même cours
-    penalite_sauts = []
     for promo, jours_travailles in promo_calendar_info.items():
         for jour_index in range(len(jours_travailles)):
+            for course in promo_courses_info[promo]:
+                course_name = course["cours"]
+
+                # 🔹 Blocs de 4h
+                for start in range(len(creneaux_horaires) - 3):  # 3 car on veut 4 créneaux consécutifs
+                    var_bloc = model.NewBoolVar(f"bloc_4h_{promo}_{course_name}_jour_{jour_index}_start_{start}")
+
+                    model.Add(
+                        sum(
+                            cours_par_creneau[f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"]
+                            for creneau_index in range(start, start + 4)
+                        ) == 4
+                    ).OnlyEnforceIf(var_bloc)
+
+                    model.Add(
+                        sum(
+                            cours_par_creneau[f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"]
+                            for creneau_index in range(start, start + 4)
+                        ) < 4
+                    ).OnlyEnforceIf(var_bloc.Not())
+
+                    bloc_4h.append(var_bloc)
+
+                # 🔹 Blocs de 3h
+                for start in range(len(creneaux_horaires) - 2):  # 2 car on veut 3 créneaux consécutifs
+                    var_bloc = model.NewBoolVar(f"bloc_3h_{promo}_{course_name}_jour_{jour_index}_start_{start}")
+
+                    model.Add(
+                        sum(
+                            cours_par_creneau[f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"]
+                            for creneau_index in range(start, start + 3)
+                        ) == 3
+                    ).OnlyEnforceIf(var_bloc)
+
+                    model.Add(
+                        sum(
+                            cours_par_creneau[f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"]
+                            for creneau_index in range(start, start + 3)
+                        ) < 3
+                    ).OnlyEnforceIf(var_bloc.Not())
+
+                    bloc_3h.append(var_bloc)
+
+                # 🔹 Blocs de 2h
+                for start in range(len(creneaux_horaires) - 1):  # 1 car on veut 2 créneaux consécutifs
+                    var_bloc = model.NewBoolVar(f"bloc_2h_{promo}_{course_name}_jour_{jour_index}_start_{start}")
+
+                    model.Add(
+                        sum(
+                            cours_par_creneau[f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"]
+                            for creneau_index in range(start, start + 2)
+                        ) == 2
+                    ).OnlyEnforceIf(var_bloc)
+
+                    model.Add(
+                        sum(
+                            cours_par_creneau[f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"]
+                            for creneau_index in range(start, start + 2)
+                        ) < 2
+                    ).OnlyEnforceIf(var_bloc.Not())
+
+                    bloc_2h.append(var_bloc)
+                    
+                    
+    score_jour = {}
+
+    for promo, jours_travailles in promo_calendar_info.items():
+        for jour_index, jour in enumerate(jours_travailles):
+            score_jour[jour_index] = model.NewIntVar(0, len(creneaux_horaires), f"score_jour_{promo}_{jour_index}")
+
+            model.Add(
+                score_jour[jour_index] ==
+                sum(
+                    cours_par_creneau[f"creneau_{promo}_{course['cours']}_jour_{jour_index}_creneau_{creneau_index}"]
+                    for course in promo_courses_info[promo]
+                    for creneau_index in range(len(creneaux_horaires))
+                    if f"creneau_{promo}_{course['cours']}_jour_{jour_index}_creneau_{creneau_index}" in cours_par_creneau
+                )
+            )
+
+    # ✅ Objectif 1 : Privilégier les matinées
+    # objectif_heure = sum(
+    #     creneau_index * cours_par_creneau[f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"]
+    #     for promo, jours_travailles in promo_calendar_info.items()
+    #     for jour_index in range(len(jours_travailles))
+    #     for course in promo_courses_info[promo]
+    #     for creneau_index in range(len(creneaux_horaires))
+    #     if f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}" in cours_par_creneau
+    # )
+
+    # ✅ Objectif 2 : Éviter les trous entre créneaux d'un même cours
+    # penalite_sauts = []
+    # for promo, jours_travailles in promo_calendar_info.items():
+    #     for jour_index in range(len(jours_travailles)):
+    #         for course in promo_courses_info[promo]:
+    #             course_name = course["cours"]
+
+    #             for creneau_index in range(1, len(creneaux_horaires)):  # Comparer avec le créneau précédent
+    #                 var_current = cours_par_creneau.get(f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}", None)
+    #                 var_prev = cours_par_creneau.get(f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index - 1}", None)
+
+    #                 if var_current is not None and var_prev is not None:
+
+    #                     saut_detecte = model.NewBoolVar(f"saut_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}")
+                        
+    #                     # saut_detecte = 1 si var_current est actif mais var_prev est inactif
+    #                     model.Add(var_current - var_prev <= saut_detecte)
+    #                     model.Add(saut_detecte <= 1 - var_prev)
+                        
+    #                     penalite_sauts.append(saut_detecte)
+
+    # ✅ Minimisation combinée des objectifs
+    #model.Minimize(objectif_heure + 5 * sum(penalite_sauts))  # 5 = coefficient de pénalité pour les trous
+
+    # Maximiser les blocs de cours consécutifs et remplir les premiers jours de la semaine
+
+    penalite_sauts = []
+    score_jour = {}
+
+    for promo, jours_travailles in promo_calendar_info.items():
+        for jour_index, jour in enumerate(jours_travailles):
             for course in promo_courses_info[promo]:
                 course_name = course["cours"]
 
@@ -193,23 +306,54 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                     var_prev = cours_par_creneau.get(f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index - 1}", None)
 
                     if var_current is not None and var_prev is not None:
-
                         saut_detecte = model.NewBoolVar(f"saut_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}")
                         
-                        # saut_detecte = 1 si var_current est actif mais var_prev est inactif
+                        # saut_detecté = 1 si var_current est actif mais var_prev est inactif
                         model.Add(var_current - var_prev <= saut_detecte)
                         model.Add(saut_detecte <= 1 - var_prev)
-                        
+
                         penalite_sauts.append(saut_detecte)
 
-    # ✅ Minimisation combinée des objectifs
-    model.Minimize(objectif_heure + 5 * sum(penalite_sauts))  # 5 = coefficient de pénalité pour les trous
+                # Assigner un score plus élevé aux jours plus tôt dans la semaine
+                score_jour[jour_index] = model.NewIntVar(0, len(creneaux_horaires), f"score_jour_{promo}_{jour_index}")
 
+                model.Add(
+                    score_jour[jour_index] ==
+                    sum(
+                        cours_par_creneau[f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"]
+                        for creneau_index in range(len(creneaux_horaires))
+                        if f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}" in cours_par_creneau
+                    )
+                )
 
+    # ✅ Objectif : Maximiser les blocs et remplir le début de semaine
+    # model.Maximize(
+    #     sum(score_jour[jour_index] * (len(jours_travailles) - jour_index) for jour_index in range(len(jours_travailles)))  # Priorise le début de semaine
+    #     - sum(penalite_sauts)  # Évite les trous
+    # )
+    
+        # Maximisation de l'usage des blocs de 4h pour un même cours
+    # model.Maximize(
+    #     sum(score_jour[jour_index] * (len(jours_travailles) - jour_index) for jour_index in range(len(jours_travailles)))  # Priorise le début de semaine
+    #     - sum(penalite_sauts)  # Évite les trous
+    #     + sum(bloc_4h)  # Maximiser le nombre de blocs de 4h consécutifs
+    # )
+
+    model.Maximize(
+        sum(score_jour[jour_index] * (len(jours_travailles) - jour_index) for jour_index in range(len(jours_travailles)))  # Priorise le début de semaine
+         - sum(penalite_sauts)  # Évite les trous
+         + 4 * sum(bloc_4h)  # Priorité aux blocs de 4h (coefficient 4)
+        + 3 * sum(bloc_3h)  # Ensuite les blocs de 3h (coefficient 3)
+        + 2 * sum(bloc_2h)  # Enfin les blocs de 2h (coefficient 2)
+        
+    )
+    # model.Minimize(0)
+    
     # ✅ Résolution du modèle
     solver = cp_model.CpSolver()
-    status = solver.Solve(model)
     
+    solver.parameters.max_time_in_seconds = 20 # Limiter à 60 secondes pour éviter l'exécution infinie
+    status = solver.Solve(model)
     
     calendrier_resultat = []
     
