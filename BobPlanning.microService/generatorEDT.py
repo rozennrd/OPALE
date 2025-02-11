@@ -25,8 +25,8 @@ def extract_calendar_info(data: RequestData) -> Dict[str, List[JourCalendrierOut
     
     for promo in data.Promos:
         print(f"📌 Promo : {promo.name}")
-        for course in promo.Cours:
-            total_hours = sum([heure.total for heure in course.heure if heure.total is not None])
+        for course in promo.cours:
+            total_hours = course.heure.total if course.heure and course.heure.total is not None else 0
             print(f"   📚 {course.name} - Volume horaire : {total_hours}h")
     
     print("\n📅 [DEBUG] Vérification des jours travaillés par promo")
@@ -62,9 +62,10 @@ def extract_courses_info(data: RequestData) -> Dict[str, List[Dict[str, float]]]
         courses_info = [
             {
                 "cours": course.name,
-                "volume_horaire": sum([heure.total for heure in course.heure if heure.total is not None])
+                "volume_horaire": course.heure.total if course.heure and course.heure.total is not None else 0
             }
-            for course in promo.Cours
+            
+            for course in promo.cours
         ]
         promo_courses_info[promo.name] = courses_info
     return promo_courses_info

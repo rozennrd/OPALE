@@ -28,7 +28,7 @@ class CoursInput(BaseModel):
     periode: List[int]  # Period numbers
     # Prof: str  # Assigned professor
     # typeSalle: str  # Type of classroom required
-    heure: List[Heure]  # Hour breakdown for the course
+    heure: Heure  # Hour breakdown for the course
 
 class PromoInput(BaseModel):
     """
@@ -36,7 +36,7 @@ class PromoInput(BaseModel):
     """
     name: str  # Promotion name
     nombreEtudiants: int  # Number of students
-    Cours: List[CoursInput]  # List of courses in this promotion
+    cours: List[CoursInput]  # List of courses in this promotion
 
 class SalleInput(BaseModel):
     """
