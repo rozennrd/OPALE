@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import CryptoJS from 'crypto-js';
-import { generateToken } from '../utils/jwt'; // Assurez-vous d'avoir bien créé ce fichier
+import { generateToken } from '../utils/jwt'; 
 
 const getLogin = async (req: Request, res: Response, connection: any) => {
   const { email, password } = req.body;

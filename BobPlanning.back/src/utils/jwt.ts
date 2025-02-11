@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 
-// Fonction pour générer le token JWT
 const generateToken = (user: any) => {
   const payload = {
     id: user.IdUtilisateur,
