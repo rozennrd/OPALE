@@ -5,8 +5,6 @@ from data import RequestData, CalendrierOutput, PromoCalendrierOutput, JourCalen
 from typing import List, Dict
 from ortools.sat.python import cp_model
 
-
-
 jours_semaine = {
     "Monday": "Lundi",
     "Tuesday": "Mardi",
@@ -16,7 +14,6 @@ jours_semaine = {
     "Saturday": "Samedi",
     "Sunday": "Dimanche"
 }
-
 
 def extract_calendar_info(data: RequestData) -> Dict[str, List[JourCalendrierOutput]]:
     """
@@ -83,8 +80,6 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
     # Créneaux horaires disponibles (1h chacun)
     creneaux_horaires = [f"{h}h-{h+1}h" for h in range(8, 18) if h != 12]
     
-    
-    
     # Dictionnaires de variables de décision
     heures_par_jour = {}  # Associe un nombre d'heures de cours par jour
     cours_par_creneau = {}  # Associe un créneau horaire à un cours donné
@@ -106,8 +101,6 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                     # Variable binaire : 1 si le cours est placé dans ce créneau, 0 sinon
                     var_creneau_name = f"creneau_{promo}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"
                     cours_par_creneau[var_creneau_name] = model.NewBoolVar(var_creneau_name)
-
-    
             
     # ✅ Contraintes : Volume horaire respecté
     for promo, courses in promo_courses_info.items():

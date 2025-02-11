@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from typing import List
-from datetime import datetime
-from data import RequestData, CalendrierOutput, CoursOutput, JourCalendrierOutput, PromoCalendrierOutput
-from generatorEDT import generate_schedule  # Import the function from the appropriate module
+from data import RequestData, CalendrierOutput
+from generatorEDT import generate_schedule 
 
 
 app = FastAPI(
@@ -12,11 +11,6 @@ app = FastAPI(
     docs_url="/swagger", 
     redoc_url="/api-docs" 
 )
-
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the OR-Tools planning API"}
-
 
 # -------------------------------------
 # API Endpoint
