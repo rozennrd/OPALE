@@ -379,6 +379,9 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                 jours_results = []
 
                 for jour_index, jour in enumerate(promo_calendar_info[promo.name]):
+                    if jour_index >= len(cal.promos[0].semaine):  # Empêcher d'ajouter des jours en trop
+                        break
+
                     cours_results = []
 
                     for course in promo_courses_info[promo.name]:
@@ -393,8 +396,6 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                                 if solver.Value(cours_par_creneau[f"creneau_{promo.name}_{course_name}_jour_{jour_index}_creneau_{creneau_index}"]) == 1
                             ]
 
-                            # Ajouter le cours avec créneaux assignés
-                            # Segmentation des créneaux en groupes continus
                             if creneaux_assignes:
                                 grouped_creneaux = []
                                 temp_group = [creneaux_assignes[0]]
@@ -420,7 +421,6 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                                         salleDeCours="Salle inconnue"
                                     ))
 
-
                     # Construire la structure du jour
                     jours_results.append(JourCalendrierOutput(
                         jour=jour.jour,
@@ -441,6 +441,7 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                 promos=promo_results
             ))
 
+                    
     else:
         print("\n❌ Aucune solution trouvée.")
     

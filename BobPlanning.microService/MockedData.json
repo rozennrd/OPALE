@@ -3,7 +3,7 @@
         {
             "name": "ADI1",
             "nombreEtudiants": "20",
-            "Cours": [
+            "cours": [
                 {
                     "name": "Math",
                     "UE": "Mathématiques 1",
@@ -11,9 +11,9 @@
                         1
                     ],
                     "periode": [],
-                    "heure": [
+                    "heure": 
                         {
-                            "total": 10,
+                            "total": 20,
                             "totalAvecProf": null,
                             "coursMagistral": null,
                             "coursInteractif": null,
@@ -22,7 +22,7 @@
                             "projet": null,
                             "elearning": null
                         }
-                    ]
+                    
                 },
                 {
                     "name": "Phy",
@@ -31,9 +31,9 @@
                         1
                     ],
                     "periode": [],
-                    "heure": [
+                    "heure": 
                         {
-                            "total": 10,
+                            "total": 20,
                             "totalAvecProf": null,
                             "coursMagistral": null,
                             "coursInteractif": null,
@@ -42,7 +42,7 @@
                             "projet": null,
                             "elearning": null
                         }
-                    ]
+                    
                 },
                 {
                     "name": "Info",
@@ -51,33 +51,7 @@
                         1
                     ],
                     "periode": [],
-                    "heure": [
-                        {
-                            "total": 5,
-                            "totalAvecProf": null,
-                            "coursMagistral": null,
-                            "coursInteractif": null,
-                            "td": null,
-                            "tp": null,
-                            "projet": null,
-                            "elearning": null
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "ADI2",
-            "nombreEtudiants": "20",
-            "Cours": [
-                {
-                    "name": "Math",
-                    "UE": "Mathématiques 1",
-                    "semestre": [
-                        1
-                    ],
-                    "periode": [],
-                    "heure": [
+                    "heure": 
                         {
                             "total": 10,
                             "totalAvecProf": null,
@@ -88,7 +62,33 @@
                             "projet": null,
                             "elearning": null
                         }
-                    ]
+                    
+                }
+            ]
+        },
+        {
+            "name": "ADI2",
+            "nombreEtudiants": "20",
+            "cours": [
+                {
+                    "name": "Math",
+                    "UE": "Mathématiques 1",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": 
+                        {
+                            "total": 10,
+                            "totalAvecProf": null,
+                            "coursMagistral": null,
+                            "coursInteractif": null,
+                            "td": null,
+                            "tp": null,
+                            "projet": null,
+                            "elearning": null
+                        }
+                    
                 },
                 {
                     "name": "Phy",
@@ -97,7 +97,7 @@
                         1
                     ],
                     "periode": [],
-                    "heure": [
+                    "heure": 
                         {
                             "total": 10,
                             "totalAvecProf": null,
@@ -108,7 +108,7 @@
                             "projet": null,
                             "elearning": null
                         }
-                    ]
+                    
                 }
             ]
         }
@@ -292,31 +292,31 @@
                     "semaine": [
                         {
                             "jour": "Lundi",
-                            "enCours": false,
+                            "enCours": true,
                             "message": "Pas cours",
                             "cours": []
                         },
                         {
                             "jour": "Mardi",
-                            "enCours": false,
+                            "enCours": true,
                             "message": "Pas cours",
                             "cours": []
                         },
                         {
                             "jour": "Mercredi",
-                            "enCours": false,
+                            "enCours": true,
                             "message": "Pas cours",
                             "cours": []
                         },
                         {
                             "jour": "Jeudi",
-                            "enCours": false,
+                            "enCours": true,
                             "message": "Pas cours",
                             "cours": []
                         },
                         {
                             "jour": "Vendredi",
-                            "enCours": false,
+                            "enCours": true,
                             "message": "Pas cours",
                             "cours": []
                         }
@@ -327,25 +327,25 @@
                     "semaine": [
                         {
                             "jour": "Lundi",
-                            "enCours": false,
+                            "enCours": true,
                             "message": "Pas cours",
                             "cours": []
                         },
                         {
                             "jour": "Mardi",
-                            "enCours": false,
+                            "enCours": true,
                             "message": "Pas cours",
                             "cours": []
                         },
                         {
                             "jour": "Mercredi",
-                            "enCours": false,
+                            "enCours": true,
                             "message": "Pas cours",
                             "cours": []
                         },
                         {
                             "jour": "Jeudi",
-                            "enCours": false,
+                            "enCours": true,
                             "message": "Pas cours",
                             "cours": []
                         },

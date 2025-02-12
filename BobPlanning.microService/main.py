@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from typing import List
 from data import RequestData, CalendrierOutput
-from generatorEDT import generate_schedule 
-
+# from generatorEDT import generate_schedule 
+from generator2 import generate_schedule
 
 app = FastAPI(
     title="Planning Microservice",

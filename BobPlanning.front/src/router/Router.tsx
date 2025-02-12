@@ -6,6 +6,7 @@ import ErrorPage from "../pages/404";
 import Contact from "../pages/Contact";
 import ParametresMicro from "../pages/ParametresMicro";
 import TrueHome from "../pages/TrueHome";
+import Salles from "../pages/Salles";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "/parametresMicro",
         element: <ParametresMicro />,
+      },
+      {
+        path: "/salles",
+        element: <Salles />,
       }
     ],
   },
