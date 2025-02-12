@@ -10,7 +10,8 @@ import getDBConfig from './database/getDBConfig';
 import path from 'path';
 import { EdtMicro } from './types/EdtMicroData';
 import { getLogin } from './database/getLogin';
-import { authMiddleware } from './utils/authMiddleware';
+import authJwt from './middleware/authJwt';
+
 
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
@@ -181,7 +182,7 @@ app.post('/login', async (req: Request, res: Response) => {
  *       500:
  *         description: Une erreur est survenue
  */
-app.get('/getPromosData', authMiddleware, (req, res) => {
+app.get('/getPromosData', authJwt.verifyToken, (req, res) => {
   interface Promo {
     Name: string;
     Nombre: number;
@@ -197,6 +198,8 @@ app.get('/getPromosData', authMiddleware, (req, res) => {
     DateFin: "",
     Promos: []
   };
+  
+  console.log('Balise 1');
 
   const sql = 'SELECT Name, Nombre, Periode FROM promosData';
   connection.query(sql, (error: any, results: any[]) => {
@@ -306,7 +309,7 @@ app.get('/getPromosData', authMiddleware, (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
-app.post('/setPromosData', (req, res) => {
+app.post('/setPromosData',authJwt.verifyToken, (req, res) => {
   const { DateDeb, DateFin, Promos } = req.body;
   console.log('req.body', req.body);
 
@@ -399,7 +402,7 @@ app.post('/setPromosData', (req, res) => {
  *       500:
  *         description: Internal server error
  */
-app.post('/generateEdtMacro', async (req: Request, res: Response) => {
+app.post('/generateEdtMacro',authJwt.verifyToken, async (req: Request, res: Response) => {
   try {
     const { DateDeb, DateFin, Promos } = req.body;
 
@@ -513,7 +516,7 @@ app.get('/download/EdtMacro', (req, res) => {
  *                 error:
  *                   type: string
  */
-app.post('/readMaquette', upload.single('file'), async (req: Request, res: Response): Promise<any> => {
+app.post('/readMaquette',authJwt.verifyToken, upload.single('file'), async (req: Request, res: Response): Promise<any> => {
   if (!req.file) {
     return res.status(400).send('Aucun fichier n\'a été téléchargé');
 }
@@ -631,7 +634,7 @@ try {
  *               type: string
  *               example: "Internal server error"
  */
-app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
+app.post('/generateEdtSquelette',authJwt.verifyToken, async (req: Request, res: Response) => {
   try {
     const edtMicroArray : EdtMicro[] = req.body;
 
@@ -760,7 +763,7 @@ app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
  *                 error:
  *                   type: string
  */
-app.post('/readMaquette', upload.single('file'), async (req: Request, res: Response): Promise<any> => {
+app.post('/readMaquette', upload.single('file'),authJwt.verifyToken, async (req: Request, res: Response): Promise<any> => {
   if (!req.file) {
     return res.status(400).send('Aucun fichier n\'a été téléchargé');
   }
@@ -958,7 +961,7 @@ app.post('/readMaquette', upload.single('file'), async (req: Request, res: Respo
  *                             type: number
  *                             example: 2
  */
-app.post('/generateDataEdtMicro', async (req: Request, res: Response) => {
+app.post('/generateDataEdtMicro',authJwt.verifyToken, async (req: Request, res: Response) => {
   try {
     const { macro, maquette }: { macro: EdtMacroData; maquette: MaquetteData[] } = req.body;
 

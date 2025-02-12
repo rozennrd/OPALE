@@ -22,11 +22,11 @@ function App() {
 
   useEffect(() => {
     const checkToken = () => {
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem('accessToken');
 
       if (!token || isTokenExpired(token)) {
         console.log('Token expiré, déconnexion...');
-        localStorage.removeItem('authToken'); // Supprimer le token
+        localStorage.removeItem('accessToken'); // Supprimer le token
         navigate('/login'); // Rediriger vers login
       }
     };

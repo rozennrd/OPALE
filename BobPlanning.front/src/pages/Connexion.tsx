@@ -3,6 +3,7 @@ import { Button, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; // Pour la redirection
 import CryptoJS from 'crypto-js'; // Pour le hachage du mot de passe
 import './Connexion.css'; // Style de la page
+import { getTokenFromLocalStorage } from '../auth/Token';
 
 const Connexion: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -26,6 +27,7 @@ const Connexion: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          "x-access-token": getTokenFromLocalStorage() ?? "",
         },
         body: JSON.stringify({
           email: email,
@@ -36,7 +38,8 @@ const Connexion: React.FC = () => {
       if (response.ok) {
         const data = await response.json(); // Récupérer le token JWT renvoyé
         setNumTryConnection(0); // Réinitialise le nombre de tentatives après succès
-        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('accessToken', data.token);
+        console.log('Token : ', localStorage.getItem('accessToken'));
         navigate('/TrueHome'); // Redirection vers la page d'accueil
       } else {
         const errorData = await response.json();
