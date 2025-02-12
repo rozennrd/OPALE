@@ -8,6 +8,7 @@ import DownloadButton from '../components/DownloadButton';
 import Loading from '../components/Loading';
 
 const RACINE_FETCHER_URL = process.env.REACT_APP_RACINE_FETCHER_URL;
+console.log('fetcher url:', RACINE_FETCHER_URL);
 
 const Parametres: React.FC = () => {
   const navigate = useNavigate();
