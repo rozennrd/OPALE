@@ -4,6 +4,8 @@ import Layout from './components/Layout';
 
 function App() {
 
+  console.log('.env : ', import.meta.env.VITE_RACINE_FETCHER_URL);
+
   return (
     <Layout>
       <Outlet />
