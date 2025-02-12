@@ -10,6 +10,8 @@ import getDBConfig from './database/getDBConfig';
 import path from 'path';
 import { EdtMicro } from './types/EdtMicroData';
 import { generateEdtMicro } from './micro/generateEdtMicro';
+import { getLogin } from './database/getLogin';
+import authJwt from './middleware/authJwt';
 
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
@@ -64,6 +66,83 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /**
  * @swagger
+ * /login:
+ *   post:
+ *     summary: Authentifie un utilisateur et renvoie un cookie JWT
+ *     description: Vérifie les identifiants et génère un token JWT stocké dans un cookie sécurisé.
+ *     tags:
+ *       - Authentification
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: L'adresse email de l'utilisateur
+ *                 example: "test@example.com"
+ *               password:
+ *                 type: string
+ *                 description: Le mot de passe hashé de l'utilisateur
+ *                 example: "$2b$10$1234567890abcdef"
+ *     responses:
+ *       200:
+ *         description: Connexion réussie, cookie envoyé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Connexion réussie"
+ *                 userId:
+ *                   type: string
+ *                   example: "123"
+ *       400:
+ *         description: Email ou mot de passe manquant
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Email et mot de passe requis"
+ *       401:
+ *         description: Identifiants incorrects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Identifiants incorrects"
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Erreur serveur"
+ */
+app.post('/login', async (req: Request, res: Response) => {
+  try {
+    await getLogin(req, res, connection); 
+  } catch (error) {
+    console.error('Erreur de connexion:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+/**
+ * @swagger
  * /getPromosData:
  *   get:
  *     summary: Récupérer les données des promotions
@@ -105,7 +184,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *       500:
  *         description: Une erreur est survenue
  */
-app.get('/getPromosData', (req, res) => {
+app.get('/getPromosData', authJwt.verifyToken, (req, res) => {
   interface Promo {
     Name: string;
     Nombre: number;
@@ -121,6 +200,8 @@ app.get('/getPromosData', (req, res) => {
     DateFin: "",
     Promos: []
   };
+  
+  console.log('Balise 1');
 
   const sql = 'SELECT Name, Nombre, Periode FROM promosData';
   connection.query(sql, (error: any, results: any[]) => {
@@ -232,7 +313,7 @@ app.get('/getPromosData', (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
-app.post('/setPromosData', (req, res) => {
+app.post('/setPromosData',authJwt.verifyToken, (req, res) => {
   const { DateDeb, DateFin, Promos } = req.body;
   console.log('req.body', req.body);
 
@@ -327,7 +408,7 @@ app.post('/setPromosData', (req, res) => {
  *       500:
  *         description: Internal server error
  */
-app.post('/generateEdtMacro', async (req: Request, res: Response) => {
+app.post('/generateEdtMacro',authJwt.verifyToken, async (req: Request, res: Response) => {
   try {
     const { DateDeb, DateFin, Promos } = req.body;
 
@@ -448,7 +529,7 @@ app.get('/download/EdtMacro', (req, res) => {
  *                 error:
  *                   type: string
  */
-app.post('/readMaquette', upload.single('file'), async (req: Request, res: Response): Promise<any> => {
+app.post('/readMaquette',authJwt.verifyToken, upload.single('file'), async (req: Request, res: Response): Promise<any> => {
   if (!req.file) {
     return res.status(400).send('Aucun fichier n\'a été téléchargé');
   }
@@ -605,7 +686,7 @@ app.get('/download/EdtMicro', (req, res) => {
  *               type: string
  *               example: "Internal server error"
  */
-app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
+app.post('/generateEdtSquelette',authJwt.verifyToken, async (req: Request, res: Response) => {
   try {
     const edtMicroArray : EdtMicro[] = req.body;
 
@@ -653,6 +734,98 @@ app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal server error: ' + error);
+  }
+});
+
+/**
+ * @swagger
+ * /readMaquette:
+ *   post:
+ *     summary: Read an Excel file and return UE and course data
+ *     tags:
+ *       - Test
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Successfully read the Excel file and returned UE and course data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 UE:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                 cours:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       UE:
+ *                         type: string
+ *                       semestrePeriode:
+ *                         type: string
+ *                       heure:
+ *                           type: object
+ *                           properties:
+ *                             total:
+ *                               type: number
+ *                             coursMagistral:
+ *                               type: number
+ *                             coursInteractif:
+ *                               type: number
+ *                             td:
+ *                               type: number
+ *                             tp:
+ *                               type: number
+ *                             autre:
+ *                               type: number
+ *       400:
+ *         description: No file was uploaded
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: Aucun fichier n'a été téléchargé
+ *       500:
+ *         description: Internal server error while reading the file
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erreur lors de la lecture du fichier Excel
+ *                 error:
+ *                   type: string
+ */
+app.post('/readMaquette', upload.single('file'),authJwt.verifyToken, async (req: Request, res: Response): Promise<any> => {
+  if (!req.file) {
+    return res.status(400).send('Aucun fichier n\'a été téléchargé');
+  }
+
+  try {
+      let data : MaquetteData;
+      data = await readMaquette(req.file.buffer);
+      res.json(data);
+  } catch (error) {
+      res.status(500).json({ message: 'Erreur lors de la lecture du fichier Excel', error });
   }
 });
 
@@ -774,7 +947,7 @@ app.post('/generateEdtSquelette', async (req: Request, res: Response) => {
  *                             type: number
  *                             example: 2
  */
-app.post('/generateDataEdtMicro', async (req: Request, res: Response) => {
+app.post('/generateDataEdtMicro',authJwt.verifyToken, async (req: Request, res: Response) => {
   try {
     const { macro }: { macro: EdtMacroData } = req.body;
 
