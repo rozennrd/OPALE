@@ -9,7 +9,7 @@ const TopBar = () => {
                 <img className='logo' src={Logo} alt="Logo_Bob_Planning" />
             </Link>
             <nav className="nav-links">
-                <Link to="/">Home</Link>    
+                <Link to="/TrueHome">Home</Link>    
                 <Link to="/parametres">Paramètres</Link>
                 <Link to="/calendriers">Calendriers</Link>
                 <Link to="/contact">Contact</Link>

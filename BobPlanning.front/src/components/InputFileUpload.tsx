@@ -4,6 +4,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import MaquetteDisplay from './MaquetteDisplay';
+import { getTokenFromLocalStorage } from '../auth/Token';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -38,6 +39,7 @@ export default function InputFileUpload({ onFileUpload , uploadedFile, responseD
         const response = await axios.post('http://localhost:3000/readMaquette', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
+            "x-access-token": getTokenFromLocalStorage()?? "",
           },
         });
 
