@@ -112,8 +112,8 @@ const Parametres: React.FC = () => {
 
   useEffect(() => {
     const fetchPromosData = async () => {
-      console.log('fetcher url:', RACINE_FETCHER_URL);
       try {
+        console.log('fetcher url:', RACINE_FETCHER_URL);
         const response = await fetch(`${RACINE_FETCHER_URL}/getPromosData`);
         const data = await response.json();
         setPromosData(data);
