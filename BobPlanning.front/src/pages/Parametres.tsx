@@ -114,6 +114,7 @@ const Parametres: React.FC = () => {
     const fetchPromosData = async () => {
       try {
         console.log('fetcher url:', RACINE_FETCHER_URL);
+        
         const response = await fetch(`${RACINE_FETCHER_URL}/getPromosData`);
         const data = await response.json();
         setPromosData(data);
