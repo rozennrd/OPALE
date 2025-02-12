@@ -27,3 +27,4 @@ dist
 *.xlsx
 *.pdf
 db.conf
+.env
