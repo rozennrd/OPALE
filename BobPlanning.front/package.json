@@ -18,6 +18,7 @@
     "animate.css": "^4.1.1",
     "axios": "^1.7.9",
     "bobplanning-front": "file:",
+    "dotenv": "^16.4.7",
     "framer-motion": "^11.11.9",
     "react": "^18.3.1",
     "react-confetti": "^6.1.0",

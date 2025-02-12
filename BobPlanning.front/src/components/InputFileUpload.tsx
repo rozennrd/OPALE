@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import MaquetteDisplay from './MaquetteDisplay';
 
-const RACINE_FETCHER_URL = process.env.REACT_APP_RACINE_FETCHER_URL;
+const RACINE_FETCHER_URL = process.env.VITE_RACINE_FETCHER_URL;
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
