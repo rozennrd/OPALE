@@ -997,24 +997,33 @@ app.post('/setSallesData', authJwt.verifyToken, (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
-app.put('/updateSalle', authJwt.verifyToken, (req, res) => {
-  const { id, name, capacite } = req.body;
-  const sql = 'UPDATE Salles SET name = ?, capacite = ? WHERE id = ?';
-  
-  connection.query(sql, [name, capacite, id], (error: any, result: any) => {
+app.put('/updateSalle', authJwt.verifyToken, (req, res): void => {
+  const { id, name, capacite, type } = req.body;
+
+  if (!id || !name || !capacite || !type) {
+    res.status(400).json({ message: 'Tous les champs sont requis.' });
+    return;
+  }
+
+  const sql = 'UPDATE Salles SET name = ?, capacite = ?, type = ? WHERE id = ?';
+  connection.query(sql, [name, capacite, type, id], (error: any, result: any) => {
     if (error) {
-      return res.status(500).json({ error: error.message });
+      console.error(error);
+      res.status(500).json({ error: error.message });
+      return;
     }
-    
-    const affectedRows = Array.isArray(result) ? result[0].affectedRows : result.affectedRows;
-    
+
+    const affectedRows = result.affectedRows;
     if (affectedRows === 0) {
-      return res.status(404).json({ message: 'Salle non trouvée' });
+      res.status(404).json({ message: `Salle avec l'ID ${id} non trouvée` });
+      return;
     }
 
     res.json({ message: 'Salle mise à jour avec succès' });
   });
 });
+
+
 
 
 /**
