@@ -140,7 +140,7 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
           semestre: semestre,
           periode: periode,
           heure: {
-            total: (rowValues[nbHeures] && typeof rowValues[nbHeures] === 'object' && rowValues[nbHeures].hasOwnProperty('result') ? parseFloat(rowValues[nbHeures].result ?? 0) : parseFloat(rowValues[nbHeures]) ?? 0) || (rowValues[nbHeuresAvecProf] && typeof rowValues[nbHeuresAvecProf] === 'object' && rowValues[nbHeuresAvecProf].hasOwnProperty('result') ? parseFloat(rowValues[nbHeuresAvecProf].result ?? 0) : parseFloat(rowValues[nbHeuresAvecProf]) ?? 0),
+            total: (rowValues[nbHeures] && typeof rowValues[nbHeures] === 'object' && rowValues[nbHeures].hasOwnProperty('result') ? parseFloat(rowValues[nbHeures].result ?? 0) : parseFloat(rowValues[nbHeures]) ?? 0) || (rowValues[nbHeuresAvecProf] && typeof rowValues[nbHeuresAvecProf] === 'object' && rowValues[nbHeuresAvecProf].hasOwnProperty('result') ? parseFloat(rowValues[nbHeuresAvecProf].result ?? 0) : parseFloat(rowValues[nbHeuresAvecProf]) ?? 0) || 0,
             totalAvecProf: (rowValues[nbHeuresAvecProf] && typeof rowValues[nbHeuresAvecProf] === 'object' && rowValues[nbHeuresAvecProf].hasOwnProperty('result') ? parseFloat(rowValues[nbHeuresAvecProf].result ?? 0) : parseFloat(rowValues[nbHeuresAvecProf]) ?? 0) || 0	,
             coursMagistral: parseFloat(rowValues[coursMagistral] ?? 0) || 0	,
             coursInteractif: parseFloat(rowValues[coursInteractif] ?? 0) || 0	,
