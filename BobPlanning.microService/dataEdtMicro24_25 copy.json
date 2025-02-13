@@ -1277,474 +1277,474 @@
         "name": "CIR1",
         "nombreEtudiants": "20",
         "cours": [
-            {
-              "name": "M1 : Fondamentaux",
-              "UE": "UE1.1 : Mathématiques",
-              "semestre": [
-                1
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 32,
-                "coursMagistral": 18,
-                "coursInteractif": 0,
-                "td": 8,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 6
-              }
-            },
-            {
-              "name": "M2 : Analyse",
-              "UE": "UE1.1 : Mathématiques",
-              "semestre": [
-                1
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 64,
-                "coursMagistral": 32,
-                "coursInteractif": 0,
-                "td": 18,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 14
-              }
-            },
-            {
-              "name": "Maths TP",
-              "UE": "UE1.1 : Mathématiques",
-              "semestre": [
-                1
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 12,
-                "coursMagistral": 0,
-                "coursInteractif": 0,
-                "td": 0,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 6
-              }
-            },
-            {
-              "name": "Optique",
-              "UE": "UE2.1 : Physique, Electronique",
-              "semestre": [
-                1
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 20,
-                "coursMagistral": 8,
-                "coursInteractif": 0,
-                "td": 12,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Electronique analogique",
-              "UE": "UE2.1 : Physique, Electronique",
-              "semestre": [
-                1
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 40,
-                "coursMagistral": 16,
-                "coursInteractif": 0,
-                "td": 24,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Electronique analogique TP",
-              "UE": "UE2.1 : Physique, Electronique",
-              "semestre": [
-                1
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 20,
-                "coursMagistral": 0,
-                "coursInteractif": 0,
-                "td": 0,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 4
-              }
-            },
-            {
-              "name": "Prog.1 : Fondamentaux",
-              "UE": "UE3.1 : Informatique",
-              "semestre": [
-                1
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 48,
-                "coursMagistral": 0,
-                "coursInteractif": 48,
-                "td": 0,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Prog.1 : TP Algo-C",
-              "UE": "UE3.1 : Informatique",
-              "semestre": [
-                1
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 14,
-                "coursMagistral": 0,
-                "coursInteractif": 0,
-                "td": 0,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Développement web statique",
-              "UE": "UE3.1 : Informatique",
-              "semestre": [
-                1
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 24,
-                "coursMagistral": 0,
-                "coursInteractif": 6,
-                "td": 0,
-                "tp": 0,
-                "projet": 6,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Anglais",
-              "UE": "UE4.1 : Humanités, Langues",
-              "semestre": [
-                1
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 24,
-                "coursMagistral": 0,
-                "coursInteractif": 24,
-                "td": 0,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Communication interpersonnelle - Bases",
-              "UE": "UE4.1 : Humanités, Langues",
-              "semestre": [
-                1
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 18,
-                "coursMagistral": 0,
-                "coursInteractif": 24,
-                "td": 0,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "PPP (Career Center, Stage, Table ronde, Portfolio)",
-              "UE": "UE4.1 : Humanités, Langues",
-              "semestre": [
-                1
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 6,
-                "coursMagistral": 0,
-                "coursInteractif": 0,
-                "td": 6,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "M3 : Arithmétique",
-              "UE": "UE1.2 : Mathématiques",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 28,
-                "coursMagistral": 16,
-                "coursInteractif": 0,
-                "td": 8,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 4
-              }
-            },
-            {
-              "name": "M4 : Algèbre linéaire",
-              "UE": "UE1.2 : Mathématiques",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 56,
-                "coursMagistral": 32,
-                "coursInteractif": 0,
-                "td": 16,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 8
-              }
-            },
-            {
-              "name": "Maths TP",
-              "UE": "UE1.2 : Mathématiques",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 12,
-                "coursMagistral": 0,
-                "coursInteractif": 0,
-                "td": 0,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 8
-              }
-            },
-            {
-              "name": "Electronique analogique TP",
-              "UE": "UE2.2 : Physique, Electronique",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 12,
-                "coursMagistral": 0,
-                "coursInteractif": 0,
-                "td": 0,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Mécanique du point",
-              "UE": "UE2.2 : Physique, Electronique",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 38,
-                "coursMagistral": 14,
-                "coursInteractif": 0,
-                "td": 22,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Thermodynamique",
-              "UE": "UE2.2 : Physique, Electronique",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 20,
-                "coursMagistral": 8,
-                "coursInteractif": 0,
-                "td": 12,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Prog.2 : Approfondissement",
-              "UE": "UE3.2 : Informatique",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 48,
-                "coursMagistral": 0,
-                "coursInteractif": 48,
-                "td": 0,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Prog.2 : TP C",
-              "UE": "UE3.2 : Informatique",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 14,
-                "coursMagistral": 0,
-                "coursInteractif": 0,
-                "td": 0,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Développement web dynamique",
-              "UE": "UE3.2 : Informatique",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 24,
-                "coursMagistral": 0,
-                "coursInteractif": 6,
-                "td": 0,
-                "tp": 0,
-                "projet": 6,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Anglais",
-              "UE": "UE4.2 : Humanités, Langues",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 24,
-                "coursMagistral": 0,
-                "coursInteractif": 24,
-                "td": 0,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Epistémologie/EEO",
-              "UE": "UE4.2 : Humanités, Langues",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 20,
-                "coursMagistral": 0,
-                "coursInteractif": 20,
-                "td": 0,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Stage / CV",
-              "UE": "UE4.2 : Humanités, Langues",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 4,
-                "coursMagistral": 0,
-                "coursInteractif": 0,
-                "td": 4,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Gestion de projet",
-              "UE": "UE5 : Projet",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 4,
-                "coursMagistral": 0,
-                "coursInteractif": 0,
-                "td": 4,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
-            },
-            {
-              "name": "Projet de fin d'année",
-              "UE": "UE5 : Projet",
-              "semestre": [
-                2
-              ],
-              "periode": [],
-              "heure": {
-                "total": 0,
-                "totalAvecProf": 116,
-                "coursMagistral": 0,
-                "coursInteractif": 0,
-                "td": 0,
-                "tp": 0,
-                "projet": 0,
-                "elearning": 0
-              }
+          {
+            "name": "M1 : Fondamentaux",
+            "UE": "UE1.1 : Mathématiques",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 32,
+              "totalAvecProf": 32,
+              "coursMagistral": 18,
+              "coursInteractif": 0,
+              "td": 8,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 6
             }
+          },
+          {
+            "name": "M2 : Analyse",
+            "UE": "UE1.1 : Mathématiques",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 64,
+              "totalAvecProf": 64,
+              "coursMagistral": 32,
+              "coursInteractif": 0,
+              "td": 18,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 14
+            }
+          },
+          {
+            "name": "Maths TP",
+            "UE": "UE1.1 : Mathématiques",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 12,
+              "totalAvecProf": 12,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 6
+            }
+          },
+          {
+            "name": "Optique",
+            "UE": "UE2.1 : Physique, Electronique",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 20,
+              "totalAvecProf": 20,
+              "coursMagistral": 8,
+              "coursInteractif": 0,
+              "td": 12,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Electronique analogique",
+            "UE": "UE2.1 : Physique, Electronique",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 40,
+              "totalAvecProf": 40,
+              "coursMagistral": 16,
+              "coursInteractif": 0,
+              "td": 24,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Electronique analogique TP",
+            "UE": "UE2.1 : Physique, Electronique",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 20,
+              "totalAvecProf": 20,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 4
+            }
+          },
+          {
+            "name": "Prog.1 : Fondamentaux",
+            "UE": "UE3.1 : Informatique",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 48,
+              "totalAvecProf": 48,
+              "coursMagistral": 0,
+              "coursInteractif": 48,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Prog.1 : TP Algo-C",
+            "UE": "UE3.1 : Informatique",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 14,
+              "totalAvecProf": 14,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Développement web statique",
+            "UE": "UE3.1 : Informatique",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 24,
+              "totalAvecProf": 24,
+              "coursMagistral": 0,
+              "coursInteractif": 6,
+              "td": 0,
+              "tp": 0,
+              "projet": 6,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Anglais",
+            "UE": "UE4.1 : Humanités, Langues",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 24,
+              "totalAvecProf": 24,
+              "coursMagistral": 0,
+              "coursInteractif": 24,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Communication interpersonnelle - Bases",
+            "UE": "UE4.1 : Humanités, Langues",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 18,
+              "totalAvecProf": 18,
+              "coursMagistral": 0,
+              "coursInteractif": 24,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "PPP (Career Center, Stage, Table ronde, Portfolio)",
+            "UE": "UE4.1 : Humanités, Langues",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 6,
+              "totalAvecProf": 6,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 6,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "M3 : Arithmétique",
+            "UE": "UE1.2 : Mathématiques",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 28,
+              "totalAvecProf": 28,
+              "coursMagistral": 16,
+              "coursInteractif": 0,
+              "td": 8,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 4
+            }
+          },
+          {
+            "name": "M4 : Algèbre linéaire",
+            "UE": "UE1.2 : Mathématiques",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 56,
+              "totalAvecProf": 56,
+              "coursMagistral": 32,
+              "coursInteractif": 0,
+              "td": 16,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 8
+            }
+          },
+          {
+            "name": "Maths TP",
+            "UE": "UE1.2 : Mathématiques",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 12,
+              "totalAvecProf": 12,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 8
+            }
+          },
+          {
+            "name": "Electronique analogique TP",
+            "UE": "UE2.2 : Physique, Electronique",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 12,
+              "totalAvecProf": 12,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Mécanique du point",
+            "UE": "UE2.2 : Physique, Electronique",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 38,
+              "totalAvecProf": 38,
+              "coursMagistral": 14,
+              "coursInteractif": 0,
+              "td": 22,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Thermodynamique",
+            "UE": "UE2.2 : Physique, Electronique",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 20,
+              "totalAvecProf": 20,
+              "coursMagistral": 8,
+              "coursInteractif": 0,
+              "td": 12,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Prog.2 : Approfondissement",
+            "UE": "UE3.2 : Informatique",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 48,
+              "totalAvecProf": 48,
+              "coursMagistral": 0,
+              "coursInteractif": 48,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Prog.2 : TP C",
+            "UE": "UE3.2 : Informatique",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 14,
+              "totalAvecProf": 14,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Développement web dynamique",
+            "UE": "UE3.2 : Informatique",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 24,
+              "totalAvecProf": 24,
+              "coursMagistral": 0,
+              "coursInteractif": 6,
+              "td": 0,
+              "tp": 0,
+              "projet": 6,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Anglais",
+            "UE": "UE4.2 : Humanités, Langues",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 24,
+              "totalAvecProf": 24,
+              "coursMagistral": 0,
+              "coursInteractif": 24,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Epistémologie/EEO",
+            "UE": "UE4.2 : Humanités, Langues",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 20,
+              "totalAvecProf": 20,
+              "coursMagistral": 0,
+              "coursInteractif": 20,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Stage / CV",
+            "UE": "UE4.2 : Humanités, Langues",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 4,
+              "totalAvecProf": 4,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 4,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Gestion de projet",
+            "UE": "UE5 : Projet",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 4,
+              "totalAvecProf": 4,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 4,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Projet de fin d'année",
+            "UE": "UE5 : Projet",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 116,
+              "totalAvecProf": 116,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          }
         ]
       },
       {
@@ -1759,7 +1759,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 42,
               "totalAvecProf": 42,
               "coursMagistral": 24,
               "coursInteractif": 0,
@@ -1777,7 +1777,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 46,
               "totalAvecProf": 46,
               "coursMagistral": 28,
               "coursInteractif": 0,
@@ -1795,7 +1795,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 12,
               "totalAvecProf": 12,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -1813,7 +1813,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 43,
               "totalAvecProf": 43,
               "coursMagistral": 18,
               "coursInteractif": 0,
@@ -1831,7 +1831,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 16,
               "totalAvecProf": 16,
               "coursMagistral": 16,
               "coursInteractif": 0,
@@ -1849,7 +1849,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 64,
               "totalAvecProf": 64,
               "coursMagistral": 20,
               "coursInteractif": 0,
@@ -1867,7 +1867,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 24,
               "totalAvecProf": 24,
               "coursMagistral": 0,
               "coursInteractif": 2,
@@ -1885,7 +1885,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 24,
               "totalAvecProf": 24,
               "coursMagistral": 0,
               "coursInteractif": 24,
@@ -1903,7 +1903,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 20,
               "totalAvecProf": 20,
               "coursMagistral": 0,
               "coursInteractif": 8,
@@ -1921,7 +1921,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 24,
               "totalAvecProf": 24,
               "coursMagistral": 0,
               "coursInteractif": 24,
@@ -1939,7 +1939,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": null,
               "totalAvecProf": 0,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -1957,7 +1957,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 36,
               "totalAvecProf": 36,
               "coursMagistral": 20,
               "coursInteractif": 0,
@@ -1975,7 +1975,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 42,
               "totalAvecProf": 42,
               "coursMagistral": 24,
               "coursInteractif": 0,
@@ -1993,7 +1993,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 12,
               "totalAvecProf": 12,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -2011,7 +2011,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 30,
               "totalAvecProf": 30,
               "coursMagistral": 12,
               "coursInteractif": 0,
@@ -2029,7 +2029,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 36,
               "totalAvecProf": 36,
               "coursMagistral": 12,
               "coursInteractif": 0,
@@ -2047,7 +2047,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 24,
               "totalAvecProf": 24,
               "coursMagistral": 14,
               "coursInteractif": 0,
@@ -2065,7 +2065,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 40,
               "totalAvecProf": 40,
               "coursMagistral": 20,
               "coursInteractif": 0,
@@ -2083,7 +2083,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 24,
               "totalAvecProf": 24,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -2101,7 +2101,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 22,
               "totalAvecProf": 22,
               "coursMagistral": 0,
               "coursInteractif": 22,
@@ -2119,7 +2119,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 24,
               "totalAvecProf": 24,
               "coursMagistral": 0,
               "coursInteractif": 12,
@@ -2137,7 +2137,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 4,
               "totalAvecProf": 4,
               "coursMagistral": 0,
               "coursInteractif": 4,
@@ -2155,7 +2155,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 100,
               "totalAvecProf": 100,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -2171,510 +2171,510 @@
         "name": "AP3",
         "nombreEtudiants": "20",
         "cours": [
-          {
-            "name": "Outils mathématiques pour l’ingénieur?",
-            "UE": "Sciences de l'ingénieur",
-            "semestre": [
-              5
-            ],
-            "periode": [
-              1,
-              2
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 40,
-              "coursMagistral": 0,
-              "coursInteractif": 40,
-              "td": 15,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
+            {
+              "name": "Outils mathématiques pour l’ingénieur?",
+              "UE": "Sciences de l'ingénieur",
+              "semestre": [
+                5
+              ],
+              "periode": [
+                1,
+                2
+              ],
+              "heure": {
+                "total": 40,
+                "totalAvecProf": 40,
+                "coursMagistral": 0,
+                "coursInteractif": 40,
+                "td": 15,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Mathématiques discrètes?",
+              "UE": "Sciences de l'ingénieur",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                3,
+                4
+              ],
+              "heure": {
+                "total": 40,
+                "totalAvecProf": 40,
+                "coursMagistral": 0,
+                "coursInteractif": 40,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Physique",
+              "UE": "Sciences de l'ingénieur",
+              "semestre": [
+                5
+              ],
+              "periode": [
+                1,
+                2
+              ],
+              "heure": {
+                "total": 40,
+                "totalAvecProf": 40,
+                "coursMagistral": 0,
+                "coursInteractif": 40,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Fabrication additive",
+              "UE": "Sciences de l'ingénieur",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                2,
+                3
+              ],
+              "heure": {
+                "total": 16,
+                "totalAvecProf": 16,
+                "coursMagistral": 0,
+                "coursInteractif": 10,
+                "td": 15,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Architecture des ordinateurs",
+              "UE": "Electronique Signaux & Systèmes",
+              "semestre": [
+                5
+              ],
+              "periode": [
+                1,
+                2,
+                4
+              ],
+              "heure": {
+                "total": 42,
+                "totalAvecProf": 42,
+                "coursMagistral": 0,
+                "coursInteractif": 30,
+                "td": 20,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Electronique analogique",
+              "UE": "Electronique Signaux & Systèmes",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                3,
+                4
+              ],
+              "heure": {
+                "total": 38,
+                "totalAvecProf": 38,
+                "coursMagistral": 0,
+                "coursInteractif": 30,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Projet électronique",
+              "UE": "Electronique Signaux & Systèmes",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                5
+              ],
+              "heure": {
+                "total": 24,
+                "totalAvecProf": 24,
+                "coursMagistral": 0,
+                "coursInteractif": 0,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Traitement du Signal",
+              "UE": "Electronique Signaux & Systèmes",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                5
+              ],
+              "heure": {
+                "total": 20,
+                "totalAvecProf": 20,
+                "coursMagistral": 0,
+                "coursInteractif": 3,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 5
+              }
+            },
+            {
+              "name": "Automatique",
+              "UE": "Electronique Signaux & Systèmes",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                5
+              ],
+              "heure": {
+                "total": 20,
+                "totalAvecProf": 20,
+                "coursMagistral": 0,
+                "coursInteractif": 20,
+                "td": 15,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Algorithmique et  Programmation en C",
+              "UE": "Informatique",
+              "semestre": [
+                5
+              ],
+              "periode": [
+                1,
+                2
+              ],
+              "heure": {
+                "total": 40,
+                "totalAvecProf": 40,
+                "coursMagistral": 0,
+                "coursInteractif": 36,
+                "td": 20,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "PROJET C",
+              "UE": "Informatique",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                3,
+                4,
+                5
+              ],
+              "heure": {
+                "total": 20,
+                "totalAvecProf": 20,
+                "coursMagistral": 0,
+                "coursInteractif": 0,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Base de Données",
+              "UE": "Informatique",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                4
+              ],
+              "heure": {
+                "total": 16,
+                "totalAvecProf": 16,
+                "coursMagistral": 0,
+                "coursInteractif": 0,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Modélisation de  données",
+              "UE": "Informatique",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                5
+              ],
+              "heure": {
+                "total": 16,
+                "totalAvecProf": 16,
+                "coursMagistral": 0,
+                "coursInteractif": 4,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Développement et Architecture Web",
+              "UE": "Informatique",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                5
+              ],
+              "heure": {
+                "total": 21,
+                "totalAvecProf": 21,
+                "coursMagistral": 0,
+                "coursInteractif": 12,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Architecture et protocles réseaux",
+              "UE": "Informatique",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                5
+              ],
+              "heure": {
+                "total": 22,
+                "totalAvecProf": 22,
+                "coursMagistral": 0,
+                "coursInteractif": 22,
+                "td": 15,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Système UNIX Linux",
+              "UE": "Informatique",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                3
+              ],
+              "heure": {
+                "total": 20,
+                "totalAvecProf": 20,
+                "coursMagistral": 0,
+                "coursInteractif": 10,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Comptabilité",
+              "UE": "Organisation & Management des Entreprises 3",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                5
+              ],
+              "heure": {
+                "total": 16,
+                "totalAvecProf": 16,
+                "coursMagistral": 0,
+                "coursInteractif": 16,
+                "td": 0,
+                "tp": 0,
+                "projet": 40,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Gestion de projet",
+              "UE": "Organisation & Management des Entreprises 3",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                5
+              ],
+              "heure": {
+                "total": 22,
+                "totalAvecProf": 22,
+                "coursMagistral": 0,
+                "coursInteractif": 22,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Jeu d'entreprise",
+              "UE": "Organisation & Management des Entreprises 3",
+              "semestre": [
+                5
+              ],
+              "periode": [
+                2
+              ],
+              "heure": {
+                "total": 23,
+                "totalAvecProf": 23,
+                "coursMagistral": 0,
+                "coursInteractif": 0,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Sensibilisation à la RSE",
+              "UE": "Organisation & Management des Entreprises 3",
+              "semestre": [],
+              "periode": [],
+              "heure": {
+                "total": 27,
+                "totalAvecProf": 27,
+                "coursMagistral": 0,
+                "coursInteractif": 4,
+                "td": 0,
+                "tp": 0,
+                "projet": 30,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Anglais",
+              "UE": "Humanités - Langues 3",
+              "semestre": [
+                5,
+                6
+              ],
+              "periode": [],
+              "heure": {
+                "total": 40,
+                "totalAvecProf": 40,
+                "coursMagistral": 0,
+                "coursInteractif": 40,
+                "td": 0,
+                "tp": 0,
+                "projet": 50,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Ethique de l'ingénieur",
+              "UE": "Humanités - Langues 3",
+              "semestre": [
+                6
+              ],
+              "periode": [
+                3,
+                4
+              ],
+              "heure": {
+                "total": 16,
+                "totalAvecProf": 16,
+                "coursMagistral": 0,
+                "coursInteractif": 16,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Compétences relationnelles",
+              "UE": "Humanités - Langues 3",
+              "semestre": [
+                5
+              ],
+              "periode": [
+                1
+              ],
+              "heure": {
+                "total": 10,
+                "totalAvecProf": 10,
+                "coursMagistral": 0,
+                "coursInteractif": 0,
+                "td": 0,
+                "tp": 0,
+                "projet": 25,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Retour Expérience Entreprise / PPP",
+              "UE": "Humanités - Langues 3",
+              "semestre": [
+                5,
+                6
+              ],
+              "periode": [],
+              "heure": {
+                "total": 10,
+                "totalAvecProf": 10,
+                "coursMagistral": 0,
+                "coursInteractif": 0,
+                "td": 0,
+                "tp": 0,
+                "projet": 25,
+                "elearning": 0
+              }
+            },
+            {
+              "name": "Périodes entreprise",
+              "UE": "Entreprise",
+              "semestre": [
+                5,
+                6
+              ],
+              "periode": [],
+              "heure": {
+                "total": null,
+                "totalAvecProf": 0,
+                "coursMagistral": 0,
+                "coursInteractif": 0,
+                "td": 0,
+                "tp": 0,
+                "projet": 0,
+                "elearning": 0
+              }
             }
-          },
-          {
-            "name": "Mathématiques discrètes?",
-            "UE": "Sciences de l'ingénieur",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              3,
-              4
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 40,
-              "coursMagistral": 0,
-              "coursInteractif": 40,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Physique",
-            "UE": "Sciences de l'ingénieur",
-            "semestre": [
-              5
-            ],
-            "periode": [
-              1,
-              2
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 40,
-              "coursMagistral": 0,
-              "coursInteractif": 40,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Fabrication additive",
-            "UE": "Sciences de l'ingénieur",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              2,
-              3
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 16,
-              "coursMagistral": 0,
-              "coursInteractif": 10,
-              "td": 15,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Architecture des ordinateurs",
-            "UE": "Electronique Signaux & Systèmes",
-            "semestre": [
-              5
-            ],
-            "periode": [
-              1,
-              2,
-              4
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 42,
-              "coursMagistral": 0,
-              "coursInteractif": 30,
-              "td": 20,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Electronique analogique",
-            "UE": "Electronique Signaux & Systèmes",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              3,
-              4
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 38,
-              "coursMagistral": 0,
-              "coursInteractif": 30,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Projet électronique",
-            "UE": "Electronique Signaux & Systèmes",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              5
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 24,
-              "coursMagistral": 0,
-              "coursInteractif": 0,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Traitement du Signal",
-            "UE": "Electronique Signaux & Systèmes",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              5
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 20,
-              "coursMagistral": 0,
-              "coursInteractif": 3,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 5
-            }
-          },
-          {
-            "name": "Automatique",
-            "UE": "Electronique Signaux & Systèmes",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              5
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 20,
-              "coursMagistral": 0,
-              "coursInteractif": 20,
-              "td": 15,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Algorithmique et  Programmation en C",
-            "UE": "Informatique",
-            "semestre": [
-              5
-            ],
-            "periode": [
-              1,
-              2
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 40,
-              "coursMagistral": 0,
-              "coursInteractif": 36,
-              "td": 20,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "PROJET C",
-            "UE": "Informatique",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              3,
-              4,
-              5
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 20,
-              "coursMagistral": 0,
-              "coursInteractif": 0,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Base de Données",
-            "UE": "Informatique",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              4
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 16,
-              "coursMagistral": 0,
-              "coursInteractif": 0,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Modélisation de  données",
-            "UE": "Informatique",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              5
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 16,
-              "coursMagistral": 0,
-              "coursInteractif": 4,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Développement et Architecture Web",
-            "UE": "Informatique",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              5
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 21,
-              "coursMagistral": 0,
-              "coursInteractif": 12,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Architecture et protocles réseaux",
-            "UE": "Informatique",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              5
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 22,
-              "coursMagistral": 0,
-              "coursInteractif": 22,
-              "td": 15,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Système UNIX Linux",
-            "UE": "Informatique",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              3
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 20,
-              "coursMagistral": 0,
-              "coursInteractif": 10,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Comptabilité",
-            "UE": "Organisation & Management des Entreprises 3",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              5
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 16,
-              "coursMagistral": 0,
-              "coursInteractif": 16,
-              "td": 0,
-              "tp": 0,
-              "projet": 40,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Gestion de projet",
-            "UE": "Organisation & Management des Entreprises 3",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              5
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 22,
-              "coursMagistral": 0,
-              "coursInteractif": 22,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Jeu d'entreprise",
-            "UE": "Organisation & Management des Entreprises 3",
-            "semestre": [
-              5
-            ],
-            "periode": [
-              2
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 23,
-              "coursMagistral": 0,
-              "coursInteractif": 0,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Sensibilisation à la RSE",
-            "UE": "Organisation & Management des Entreprises 3",
-            "semestre": [],
-            "periode": [],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 27,
-              "coursMagistral": 0,
-              "coursInteractif": 4,
-              "td": 0,
-              "tp": 0,
-              "projet": 30,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Anglais",
-            "UE": "Humanités - Langues 3",
-            "semestre": [
-              5,
-              6
-            ],
-            "periode": [],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 40,
-              "coursMagistral": 0,
-              "coursInteractif": 40,
-              "td": 0,
-              "tp": 0,
-              "projet": 50,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Ethique de l'ingénieur",
-            "UE": "Humanités - Langues 3",
-            "semestre": [
-              6
-            ],
-            "periode": [
-              3,
-              4
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 16,
-              "coursMagistral": 0,
-              "coursInteractif": 16,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Compétences relationnelles",
-            "UE": "Humanités - Langues 3",
-            "semestre": [
-              5
-            ],
-            "periode": [
-              1
-            ],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 10,
-              "coursMagistral": 0,
-              "coursInteractif": 0,
-              "td": 0,
-              "tp": 0,
-              "projet": 25,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Retour Expérience Entreprise / PPP",
-            "UE": "Humanités - Langues 3",
-            "semestre": [
-              5,
-              6
-            ],
-            "periode": [],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 10,
-              "coursMagistral": 0,
-              "coursInteractif": 0,
-              "td": 0,
-              "tp": 0,
-              "projet": 25,
-              "elearning": 0
-            }
-          },
-          {
-            "name": "Périodes entreprise",
-            "UE": "Entreprise",
-            "semestre": [
-              5,
-              6
-            ],
-            "periode": [],
-            "heure": {
-              "total": 0,
-              "totalAvecProf": 0,
-              "coursMagistral": 0,
-              "coursInteractif": 0,
-              "td": 0,
-              "tp": 0,
-              "projet": 0,
-              "elearning": 0
-            }
-          }
         ]
       },
       {
@@ -2691,7 +2691,7 @@
               1
             ],
             "heure": {
-              "total": 0,
+              "total": 16,
               "totalAvecProf": 16,
               "coursMagistral": 0,
               "coursInteractif": 4,
@@ -2711,7 +2711,7 @@
               1
             ],
             "heure": {
-              "total": 0,
+              "total": 15,
               "totalAvecProf": 15,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -2731,7 +2731,7 @@
               1
             ],
             "heure": {
-              "total": 0,
+              "total": 28,
               "totalAvecProf": 28,
               "coursMagistral": 0,
               "coursInteractif": 28,
@@ -2751,7 +2751,7 @@
               1
             ],
             "heure": {
-              "total": 0,
+              "total": 37,
               "totalAvecProf": 37,
               "coursMagistral": 0,
               "coursInteractif": 33,
@@ -2771,7 +2771,7 @@
               1
             ],
             "heure": {
-              "total": 0,
+              "total": 15,
               "totalAvecProf": 15,
               "coursMagistral": 0,
               "coursInteractif": 7,
@@ -2791,7 +2791,7 @@
               2
             ],
             "heure": {
-              "total": 0,
+              "total": 20,
               "totalAvecProf": 20,
               "coursMagistral": 0,
               "coursInteractif": 10,
@@ -2812,7 +2812,7 @@
               3
             ],
             "heure": {
-              "total": 0,
+              "total": 35,
               "totalAvecProf": 35,
               "coursMagistral": 0,
               "coursInteractif": 10,
@@ -2828,7 +2828,7 @@
             "semestre": [],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 44,
               "totalAvecProf": 44,
               "coursMagistral": 0,
               "coursInteractif": 3.5,
@@ -2848,7 +2848,7 @@
               3
             ],
             "heure": {
-              "total": 0,
+              "total": 20,
               "totalAvecProf": 20,
               "coursMagistral": 0,
               "coursInteractif": 10,
@@ -2868,7 +2868,7 @@
               3
             ],
             "heure": {
-              "total": 0,
+              "total": 30,
               "totalAvecProf": 30,
               "coursMagistral": 0,
               "coursInteractif": 10,
@@ -2888,7 +2888,7 @@
               1
             ],
             "heure": {
-              "total": 0,
+              "total": 32,
               "totalAvecProf": 32,
               "coursMagistral": 0,
               "coursInteractif": 6,
@@ -2909,7 +2909,7 @@
               3
             ],
             "heure": {
-              "total": 0,
+              "total": 100,
               "totalAvecProf": 100,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -2930,7 +2930,7 @@
               3
             ],
             "heure": {
-              "total": 0,
+              "total": 48,
               "totalAvecProf": 48,
               "coursMagistral": 0,
               "coursInteractif": 10,
@@ -2950,7 +2950,7 @@
               3
             ],
             "heure": {
-              "total": 0,
+              "total": 36,
               "totalAvecProf": 36,
               "coursMagistral": 0,
               "coursInteractif": 28,
@@ -2968,7 +2968,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 16,
               "totalAvecProf": 16,
               "coursMagistral": 0,
               "coursInteractif": 16,
@@ -2986,7 +2986,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 8,
               "totalAvecProf": 8,
               "coursMagistral": 0,
               "coursInteractif": 2,
@@ -3004,7 +3004,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 9,
               "totalAvecProf": 9,
               "coursMagistral": 0,
               "coursInteractif": 2,
@@ -3027,7 +3027,7 @@
               3
             ],
             "heure": {
-              "total": 0,
+              "total": 40,
               "totalAvecProf": 40,
               "coursMagistral": 0,
               "coursInteractif": 40,
@@ -3045,7 +3045,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 12,
               "totalAvecProf": 12,
               "coursMagistral": 0,
               "coursInteractif": 12,
@@ -3063,7 +3063,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 14,
               "totalAvecProf": 14,
               "coursMagistral": 0,
               "coursInteractif": 14,
@@ -3081,7 +3081,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 12,
               "totalAvecProf": 12,
               "coursMagistral": 0,
               "coursInteractif": 12,
@@ -3099,7 +3099,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 9,
               "totalAvecProf": 9,
               "coursMagistral": 0,
               "coursInteractif": 12,
@@ -3118,7 +3118,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": null,
               "totalAvecProf": 0,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -3142,7 +3142,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 28,
               "totalAvecProf": 28,
               "coursMagistral": 0,
               "coursInteractif": 28,
@@ -3160,7 +3160,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 28,
               "totalAvecProf": 28,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -3178,7 +3178,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 28,
               "totalAvecProf": 28,
               "coursMagistral": 0,
               "coursInteractif": 14,
@@ -3196,7 +3196,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 28,
               "totalAvecProf": 28,
               "coursMagistral": 0,
               "coursInteractif": 14,
@@ -3214,7 +3214,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 28,
               "totalAvecProf": 28,
               "coursMagistral": 0,
               "coursInteractif": 14,
@@ -3232,7 +3232,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 28,
               "totalAvecProf": 28,
               "coursMagistral": 0,
               "coursInteractif": 19,
@@ -3250,7 +3250,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 9,
               "totalAvecProf": 9,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -3268,7 +3268,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 9,
               "totalAvecProf": 9,
               "coursMagistral": 0,
               "coursInteractif": 28,
@@ -3286,7 +3286,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 28,
               "totalAvecProf": 28,
               "coursMagistral": 0,
               "coursInteractif": 28,
@@ -3304,7 +3304,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 28,
               "totalAvecProf": 28,
               "coursMagistral": 0,
               "coursInteractif": 28,
@@ -3322,7 +3322,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 20,
               "totalAvecProf": 20,
               "coursMagistral": 0,
               "coursInteractif": 6,
@@ -3340,7 +3340,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 29,
               "totalAvecProf": 29,
               "coursMagistral": 0,
               "coursInteractif": 23,
@@ -3358,7 +3358,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 180,
               "totalAvecProf": 180,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -3376,7 +3376,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 16,
               "totalAvecProf": 16,
               "coursMagistral": 0,
               "coursInteractif": 16,
@@ -3394,7 +3394,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 14,
               "totalAvecProf": 14,
               "coursMagistral": 0,
               "coursInteractif": 14,
@@ -3412,7 +3412,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 20,
               "totalAvecProf": 20,
               "coursMagistral": 0,
               "coursInteractif": 20,
@@ -3430,7 +3430,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 8,
               "totalAvecProf": 8,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -3448,7 +3448,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 40,
               "totalAvecProf": 40,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -3466,7 +3466,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 20,
               "totalAvecProf": 20,
               "coursMagistral": 0,
               "coursInteractif": 20,
@@ -3484,7 +3484,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 8,
               "totalAvecProf": 8,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -3502,7 +3502,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": 6,
               "totalAvecProf": 6,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -3521,7 +3521,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": 0,
+              "total": null,
               "totalAvecProf": 0,
               "coursMagistral": 0,
               "coursInteractif": 0,
