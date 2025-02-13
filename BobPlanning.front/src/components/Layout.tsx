@@ -1,4 +1,5 @@
 import TopBar from './TopBar';
+import './Layout.css';
 
 import { ReactNode } from "react";
 
