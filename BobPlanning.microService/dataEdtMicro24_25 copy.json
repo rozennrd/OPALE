@@ -1939,7 +1939,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": null,
+              "total": 0,
               "totalAvecProf": 0,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -2665,7 +2665,7 @@
               ],
               "periode": [],
               "heure": {
-                "total": null,
+                "total": 0,
                 "totalAvecProf": 0,
                 "coursMagistral": 0,
                 "coursInteractif": 0,
@@ -3118,7 +3118,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": null,
+              "total": 0,
               "totalAvecProf": 0,
               "coursMagistral": 0,
               "coursInteractif": 0,
@@ -3521,7 +3521,7 @@
             ],
             "periode": [],
             "heure": {
-              "total": null,
+              "total": 0,
               "totalAvecProf": 0,
               "coursMagistral": 0,
               "coursInteractif": 0,

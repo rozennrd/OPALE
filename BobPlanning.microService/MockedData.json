@@ -13,8 +13,8 @@
                     "periode": [],
                     "heure": 
                         {
-                            "total": 20,
-                            "totalAvecProf": null,
+                            "total": 0,
+                            "totalAvecProf": 40,
                             "coursMagistral": null,
                             "coursInteractif": null,
                             "td": null,
@@ -33,8 +33,8 @@
                     "periode": [],
                     "heure": 
                         {
-                            "total": 20,
-                            "totalAvecProf": null,
+                            "total": 0,
+                            "totalAvecProf": 20,
                             "coursMagistral": null,
                             "coursInteractif": null,
                             "td": null,
@@ -53,8 +53,8 @@
                     "periode": [],
                     "heure": 
                         {
-                            "total": 10,
-                            "totalAvecProf": null,
+                            "total": 0,
+                            "totalAvecProf": 20,
                             "coursMagistral": null,
                             "coursInteractif": null,
                             "td": null,

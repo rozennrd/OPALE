@@ -1,0 +1,46 @@
+{
+  "macro": {
+    "DateDeb": "2024-08-01",
+    "DateFin": "2025-09-01",
+    "Promos": [
+      {
+        "Name": "ADI1",
+        "i": 1,
+        "Nombre": 30,
+        "Periode": [
+          {
+            "DateDebutP": "2024-09-01",
+            "DateFinP": "2025-06-14",
+            "nbSemaineP": 15
+          }
+        ]
+      }
+    ]
+  },
+  "maquette": [
+    {
+      "UE": [
+        {
+          "name": "Mathématiques 1"
+        }
+      ],
+      "cours": [
+        {
+          "name": "Algèbre Linéaire",
+          "UE": "Mathématiques 1",
+          "semestrePeriode": "Semestre 1",
+          "heure": {
+            "total": 30,
+            "totalAvecProf": 28,
+            "coursMagistral": 15,
+            "coursInteractif": 10,
+            "td": 5,
+            "tp": 0,
+            "projet": 0,
+            "elearning": 0
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2858 @@
+{
+  "Promos": [
+      
+      {
+        "name": "CIR1",
+        "nombreEtudiants": "20",
+        "cours": [
+          {
+            "name": "M1 : Fondamentaux",
+            "UE": "UE1.1 : Mathématiques",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 32,
+              "totalAvecProf": 32,
+              "coursMagistral": 18,
+              "coursInteractif": 0,
+              "td": 8,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 6
+            }
+          },
+          {
+            "name": "M2 : Analyse",
+            "UE": "UE1.1 : Mathématiques",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 64,
+              "totalAvecProf": 64,
+              "coursMagistral": 32,
+              "coursInteractif": 0,
+              "td": 18,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 14
+            }
+          },
+          {
+            "name": "Maths TP",
+            "UE": "UE1.1 : Mathématiques",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 12,
+              "totalAvecProf": 12,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 6
+            }
+          },
+          {
+            "name": "Optique",
+            "UE": "UE2.1 : Physique, Electronique",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 20,
+              "totalAvecProf": 20,
+              "coursMagistral": 8,
+              "coursInteractif": 0,
+              "td": 12,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Electronique analogique",
+            "UE": "UE2.1 : Physique, Electronique",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 40,
+              "totalAvecProf": 40,
+              "coursMagistral": 16,
+              "coursInteractif": 0,
+              "td": 24,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Electronique analogique TP",
+            "UE": "UE2.1 : Physique, Electronique",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 20,
+              "totalAvecProf": 20,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 4
+            }
+          },
+          {
+            "name": "Prog.1 : Fondamentaux",
+            "UE": "UE3.1 : Informatique",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 48,
+              "totalAvecProf": 48,
+              "coursMagistral": 0,
+              "coursInteractif": 48,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Prog.1 : TP Algo-C",
+            "UE": "UE3.1 : Informatique",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 14,
+              "totalAvecProf": 14,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Développement web statique",
+            "UE": "UE3.1 : Informatique",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 24,
+              "totalAvecProf": 24,
+              "coursMagistral": 0,
+              "coursInteractif": 6,
+              "td": 0,
+              "tp": 0,
+              "projet": 6,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Anglais",
+            "UE": "UE4.1 : Humanités, Langues",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 24,
+              "totalAvecProf": 24,
+              "coursMagistral": 0,
+              "coursInteractif": 24,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Communication interpersonnelle - Bases",
+            "UE": "UE4.1 : Humanités, Langues",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 18,
+              "totalAvecProf": 18,
+              "coursMagistral": 0,
+              "coursInteractif": 24,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "PPP (Career Center, Stage, Table ronde, Portfolio)",
+            "UE": "UE4.1 : Humanités, Langues",
+            "semestre": [
+              1
+            ],
+            "periode": [],
+            "heure": {
+              "total": 6,
+              "totalAvecProf": 6,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 6,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "M3 : Arithmétique",
+            "UE": "UE1.2 : Mathématiques",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 28,
+              "totalAvecProf": 28,
+              "coursMagistral": 16,
+              "coursInteractif": 0,
+              "td": 8,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 4
+            }
+          },
+          {
+            "name": "M4 : Algèbre linéaire",
+            "UE": "UE1.2 : Mathématiques",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 56,
+              "totalAvecProf": 56,
+              "coursMagistral": 32,
+              "coursInteractif": 0,
+              "td": 16,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 8
+            }
+          },
+          {
+            "name": "Maths TP",
+            "UE": "UE1.2 : Mathématiques",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 12,
+              "totalAvecProf": 12,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 8
+            }
+          },
+          {
+            "name": "Electronique analogique TP",
+            "UE": "UE2.2 : Physique, Electronique",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 12,
+              "totalAvecProf": 12,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Mécanique du point",
+            "UE": "UE2.2 : Physique, Electronique",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 38,
+              "totalAvecProf": 38,
+              "coursMagistral": 14,
+              "coursInteractif": 0,
+              "td": 22,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Thermodynamique",
+            "UE": "UE2.2 : Physique, Electronique",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 20,
+              "totalAvecProf": 20,
+              "coursMagistral": 8,
+              "coursInteractif": 0,
+              "td": 12,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Prog.2 : Approfondissement",
+            "UE": "UE3.2 : Informatique",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 48,
+              "totalAvecProf": 48,
+              "coursMagistral": 0,
+              "coursInteractif": 48,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Prog.2 : TP C",
+            "UE": "UE3.2 : Informatique",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 14,
+              "totalAvecProf": 14,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Développement web dynamique",
+            "UE": "UE3.2 : Informatique",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 24,
+              "totalAvecProf": 24,
+              "coursMagistral": 0,
+              "coursInteractif": 6,
+              "td": 0,
+              "tp": 0,
+              "projet": 6,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Anglais",
+            "UE": "UE4.2 : Humanités, Langues",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 24,
+              "totalAvecProf": 24,
+              "coursMagistral": 0,
+              "coursInteractif": 24,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Epistémologie/EEO",
+            "UE": "UE4.2 : Humanités, Langues",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 20,
+              "totalAvecProf": 20,
+              "coursMagistral": 0,
+              "coursInteractif": 20,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Stage / CV",
+            "UE": "UE4.2 : Humanités, Langues",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 4,
+              "totalAvecProf": 4,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 4,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Gestion de projet",
+            "UE": "UE5 : Projet",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 4,
+              "totalAvecProf": 4,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 4,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          },
+          {
+            "name": "Projet de fin d'année",
+            "UE": "UE5 : Projet",
+            "semestre": [
+              2
+            ],
+            "periode": [],
+            "heure": {
+              "total": 116,
+              "totalAvecProf": 116,
+              "coursMagistral": 0,
+              "coursInteractif": 0,
+              "td": 0,
+              "tp": 0,
+              "projet": 0,
+              "elearning": 0
+            }
+          }
+        ]
+      }
+      
+     
+  ],
+  "Salles": [
+      {
+          "ID": "J001",
+          "type": "TPelec",
+          "capacite": 30
+      },
+      {
+          "ID": "J002",
+          "type": "Interactif",
+          "capacite": 20
+      },
+      {
+          "ID": "J003",
+          "type": "TPinfo",
+          "capacite": 30
+      },
+      {
+          "ID": "J004",
+          "type": "TPinfo",
+          "capacite": 20
+      },
+      {
+          "ID": "J005",
+          "type": "Classique",
+          "capacite": 20
+      },
+      {
+          "ID": "J006",
+          "type": "TPelec",
+          "capacite": 20
+      },
+      {
+          "ID": "J101",
+          "type": "Interactif",
+          "capacite": 30
+      },
+      {
+          "ID": "J102",
+          "type": "TPinfo",
+          "capacite": 20
+      },
+      {
+          "ID": "J103",
+          "type": "Interactif",
+          "capacite": 20
+      },
+      {
+          "ID": "J104",
+          "type": "TPinfo",
+          "capacite": 12
+      },
+      {
+          "ID": "J105",
+          "type": "Classique",
+          "capacite": 30
+      }
+  ],
+  "Profs": [
+      {
+          "ID": "INT1",
+          "name": "Emma Bernard",
+          "type": "Externe",
+          "dispo": []
+      },
+      {
+          "ID": "INT2",
+          "name": "Nadia Martin",
+          "type": "Externe",
+          "dispo": []
+      },
+      {
+          "ID": "INT3",
+          "name": "Clara Durand",
+          "type": "Interne",
+          "dispo": []
+      },
+      {
+          "ID": "INT4",
+          "name": "Marie Lemoine",
+          "type": "Externe",
+          "dispo": []
+      },
+      {
+          "ID": "INT5",
+          "name": "Jean Dupont",
+          "type": "Interne",
+          "dispo": []
+      },
+      {
+          "ID": "EXT6",
+          "name": "Luc Dupont",
+          "type": "Externe",
+          "dispo": []
+      }
+  ],
+  "Calendrier": [
+    {
+      "dateDebut": "2024-07-29T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-08-05T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-08-12T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Assomption",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-08-19T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-08-26T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-09-02T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-09-09T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-09-16T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-09-23T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-09-30T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-10-07T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-10-14T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-10-21T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-10-28T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Vacances de la Toussaint + Toussaint",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances de la Toussaint + Toussaint",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Vacances de la Toussaint + Toussaint",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances de la Toussaint + Toussaint",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Toussaint",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-11-04T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-11-11T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "11 novembre",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-11-18T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-11-25T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-12-02T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-12-09T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-12-16T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-12-23T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Vacances de Noël",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances de Noël",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Jour de Noël",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances de Noël",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Vacances de Noël",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-12-30T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Vacances de Noël",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances de Noël",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "1er janvier",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances de Noël",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Vacances de Noël",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-01-06T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-01-13T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-01-20T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-01-27T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-02-03T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-02-10T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-02-17T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-02-24T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Vacances d'Hiver",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances d'Hiver",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Vacances d'Hiver",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances d'Hiver",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Vacances d'Hiver",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-03-03T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Vacances d'Hiver",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances d'Hiver",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Vacances d'Hiver",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances d'Hiver",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Vacances d'Hiver",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-03-10T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-03-17T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-03-24T01:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-03-31T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-04-07T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-04-14T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-04-21T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Lundi de Pâques",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances de Printemps",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Vacances de Printemps",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances de Printemps",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Vacances de Printemps",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-04-28T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Vacances de Printemps",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances de Printemps",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Vacances de Printemps",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "1er mai",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Vacances de Printemps",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-05-05T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "8 mai",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-05-12T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-05-19T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-05-26T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Ascension",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-06-02T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-06-09T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Lundi de Pentecôte",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": true,
+              "message": "",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-06-16T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-06-23T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-06-30T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Pas cours",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-07-07T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-07-14T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "14 juillet",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-07-21T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-07-28T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-08-04T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-08-11T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Assomption",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-08-18T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2025-08-25T00:00:00.000Z",
+      "promos": [
+        {
+          "name": "CIR1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mardi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Jeudi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            },
+            {
+              "jour": "Vendredi",
+              "enCours": false,
+              "message": "Vacances d'Été",
+              "cours": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
