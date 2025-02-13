@@ -11,6 +11,8 @@ const TopBar = () => {
             <nav className="nav-links">
                 <Link to="/TrueHome">Home</Link>    
                 <Link to="/parametres">Paramètres</Link>
+                <Link to="/Salle">Salle</Link>
+                <Link to="/Profs">Profs</Link>
                 <Link to="/calendriers">Calendriers</Link>
                 <Link to="/contact">Contact</Link>
             </nav>

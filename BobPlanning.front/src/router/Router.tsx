@@ -9,6 +9,8 @@ import Contact from "../pages/Contact";
 import ParametresMicro from "../pages/ParametresMicro";
 import TrueHome from "../pages/TrueHome";
 import Connexion from "../pages/Connexion";
+import Salle from "../pages/Salle";
+import Profs from "../pages/Profs";
 
 const router = createBrowserRouter([
    // Route pour la connexion (sans Layout)
@@ -48,6 +50,16 @@ const router = createBrowserRouter([
       {
         path: "/parametresMicro",
         element: <ParametresMicro />,
+      },
+      {
+        path: "/Salle",
+        element: <Salle />,
+        //  element: <Salle />,
+      },
+      {
+        path: "/Profs",
+        element: <Profs />,
+        //  element: <Profs />,
       }
     ],
   },
