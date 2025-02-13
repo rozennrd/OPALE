@@ -866,6 +866,208 @@ app.post('/generateDataEdtMicro',authJwt.verifyToken, async (req: Request, res: 
   }
 });
 
+/**
+ * @swagger
+ * /getSallesData:
+ *   get:
+ *     summary: Récupérer les données des salles
+ *     tags:
+ *       - Salles
+ *     description: Retourne toutes les données des salles disponibles.
+ *     responses:
+ *       200:
+ *         description: Une liste d'objets contenant les informations des salles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   name:
+ *                     type: string
+ *                     example: "Salle 101"
+ *                   capacity:
+ *                     type: integer
+ *                     example: 30
+ *       500:
+ *         description: Une erreur est survenue
+ */
+app.get('/getSallesData', authJwt.verifyToken, (req, res) => {
+  const sql = 'SELECT * FROM Salles';
+  connection.query(sql, (error: any, results: any[]) => {
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+    res.json(results);
+  });
+});
+
+/**
+ * @swagger
+ * /setSallesData:
+ *   post:
+ *     summary: Ajouter une nouvelle salle
+ *     tags:
+ *       - Salles
+ *     description: Ajoute une nouvelle salle à la base de données.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Le nom de la salle.
+ *                 example: "Salle 102"
+ *               capacity:
+ *                 type: integer
+ *                 description: La capacité maximale de la salle.
+ *                 example: 25
+ *     responses:
+ *       201:
+ *         description: Salle ajoutée avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Salle ajoutée avec succès"
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
+app.post('/setSallesData', authJwt.verifyToken, (req, res) => {
+  const { name, type, capacite } = req.body;
+  const sql = 'INSERT INTO Salles (name, type, capacite) VALUES (?, ?, ?)';
+  connection.query(sql, [name,type, capacite], (error: any) => {
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+    res.status(201).json({ message: 'Salle ajoutée avec succès' });
+  });
+});
+
+/**
+ * @swagger
+ * /updateSalle:
+ *   put:
+ *     summary: Mettre à jour une salle existante
+ *     tags:
+ *       - Salles
+ *     description: Met à jour les informations d'une salle spécifique.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 description: L'ID de la salle à mettre à jour.
+ *                 example: 1
+ *               name:
+ *                 type: string
+ *                 description: Le nouveau nom de la salle.
+ *                 example: "Salle Informatique"
+ *               capacity:
+ *                 type: integer
+ *                 description: La nouvelle capacité de la salle.
+ *                 example: 40
+ *     responses:
+ *       200:
+ *         description: Salle mise à jour avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Salle mise à jour avec succès"
+ *       404:
+ *         description: Salle non trouvée.
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
+app.put('/updateSalle', authJwt.verifyToken, (req, res) => {
+  const { id, name, capacite } = req.body;
+  const sql = 'UPDATE Salles SET name = ?, capacite = ? WHERE id = ?';
+  
+  connection.query(sql, [name, capacite, id], (error: any, result: any) => {
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+    
+    const affectedRows = Array.isArray(result) ? result[0].affectedRows : result.affectedRows;
+    
+    if (affectedRows === 0) {
+      return res.status(404).json({ message: 'Salle non trouvée' });
+    }
+
+    res.json({ message: 'Salle mise à jour avec succès' });
+  });
+});
+
+
+/**
+ * @swagger
+ * /deleteSalle:
+ *   delete:
+ *     summary: Supprimer une salle
+ *     tags:
+ *       - Salles
+ *     description: Supprime une salle spécifique de la base de données.
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: L'ID de la salle à supprimer.
+ *     responses:
+ *       200:
+ *         description: Salle supprimée avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Salle supprimée avec succès"
+ *       404:
+ *         description: Salle non trouvée.
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
+app.delete('/deleteSalle', authJwt.verifyToken, (req, res) => {
+  const { id } = req.query;
+  const sql = 'DELETE FROM Salles WHERE id = ?';
+  
+  connection.query(sql, [id], (error: any, result: any) => {
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+    
+    const affectedRows = Array.isArray(result) ? result[0].affectedRows : result.affectedRows;
+    
+    if (affectedRows === 0) {
+      return res.status(404).json({ message: 'Salle non trouvée' });
+    }
+
+    res.json({ message: 'Salle supprimée avec succès' });
+  });
+});
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
