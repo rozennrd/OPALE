@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost
--- Généré le : jeu. 30 jan. 2025 à 08:11
+-- Généré le : jeu. 13 fév. 2025 à 10:22
 -- Version du serveur : 10.11.6-MariaDB
 -- Version de PHP : 8.0.30
 
@@ -107,6 +107,7 @@ INSERT INTO `promosData` (`id`, `Name`, `Nombre`, `Periode`) VALUES
 
 CREATE TABLE `Salles` (
   `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `type` enum('classique','electronique','informatique','projet') NOT NULL,
   `capacite` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
@@ -122,16 +123,18 @@ CREATE TABLE `Utilisateurs` (
   `Login` varchar(255) NOT NULL,
   `Email` varchar(255) NOT NULL,
   `Password` varchar(255) NOT NULL,
-  `Bloque` tinyint(1) DEFAULT NULL,
-  `DateBlocage` datetime NOT NULL
+  `Bloque` tinyint(1) DEFAULT 0,
+  `DateBlocage` datetime DEFAULT NULL,
+  `TentativesEchouees` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Déchargement des données de la table `Utilisateurs`
 --
 
-INSERT INTO `Utilisateurs` (`IdUtilisateur`, `Login`, `Email`, `Password`, `Bloque`, `DateBlocage`) VALUES
-(1, 'A', 'A', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533', 0, '2025-01-29 00:00:00');
+INSERT INTO `Utilisateurs` (`IdUtilisateur`, `Login`, `Email`, `Password`, `Bloque`, `DateBlocage`, `TentativesEchouees`) VALUES
+(1, 'Daminou', 'Daminou', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533', 0, NULL, 0),
+(2, 'Mathias', 'Mathias.milhe@student.junia.com', '559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd', 0, NULL, 0);
 
 --
 -- Index pour les tables déchargées
@@ -212,7 +215,7 @@ ALTER TABLE `Salles`
 -- AUTO_INCREMENT pour la table `Utilisateurs`
 --
 ALTER TABLE `Utilisateurs`
-  MODIFY `IdUtilisateur` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `IdUtilisateur` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Contraintes pour les tables déchargées

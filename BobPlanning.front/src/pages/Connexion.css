@@ -7,8 +7,7 @@
     align-items: center;
     justify-content: center;
     background-color: #f5f5f5;
-    padding: 2rem;
-    padding-top: 0; /* Corrected from 0% to 0 */
+    padding-top: 0; 
 }
 
 /* Formulaire de connexion */
@@ -25,11 +24,21 @@
     gap: 1.5rem;
 }
 
-/* Champs de saisie */
 .login-input {
     width: 100% !important; /* Forcer la largeur à 100% */
     display: block; /* S'assurer qu'ils sont en mode block */
     margin-bottom: 1.5rem; /* Ajouter de l'espace entre les champs */
+    padding: 1rem; /* Augmenter le padding pour plus de confort */
+    font-size: 1rem; /* Augmenter la taille de la police */
+    border-radius: 8px; /* Arrondir les coins */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ajouter une ombre subtile */
+    border: 1px solid #ccc; /* Ajouter une bordure légère */
+}
+
+.login-input:focus {
+    border-color: var(--primary-color); /* Changer la couleur de la bordure au focus */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Augmenter l'ombre au focus */
+    outline: none; /* Supprimer l'outline par défaut */
 }
 
 /* Bouton de connexion */
