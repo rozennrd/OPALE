@@ -171,7 +171,8 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
         for course in courses:
             course_name = course["cours"]
             total_heures = course["volume_horaire"]
-
+            
+            print(f"🛠 Création variable: {promo} - {course_name} ({total_heures}h)")
             for semaine_index, semaine in enumerate(calendar_info[promo]):
                 for jour_index, jour in enumerate(semaine["jours_travailles"]):
                     for creneau_index in range(len(creneaux_horaires)):
@@ -182,10 +183,12 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
 
     # ✅ CONTRAINTE : Respect du volume horaire total pour chaque cours
     for promo, courses in promo_courses_info.items():
+        print(f"\n🎯 [DEBUG] Promo: {promo}")
+        
         for course in courses:
             course_name = course["cours"]
-            total_heures = course["volume_horaire"]
-
+            total_heures = course["volume_horaire"]        
+            print(f"🎯 [DEBUG] Cours: {course_name} ({total_heures}h)")
             constraint_expr = sum(
                 creneau_occupe[(promo, course_name, semaine_index, jour_index, creneau_index)]
                 for semaine_index, semaine in enumerate(calendar_info[promo])
@@ -194,7 +197,10 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
             )
 
             model.Add(constraint_expr == int(total_heures))
-            print(f"✅ [CONTRAINTE] Volume horaire {course_name} ({promo}) → {total_heures}h")
+            # model.Add(constraint_expr >= max(0, int(total_heures) - 24))  # Minimum : total_heures - 20
+            # model.Add(constraint_expr <= int(total_heures) + 24)  # Maximum : total_heures + 20
+
+            
 
     # ✅ CONTRAINTE : Un seul cours par créneau dans une même promo
     for promo in promo_courses_info.keys():
@@ -227,6 +233,7 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
     callback = DebugCallback(creneau_occupe)
     status = solver.Solve(model)
     if status != cp_model.OPTIMAL and status != cp_model.FEASIBLE:
+        
         print("\n❌ Aucune solution trouvée.")
         return []
 
