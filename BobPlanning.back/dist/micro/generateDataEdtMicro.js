@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateDataEdtMicro = void 0;
 const holidaysAndWeek_1 = require("../tools/holidaysAndWeek");
-const generateDataEdtMicro = (macro, maquette) => __awaiter(void 0, void 0, void 0, function* () {
+const generateDataEdtMicro = (macro) => __awaiter(void 0, void 0, void 0, function* () {
     let days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
     let micro = [];
     let promo = [];

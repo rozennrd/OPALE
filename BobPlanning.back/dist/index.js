@@ -43,6 +43,9 @@ const express_1 = __importDefault(require("express"));
 const mysql = __importStar(require("mysql2"));
 const getDBConfig_1 = __importDefault(require("./database/getDBConfig"));
 const path_1 = __importDefault(require("path"));
+const generateEdtMicro_1 = require("./micro/generateEdtMicro");
+const getLogin_1 = require("./database/getLogin");
+const authJwt_1 = __importDefault(require("./middleware/authJwt"));
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const multer = require('multer');
@@ -90,6 +93,83 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 /**
  * @swagger
+ * /login:
+ *   post:
+ *     summary: Authentifie un utilisateur et renvoie un cookie JWT
+ *     description: Vérifie les identifiants et génère un token JWT stocké dans un cookie sécurisé.
+ *     tags:
+ *       - Authentification
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: L'adresse email de l'utilisateur
+ *                 example: "test@example.com"
+ *               password:
+ *                 type: string
+ *                 description: Le mot de passe hashé de l'utilisateur
+ *                 example: "$2b$10$1234567890abcdef"
+ *     responses:
+ *       200:
+ *         description: Connexion réussie, cookie envoyé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Connexion réussie"
+ *                 userId:
+ *                   type: string
+ *                   example: "123"
+ *       400:
+ *         description: Email ou mot de passe manquant
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Email et mot de passe requis"
+ *       401:
+ *         description: Identifiants incorrects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Identifiants incorrects"
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Erreur serveur"
+ */
+app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield (0, getLogin_1.getLogin)(req, res, connection);
+    }
+    catch (error) {
+        console.error('Erreur de connexion:', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+}));
+/**
+ * @swagger
  * /getPromosData:
  *   get:
  *     summary: Récupérer les données des promotions
@@ -131,12 +211,13 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *       500:
  *         description: Une erreur est survenue
  */
-app.get('/getPromosData', (req, res) => {
+app.get('/getPromosData', authJwt_1.default.verifyToken, (req, res) => {
     const promosData = {
         DateDeb: "",
         DateFin: "",
         Promos: []
     };
+    console.log('Balise 1');
     const sql = 'SELECT Name, Nombre, Periode FROM promosData';
     connection.query(sql, (error, results) => {
         if (error) {
@@ -239,7 +320,7 @@ app.get('/getPromosData', (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
-app.post('/setPromosData', (req, res) => {
+app.post('/setPromosData', authJwt_1.default.verifyToken, (req, res) => {
     const { DateDeb, DateFin, Promos } = req.body;
     console.log('req.body', req.body);
     const dateDeb = DateDeb || null;
@@ -271,6 +352,138 @@ app.post('/setPromosData', (req, res) => {
             console.log('2. error', error);
             res.status(500).json({ error: error.message });
         });
+    });
+});
+/**
+ * @swagger
+ * /getProfsData:
+ *   get:
+ *     summary: Récupérer les informations des professeurs
+ *     tags:
+ *       - DB
+ *     description: Retourne toutes les informations des professeurs.
+ *     responses:
+ *       200:
+ *         description: Une liste d'objets professeurs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   name:
+ *                     type: string
+ *                     example: "Dupont"
+ *                   type:
+ *                     type: string
+ *                     enum: [EXT, INT]
+ *                     example: "INT"
+ *                   dispo:
+ *                     type: string
+ *                     example: "{\"lundiMatin\": true, \"lundiAprem\": false, ...}"
+ *       500:
+ *         description: Une erreur est survenue
+ */
+app.get('/getProfsData', authJwt_1.default.verifyToken, (req, res) => {
+    const sql = 'SELECT id, name, type, dispo FROM Professeurs';
+    connection.query(sql, (error, results) => {
+        if (error) {
+            return res.status(500).json({ error: error.message });
+        }
+        res.json(results);
+    });
+});
+/**
+ * @swagger
+ * /setProfsData:
+ *   post:
+ *     summary: Ajouter ou mettre à jour les informations des professeurs
+ *     tags:
+ *       - DB
+ *     description: Cette route permet d'ajouter ou de mettre à jour les informations des professeurs dans la base de données.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: L'identifiant du professeur (optionnel pour l'ajout)
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   description: Le nom du professeur
+ *                   example: "Dupont"
+ *                 type:
+ *                   type: string
+ *                   enum: [EXT, INT]
+ *                   description: Le type du professeur
+ *                   example: "INT"
+ *                 dispo:
+ *                   type: string
+ *                   description: Les disponibilités du professeur au format JSON
+ *                   example: "{\"lundiMatin\": true, \"lundiAprem\": false, ...}"
+ *     responses:
+ *       200:
+ *         description: Informations du professeur ajoutées ou mises à jour avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Informations du professeur mises à jour avec succès."
+ *                 insertedIds:
+ *                   type: array
+ *                   items:
+ *                     type: integer
+ *                   description: Liste des IDs des nouveaux professeurs insérés.
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
+app.post('/setProfsData', authJwt_1.default.verifyToken, (req, res) => {
+    const insertedIds = [];
+    const updatePromises = req.body.map((prof) => {
+        return new Promise((resolve, reject) => {
+            if (prof.id) {
+                // Si un ID est fourni, mettre à jour le professeur existant
+                const updateSql = 'UPDATE Professeurs SET name = ?, type = ?, dispo = ? WHERE id = ?';
+                connection.query(updateSql, [prof.name, prof.type, prof.dispo, prof.id], (error) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    resolve();
+                });
+            }
+            else {
+                // Sinon, ajouter un nouveau professeur
+                const insertSql = 'INSERT INTO Professeurs (name, type, dispo) VALUES (?, ?, ?)';
+                connection.query(insertSql, [prof.name, prof.type, prof.dispo], (error, results) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    insertedIds.push(results.insertId);
+                    resolve();
+                });
+            }
+        });
+    });
+    // Attendre que toutes les requêtes soient terminées avant d'envoyer une réponse
+    Promise.all(updatePromises)
+        .then(() => {
+        res.json({ message: 'Informations des professeurs mises à jour avec succès.', insertedIds });
+    })
+        .catch((error) => {
+        res.status(500).json({ error: error.message });
     });
 });
 /**
@@ -330,7 +543,7 @@ app.post('/setPromosData', (req, res) => {
  *       500:
  *         description: Internal server error
  */
-app.post('/generateEdtMacro', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post('/generateEdtMacro', authJwt_1.default.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { DateDeb, DateFin, Promos } = req.body;
         if (!DateDeb || !DateFin || !Promos) {
@@ -350,8 +563,15 @@ app.post('/generateEdtMacro', (req, res) => __awaiter(void 0, void 0, void 0, fu
         res.status(500).send('Internal server error' + error);
     }
 }));
-// Route pour télécharger le fichier Excel
-app.get('/download/EdtMacro', (req, res) => {
+/**
+ * @swagger
+ * /download/EdtMacro:
+ *  get:
+ *     summary: Download excel macro file
+ *     tags:
+ *       - Macro
+ */
+app.get('/download/EdtMacro', authJwt_1.default.verifyToken, (req, res) => {
     const filePath = path_1.default.join(__dirname, '..', 'files', 'EdtMacro.xlsx');
     res.download(filePath, 'EdtMacro.xlsx', (err) => {
         if (err) {
@@ -438,7 +658,7 @@ app.get('/download/EdtMacro', (req, res) => {
  *                 error:
  *                   type: string
  */
-app.post('/readMaquette', upload.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post('/readMaquette', authJwt_1.default.verifyToken, upload.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.file) {
         return res.status(400).send('Aucun fichier n\'a été téléchargé');
     }
@@ -461,32 +681,9 @@ app.post('/readMaquette', upload.single('file'), (req, res) => __awaiter(void 0,
  *     requestBody:
  *       required: true
  */
-app.post('/generateEdtMicro', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post('/generateEdtMicro', authJwt_1.default.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        //Generate Data EdtMicro
-        const { macro, maquette } = req.body;
-        const calendrier = yield (0, generateDataEdtMicro_1.generateDataEdtMicro)(macro, maquette);
-        //Call solver from microservice
-        const edtMicroArray = [];
-        //Generate Excel file
-        if (!Array.isArray(edtMicroArray)) {
-            res.status(400).send('Invalid data format: Expected an array of timetable entries.');
-            return;
-        }
-        // Validate structure of each object in edtMicroArray
-        const isValid = edtMicroArray.every((edtMicro) => edtMicro.dateDebut &&
-            Array.isArray(edtMicro.promos) &&
-            edtMicro.promos.every((promo) => promo.name &&
-                Array.isArray(promo.semaine) &&
-                promo.semaine.every((semaine) => semaine.jour &&
-                    typeof semaine.enCours === 'boolean' &&
-                    Array.isArray(semaine.cours) &&
-                    semaine.cours.every((cours) => cours.matiere &&
-                        cours.heureDebut &&
-                        cours.heureFin &&
-                        cours.professeur &&
-                        cours.salleDeCours))));
-        const filePath = yield (0, generateEdtSquelette_1.generateEdtSquelette)(edtMicroArray);
+        const filePath = yield (0, generateEdtMicro_1.generateEdtMicro)(connection);
         res.status(200).json({
             message: 'Excel file generated and saved on the server',
             filePath,
@@ -496,6 +693,23 @@ app.post('/generateEdtMicro', (req, res) => __awaiter(void 0, void 0, void 0, fu
         res.status(500).send('Internal server error: ' + error);
     }
 }));
+/**
+ * @swagger
+ * /download/EdtMicro:
+ *  get:
+ *     summary: Download excel micro file
+ *     tags:
+ *       - Micro
+ */
+app.get('/download/EdtMicro', authJwt_1.default.verifyToken, (req, res) => {
+    const filePath = path_1.default.join(__dirname, '..', 'files', 'EdtMicro.xlsx');
+    res.download(filePath, 'EdtMicro.xlsx', (err) => {
+        if (err) {
+            console.error('Erreur lors du téléchargement du fichier:', err);
+            res.status(500).send('Erreur lors du téléchargement du fichier');
+        }
+    });
+});
 /**
  * @swagger
  * /generateEdtSquelette:
@@ -527,7 +741,7 @@ app.post('/generateEdtMicro', (req, res) => __awaiter(void 0, void 0, void 0, fu
  *                       name:
  *                         type: string
  *                         description: Name of the class
- *                         example: "Promo 2024"
+ *                         example: "ADI 1"
  *                       semaine:
  *                         type: array
  *                         description: Weekly schedule with courses
@@ -536,9 +750,8 @@ app.post('/generateEdtMicro', (req, res) => __awaiter(void 0, void 0, void 0, fu
  *                           properties:
  *                             jour:
  *                               type: string
- *                               format: date-time
- *                               description: Date of the day
- *                               example: "2024-01-01T00:00:00.000Z"
+ *                               description: Day
+ *                               example: "Lundi"
  *                             enCours:
  *                               type: boolean
  *                               description: Indicates if courses are scheduled on this day
@@ -558,11 +771,11 @@ app.post('/generateEdtMicro', (req, res) => __awaiter(void 0, void 0, void 0, fu
  *                                   heureDebut:
  *                                     type: string
  *                                     description: Start time of the course
- *                                     example: "09:00"
+ *                                     example: "09h"
  *                                   heureFin:
  *                                     type: string
  *                                     description: End time of the course
- *                                     example: "11:00"
+ *                                     example: "11h30"
  *                                   professeur:
  *                                     type: string
  *                                     description: Teacher of the course
@@ -600,7 +813,7 @@ app.post('/generateEdtMicro', (req, res) => __awaiter(void 0, void 0, void 0, fu
  *               type: string
  *               example: "Internal server error"
  */
-app.post('/generateEdtSquelette', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post('/generateEdtSquelette', authJwt_1.default.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const edtMicroArray = req.body;
         // Check if edtMicroArray is an array of objects
@@ -654,10 +867,6 @@ app.post('/generateEdtSquelette', (req, res) => __awaiter(void 0, void 0, void 0
  *             properties:
  *               macro:
  *                 $ref: '#/components/schemas/EdtMacroData'
- *               maquette:
- *                 type: array
- *                 items:
- *                   $ref: '#/components/schemas/MaquetteData'
  *     responses:
  *       200:
  *         description: Données EdtMicro générées avec succès
@@ -720,68 +929,6 @@ app.post('/generateEdtSquelette', (req, res) => __awaiter(void 0, void 0, void 0
  *           type: number
  *           example: 15
  *
- *     MaquetteData:
- *       type: object
- *       properties:
- *         UE:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/UE'
- *         cours:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Cours'
- *
- *     UE:
- *       type: object
- *       properties:
- *         name:
- *           type: string
- *           example: "Mathématiques 1"
- *
- *     Cours:
- *       type: object
- *       properties:
- *         name:
- *           type: string
- *           example: "Algèbre Linéaire"
- *         UE:
- *           type: string
- *           example: "Mathématiques 1"
- *         semestrePeriode:
- *           type: string
- *           example: "Semestre 1"
- *         heure:
- *           $ref: '#/components/schemas/Heure'
- *
- *     Heure:
- *       type: object
- *       properties:
- *         total:
- *           type: number
- *           example: 30
- *         totalAvecProf:
- *           type: number
- *           example: 28
- *         coursMagistral:
- *           type: number
- *           example: 15
- *         coursInteractif:
- *           type: number
- *           example: 10
- *         td:
- *           type: number
- *           example: 5
- *         tp:
- *           type: number
- *           example: 0
- *         projet:
- *           type: number
- *           example: 0
- *         elearning:
- *           type: number
- *           example: 0
- *
  *     EdtMicro:
  *       type: object
  *       properties:
@@ -821,18 +968,214 @@ app.post('/generateEdtSquelette', (req, res) => __awaiter(void 0, void 0, void 0
  *                             type: number
  *                             example: 2
  */
-app.post('/generateDataEdtMicro', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post('/generateDataEdtMicro', authJwt_1.default.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { macro, maquette } = req.body;
-        const result = yield (0, generateDataEdtMicro_1.generateDataEdtMicro)(macro, maquette);
+        const { macro } = req.body;
+        const result = yield (0, generateDataEdtMicro_1.generateDataEdtMicro)(macro);
         res.status(200).json(result);
     }
     catch (error) {
         res.status(500).json({ message: 'Erreur lors de la génération des données EdtMicro', error });
     }
 }));
+/**
+ * @swagger
+ * /getSallesData:
+ *   get:
+ *     summary: Récupérer les données des salles
+ *     tags:
+ *       - Salles
+ *     description: Retourne toutes les données des salles disponibles.
+ *     responses:
+ *       200:
+ *         description: Une liste d'objets contenant les informations des salles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   name:
+ *                     type: string
+ *                     example: "Salle 101"
+ *                   capacity:
+ *                     type: integer
+ *                     example: 30
+ *       500:
+ *         description: Une erreur est survenue
+ */
+app.get('/getSallesData', authJwt_1.default.verifyToken, (req, res) => {
+    const sql = 'SELECT * FROM Salles';
+    connection.query(sql, (error, results) => {
+        if (error) {
+            return res.status(500).json({ error: error.message });
+        }
+        res.json(results);
+    });
+});
+/**
+ * @swagger
+ * /setSallesData:
+ *   post:
+ *     summary: Ajouter une nouvelle salle
+ *     tags:
+ *       - Salles
+ *     description: Ajoute une nouvelle salle à la base de données.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Le nom de la salle.
+ *                 example: "Salle 102"
+ *               capacity:
+ *                 type: integer
+ *                 description: La capacité maximale de la salle.
+ *                 example: 25
+ *     responses:
+ *       201:
+ *         description: Salle ajoutée avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Salle ajoutée avec succès"
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
+app.post('/setSallesData', authJwt_1.default.verifyToken, (req, res) => {
+    const { name, type, capacite } = req.body;
+    const sql = 'INSERT INTO Salles (name, type, capacite) VALUES (?, ?, ?)';
+    connection.query(sql, [name, type, capacite], (error) => {
+        if (error) {
+            return res.status(500).json({ error: error.message });
+        }
+        res.status(201).json({ message: 'Salle ajoutée avec succès' });
+    });
+});
+/**
+ * @swagger
+ * /updateSalle:
+ *   put:
+ *     summary: Mettre à jour une salle existante
+ *     tags:
+ *       - Salles
+ *     description: Met à jour les informations d'une salle spécifique.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 description: L'ID de la salle à mettre à jour.
+ *                 example: 1
+ *               name:
+ *                 type: string
+ *                 description: Le nouveau nom de la salle.
+ *                 example: "Salle Informatique"
+ *               capacity:
+ *                 type: integer
+ *                 description: La nouvelle capacité de la salle.
+ *                 example: 40
+ *     responses:
+ *       200:
+ *         description: Salle mise à jour avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Salle mise à jour avec succès"
+ *       404:
+ *         description: Salle non trouvée.
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
+app.put('/updateSalle', authJwt_1.default.verifyToken, (req, res) => {
+    const { id, name, capacite, type } = req.body;
+    if (!id || !name || !capacite || !type) {
+        res.status(400).json({ message: 'Tous les champs sont requis.' });
+        return;
+    }
+    const sql = 'UPDATE Salles SET name = ?, capacite = ?, type = ? WHERE id = ?';
+    connection.query(sql, [name, capacite, type, id], (error, result) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({ error: error.message });
+            return;
+        }
+        const affectedRows = result.affectedRows;
+        if (affectedRows === 0) {
+            res.status(404).json({ message: `Salle avec l'ID ${id} non trouvée` });
+            return;
+        }
+        res.json({ message: 'Salle mise à jour avec succès' });
+    });
+});
+/**
+ * @swagger
+ * /deleteSalle:
+ *   delete:
+ *     summary: Supprimer une salle
+ *     tags:
+ *       - Salles
+ *     description: Supprime une salle spécifique de la base de données.
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: L'ID de la salle à supprimer.
+ *     responses:
+ *       200:
+ *         description: Salle supprimée avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Salle supprimée avec succès"
+ *       404:
+ *         description: Salle non trouvée.
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
+app.delete('/deleteSalle', authJwt_1.default.verifyToken, (req, res) => {
+    const { id } = req.query;
+    const sql = 'DELETE FROM Salles WHERE id = ?';
+    connection.query(sql, [id], (error, result) => {
+        if (error) {
+            return res.status(500).json({ error: error.message });
+        }
+        const affectedRows = Array.isArray(result) ? result[0].affectedRows : result.affectedRows;
+        if (affectedRows === 0) {
+            return res.status(404).json({ message: 'Salle non trouvée' });
+        }
+        res.json({ message: 'Salle supprimée avec succès' });
+    });
+});
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
     console.log(`Swagger docs available at http://localhost:${PORT}/docs`);
 });
+exports.default = app;
