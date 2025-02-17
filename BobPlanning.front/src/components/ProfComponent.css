@@ -1,81 +1,69 @@
 /* Style pour le conteneur principal */
 .contact-container {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #ffffff;
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
 }
 
 /* Style pour le titre */
 .contact-container h1 {
-  font-size: 2.5rem;
-  color: #333;
   text-align: center;
-  margin-bottom: 1.5rem;
-  border-bottom: 2px solid #007bff;
-  padding-bottom: 0.5rem;
+  color: #333;
 }
 
 /* Style pour le formulaire */
 form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f4f4f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
 }
 
 /* Style pour les labels */
 form label {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #555;
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
 }
 
 /* Style pour les inputs et selects */
 form input,
 form select {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
+  padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 1rem;
-  transition: border-color 0.3s;
-}
-
-form input:focus,
-form select:focus {
-  border-color: #007bff;
-  outline: none;
+  font-size: 16px;
 }
 
 /* Style pour les checkboxes */
 form input[type="checkbox"] {
   width: auto;
-  margin-right: 0.5rem;
+  margin-right: 10px;
 }
 
 /* Style pour les boutons */
 form button {
-  padding: 0.75rem 1.5rem;
+  padding: 10px 20px;
   border: none;
   border-radius: 4px;
   background-color: #007bff;
   color: #fff;
-  font-size: 1rem;
+  font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
+  transition: background-color 0.3s;
 }
 
 form button:hover {
   background-color: #0056b3;
-  transform: translateY(-2px);
 }
 
 /* Style pour le bouton de suppression */
@@ -89,38 +77,35 @@ form button[type="button"]:hover {
 
 /* Style pour le bouton d'ajout */
 .contact-container button {
-  padding: 0.75rem 1.5rem;
+  padding: 10px 20px;
   border: none;
   border-radius: 4px;
   background-color: #28a745;
   color: #fff;
-  font-size: 1rem;
+  font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
+  transition: background-color 0.3s;
   align-self: center;
-  margin-top: 1rem;
 }
 
 .contact-container button:hover {
   background-color: #218838;
-  transform: translateY(-2px);
 }
 
 /* Style pour les disponibilités */
 form .disponibilites {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 }
 
 form .disponibilites .day-row {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 20px;
 }
 
 form .disponibilites label {
   display: flex;
   align-items: center;
-  flex: 1;
 }

@@ -353,6 +353,141 @@ app.post('/setPromosData',authJwt.verifyToken, (req, res) => {
 
 /**
  * @swagger
+ * /getProfsData:
+ *   get:
+ *     summary: Récupérer les informations des professeurs
+ *     tags:
+ *       - DB
+ *     description: Retourne toutes les informations des professeurs.
+ *     responses:
+ *       200:
+ *         description: Une liste d'objets professeurs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   name:
+ *                     type: string
+ *                     example: "Dupont"
+ *                   type:
+ *                     type: string
+ *                     enum: [EXT, INT]
+ *                     example: "INT"
+ *                   dispo:
+ *                     type: string
+ *                     example: "{\"lundiMatin\": true, \"lundiAprem\": false, ...}"
+ *       500:
+ *         description: Une erreur est survenue
+ */
+app.get('/getProfsData', authJwt.verifyToken, (req, res) => {
+  const sql = 'SELECT id, name, type, dispo FROM Professeurs';
+  connection.query(sql, (error: any, results: any[]) => {
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+    res.json(results);
+  });
+});
+
+/**
+ * @swagger
+ * /setProfsData:
+ *   post:
+ *     summary: Ajouter ou mettre à jour les informations des professeurs
+ *     tags:
+ *       - DB
+ *     description: Cette route permet d'ajouter ou de mettre à jour les informations des professeurs dans la base de données.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: L'identifiant du professeur (optionnel pour l'ajout)
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   description: Le nom du professeur
+ *                   example: "Dupont"
+ *                 type:
+ *                   type: string
+ *                   enum: [EXT, INT]
+ *                   description: Le type du professeur
+ *                   example: "INT"
+ *                 dispo:
+ *                   type: string
+ *                   description: Les disponibilités du professeur au format JSON
+ *                   example: "{\"lundiMatin\": true, \"lundiAprem\": false, ...}"
+ *     responses:
+ *       200:
+ *         description: Informations du professeur ajoutées ou mises à jour avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Informations du professeur mises à jour avec succès."
+ *                 insertedIds:
+ *                   type: array
+ *                   items:
+ *                     type: integer
+ *                   description: Liste des IDs des nouveaux professeurs insérés.
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
+app.post('/setProfsData', authJwt.verifyToken, (req, res) => {
+  const insertedIds: number[] = [];
+  const updatePromises = req.body.map((prof: { id: any; name: any; type: any; dispo: any; }) => {
+    return new Promise<void>((resolve, reject) => {
+      if (prof.id) {
+        // Si un ID est fourni, mettre à jour le professeur existant
+        const updateSql = 'UPDATE Professeurs SET name = ?, type = ?, dispo = ? WHERE id = ?';
+        connection.query(updateSql, [prof.name, prof.type, prof.dispo, prof.id], (error: any) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve();
+        });
+      } else {
+        // Sinon, ajouter un nouveau professeur
+        const insertSql = 'INSERT INTO Professeurs (name, type, dispo) VALUES (?, ?, ?)';
+        connection.query(insertSql, [prof.name, prof.type, prof.dispo], (error: any, results: any) => {
+          if (error) {
+            return reject(error);
+          }
+          insertedIds.push(results.insertId);
+          resolve();
+        });
+      }
+    });
+  });
+
+  // Attendre que toutes les requêtes soient terminées avant d'envoyer une réponse
+  Promise.all(updatePromises)
+    .then(() => {
+      res.json({ message: 'Informations des professeurs mises à jour avec succès.', insertedIds });
+    })
+    .catch((error) => {
+      res.status(500).json({ error: error.message });
+    });
+});
+
+
+/**
+ * @swagger
  * /generateEdtMacro:
  *   post:
  *     summary: Generate an Excel file based on provided data
