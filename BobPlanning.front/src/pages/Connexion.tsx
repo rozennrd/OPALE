@@ -5,6 +5,8 @@ import CryptoJS from 'crypto-js';
 import './Connexion.css';
 import { getTokenFromLocalStorage } from '../auth/Token';
 
+const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
+
 const Connexion: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,7 +21,7 @@ const Connexion: React.FC = () => {
     const hashedPassword = hashPassword(password);
 
     try {
-      const response = await fetch('http://localhost:3000/login', {
+      const response = await fetch(`${RACINE_FETCHER_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
