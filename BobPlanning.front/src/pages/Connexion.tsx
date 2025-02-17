@@ -9,7 +9,6 @@ const Connexion: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [numTryConnection, setNumTryConnection] = useState(0);
   const navigate = useNavigate();
 
   const hashPassword = (password: string) => {
@@ -34,7 +33,6 @@ const Connexion: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setNumTryConnection(0);
         localStorage.setItem('accessToken', data.token);
         console.log('Token : ', localStorage.getItem('accessToken'));
         navigate('/TrueHome');
@@ -44,7 +42,6 @@ const Connexion: React.FC = () => {
         if (errorData.message === 'Votre compte est bloqué. Veuillez contacter l\'administrateur.') {
           setError(errorData.message);
         } else {
-          setNumTryConnection(prev => prev + 1);
           setError(errorData.message);
         }
       }
