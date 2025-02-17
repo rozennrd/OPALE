@@ -6,7 +6,6 @@ import './Parametres.css';
 import Bouton from '../components/Bouton';
 import DownloadButton from '../components/DownloadButton';
 import Loading from '../components/Loading';
-import { getTokenFromLocalStorage } from '../auth/Token';
 
 const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
 
@@ -92,8 +91,6 @@ const Parametres: React.FC = () => {
   const [fileUrl, setFileUrl] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const token = getTokenFromLocalStorage() || ""; // Si null, mettre une chaîne vide
-
   const isAllDataFilled = () => {
     const { DateDeb, DateFin, Promos } = promosData;
     console.log("Vérification des données:", { DateDeb, DateFin, Promos });
@@ -115,19 +112,10 @@ const Parametres: React.FC = () => {
 
   useEffect(() => {
     const fetchPromosData = async () => {
-      console.log('Token /getPromosData:', getTokenFromLocalStorage());
-      console.log('fetcher url:', RACINE_FETCHER_URL);
       try {
-        const response = await fetch(`${RACINE_FETCHER_URL}/getPromosData`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-access-token': token,
-            }
+        console.log('fetcher url:', RACINE_FETCHER_URL);
         
-        });
-
+        const response = await fetch(`${RACINE_FETCHER_URL}/getPromosData`);
         const data = await response.json();
         setPromosData(data);
       } catch (error) {
@@ -159,8 +147,7 @@ const Parametres: React.FC = () => {
         const response = await fetch(`${RACINE_FETCHER_URL}/setPromosData`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            "x-access-token": getTokenFromLocalStorage()?? "",
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(promosData)
         });
@@ -185,7 +172,6 @@ const Parametres: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          "x-access-token": getTokenFromLocalStorage() ?? "",
         },
         body: JSON.stringify(promosData),
       });
