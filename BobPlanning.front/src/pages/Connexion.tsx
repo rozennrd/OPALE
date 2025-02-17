@@ -19,6 +19,7 @@ const Connexion: React.FC = () => {
 
   const handleLogin = async () => {
     const hashedPassword = hashPassword(password);
+    console.log('Hashed password : ', hashedPassword);
 
     try {
       const response = await fetch(`${RACINE_FETCHER_URL}/login`, {
