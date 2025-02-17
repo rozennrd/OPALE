@@ -39,6 +39,8 @@ function App() {
     return () => clearInterval(interval); // Nettoyage à la destruction du composant
   }, [navigate]);
 
+  console.log('.env : ', import.meta.env.VITE_RACINE_FETCHER_URL);
+
   return (
     <Layout>
       <Outlet />

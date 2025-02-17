@@ -1,21 +1,72 @@
 services:
+  php-fpm:
+    image: php:8.1-fpm
+    networks:
+      - app-network
+    volumes:
+      - ./phpmyadmin:/usr/share/phpmyadmin
+
   nginx:
-    build: ./www
-    container_name: nginx-server
+    build: ./BobPlanning.front
+    networks:
+      - app-network
+    volumes:
+      - ./BobPlanning.front/dockerization/nginx.conf:/etc/nginx/nginx.conf
+      - ./phpmyadmin:/usr/share/phpmyadmin
     ports:
       - "80:80"
     depends_on:
-      - node-app
-      - db
-    networks:
-      - app-network
+      - php-fpm
 
   node-app:
-    build: ./app
+    build: ./BobPlanning.back
     container_name: node-application
     ports:
       - "3000:3000"
     depends_on:
       - db
+    volumes:
+      - ./BobPlanning.back:/usr/src/app
+      - ./BobPlanning.back/src/database/config:/usr/src/app/dist/database/config
+
     networks:
       - app-network
+
+  db:
+    image: mysql:8.0
+    container_name: mysql-database
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
+      MYSQL_INITDB_SKIP_TZINFO: ${MYSQL_INITDB_SKIP_TZINFO}
+      MYSQL_TCP_PORT: ${MYSQL_TCP_PORT}
+      MYSQL_WAIT_TIMEOUT: ${MYSQL_WAIT_TIMEOUT}
+      MYSQL_INTERACTIVE_TIMEOUT: ${MYSQL_INTERACTIVE_TIMEOUT}
+    ports:
+      - "3307:3306"
+    volumes:
+      - ../bobPlanning.db:/var/lib/mysql
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql-database
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      PMA_ARBITRARY: 1  # Autorise d'autres connexions MySQL si nécessaire
+      PMA_ABSOLUTE_URI: http://10.40.150.2:8100/phpmyadmin/
+    ports:
+      - "8080:80"  # PhpMyAdmin sera accessible via http://localhost:8080
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge

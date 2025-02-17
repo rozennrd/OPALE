@@ -8,6 +8,8 @@ import DownloadButton from '../components/DownloadButton';
 import Loading from '../components/Loading';
 import { getTokenFromLocalStorage } from '../auth/Token';
 
+const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
+
 const Parametres: React.FC = () => {
   const navigate = useNavigate();
   const [promosData, setPromosData] = React.useState<any>({
@@ -114,8 +116,9 @@ const Parametres: React.FC = () => {
   useEffect(() => {
     const fetchPromosData = async () => {
       console.log('Token /getPromosData:', getTokenFromLocalStorage());
+      console.log('fetcher url:', RACINE_FETCHER_URL);
       try {
-        const response = await fetch('http://localhost:3000/getPromosData',
+        const response = await fetch(`${RACINE_FETCHER_URL}/getPromosData`,
           {
             method: 'GET',
             headers: {
@@ -124,6 +127,7 @@ const Parametres: React.FC = () => {
             }
         
         });
+
         const data = await response.json();
         setPromosData(data);
       } catch (error) {
@@ -152,7 +156,7 @@ const Parametres: React.FC = () => {
 
     const majPromosData = async () => {
       try {
-        const response = await fetch('http://localhost:3000/setPromosData', {
+        const response = await fetch(`${RACINE_FETCHER_URL}/setPromosData`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -177,7 +181,7 @@ const Parametres: React.FC = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:3000/generateEdtMacro', {
+      const response = await fetch(`${RACINE_FETCHER_URL}/generateEdtMacro`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

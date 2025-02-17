@@ -6,5 +6,3 @@ export default defineConfig({
   plugins: [react()],
   assetsInclude: ['**/*.JPG', '**/*.PNG'], // Inclure les fichiers d'images comme assets
 });
-  
-

@@ -1,23 +1,39 @@
 name: Deploy to Server
 
 on:
-  workflow_dispatch: # Permet de déclencher ce workflow manuellement depuis l'interface GitHub
+  workflow_dispatch:
   push:
     branches:
       - deploy
 
 jobs:
+
   deploy:
     runs-on: self-hosted
+    env:
+      ACTIONS_STEP_DEBUG: true
+    strategy:
+      fail-fast: false  # Ne pas annuler les autres runners si l'un plante
+      matrix:
+        runner: [bob]
 
     steps:
+
+    - name: Set up debugging
+      run: echo "ACTIONS_RUNNER_DEBUG=true" >> $GITHUB_ENV
+
     - name: Récupérer le code
       uses: actions/checkout@v3
 
-    - name: Deploy on server
+    - name: Ajouter le répertoire comme sûr
+      run: git config --global --add safe.directory /home/bob/bobPlanning.app
+
+    - name: Déployer l’application
       run: |
           cd /home/bob/bobPlanning.app
-          git pull origin deploy
           docker-compose down
+          docker builder prune --all
+          git pull origin deploy
           docker-compose build
+          docker image prune -af
           docker-compose up -d

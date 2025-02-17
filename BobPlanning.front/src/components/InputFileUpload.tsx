@@ -6,6 +6,8 @@ import axios from 'axios';
 import MaquetteDisplay from './MaquetteDisplay';
 import { getTokenFromLocalStorage } from '../auth/Token';
 
+const RACINE_FETCHER_URL =import.meta.env.VITE_RACINE_FETCHER_URL;
+
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -36,7 +38,7 @@ export default function InputFileUpload({ onFileUpload , uploadedFile, responseD
       formData.append('file', file);
 
       try {
-        const response = await axios.post('http://localhost:3000/readMaquette', formData, {
+        const response = await axios.post(`${RACINE_FETCHER_URL}/readMaquette`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             "x-access-token": getTokenFromLocalStorage()?? "",
