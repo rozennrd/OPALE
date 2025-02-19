@@ -116,7 +116,7 @@ const Parametres: React.FC = () => {
         const token = localStorage.getItem("accessToken"); // Récupérer le token
         console.log('fetcher url:', RACINE_FETCHER_URL);
         
-        const response = await fetch(`${RACINE_FETCHER_URL}/getPromosData`{
+        const response = await fetch(`${RACINE_FETCHER_URL}/getPromosData`,{
           method: 'GET',
           headers: {
             "x-access-token": token ?? "", // Ajouter le token dans l'en-tête
