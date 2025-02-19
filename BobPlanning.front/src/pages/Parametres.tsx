@@ -6,6 +6,7 @@ import './Parametres.css';
 import Bouton from '../components/Bouton';
 import DownloadButton from '../components/DownloadButton';
 import Loading from '../components/Loading';
+import { getTokenFromLocalStorage } from '../auth/Token';
 
 const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
 
@@ -150,10 +151,12 @@ const Parametres: React.FC = () => {
 
     const majPromosData = async () => {
       try {
+        
         const response = await fetch(`${RACINE_FETCHER_URL}/setPromosData`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "x-access-token": getTokenFromLocalStorage() ?? "",
           },
           body: JSON.stringify(promosData)
         });
@@ -178,6 +181,7 @@ const Parametres: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          "x-access-token": getTokenFromLocalStorage() ?? "",
         },
         body: JSON.stringify(promosData),
       });
