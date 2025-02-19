@@ -1,0 +1,3 @@
+L'algorithme priorise les longs créneaux, bloc de 4h > bloc de 3h > 2h > 1h
+Les matieres sont placées l'une a la suite de l'autre
+Nous n'avons pas les dates de début et fin de chaque semestre, pour l'instant on met les cours de S1 suivis par S2

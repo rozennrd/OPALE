@@ -7,6 +7,7 @@
                 {
                     "name": "Math",
                     "UE": "Mathématiques 1",
+                    "prof": "INT1",
                     "semestre": [
                         1
                     ],
@@ -14,7 +15,7 @@
                     "heure": 
                         {
                             "total": 0,
-                            "totalAvecProf": 40,
+                            "totalAvecProf": 10,
                             "coursMagistral": null,
                             "coursInteractif": null,
                             "td": null,
@@ -27,6 +28,7 @@
                 {
                     "name": "Phy",
                     "UE": "Mathématiques 1",
+                    "prof": "INT2",
                     "semestre": [
                         1
                     ],
@@ -34,7 +36,7 @@
                     "heure": 
                         {
                             "total": 0,
-                            "totalAvecProf": 20,
+                            "totalAvecProf": 10,
                             "coursMagistral": null,
                             "coursInteractif": null,
                             "td": null,
@@ -47,6 +49,7 @@
                 {
                     "name": "Info",
                     "UE": "Mathématiques 1",
+                    "prof": "INT3",
                     "semestre": [
                         1
                     ],
@@ -54,7 +57,7 @@
                     "heure": 
                         {
                             "total": 0,
-                            "totalAvecProf": 20,
+                            "totalAvecProf": 5,
                             "coursMagistral": null,
                             "coursInteractif": null,
                             "td": null,
@@ -73,6 +76,7 @@
                 {
                     "name": "Math",
                     "UE": "Mathématiques 1",
+                    "prof": "INT1",
                     "semestre": [
                         1
                     ],
@@ -93,6 +97,7 @@
                 {
                     "name": "Phy",
                     "UE": "Mathématiques 1",
+                    "prof": "INT2",
                     "semestre": [
                         1
                     ],
@@ -175,37 +180,37 @@
             "ID": "INT1",
             "name": "Emma Bernard",
             "type": "Externe",
-            "dispo": []
+            "dispo": ["lundi_matin", "lundi_aprem","mardi_matin","mardi_aprem", "mercredi_matin", "mercredi_aprem"]
         },
         {
             "ID": "INT2",
             "name": "Nadia Martin",
             "type": "Externe",
-            "dispo": []
+            "dispo": ["mercredi_matin", "mercredi_aprem",  "jeudi_matin", "jeudi_aprem","vendredi_matin","vendredi_aprem"]
         },
         {
             "ID": "INT3",
             "name": "Clara Durand",
             "type": "Interne",
-            "dispo": []
+            "dispo": ["mercredi_matin", "mercredi_aprem",  "jeudi_matin", "jeudi_aprem","vendredi_matin","vendredi_aprem"]
         },
         {
             "ID": "INT4",
             "name": "Marie Lemoine",
             "type": "Externe",
-            "dispo": []
+            "dispo": ["lundi_matin", "lundi_aprem", "mardi_matin", "mercredi_aprem", "jeudi_matin", "jeudi_aprem", "vendredi_matin"]
         },
         {
             "ID": "INT5",
             "name": "Jean Dupont",
             "type": "Interne",
-            "dispo": []
+            "dispo": ["lundi_aprem", "mardi_matin", "mardi_aprem", "jeudi_matin", "vendredi_aprem"]
         },
         {
             "ID": "EXT6",
             "name": "Luc Dupont",
             "type": "Externe",
-            "dispo": []
+            "dispo": ["lundi_aprem", "mardi_matin", "mardi_aprem", "jeudi_matin", "vendredi_aprem"]
         }
     ],
     "Calendrier": [

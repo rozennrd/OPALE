@@ -24,6 +24,7 @@ class CoursInput(BaseModel):
     """
     name: str  # Course name
     UE: str  # Teaching unit
+    prof: str
     semestre: List[int]  # Semester numbers
     periode: List[int]  # Period numbers
     # Prof: str  # Assigned professor

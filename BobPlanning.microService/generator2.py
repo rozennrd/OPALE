@@ -25,6 +25,8 @@ def extract_courses_info(data: RequestData):
                 "cours": course.name,
                 "volume_horaire": course.heure.total if course.heure and course.heure.total not in [0, None] else 
                                  course.heure.totalAvecProf if course.heure and course.heure.totalAvecProf not in [0, None] else 0,
+                "prof": course.prof if course.prof else "Prof inconnu",
+                
             }
             for course in promo.cours
         ]
@@ -78,6 +80,7 @@ def generate_schedule_output(data: RequestData, solver, creneaux_horaires, crene
                         creneaux_assignes = [
                             creneaux_horaires[creneau_index]
                             for creneau_index in range(len(creneaux_horaires))
+                            if (prom.name, course_name, semaine_index, jour_index, creneau_index) in creneau_occupe
                             if solver.Value(creneau_occupe[(prom.name, course_name, semaine_index, jour_index, creneau_index)]) == 1
                         ]
 
@@ -102,7 +105,7 @@ def generate_schedule_output(data: RequestData, solver, creneaux_horaires, crene
                                     matiere=course_name,
                                     heureDebut=group[0].split("-")[0],
                                     heureFin=group[-1].split("-")[1],
-                                    professeur="Prof inconnu",
+                                    professeur=course["prof"],
                                     salleDeCours="Salle inconnue"
                                 ))
 
@@ -128,11 +131,32 @@ def generate_schedule_output(data: RequestData, solver, creneaux_horaires, crene
 
     return output
 
+def extract_profs_info(data: RequestData) -> Dict[str, Dict]:
+    """
+    Transforme la liste des profs en un dictionnaire indexé par ID.
+    """
+    return {prof.ID: {"name": prof.name, "type": prof.type, "dispo": set(prof.dispo)} for prof in data.Profs}
+
+
+
+def is_prof_available(profs_info: Dict[str, Dict],  prof_id: str, jour: str, creneau_horaire: str) -> bool:
+    """
+    Vérifie si un prof est disponible à un créneau donné.
+    """
+    if prof_id not in profs_info:
+        return False  # Si le prof n'existe pas dans la base
+
+    periode = "matin" if int(creneau_horaire.split("h")[0]) < 12 else "aprem"
+    return f"{jour.lower()}_{periode}" in profs_info[prof_id]["dispo"]
+
+    
 def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
     model = cp_model.CpModel()
 
     promo_courses_info = extract_courses_info(data)
     calendar_info = extract_calendar_info(data)
+    # Extraire les profs une seule fois
+    profs_info = extract_profs_info(data)
 
     creneaux_horaires = [f"{h}h-{h+1}h" for h in range(8, 18) if h != 12]
 
@@ -170,16 +194,28 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
     for promo, courses in promo_courses_info.items():
         for course in courses:
             course_name = course["cours"]
+            prof_id = course["prof"]
             total_heures = course["volume_horaire"]
             
             print(f"🛠 Création variable: {promo} - {course_name} ({total_heures}h)")
+            
+            creneaux_valides = []
             for semaine_index, semaine in enumerate(calendar_info[promo]):
                 for jour_index, jour in enumerate(semaine["jours_travailles"]):
                     for creneau_index in range(len(creneaux_horaires)):
+                        if prof_id not in profs_info:
+                            print(f"⚠️ [ALERTE] Le prof {prof_id} n'existe pas dans la liste des profs.")
+                            continue
+                        if is_prof_available(profs_info, prof_id, jour, creneaux_horaires[creneau_index]):
+                            creneaux_valides.append((semaine_index, jour_index, creneau_index))
+                        if not creneaux_valides:
+                            print(f"❌ ERREUR : Aucun créneau disponible pour {course_name} (Prof: {prof_id})")
+                            continue     
                         # Création d'une variable binaire qui indique si un créneau donné est utilisé par un cours
-                        creneau_occupe[(promo, course_name, semaine_index, jour_index, creneau_index)] = model.NewBoolVar(
-                            f"creneau_occupe_{promo}_{course_name}_semaine_{semaine_index}_jour_{jour_index}_creneau_{creneau_index}"
-                        )
+                        for semaine_index, jour_index, creneau_index in creneaux_valides:
+                            creneau_occupe[(promo, course_name, semaine_index, jour_index, creneau_index)] = model.NewBoolVar(
+                                f"creneau_occupe_{promo}_{course_name}_semaine_{semaine_index}_jour_{jour_index}_creneau_{creneau_index}"
+                            )
 
     # ✅ CONTRAINTE : Respect du volume horaire total pour chaque cours
     for promo, courses in promo_courses_info.items():
@@ -194,6 +230,7 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                 for semaine_index, semaine in enumerate(calendar_info[promo])
                 for jour_index in range(len(semaine["jours_travailles"]))
                 for creneau_index in range(len(creneaux_horaires))
+                if (promo, course_name, semaine_index, jour_index, creneau_index) in creneau_occupe
             )
 
             model.Add(constraint_expr == int(total_heures))
@@ -209,27 +246,143 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                 for creneau_index in range(len(creneaux_horaires)):
                     # La somme des cours attribués à un même créneau horaire ne doit pas dépasser 1
                     # Cela empêche plusieurs cours de se chevaucher sur le même créneau pour une promo donnée
-                    model.Add(
-                        sum(
-                            creneau_occupe[(promo, course["cours"], semaine_index, jour_index, creneau_index)]
-                            for course in promo_courses_info[promo]
-                        ) <= 1
+                    constraint_expr = sum(
+                        creneau_occupe[(promo, course["cours"], semaine_index, jour_index, creneau_index)]
+                        for course in promo_courses_info[promo]
+                        if (promo, course["cours"], semaine_index, jour_index, creneau_index) in creneau_occupe
                     )
+                    model.Add(constraint_expr <= 1)
 
     # ✅ CONTRAINTE : Ne pas dépasser 8 heures de cours par jour pour une promo
     for promo in promo_courses_info.keys():
         for semaine_index, semaine in enumerate(calendar_info[promo]):
             for jour_index in range(len(semaine["jours_travailles"])):
-                model.Add(
-                    sum(
-                        creneau_occupe[(promo, course["cours"], semaine_index, jour_index, creneau_index)]
-                        for course in promo_courses_info[promo]
-                        for creneau_index in range(len(creneaux_horaires))
-                    ) <= 8  # ⏳ Maximum 8 heures par jour
+                constraint_expr = sum(
+                    creneau_occupe[(promo, course["cours"], semaine_index, jour_index, creneau_index)]
+                    for course in promo_courses_info[promo]
+                    for creneau_index in range(len(creneaux_horaires))
+                    if (promo, course["cours"], semaine_index, jour_index, creneau_index) in creneau_occupe
                 )
-                # print(f"✅ [CONTRAINTE] {promo} - Jour {jour_index} limité à 8h max")
 
+                model.Add(constraint_expr <= 8)
+
+    # Contrainte + objectif ; maximiser longs blocs 
+    # ✅ Variables pour les blocs
+    # ✅ Contrainte + objectif : maximiser les blocs longs
+    bloc_4h_vars = []
+    bloc_3h_vars = []
+    bloc_2h_vars = []
+    bloc_1h_vars = []
+
+    for promo, courses in promo_courses_info.items():
+        for course in courses:
+            course_name = course["cours"]
+            for semaine_index, semaine in enumerate(calendar_info[promo]):
+                for jour_index in range(len(semaine["jours_travailles"])):
+                    for creneau_index in range(len(creneaux_horaires) - 3):  # Garantir un bloc de 4h possible
+
+                        # Variables booléennes pour chaque bloc
+                        bloc_4h_var = model.NewBoolVar(f"bloc_4h_{promo}_{course_name}_{semaine_index}_{jour_index}_{creneau_index}")
+                        bloc_3h_var = model.NewBoolVar(f"bloc_3h_{promo}_{course_name}_{semaine_index}_{jour_index}_{creneau_index}")
+                        bloc_2h_var = model.NewBoolVar(f"bloc_2h_{promo}_{course_name}_{semaine_index}_{jour_index}_{creneau_index}")
+                        bloc_1h_var = model.NewBoolVar(f"bloc_1h_{promo}_{course_name}_{semaine_index}_{jour_index}_{creneau_index}")
+
+                        # Vérifier l'existence des clés avant de construire les blocs
+                        bloc_4h = [
+                            creneau_occupe[(promo, course_name, semaine_index, jour_index, creneau_index + i)]
+                            for i in range(4)
+                            if (promo, course_name, semaine_index, jour_index, creneau_index + i) in creneau_occupe
+                        ]
+                        bloc_3h = [
+                            creneau_occupe[(promo, course_name, semaine_index, jour_index, creneau_index + i)]
+                            for i in range(3)
+                            if (promo, course_name, semaine_index, jour_index, creneau_index + i) in creneau_occupe
+                        ]
+                        bloc_2h = [
+                            creneau_occupe[(promo, course_name, semaine_index, jour_index, creneau_index + i)]
+                            for i in range(2)
+                            if (promo, course_name, semaine_index, jour_index, creneau_index + i) in creneau_occupe
+                        ]
+                        bloc_1h = [
+                            creneau_occupe[(promo, course_name, semaine_index, jour_index, creneau_index)]
+                            if (promo, course_name, semaine_index, jour_index, creneau_index) in creneau_occupe
+                            else None
+                        ]
+
+                        # Vérifier que les blocs ne sont pas vides avant d'ajouter les contraintes
+                        if len(bloc_4h) == 4:
+                            model.Add(sum(bloc_4h) == 4).OnlyEnforceIf(bloc_4h_var)
+                        if len(bloc_3h) == 3:
+                            model.Add(sum(bloc_3h) == 3).OnlyEnforceIf(bloc_3h_var)
+                        if len(bloc_2h) == 2:
+                            model.Add(sum(bloc_2h) == 2).OnlyEnforceIf(bloc_2h_var)
+                        if len(bloc_1h) == 1 and bloc_1h[0] is not None:
+                            model.Add(sum(bloc_1h) == 1).OnlyEnforceIf(bloc_1h_var)
+
+                        # Priorisation : Un bloc plus long empêche un bloc plus court sur les mêmes créneaux
+                        model.Add(bloc_4h_var <= bloc_3h_var)
+                        model.Add(bloc_3h_var <= bloc_2h_var)
+                        model.Add(bloc_2h_var <= bloc_1h_var)
+
+                    # Ajout des variables à la liste pour l'objectif
+                    bloc_4h_vars.append(bloc_4h_var)
+                    bloc_3h_vars.append(bloc_3h_var)
+                    bloc_2h_vars.append(bloc_2h_var)
+                    bloc_1h_vars.append(bloc_1h_var)
+
+
+    # 🎯 Fonction objectif : maximiser les blocs longs
+    model.Maximize(
+        10 * sum(bloc_4h_vars) + 5 * sum(bloc_3h_vars) + 2 * sum(bloc_2h_vars) + sum(bloc_1h_vars)
+    )
+
+    #S1 avant S2 
+    # ✅ Extraction des cours par semestre
+    cours_S1 = {}  # Stocke les créneaux de chaque matière de S1
+    cours_S2 = {}  # Stocke les créneaux de chaque matière de S2
+
+    for promo, courses in promo_courses_info.items():
+        for course in courses:
+            course_name = course["cours"]
+            semestre = course.get("semestre", [1])[0]  # Par défaut, considère que c'est S1 s'il n'y a pas d'info
+            if semestre == 1:
+                cours_S1.setdefault(promo, []).append(course_name)
+            else:
+                cours_S2.setdefault(promo, []).append(course_name)
+
+    # ✅ CONTRAINTE : Tous les créneaux de S1 doivent être placés avant ceux de S2
+    for promo in cours_S1.keys():
+        for course_S1 in cours_S1[promo]:
+            for course_S2 in cours_S2.get(promo, []):  # Vérifie si des cours S2 existent
+                for semaine_index, semaine in enumerate(calendar_info[promo]):
+                    for jour_index in range(len(semaine["jours_travailles"])):
+                        for creneau_index in range(len(creneaux_horaires)):
+                            # Le premier créneau de S2 doit être après le dernier créneau de S1
+                            model.Add(
+                                sum(
+                                    creneau_occupe[(promo, course_S1, s, j, c)]
+                                    for s in range(semaine_index + 1)
+                                    for j in range(jour_index + 1)
+                                    for c in range(creneau_index + 1)
+                                )
+                                >=
+                                sum(
+                                    creneau_occupe[(promo, course_S2, s, j, c)]
+                                    for s in range(semaine_index)
+                                    for j in range(jour_index)
+                                    for c in range(creneau_index)
+                                )
+                            )
+
+    
     solver = cp_model.CpSolver()
+    
+    solver.parameters.max_time_in_seconds = 60  # Stop après 10s de calcul
+    solver.parameters.num_search_workers = 5  # Utilise 4 cœurs (modifiable selon ton PC)
+    solver.parameters.log_search_progress = True  # Affiche l’avancement pour debug
+    # ✅ Éviter la recherche d'optimalité extrême
+    solver.parameters.optimize_with_core = False
+    
     callback = DebugCallback(creneau_occupe)
     status = solver.Solve(model)
     if status != cp_model.OPTIMAL and status != cp_model.FEASIBLE:
