@@ -26,9 +26,9 @@ def extract_courses_info(data: RequestData):
                 "volume_horaire": course.heure.total if course.heure and course.heure.total not in [0, None] else 
                                  course.heure.totalAvecProf if course.heure and course.heure.totalAvecProf not in [0, None] else 0,
                 "prof": course.prof if course.prof else "Prof inconnu",
-                
+                "unique_id": f"{promo.name}_{index}"
             }
-            for course in promo.cours
+            for index,course in enumerate(promo.cours)
         ]
         promo_courses_info[promo.name] = courses_info
     return promo_courses_info
@@ -75,13 +75,14 @@ def generate_schedule_output(data: RequestData, solver, creneaux_horaires, crene
                     cours_results = []
 
                     for course in promo_courses_info[prom.name]:
-                        course_name = course["cours"]
+                        course_name = course["cours"] 
+                        unique_id = course["unique_id"]
 
                         creneaux_assignes = [
                             creneaux_horaires[creneau_index]
                             for creneau_index in range(len(creneaux_horaires))
-                            if (prom.name, course_name, semaine_index, jour_index, creneau_index) in creneau_occupe
-                            if solver.Value(creneau_occupe[(prom.name, course_name, semaine_index, jour_index, creneau_index)]) == 1
+                            if (prom.name, unique_id, semaine_index, jour_index, creneau_index) in creneau_occupe
+                            if solver.Value(creneau_occupe[(prom.name, unique_id, semaine_index, jour_index, creneau_index)]) == 1
                         ]
 
                         if creneaux_assignes:
@@ -194,6 +195,7 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
     for promo, courses in promo_courses_info.items():
         for course in courses:
             course_name = course["cours"]
+            unique_id = course["unique_id"]
             prof_id = course["prof"]
             total_heures = course["volume_horaire"]
             
@@ -213,7 +215,7 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                             continue     
                         # Création d'une variable binaire qui indique si un créneau donné est utilisé par un cours
                         for semaine_index, jour_index, creneau_index in creneaux_valides:
-                            creneau_occupe[(promo, course_name, semaine_index, jour_index, creneau_index)] = model.NewBoolVar(
+                            creneau_occupe[(promo, unique_id, semaine_index, jour_index, creneau_index)] = model.NewBoolVar(
                                 f"creneau_occupe_{promo}_{course_name}_semaine_{semaine_index}_jour_{jour_index}_creneau_{creneau_index}"
                             )
 
@@ -223,14 +225,15 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
         
         for course in courses:
             course_name = course["cours"]
+            unique_id = course["unique_id"]
             total_heures = course["volume_horaire"]        
             print(f"🎯 [DEBUG] Cours: {course_name} ({total_heures}h)")
             constraint_expr = sum(
-                creneau_occupe[(promo, course_name, semaine_index, jour_index, creneau_index)]
+                creneau_occupe[(promo, unique_id, semaine_index, jour_index, creneau_index)]
                 for semaine_index, semaine in enumerate(calendar_info[promo])
                 for jour_index in range(len(semaine["jours_travailles"]))
                 for creneau_index in range(len(creneaux_horaires))
-                if (promo, course_name, semaine_index, jour_index, creneau_index) in creneau_occupe
+                if (promo, unique_id, semaine_index, jour_index, creneau_index) in creneau_occupe
             )
 
             model.Add(constraint_expr == int(total_heures))
@@ -247,9 +250,9 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                     # La somme des cours attribués à un même créneau horaire ne doit pas dépasser 1
                     # Cela empêche plusieurs cours de se chevaucher sur le même créneau pour une promo donnée
                     constraint_expr = sum(
-                        creneau_occupe[(promo, course["cours"], semaine_index, jour_index, creneau_index)]
+                        creneau_occupe[(promo, course["unique_id"], semaine_index, jour_index, creneau_index)]
                         for course in promo_courses_info[promo]
-                        if (promo, course["cours"], semaine_index, jour_index, creneau_index) in creneau_occupe
+                        if (promo, course["unique_id"], semaine_index, jour_index, creneau_index) in creneau_occupe
                     )
                     model.Add(constraint_expr <= 1)
 
@@ -258,10 +261,10 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
         for semaine_index, semaine in enumerate(calendar_info[promo]):
             for jour_index in range(len(semaine["jours_travailles"])):
                 constraint_expr = sum(
-                    creneau_occupe[(promo, course["cours"], semaine_index, jour_index, creneau_index)]
+                    creneau_occupe[(promo, course["unique_id"], semaine_index, jour_index, creneau_index)]
                     for course in promo_courses_info[promo]
                     for creneau_index in range(len(creneaux_horaires))
-                    if (promo, course["cours"], semaine_index, jour_index, creneau_index) in creneau_occupe
+                    if (promo, course["unique_id"], semaine_index, jour_index, creneau_index) in creneau_occupe
                 )
 
                 model.Add(constraint_expr <= 8)
@@ -277,6 +280,7 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
     for promo, courses in promo_courses_info.items():
         for course in courses:
             course_name = course["cours"]
+            unique_id = course["unique_id"]
             for semaine_index, semaine in enumerate(calendar_info[promo]):
                 for jour_index in range(len(semaine["jours_travailles"])):
                     for creneau_index in range(len(creneaux_horaires) - 3):  # Garantir un bloc de 4h possible
@@ -289,23 +293,23 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
 
                         # Vérifier l'existence des clés avant de construire les blocs
                         bloc_4h = [
-                            creneau_occupe[(promo, course_name, semaine_index, jour_index, creneau_index + i)]
+                            creneau_occupe[(promo, unique_id, semaine_index, jour_index, creneau_index + i)]
                             for i in range(4)
-                            if (promo, course_name, semaine_index, jour_index, creneau_index + i) in creneau_occupe
+                            if (promo, unique_id, semaine_index, jour_index, creneau_index + i) in creneau_occupe
                         ]
                         bloc_3h = [
-                            creneau_occupe[(promo, course_name, semaine_index, jour_index, creneau_index + i)]
+                            creneau_occupe[(promo, unique_id, semaine_index, jour_index, creneau_index + i)]
                             for i in range(3)
-                            if (promo, course_name, semaine_index, jour_index, creneau_index + i) in creneau_occupe
+                            if (promo, unique_id, semaine_index, jour_index, creneau_index + i) in creneau_occupe
                         ]
                         bloc_2h = [
-                            creneau_occupe[(promo, course_name, semaine_index, jour_index, creneau_index + i)]
+                            creneau_occupe[(promo, unique_id, semaine_index, jour_index, creneau_index + i)]
                             for i in range(2)
-                            if (promo, course_name, semaine_index, jour_index, creneau_index + i) in creneau_occupe
+                            if (promo, unique_id, semaine_index, jour_index, creneau_index + i) in creneau_occupe
                         ]
                         bloc_1h = [
-                            creneau_occupe[(promo, course_name, semaine_index, jour_index, creneau_index)]
-                            if (promo, course_name, semaine_index, jour_index, creneau_index) in creneau_occupe
+                            creneau_occupe[(promo, unique_id, semaine_index, jour_index, creneau_index)]
+                            if (promo, unique_id, semaine_index, jour_index, creneau_index) in creneau_occupe
                             else None
                         ]
 
@@ -375,6 +379,26 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                             )
 
     
+    # ✅ CONTRAINTE : Un prof ne peut enseigner que dans une seule promo à la fois
+    for prof in {course["prof"] for courses in promo_courses_info.values() for course in courses}:
+        for semaine_index in range(len(calendar_info[list(promo_courses_info.keys())[0]])):  # Nombre de semaines
+            for jour_index in range(len(calendar_info[list(promo_courses_info.keys())[0]][0]["jours_travailles"])):  # Nombre de jours
+                for creneau_index in range(len(creneaux_horaires)):
+
+                    # On récupère toutes les variables qui concernent ce prof
+                    prof_occupe = [
+                        creneau_occupe[(promo, course["unique_id"], semaine_index, jour_index, creneau_index)]
+                        for promo, courses in promo_courses_info.items()
+                        for course in courses
+                        if course["prof"] == prof
+                        and (promo, course["unique_id"], semaine_index, jour_index, creneau_index) in creneau_occupe
+                    ]
+
+                    # Un prof ne peut pas être présent dans plus d'une promo en même temps
+                    if prof_occupe:
+                        model.Add(sum(prof_occupe) <= 1)
+
+        
     solver = cp_model.CpSolver()
     
     solver.parameters.max_time_in_seconds = 60  # Stop après 10s de calcul
