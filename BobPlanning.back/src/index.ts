@@ -395,6 +395,7 @@ app.get('/getProfsData', authJwt.verifyToken, (req, res) => {
   });
 });
 
+
 /**
  * @swagger
  * /setProfsData:
@@ -449,33 +450,35 @@ app.get('/getProfsData', authJwt.verifyToken, (req, res) => {
  *         description: Erreur interne du serveur.
  */
 app.post('/setProfsData', authJwt.verifyToken, (req, res) => {
+  console.log("Données reçues du frontend:", req.body);
+
   const insertedIds: number[] = [];
   const updatePromises = req.body.map((prof: { id: any; name: any; type: any; dispo: any; }) => {
     return new Promise<void>((resolve, reject) => {
       if (prof.id) {
-        // Si un ID est fourni, mettre à jour le professeur existant
+        // Mise à jour du professeur
         const updateSql = 'UPDATE Professeurs SET name = ?, type = ?, dispo = ? WHERE id = ?';
-        connection.query(updateSql, [prof.name, prof.type, prof.dispo, prof.id], (error: any) => {
+        connection.query(updateSql, [prof.name, prof.type, JSON.stringify(prof.dispo), prof.id], (error: any) => {
           if (error) {
+            console.error("Erreur lors de la mise à jour :", error);  // afficher l'erreur
             return reject(error);
           }
           resolve();
         });
       } else {
-        // Sinon, ajouter un nouveau professeur
+        // Ajout d'un nouveau professeur
         const insertSql = 'INSERT INTO Professeurs (name, type, dispo) VALUES (?, ?, ?)';
-        connection.query(insertSql, [prof.name, prof.type, prof.dispo], (error: any, results: any) => {
+        connection.query(insertSql, [prof.name, prof.type, JSON.stringify(prof.dispo)], (error: any, results: any) => {
           if (error) {
             return reject(error);
           }
-          insertedIds.push(results.insertId);
+          insertedIds.push(results.insertId); // Ajout du nouvel ID dans la réponse
           resolve();
         });
       }
     });
   });
 
-  // Attendre que toutes les requêtes soient terminées avant d'envoyer une réponse
   Promise.all(updatePromises)
     .then(() => {
       res.json({ message: 'Informations des professeurs mises à jour avec succès.', insertedIds });
@@ -483,6 +486,59 @@ app.post('/setProfsData', authJwt.verifyToken, (req, res) => {
     .catch((error) => {
       res.status(500).json({ error: error.message });
     });
+});
+
+
+
+/**
+ * @swagger
+ * /deleteProf:
+ *   delete:
+ *     summary: Supprimer un professeur
+ *     tags:
+ *       - DB
+ *     description: Cette route permet de supprimer un professeur de la base de données en utilisant son ID.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 description: L'identifiant du professeur à supprimer
+ *                 example: 1
+ *     responses:
+ *       200:
+ *         description: Le professeur a été supprimé avec succès.
+ *       400:
+ *         description: Erreur, ID invalide ou professeur non trouvé.
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
+app.delete('/deleteProf/:id', authJwt.verifyToken, (req: Request, res: Response): void => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(400).json({ error: 'ID du professeur est requis.' });
+    return;
+  }
+
+  const deleteSql = 'DELETE FROM Professeurs WHERE id = ?';
+  connection.query(deleteSql, [id], (error: any, results: any) => {
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    if (results.affectedRows === 0) {
+      res.status(400).json({ error: 'Aucun professeur trouvé avec cet ID.' });
+      return;
+    }
+
+    res.json({ message: 'Professeur supprimé avec succès.' });
+  });
 });
 
 

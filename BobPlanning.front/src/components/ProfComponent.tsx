@@ -172,7 +172,6 @@ const ProfComponent: React.FC<ProfComponentProps> = ({ initialData, onDelete, on
           </label>
         </div>
       </div>
-      <button type="submit">Soumettre</button>
       <button type="button" onClick={onDelete}>Supprimer</button>
     </form>
   );
