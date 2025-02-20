@@ -134,7 +134,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  */
 app.post('/login', async (req: Request, res: Response) => {
   try {
-    await getLogin(req, res, connection); 
+    await getLogin(req, res, connection);
   } catch (error) {
     console.error('Erreur de connexion:', error);
     res.status(500).json({ message: 'Erreur serveur' });
@@ -200,7 +200,7 @@ app.get('/getPromosData', authJwt.verifyToken, (req, res) => {
     DateFin: "",
     Promos: []
   };
-  
+
   console.log('Balise 1');
 
   const sql = 'SELECT Name, Nombre, Periode FROM promosData';
@@ -222,18 +222,18 @@ app.get('/getPromosData', authJwt.verifyToken, (req, res) => {
       if (error) {
         return res.status(500).json({ error: error.message });
       }
-      if (calendarResults.length > 0  && calendarResults[0].dateDeb && calendarResults[0].dateFin) {
-        promosData.DateDeb = calendarResults[0].dateDeb.toLocaleDateString('fr-FR', { 
-          year: 'numeric', 
-          month: '2-digit', 
-          day: '2-digit' 
-      }).split('/').reverse().join('-'); // Inverser le format pour obtenir yyyy-mm-dd
+      if (calendarResults.length > 0 && calendarResults[0].dateDeb && calendarResults[0].dateFin) {
+        promosData.DateDeb = calendarResults[0].dateDeb.toLocaleDateString('fr-FR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }).split('/').reverse().join('-'); // Inverser le format pour obtenir yyyy-mm-dd
 
-        promosData.DateFin = calendarResults[0].dateFin.toLocaleDateString('fr-FR', { 
-          year: 'numeric', 
-          month: '2-digit', 
-          day: '2-digit' 
-      }).split('/').reverse().join('-'); // Inverser le format pour obtenir yyyy-mm-dd
+        promosData.DateFin = calendarResults[0].dateFin.toLocaleDateString('fr-FR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }).split('/').reverse().join('-'); // Inverser le format pour obtenir yyyy-mm-dd
 
         console.log('calendarResults datedeb:', calendarResults[0].dateDeb);
         console.log('calendarResults dateFin:', calendarResults[0].dateFin);
@@ -313,7 +313,7 @@ app.get('/getPromosData', authJwt.verifyToken, (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
-app.post('/setPromosData',authJwt.verifyToken, (req, res) => {
+app.post('/setPromosData', authJwt.verifyToken, (req, res) => {
   const { DateDeb, DateFin, Promos } = req.body;
   console.log('req.body', req.body);
 
@@ -595,7 +595,7 @@ app.delete('/deleteProf/:id', authJwt.verifyToken, (req: Request, res: Response)
  *       500:
  *         description: Internal server error
  */
-app.post('/generateEdtMacro',authJwt.verifyToken, async (req: Request, res: Response) => {
+app.post('/generateEdtMacro', authJwt.verifyToken, async (req: Request, res: Response) => {
   try {
     const { DateDeb, DateFin, Promos } = req.body;
 
@@ -607,11 +607,11 @@ app.post('/generateEdtMacro',authJwt.verifyToken, async (req: Request, res: Resp
     const start = new Date(DateDeb as string);
     const end = new Date(DateFin as string);
 
-    const workbook = await generateEdtMacro({DateDeb: start, DateFin: end, Promos: Promos});
+    const workbook = await generateEdtMacro({ DateDeb: start, DateFin: end, Promos: Promos });
 
     res.status(200).json({
       message: 'Excel file generated and saved on the server',
-       fileUrl: `http://localhost:${PORT}/download/EdtMacro`,
+      fileUrl: `http://localhost:${PORT}/download/EdtMacro`,
     });
 
   } catch (error) {
@@ -628,7 +628,7 @@ app.post('/generateEdtMacro',authJwt.verifyToken, async (req: Request, res: Resp
  *     tags:
  *       - Macro
  */
-app.get('/download/EdtMacro',authJwt.verifyToken, (req, res) => {
+app.get('/download/EdtMacro', authJwt.verifyToken, (req, res) => {
   const filePath = path.join(__dirname, '..', 'files', 'EdtMacro.xlsx');
   res.download(filePath, 'EdtMacro.xlsx', (err) => {
     if (err) {
@@ -716,17 +716,17 @@ app.get('/download/EdtMacro',authJwt.verifyToken, (req, res) => {
  *                 error:
  *                   type: string
  */
-app.post('/readMaquette',authJwt.verifyToken, upload.single('file'), async (req: Request, res: Response): Promise<any> => {
+app.post('/readMaquette', authJwt.verifyToken, upload.single('file'), async (req: Request, res: Response): Promise<any> => {
   if (!req.file) {
     return res.status(400).send('Aucun fichier n\'a été téléchargé');
   }
 
   try {
-      let data : MaquetteData;
-      data = await readMaquette(req.file.buffer);
-      res.json(data);
+    let data: MaquetteData;
+    data = await readMaquette(req.file.buffer);
+    res.json(data);
   } catch (error) {
-      res.status(500).json({ message: 'Erreur lors de la lecture du fichier Excel', error });
+    res.status(500).json({ message: 'Erreur lors de la lecture du fichier Excel', error });
   }
 });
 
@@ -740,7 +740,7 @@ app.post('/readMaquette',authJwt.verifyToken, upload.single('file'), async (req:
  *     requestBody:
  *       required: true
  */
-app.post('/generateEdtMicro',authJwt.verifyToken, async (req: Request, res: Response) => {
+app.post('/generateEdtMicro', authJwt.verifyToken, async (req: Request, res: Response) => {
   try {
     const filePath = await generateEdtMicro(connection);
     res.status(200).json({
@@ -760,7 +760,7 @@ app.post('/generateEdtMicro',authJwt.verifyToken, async (req: Request, res: Resp
  *     tags:
  *       - Micro
  */
-app.get('/download/EdtMicro',authJwt.verifyToken, (req, res) => {
+app.get('/download/EdtMicro', authJwt.verifyToken, (req, res) => {
   const filePath = path.join(__dirname, '..', 'files', 'EdtMicro.xlsx');
   res.download(filePath, 'EdtMicro.xlsx', (err) => {
     if (err) {
@@ -873,9 +873,9 @@ app.get('/download/EdtMicro',authJwt.verifyToken, (req, res) => {
  *               type: string
  *               example: "Internal server error"
  */
-app.post('/generateEdtSquelette',authJwt.verifyToken, async (req: Request, res: Response) => {
+app.post('/generateEdtSquelette', authJwt.verifyToken, async (req: Request, res: Response) => {
   try {
-    const edtMicroArray : EdtMicro[] = req.body;
+    const edtMicroArray: EdtMicro[] = req.body;
 
     // Check if edtMicroArray is an array of objects
     if (!Array.isArray(edtMicroArray)) {
@@ -1042,7 +1042,7 @@ app.post('/generateEdtSquelette',authJwt.verifyToken, async (req: Request, res: 
  *                             type: number
  *                             example: 2
  */
-app.post('/generateDataEdtMicro',authJwt.verifyToken, async (req: Request, res: Response) => {
+app.post('/generateDataEdtMicro', authJwt.verifyToken, async (req: Request, res: Response) => {
   try {
     const { macro }: { macro: EdtMacroData } = req.body;
 
@@ -1133,7 +1133,7 @@ app.get('/getSallesData', authJwt.verifyToken, (req, res) => {
 app.post('/setSallesData', authJwt.verifyToken, (req, res) => {
   const { name, type, capacite } = req.body;
   const sql = 'INSERT INTO Salles (name, type, capacite) VALUES (?, ?, ?)';
-  connection.query(sql, [name,type, capacite], (error: any) => {
+  connection.query(sql, [name, type, capacite], (error: any) => {
     if (error) {
       return res.status(500).json({ error: error.message });
     }
@@ -1244,14 +1244,14 @@ app.put('/updateSalle', authJwt.verifyToken, (req, res): void => {
 app.delete('/deleteSalle', authJwt.verifyToken, (req, res) => {
   const { id } = req.query;
   const sql = 'DELETE FROM Salles WHERE id = ?';
-  
+
   connection.query(sql, [id], (error: any, result: any) => {
     if (error) {
       return res.status(500).json({ error: error.message });
     }
-    
+
     const affectedRows = Array.isArray(result) ? result[0].affectedRows : result.affectedRows;
-    
+
     if (affectedRows === 0) {
       return res.status(404).json({ message: 'Salle non trouvée' });
     }
@@ -1259,6 +1259,66 @@ app.delete('/deleteSalle', authJwt.verifyToken, (req, res) => {
     res.json({ message: 'Salle supprimée avec succès' });
   });
 });
+
+app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
+  console.log("Données reçues pour les matieres :", req.body);
+
+  const insertPromises = req.body.courses.map((cours: { promo: string; name: string; UE: string; Semestre: string; Periode: string; Prof: string; typeSalle: string; heure: string }) => {
+    return new Promise<void>((resolve, reject) => {
+      const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE 
+                UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode), 
+                Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
+
+      connection.query(sql,
+        [cours.promo, cours.name, cours.UE, cours.Semestre, cours.Periode, cours.Prof, cours.typeSalle, cours.heure],
+        (error) => {
+          if (error) {
+            console.error("Erreur lors de l'insertion/mise à jour :", error);
+            return reject(error);
+          }
+          resolve();
+        }
+      );
+    });
+  });
+  Promise.all(insertPromises)
+    .then(() => {
+      res.json({ message: 'Informations des cours ajoutées avec succès.' });
+    })
+    .catch((error) => {
+      res.status(500).json({ error: error.message });
+    });
+
+});
+
+app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
+  console.log("Données reçues pour la mise à jour du professeur :", req.body);
+
+  const updatePromises = req.body.courses.map((cours: { Prof: string; name: string }) => {
+    return new Promise<void>((resolve, reject) => {
+      const sql = `UPDATE Cours SET Prof = ? WHERE name = ?`;
+
+      connection.query(sql, [cours.Prof, cours.name], (error) => {
+        if (error) {
+          console.error("Erreur lors de la mise à jour du professeur :", error);
+          return reject(error);
+        }
+        resolve();
+      });
+    });
+  });
+
+  Promise.all(updatePromises)
+    .then(() => {
+      res.json({ message: 'Professeurs mis à jour avec succès.' });
+    })
+    .catch((error) => {
+      res.status(500).json({ error: error.message });
+    });
+});
+
 
 // Start the server
 app.listen(PORT, () => {

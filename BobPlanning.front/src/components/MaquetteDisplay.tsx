@@ -1,6 +1,9 @@
-import { Accordion, AccordionDetails, AccordionSummary, Table, TableBody, TableCell, TableRow, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, MenuItem, Select, Table, TableBody, TableCell, TableRow, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useEffect, useState } from "react";
+import axios from "axios";
 
+const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
 interface Course {
     name: string;
     UE: string;
@@ -22,10 +25,77 @@ interface Data {
     cours: Course[];
 }
 
+interface Prof {
+    id: number;
+    name: string;
+    type: string;
+    dispo: string;
+}
+
 export default function MaquetteDisplay({ data }: { data: Data }) {
+    const [selectedProfessors, setSelectedProfessors] = useState<{ [key: string]: string }>({});
+    const [professors, setProfessors] = useState<Prof[]>([]);
+
+    useEffect(() => {
+        const fetchProfsData = async () => {
+            try {
+                const token = localStorage.getItem("accessToken"); // Récupérer le token
+                const response = await fetch(`${RACINE_FETCHER_URL}/getProfsData`, {
+                    method: 'GET',
+                    headers: {
+                        "x-access-token": token ?? "", // Ajouter le token dans l'en-tête
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error("Erreur lors de la récupération des professeurs");
+                }
+
+
+                const dataProf = await response.json();
+                console.log('dataProf:', dataProf);
+                setProfessors(dataProf);
+            } catch (error) {
+                console.error('Error fetching profs data:', error);
+            }
+        };
+
+        fetchProfsData();
+    }, []);
+
+    const handleSelectChange = async (courseName: string, professorId: number) => {
+        setSelectedProfessors((prev) => ({
+            ...prev,
+            [courseName]: professorId.toString(),
+        }));
+
+      
+        try {
+            const token = localStorage.getItem("accessToken");
+            const response = await fetch(`${RACINE_FETCHER_URL}/updateCourseProfessor`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-access-token": token ?? "",
+                },
+                body: JSON.stringify({
+                    courses: [{ Prof: professorId, name: courseName }] // Envoi de l'ID du prof
+                }),
+            });
+    
+            if (!response.ok) {
+                throw new Error("Échec de la mise à jour du professeur");
+            }
+    
+            console.log(`Professeur (ID: ${professorId}) mis à jour pour le cours ${courseName}`);
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du professeur :", error);
+        }
+    };
+
+
     return (
         <div style={{ padding: '20px' }}>
-            <Accordion 
+            <Accordion
                 sx={{
                     backgroundColor: 'transparent', // Arrière-plan transparent
 
@@ -100,6 +170,22 @@ export default function MaquetteDisplay({ data }: { data: Data }) {
                                                         <TableRow>
                                                             <TableCell>Projets :</TableCell>
                                                             <TableCell>{course.heure.projet || 'N/A'}</TableCell>
+                                                        </TableRow>
+                                                        <TableRow>
+                                                            <TableCell>Professeur :</TableCell>
+                                                            <TableCell>
+                                                                <Select
+                                                                    value={selectedProfessors[course.name] || ""}
+                                                                    onChange={(e) => handleSelectChange(course.name, Number(e.target.value))}
+                                                                    displayEmpty
+                                                                    fullWidth
+                                                                >
+                                                                    <MenuItem value="" disabled>Sélectionner un professeur</MenuItem>
+                                                                    {professors.map((prof) => (
+                                                                        <MenuItem key={prof.id} value={prof.id}>{prof.name}</MenuItem>
+                                                                    ))}
+                                                                </Select>
+                                                            </TableCell>
                                                         </TableRow>
                                                     </TableBody>
                                                 </Table>
