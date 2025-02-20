@@ -442,7 +442,6 @@ app.get("/getProfsData", authJwt.verifyToken, (req, res) => {
   });
 });
 
-
 /**
  * @swagger
  * /setProfsData:
