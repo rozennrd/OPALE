@@ -12,6 +12,7 @@ const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
 
 const Parametres: React.FC = () => {
   const navigate = useNavigate();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [promosData, setPromosData] = React.useState<any>({
     "DateDeb": "",
     "DateFin": "",
