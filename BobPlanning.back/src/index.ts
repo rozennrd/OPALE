@@ -488,8 +488,6 @@ app.post('/setProfsData', authJwt.verifyToken, (req, res) => {
     });
 });
 
-
-
 /**
  * @swagger
  * /deleteProf:
@@ -540,7 +538,6 @@ app.delete('/deleteProf/:id', authJwt.verifyToken, (req: Request, res: Response)
     res.json({ message: 'Professeur supprimé avec succès.' });
   });
 });
-
 
 /**
  * @swagger
@@ -1214,9 +1211,6 @@ app.put('/updateSalle', authJwt.verifyToken, (req, res): void => {
   });
 });
 
-
-
-
 /**
  * @swagger
  * /deleteSalle:
@@ -1266,7 +1260,6 @@ app.delete('/deleteSalle', authJwt.verifyToken, (req, res) => {
     res.json({ message: 'Salle supprimée avec succès' });
   });
 });
-
 
 // Start the server
 app.listen(PORT, () => {

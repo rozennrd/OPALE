@@ -3,22 +3,22 @@ import { EdtMacroData } from "../types/EdtMacroData";
 import { generateDataEdtMicro } from "./generateDataEdtMicro";
 import { generateEdtSquelette } from './generateEdtSquelette';
 
-export const generateEdtMicro = async (connection: any) : Promise<string> => {
+export const generateEdtMicro = async (connection: any) : Promise<any> => {
 
-  //Get data from database and formated data
-  const [promosData] = await connection.query(
+  const [promosData] = await connection.promise().query(
     "SELECT id, Name, Nombre, Periode FROM promosData"
   );
-
-  const [coursesData] = await connection.query(
-    `SELECT C.id, C.name, C.UE, C.Semestre, C.Periode, C.Prof, C.typeSalle, C.heure FROM Cours C`
+  
+  const [coursesData] = await connection.promise().query(
+    `SELECT id, name, UE, Semestre, Periode, Prof, typeSalle, heure FROM Cours`
   );
-
-  const [sallesData] = await connection.query("SELECT * FROM Salles");
-
-  const [profsData] = await connection.query("SELECT * FROM Professeurs");
-
-  const [calendrierData] = await connection.query("SELECT * FROM calendrier");
+  
+  const [sallesData] = await connection.promise().query("SELECT * FROM Salles");
+  
+  const [profsData] = await connection.promise().query("SELECT * FROM Professeurs");
+  
+  const [calendrierData] = await connection.promise().query("SELECT * FROM calendrier");
+  
 
   const promos: any[] = (promosData as any[]).map((promo) => ({
     name: promo.Name,
@@ -63,11 +63,13 @@ export const generateEdtMicro = async (connection: any) : Promise<string> => {
   //Generate Data EdtMicro 
   const calendrier = await generateDataEdtMicro(macro);
 
-  //Call solver from microservice
-  //TODO
-  const edtMicroArray : any[] = [];
+  return {promos, profs, salles, calendrier};
 
-  //Generate Excel file
-  const filePath = await generateEdtSquelette(edtMicroArray);
-  return filePath;
+  // //Call solver from microservice
+  // //TODO
+  // const edtMicroArray : any[] = [];
+
+  // //Generate Excel file
+  // const filePath = await generateEdtSquelette(edtMicroArray);
+  // return filePath;
 };
