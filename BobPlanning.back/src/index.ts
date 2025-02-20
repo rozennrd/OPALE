@@ -549,12 +549,13 @@ app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
   Promise.all(updatePromises)
     .then(() => {
       res.json({
+        success: true,
         message: "Informations des professeurs mises à jour avec succès.",
         insertedIds,
       });
     })
     .catch((error) => {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ success: false, error: error.message });
     });
 });
 

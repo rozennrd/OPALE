@@ -6,10 +6,10 @@ import { getTokenFromLocalStorage } from '../auth/Token';
 const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
 
 interface ProfData {
-  id: number | null;
+  id: any;
   name: string;
   type: 'EXT' | 'INT';
-  dispo: string | object; // Peut être une chaîne ou un objet selon la sérialisation
+  dispo: Record<string, boolean> ;
 }
 
 const Profs: React.FC = () => {
@@ -26,15 +26,19 @@ const Profs: React.FC = () => {
         },
       })
         .then((response) => response.json())
-        .then((data) => setProfs(data))
+        .then((data) => {
+          console.log(data);
+          setProfs(data);
+          console.log("📌 Liste des profs chargée :", data);
+        })
         .catch((error) => console.error('❌ Erreur lors de la récupération des professeurs:', error));
     }
   }, []);
 
-  // ➕ Ajouter un nouveau professeur temporaire
+  // ➕ Ajouter un nouveau professeur temporaire (sans ID)
   const addProf = () => {
     const newProf: ProfData = {
-      id: null,
+      id: null, // 🚀 No ID by default
       name: '',
       type: 'INT',
       dispo: {
@@ -45,12 +49,13 @@ const Profs: React.FC = () => {
         vendrediMatin: false, vendrediAprem: false
       },
     };
-    setNewProfs([...newProfs, newProf]);
+    setNewProfs((prev) => [...prev, newProf]);
   };
 
+  // 🗑 Supprimer un professeur
   const deleteProf = async (id: number | null) => {
     if (id === null) {
-      setNewProfs(newProfs.filter((prof) => prof.id !== id));
+      setNewProfs((prev) => prev.filter((prof) => prof.id !== id));
       return;
     }
 
@@ -67,10 +72,9 @@ const Profs: React.FC = () => {
       });
 
       if (response.ok) {
-        setProfs(profs.filter((prof) => prof.id !== id));
+        setProfs((prev) => prev.filter((prof) => prof.id !== id));
       } else {
         const message = await response.text();
-        console.error(`Erreur lors de la suppression du professeur : ${message}`);
         alert(`❌ Erreur: ${message}`);
       }
     } catch (error) {
@@ -79,9 +83,10 @@ const Profs: React.FC = () => {
     }
   };
 
-  // 🔄 Mettre à jour un professeur dans la liste
-  const updateProf = (updatedProf: ProfData, index: number, isNew: boolean) => {
-    if (updatedProf.name.trim() === '') {
+  // 🔄 Mettre à jour un professeur
+  const updateProf = (updatedProfBis: ProfData, index: number, isNew: boolean) => {
+    console.log(updatedProfBis);
+    if (updatedProfBis.name.trim() === '') {
       alert('⚠️ Le nom du professeur ne peut pas être vide.');
       return;
     }
@@ -89,32 +94,23 @@ const Profs: React.FC = () => {
     if (isNew) {
       setNewProfs((prev) => {
         const updatedList = [...prev];
-        updatedList[index] = updatedProf;
+        updatedList[index] = updatedProfBis;
         return updatedList;
       });
     } else {
       setProfs((prev) => {
         const updatedList = [...prev];
-        updatedList[index] = updatedProf;
+        updatedList[index] = updatedProfBis;
+        console.log(updatedList);
         return updatedList;
       });
     }
   };
 
+  // 💾 Sauvegarder les nouveaux professeurs (avec ID généré par le serveur)
   const updateProfs = async () => {
+    const validProfs = profs.filter((prof) => prof.name.trim() !== '');
     const validNewProfs = newProfs.filter((prof) => prof.name.trim() !== '');
-    const updatedNewProfs = validNewProfs.map((prof) => ({ ...prof, id: null }));
-    const allProfs = [...profs, ...updatedNewProfs];
-
-    if (allProfs.length === 0) {
-      alert('⚠️ Aucun professeur valide à mettre à jour.');
-      return;
-    }
-
-    const preparedProfs = allProfs.map((prof) => ({
-      ...prof,
-      dispo: typeof prof.dispo === 'string' ? JSON.parse(prof.dispo) : prof.dispo,
-    }));
 
     try {
       const token = getTokenFromLocalStorage();
@@ -124,24 +120,35 @@ const Profs: React.FC = () => {
           'Content-Type': 'application/json',
           'x-access-token': token ?? '',
         },
-        body: JSON.stringify(preparedProfs),
+        body: JSON.stringify(validProfs),
+      });
+      const responseNew = await fetch('http://localhost:3000/setProfsData', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': token ?? '',
+        },
+        body: JSON.stringify(validNewProfs),
       });
 
       const data = await response.json();
+      const dataNew = await responseNew.json();
+      
+      if (data.success && dataNew && dataNew.insertedIds) {
+        const updatedNewProfs = validNewProfs.map((prof, index) => ({
+          ...prof,
+          id: data.insertedIds[index], // Assign real ID from server
+        }));
 
-      if (data.insertedIds && data.insertedIds.length) {
-        setProfs((prevProfs) =>
-          prevProfs.map((prof) =>
-            prof.id === null ? { ...prof, id: data.insertedIds.shift() ?? 0 } : prof
-          )
-        );
+        setProfs((prevProfs) => [...prevProfs, ...updatedNewProfs]);
+        setNewProfs([]);
+        alert('✅ Profs mis à jours avec success !');
+      } else {
+        alert('⚠️ Erreur lors de l’ajout des professeurs.');
       }
-
-      setNewProfs([]);
-      alert('✅ Professeurs mis à jour avec succès !');
     } catch (error) {
       console.error('❌ Erreur lors de la mise à jour des professeurs:', error);
-      alert('❌ Erreur lors de la mise à jour.');
+      alert('❌ Une erreur est survenue.');
     }
   };
 
