@@ -6,10 +6,10 @@ type Disponibilites = {
 
 interface ProfComponentProps {
   initialData?: {
-    id: number;
+    id: number | null;
     name: string;
     type: 'EXT' | 'INT';
-    dispo: string;
+    dispo: string | Object;
   };
   onDelete: () => void;
   onUpdate: (updatedProf: { id: number; name: string; type: 'EXT' | 'INT'; dispo: string }) => void;
