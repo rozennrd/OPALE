@@ -3,6 +3,8 @@ import './Profs.css';
 import ProfComponent from '../components/ProfComponent'; 
 import { getTokenFromLocalStorage } from '../auth/Token';
 
+const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
+
 interface ProfData {
   id: number | null;
   name: string;
@@ -17,7 +19,8 @@ const Profs: React.FC = () => {
   useEffect(() => {
     const token = getTokenFromLocalStorage();
     if (token) {
-      fetch('http://localhost:3000/getProfsData', {
+    // Récupérer les données des professeurs au chargement initial
+    fetch(`${RACINE_FETCHER_URL}/getProfsData`, {
         headers: {
           'x-access-token': token,
         },
@@ -58,7 +61,7 @@ const Profs: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/deleteProf/${id}`, {
+      const response = await fetch(`${RACINE_FETCHER_URL}/deleteProf/${id}`, {
         method: 'DELETE',
         headers: { 'x-access-token': token },
       });
@@ -115,7 +118,7 @@ const Profs: React.FC = () => {
 
     try {
       const token = getTokenFromLocalStorage();
-      const response = await fetch('http://localhost:3000/setProfsData', {
+      const response = await fetch(`${RACINE_FETCHER_URL}/setProfsData`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
