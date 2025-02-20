@@ -1,22 +1,22 @@
-import { generateEdtMacro } from './macro/generateEdtMacro';
-import { generateDataEdtMicro } from './micro/generateDataEdtMicro';
-import { readMaquette } from './micro/readMaquette';
-import { MaquetteData } from './types/MaquetteData';
-import { EdtMacroData } from './types/EdtMacroData';
-import { generateEdtSquelette } from './micro/generateEdtSquelette';
-import express, { Request, Response } from 'express';
-import * as mysql from 'mysql2';
-import getDBConfig from './database/getDBConfig';
-import path from 'path';
-import { EdtMicro } from './types/EdtMicroData';
-import { generateEdtMicro } from './micro/generateEdtMicro';
-import { getLogin } from './database/getLogin';
-import authJwt from './middleware/authJwt';
+import { generateEdtMacro } from "./macro/generateEdtMacro";
+import { generateDataEdtMicro } from "./micro/generateDataEdtMicro";
+import { readMaquette } from "./micro/readMaquette";
+import { MaquetteData } from "./types/MaquetteData";
+import { EdtMacroData } from "./types/EdtMacroData";
+import { generateEdtSquelette } from "./micro/generateEdtSquelette";
+import express, { Request, Response } from "express";
+import * as mysql from "mysql2";
+import getDBConfig from "./database/getDBConfig";
+import path from "path";
+import { EdtMicro } from "./types/EdtMicroData";
+import { generateEdtMicro } from "./micro/generateEdtMicro";
+import { getLogin } from "./database/getLogin";
+import authJwt from "./middleware/authJwt";
 
-const cors = require('cors');
-const swaggerUi = require('swagger-ui-express');
-const multer = require('multer');
-const swaggerJsdoc = require('swagger-jsdoc');
+const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
+const multer = require("multer");
+const swaggerJsdoc = require("swagger-jsdoc");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -25,33 +25,37 @@ const dbConfig = getDBConfig();
 
 const app = express();
 const PORT = 3000;
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: "50mb" }));
 app.use(cors());
 
-const connection = mysql.createConnection({
+const pool = mysql.createPool({
   host: dbConfig.DB_HOST,
   user: dbConfig.DB_USER,
   password: dbConfig.DB_PASSWORD,
   database: dbConfig.DB_NAME,
-  port: dbConfig.DB_PORT
+  port: dbConfig.DB_PORT,
+  waitForConnections: true,
+  connectionLimit: 10, // Nombre maximal de connexions dans le pool
+  queueLimit: 0, // Nombre maximal de requêtes en attente
 });
 
-connection.connect((err: any) => {
+pool.getConnection((err, connection) => {
   if (err) {
-    console.error('Erreur de connexion à la base de données:', err);
+    console.error("Erreur de connexion à la base de données:", err);
   } else {
-    console.log('Connecté à la base de données');
+    console.log("Connecté à la base de données via un pool");
+    connection.release(); // Libérer la connexion après vérification
   }
 });
 
 // Swagger options
 const swaggerOptions = {
   definition: {
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: {
-      title: 'Excel Generation API',
-      version: '1.0.0',
-      description: 'API to generate Excel files',
+      title: "Excel Generation API",
+      version: "1.0.0",
+      description: "API to generate Excel files",
     },
     servers: [
       {
@@ -59,10 +63,10 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./src/index.ts'], // Met à jour ce chemin si nécessaire
+  apis: ["./src/index.ts"], // Met à jour ce chemin si nécessaire
 };
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /**
  * @swagger
@@ -132,12 +136,18 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *                   type: string
  *                   example: "Erreur serveur"
  */
-app.post('/login', async (req: Request, res: Response) => {
+app.post("/login", async (req: Request, res: Response) => {
   try {
-    await getLogin(req, res, connection); 
+    pool.getConnection(async (err, connection) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      await getLogin(req, res, connection);
+      connection.release(); // Libérer la connexion après vérification
+    });
   } catch (error) {
-    console.error('Erreur de connexion:', error);
-    res.status(500).json({ message: 'Erreur serveur' });
+    console.error("Erreur de connexion:", error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 });
 
@@ -184,7 +194,7 @@ app.post('/login', async (req: Request, res: Response) => {
  *       500:
  *         description: Une erreur est survenue
  */
-app.get('/getPromosData', authJwt.verifyToken, (req, res) => {
+app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
   interface Promo {
     Name: string;
     Nombre: number;
@@ -198,51 +208,69 @@ app.get('/getPromosData', authJwt.verifyToken, (req, res) => {
   const promosData: { DateDeb: string; DateFin: string; Promos: Promo[] } = {
     DateDeb: "",
     DateFin: "",
-    Promos: []
+    Promos: [],
   };
-  
-  console.log('Balise 1');
 
-  const sql = 'SELECT Name, Nombre, Periode FROM promosData';
-  connection.query(sql, (error: any, results: any[]) => {
-    if (error) {
-      return res.status(500).json({ error: error.message });
+  console.log("Balise 1");
+
+  const sql = "SELECT Name, Nombre, Periode FROM promosData";
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
     }
-
-    // Conversion de `Periode` en tableau d'objets JSON
-    const parsedResults = results.map((promo) => ({
-      ...promo,
-      Periode: promo.Periode ? JSON.parse(promo.Periode) : [] // Conversion de la chaîne JSON
-    }));
-    promosData.Promos = parsedResults;
-
-    // Récupération des données du calendrier
-    const calendarSql = 'SELECT dateDeb, dateFin FROM calendrier LIMIT 1';
-    connection.query(calendarSql, (error: any, calendarResults: any) => {
+    connection.query(sql, (error: any, results: any[]) => {
       if (error) {
         return res.status(500).json({ error: error.message });
       }
-      if (calendarResults.length > 0  && calendarResults[0].dateDeb && calendarResults[0].dateFin) {
-        promosData.DateDeb = calendarResults[0].dateDeb.toLocaleDateString('fr-FR', { 
-          year: 'numeric', 
-          month: '2-digit', 
-          day: '2-digit' 
-      }).split('/').reverse().join('-'); // Inverser le format pour obtenir yyyy-mm-dd
 
-        promosData.DateFin = calendarResults[0].dateFin.toLocaleDateString('fr-FR', { 
-          year: 'numeric', 
-          month: '2-digit', 
-          day: '2-digit' 
-      }).split('/').reverse().join('-'); // Inverser le format pour obtenir yyyy-mm-dd
+      // Conversion de `Periode` en tableau d'objets JSON
+      const parsedResults = results.map((promo) => ({
+        ...promo,
+        Periode: promo.Periode ? JSON.parse(promo.Periode) : [], // Conversion de la chaîne JSON
+      }));
+      promosData.Promos = parsedResults;
 
-        console.log('calendarResults datedeb:', calendarResults[0].dateDeb);
-        console.log('calendarResults dateFin:', calendarResults[0].dateFin);
-        console.log('DateDeb:', promosData.DateDeb);
-        console.log('DateFin:', promosData.DateFin);
-      }
+      // Récupération des données du calendrier
+      const calendarSql = "SELECT dateDeb, dateFin FROM calendrier LIMIT 1";
+      connection.query(calendarSql, (error: any, calendarResults: any) => {
+        if (error) {
+          return res.status(500).json({ error: error.message });
+        }
+        if (
+          calendarResults.length > 0 &&
+          calendarResults[0].dateDeb &&
+          calendarResults[0].dateFin
+        ) {
+          promosData.DateDeb = calendarResults[0].dateDeb
+            .toLocaleDateString("fr-FR", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            })
+            .split("/")
+            .reverse()
+            .join("-"); // Inverser le format pour obtenir yyyy-mm-dd
 
-      res.json(promosData);
+          promosData.DateFin = calendarResults[0].dateFin
+            .toLocaleDateString("fr-FR", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            })
+            .split("/")
+            .reverse()
+            .join("-"); // Inverser le format pour obtenir yyyy-mm-dd
+
+          console.log("calendarResults datedeb:", calendarResults[0].dateDeb);
+          console.log("calendarResults dateFin:", calendarResults[0].dateFin);
+          console.log("DateDeb:", promosData.DateDeb);
+          console.log("DateFin:", promosData.DateFin);
+        }
+
+        res.json(promosData);
+      });
     });
+    connection.release(); // Libérer la connexion après vérification
   });
 });
 
@@ -313,41 +341,54 @@ app.get('/getPromosData', authJwt.verifyToken, (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
-app.post('/setPromosData',authJwt.verifyToken, (req, res) => {
+app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
   const { DateDeb, DateFin, Promos } = req.body;
-  console.log('req.body', req.body);
+  console.log("req.body", req.body);
 
   const dateDeb = DateDeb || null;
   const dateFin = DateFin || null;
-  const sql = 'UPDATE calendrier SET dateDeb = ?, dateFin = ?';
-  connection.query(sql, [dateDeb, dateFin], (error: any) => {
-    if (error) {
-      console.log('1. error', error);
-      return res.status(500).json({ error: error.message });
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
     }
+    const sql = "UPDATE calendrier SET dateDeb = ?, dateFin = ?";
+    connection.query(sql, [dateDeb, dateFin], (error: any) => {
+      if (error) {
+        console.log("1. error", error);
+        return res.status(500).json({ error: error.message });
+      }
 
-    // Tableau de promesses pour chaque requête de mise à jour de promo
-    const updatePromises = Promos.map((promo: { Nombre: any; Periode: any; Name: any; }) => {
-      const updatePromosSql = 'UPDATE promosData SET Nombre = ?, Periode = ? WHERE Name = ?';
-      return new Promise<void>((resolve, reject) => {
-        connection.query(updatePromosSql, [promo.Nombre, JSON.stringify(promo.Periode), promo.Name], (error: any) => {
-          if (error) {
-            return reject(error);
-          }
-          resolve();
+      // Tableau de promesses pour chaque requête de mise à jour de promo
+      const updatePromises = Promos.map(
+        (promo: { Nombre: any; Periode: any; Name: any }) => {
+          const updatePromosSql =
+            "UPDATE promosData SET Nombre = ?, Periode = ? WHERE Name = ?";
+          return new Promise<void>((resolve, reject) => {
+            connection.query(
+              updatePromosSql,
+              [promo.Nombre, JSON.stringify(promo.Periode), promo.Name],
+              (error: any) => {
+                if (error) {
+                  return reject(error);
+                }
+                resolve();
+              }
+            );
+          });
+        }
+      );
+
+      // Attendre que toutes les requêtes soient terminées avant d'envoyer une réponse
+      Promise.all(updatePromises)
+        .then(() => {
+          res.json({ DateDeb, DateFin, Promos });
+        })
+        .catch((error) => {
+          console.log("2. error", error);
+          res.status(500).json({ error: error.message });
         });
-      });
     });
-
-    // Attendre que toutes les requêtes soient terminées avant d'envoyer une réponse
-    Promise.all(updatePromises)
-      .then(() => {
-        res.json({ DateDeb, DateFin, Promos });
-      })
-      .catch((error) => {
-        console.log('2. error', error);
-        res.status(500).json({ error: error.message });
-      });
+    connection.release(); // Libérer la connexion après vérification
   });
 });
 
@@ -385,13 +426,19 @@ app.post('/setPromosData',authJwt.verifyToken, (req, res) => {
  *       500:
  *         description: Une erreur est survenue
  */
-app.get('/getProfsData', authJwt.verifyToken, (req, res) => {
-  const sql = 'SELECT id, name, type, dispo FROM Professeurs';
-  connection.query(sql, (error: any, results: any[]) => {
-    if (error) {
-      return res.status(500).json({ error: error.message });
+app.get("/getProfsData", authJwt.verifyToken, (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
     }
-    res.json(results);
+    const sql = "SELECT id, name, type, dispo FROM Professeurs";
+    connection.query(sql, (error: any, results: any[]) => {
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+      res.json(results);
+    });
+    connection.release(); // Libérer la connexion après vérification
   });
 });
 
@@ -448,43 +495,69 @@ app.get('/getProfsData', authJwt.verifyToken, (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
-app.post('/setProfsData', authJwt.verifyToken, (req, res) => {
+app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
   const insertedIds: number[] = [];
-  const updatePromises = req.body.map((prof: { id: any; name: any; type: any; dispo: any; }) => {
-    return new Promise<void>((resolve, reject) => {
-      if (prof.id) {
-        // Si un ID est fourni, mettre à jour le professeur existant
-        const updateSql = 'UPDATE Professeurs SET name = ?, type = ?, dispo = ? WHERE id = ?';
-        connection.query(updateSql, [prof.name, prof.type, prof.dispo, prof.id], (error: any) => {
-          if (error) {
-            return reject(error);
-          }
-          resolve();
-        });
-      } else {
-        // Sinon, ajouter un nouveau professeur
-        const insertSql = 'INSERT INTO Professeurs (name, type, dispo) VALUES (?, ?, ?)';
-        connection.query(insertSql, [prof.name, prof.type, prof.dispo], (error: any, results: any) => {
-          if (error) {
-            return reject(error);
-          }
-          insertedIds.push(results.insertId);
-          resolve();
-        });
-      }
-    });
-  });
+  const updatePromises = req.body.map(
+    (prof: { id: any; name: any; type: any; dispo: any }) => {
+      return new Promise<void>((resolve, reject) => {
+        if (prof.id) {
+          // Si un ID est fourni, mettre à jour le professeur existant
+          pool.getConnection((err, connection) => {
+            if (err) {
+              return res.status(500).json({ error: err.message });
+            }
+            const updateSql =
+              "UPDATE Professeurs SET name = ?, type = ?, dispo = ? WHERE id = ?";
+            connection.query(
+              updateSql,
+              [prof.name, prof.type, prof.dispo, prof.id],
+              (error: any) => {
+                if (error) {
+                  return reject(error);
+                }
+                resolve();
+              }
+            );
+            connection.release(); // Libérer la connexion après vérification
+          });
+        } else {
+          // Sinon, ajouter un nouveau professeur
+          pool.getConnection((err, connection) => {
+            if (err) {
+              return res.status(500).json({ error: err.message });
+            }
+            const insertSql =
+              "INSERT INTO Professeurs (name, type, dispo) VALUES (?, ?, ?)";
+            connection.query(
+              insertSql,
+              [prof.name, prof.type, prof.dispo],
+              (error: any, results: any) => {
+                if (error) {
+                  return reject(error);
+                }
+                insertedIds.push(results.insertId);
+                resolve();
+              }
+            );
+            connection.release(); // Libérer la connexion après vérification
+          });
+        }
+      });
+    }
+  );
 
   // Attendre que toutes les requêtes soient terminées avant d'envoyer une réponse
   Promise.all(updatePromises)
     .then(() => {
-      res.json({ message: 'Informations des professeurs mises à jour avec succès.', insertedIds });
+      res.json({
+        message: "Informations des professeurs mises à jour avec succès.",
+        insertedIds,
+      });
     })
     .catch((error) => {
       res.status(500).json({ error: error.message });
     });
 });
-
 
 /**
  * @swagger
@@ -530,7 +603,7 @@ app.post('/setProfsData', authJwt.verifyToken, (req, res) => {
  *                           DateDebutP:
  *                             type: string
  *                             format: date
- *                             description: Start date of the period 
+ *                             description: Start date of the period
  *                           DateFinP:
  *                             type: string
  *                             format: date
@@ -543,30 +616,37 @@ app.post('/setProfsData', authJwt.verifyToken, (req, res) => {
  *       500:
  *         description: Internal server error
  */
-app.post('/generateEdtMacro',authJwt.verifyToken, async (req: Request, res: Response) => {
-  try {
-    const { DateDeb, DateFin, Promos } = req.body;
+app.post(
+  "/generateEdtMacro",
+  authJwt.verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { DateDeb, DateFin, Promos } = req.body;
 
-    if (!DateDeb || !DateFin || !Promos) {
-      res.status(400).send('Missing startDate, endDate or Promos');
-      return;
+      if (!DateDeb || !DateFin || !Promos) {
+        res.status(400).send("Missing startDate, endDate or Promos");
+        return;
+      }
+
+      const start = new Date(DateDeb as string);
+      const end = new Date(DateFin as string);
+
+      const workbook = await generateEdtMacro({
+        DateDeb: start,
+        DateFin: end,
+        Promos: Promos,
+      });
+
+      res.status(200).json({
+        message: "Excel file generated and saved on the server",
+        fileUrl: `http://localhost:${PORT}/download/EdtMacro`,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Internal server error" + error);
     }
-
-    const start = new Date(DateDeb as string);
-    const end = new Date(DateFin as string);
-
-    const workbook = await generateEdtMacro({DateDeb: start, DateFin: end, Promos: Promos});
-
-    res.status(200).json({
-      message: 'Excel file generated and saved on the server',
-       fileUrl: `http://localhost:${PORT}/download/EdtMacro`,
-    });
-
-  } catch (error) {
-    console.log(error);
-    res.status(500).send('Internal server error' + error);
   }
-});
+);
 
 /**
  * @swagger
@@ -576,12 +656,12 @@ app.post('/generateEdtMacro',authJwt.verifyToken, async (req: Request, res: Resp
  *     tags:
  *       - Macro
  */
-app.get('/download/EdtMacro',authJwt.verifyToken, (req, res) => {
-  const filePath = path.join(__dirname, '..', 'files', 'EdtMacro.xlsx');
-  res.download(filePath, 'EdtMacro.xlsx', (err) => {
+app.get("/download/EdtMacro", authJwt.verifyToken, (req, res) => {
+  const filePath = path.join(__dirname, "..", "files", "EdtMacro.xlsx");
+  res.download(filePath, "EdtMacro.xlsx", (err) => {
     if (err) {
-      console.error('Erreur lors du téléchargement du fichier:', err);
-      res.status(500).send('Erreur lors du téléchargement du fichier');
+      console.error("Erreur lors du téléchargement du fichier:", err);
+      res.status(500).send("Erreur lors du téléchargement du fichier");
     }
   });
 });
@@ -664,19 +744,26 @@ app.get('/download/EdtMacro',authJwt.verifyToken, (req, res) => {
  *                 error:
  *                   type: string
  */
-app.post('/readMaquette',authJwt.verifyToken, upload.single('file'), async (req: Request, res: Response): Promise<any> => {
-  if (!req.file) {
-    return res.status(400).send('Aucun fichier n\'a été téléchargé');
-  }
+app.post(
+  "/readMaquette",
+  authJwt.verifyToken,
+  upload.single("file"),
+  async (req: Request, res: Response): Promise<any> => {
+    if (!req.file) {
+      return res.status(400).send("Aucun fichier n'a été téléchargé");
+    }
 
-  try {
-      let data : MaquetteData;
+    try {
+      let data: MaquetteData;
       data = await readMaquette(req.file.buffer);
       res.json(data);
-  } catch (error) {
-      res.status(500).json({ message: 'Erreur lors de la lecture du fichier Excel', error });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Erreur lors de la lecture du fichier Excel", error });
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -688,17 +775,27 @@ app.post('/readMaquette',authJwt.verifyToken, upload.single('file'), async (req:
  *     requestBody:
  *       required: true
  */
-app.post('/generateEdtMicro',authJwt.verifyToken, async (req: Request, res: Response) => {
-  try {
-    const filePath = await generateEdtMicro(connection);
-    res.status(200).json({
-      message: 'Excel file generated and saved on the server',
-      filePath,
-    });
-  } catch (error) {
-    res.status(500).send('Internal server error: ' + error);
+app.post(
+  "/generateEdtMicro",
+  authJwt.verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      pool.getConnection(async (err, connection) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        const filePath = await generateEdtMicro(connection);
+        connection.release(); // Libérer la connexion après vérification
+        res.status(200).json({
+          message: "Excel file generated and saved on the server",
+          filePath,
+        });
+      });
+    } catch (error) {
+      res.status(500).send("Internal server error: " + error);
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -708,12 +805,12 @@ app.post('/generateEdtMicro',authJwt.verifyToken, async (req: Request, res: Resp
  *     tags:
  *       - Micro
  */
-app.get('/download/EdtMicro',authJwt.verifyToken, (req, res) => {
-  const filePath = path.join(__dirname, '..', 'files', 'EdtMicro.xlsx');
-  res.download(filePath, 'EdtMicro.xlsx', (err) => {
+app.get("/download/EdtMicro", authJwt.verifyToken, (req, res) => {
+  const filePath = path.join(__dirname, "..", "files", "EdtMicro.xlsx");
+  res.download(filePath, "EdtMicro.xlsx", (err) => {
     if (err) {
-      console.error('Erreur lors du téléchargement du fichier:', err);
-      res.status(500).send('Erreur lors du téléchargement du fichier');
+      console.error("Erreur lors du téléchargement du fichier:", err);
+      res.status(500).send("Erreur lors du téléchargement du fichier");
     }
   });
 });
@@ -821,56 +918,69 @@ app.get('/download/EdtMicro',authJwt.verifyToken, (req, res) => {
  *               type: string
  *               example: "Internal server error"
  */
-app.post('/generateEdtSquelette',authJwt.verifyToken, async (req: Request, res: Response) => {
-  try {
-    const edtMicroArray : EdtMicro[] = req.body;
+app.post(
+  "/generateEdtSquelette",
+  authJwt.verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      const edtMicroArray: EdtMicro[] = req.body;
 
-    // Check if edtMicroArray is an array of objects
-    if (!Array.isArray(edtMicroArray)) {
-      res.status(400).send('Invalid data format: Expected an array of timetable entries.');
-      return;
-    }
+      // Check if edtMicroArray is an array of objects
+      if (!Array.isArray(edtMicroArray)) {
+        res
+          .status(400)
+          .send("Invalid data format: Expected an array of timetable entries.");
+        return;
+      }
 
-    // Validate structure of each object in edtMicroArray
-    const isValid = edtMicroArray.every((edtMicro: EdtMicro) =>
-      edtMicro.dateDebut &&
-      Array.isArray(edtMicro.promos) &&
-      edtMicro.promos.every((promo: any) =>
-        promo.name &&
-        Array.isArray(promo.semaine) &&
-        promo.semaine.every((semaine: any) =>
-          semaine.jour &&
-          typeof semaine.enCours === 'boolean' &&
-          Array.isArray(semaine.cours) &&
-          semaine.cours.every((cours: any) =>
-            cours.matiere &&
-            cours.heureDebut &&
-            cours.heureFin &&
-            cours.professeur &&
-            cours.salleDeCours
+      // Validate structure of each object in edtMicroArray
+      const isValid = edtMicroArray.every(
+        (edtMicro: EdtMicro) =>
+          edtMicro.dateDebut &&
+          Array.isArray(edtMicro.promos) &&
+          edtMicro.promos.every(
+            (promo: any) =>
+              promo.name &&
+              Array.isArray(promo.semaine) &&
+              promo.semaine.every(
+                (semaine: any) =>
+                  semaine.jour &&
+                  typeof semaine.enCours === "boolean" &&
+                  Array.isArray(semaine.cours) &&
+                  semaine.cours.every(
+                    (cours: any) =>
+                      cours.matiere &&
+                      cours.heureDebut &&
+                      cours.heureFin &&
+                      cours.professeur &&
+                      cours.salleDeCours
+                  )
+              )
           )
-        )
-      )
-    );
+      );
 
-    if (!isValid) {
-      res.status(400).send('Invalid data: Ensure EdtMicro structure follows the required format.');
-      return;
+      if (!isValid) {
+        res
+          .status(400)
+          .send(
+            "Invalid data: Ensure EdtMicro structure follows the required format."
+          );
+        return;
+      }
+
+      // Call function to generate the Excel file
+      const filePath = await generateEdtSquelette(edtMicroArray);
+
+      res.status(200).json({
+        message: "Excel file generated and saved on the server",
+        filePath,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal server error: " + error);
     }
-
-    // Call function to generate the Excel file
-    const filePath = await generateEdtSquelette(edtMicroArray);
-
-    res.status(200).json({
-      message: 'Excel file generated and saved on the server',
-      filePath,
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Internal server error: ' + error);
   }
-});
+);
 
 /**
  * @swagger
@@ -900,7 +1010,7 @@ app.post('/generateEdtSquelette',authJwt.verifyToken, async (req: Request, res: 
  *                 $ref: '#/components/schemas/EdtMicro'
  *       500:
  *         description: Erreur lors de la génération des données EdtMicro
- * 
+ *
  * components:
  *   schemas:
  *     EdtMacroData:
@@ -918,7 +1028,7 @@ app.post('/generateEdtSquelette',authJwt.verifyToken, async (req: Request, res: 
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/Promos'
- * 
+ *
  *     Promos:
  *       type: object
  *       properties:
@@ -935,7 +1045,7 @@ app.post('/generateEdtSquelette',authJwt.verifyToken, async (req: Request, res: 
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/Periode'
- * 
+ *
  *     Periode:
  *       type: object
  *       properties:
@@ -990,16 +1100,25 @@ app.post('/generateEdtSquelette',authJwt.verifyToken, async (req: Request, res: 
  *                             type: number
  *                             example: 2
  */
-app.post('/generateDataEdtMicro',authJwt.verifyToken, async (req: Request, res: Response) => {
-  try {
-    const { macro }: { macro: EdtMacroData } = req.body;
+app.post(
+  "/generateDataEdtMicro",
+  authJwt.verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { macro }: { macro: EdtMacroData } = req.body;
 
-    const result = await generateDataEdtMicro(macro);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la génération des données EdtMicro', error });
+      const result = await generateDataEdtMicro(macro);
+      res.status(200).json(result);
+    } catch (error) {
+      res
+        .status(500)
+        .json({
+          message: "Erreur lors de la génération des données EdtMicro",
+          error,
+        });
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -1031,13 +1150,20 @@ app.post('/generateDataEdtMicro',authJwt.verifyToken, async (req: Request, res: 
  *       500:
  *         description: Une erreur est survenue
  */
-app.get('/getSallesData', authJwt.verifyToken, (req, res) => {
-  const sql = 'SELECT * FROM Salles';
-  connection.query(sql, (error: any, results: any[]) => {
-    if (error) {
-      return res.status(500).json({ error: error.message });
+app.get("/getSallesData", authJwt.verifyToken, (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
     }
-    res.json(results);
+    const sql = "SELECT * FROM Salles";
+    console.log("DB_HOST :", dbConfig.DB_HOST);
+    connection.query(sql, (error: any, results: any[]) => {
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+      res.json(results);
+    });
+    connection.release(); // Libérer la connexion après vérification
   });
 });
 
@@ -1078,14 +1204,20 @@ app.get('/getSallesData', authJwt.verifyToken, (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
-app.post('/setSallesData', authJwt.verifyToken, (req, res) => {
-  const { name, type, capacite } = req.body;
-  const sql = 'INSERT INTO Salles (name, type, capacite) VALUES (?, ?, ?)';
-  connection.query(sql, [name,type, capacite], (error: any) => {
-    if (error) {
-      return res.status(500).json({ error: error.message });
+app.post("/setSallesData", authJwt.verifyToken, (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
     }
-    res.status(201).json({ message: 'Salle ajoutée avec succès' });
+    const { name, type, capacite } = req.body;
+    const sql = "INSERT INTO Salles (name, type, capacite) VALUES (?, ?, ?)";
+    connection.query(sql, [name, type, capacite], (error: any) => {
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+      res.status(201).json({ message: "Salle ajoutée avec succès" });
+    });
+    connection.release(); // Libérer la connexion après vérification
   });
 });
 
@@ -1132,34 +1264,45 @@ app.post('/setSallesData', authJwt.verifyToken, (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
-app.put('/updateSalle', authJwt.verifyToken, (req, res): void => {
+app.put("/updateSalle", authJwt.verifyToken, (req, res): void => {
   const { id, name, capacite, type } = req.body;
 
   if (!id || !name || !capacite || !type) {
-    res.status(400).json({ message: 'Tous les champs sont requis.' });
+    res.status(400).json({ message: "Tous les champs sont requis." });
     return;
   }
 
-  const sql = 'UPDATE Salles SET name = ?, capacite = ?, type = ? WHERE id = ?';
-  connection.query(sql, [name, capacite, type, id], (error: any, result: any) => {
-    if (error) {
-      console.error(error);
-      res.status(500).json({ error: error.message });
-      return;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
     }
 
-    const affectedRows = result.affectedRows;
-    if (affectedRows === 0) {
-      res.status(404).json({ message: `Salle avec l'ID ${id} non trouvée` });
-      return;
-    }
+    const sql =
+      "UPDATE Salles SET name = ?, capacite = ?, type = ? WHERE id = ?";
+    connection.query(
+      sql,
+      [name, capacite, type, id],
+      (error: any, result: any) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({ error: error.message });
+          return;
+        }
 
-    res.json({ message: 'Salle mise à jour avec succès' });
+        const affectedRows = result.affectedRows;
+        if (affectedRows === 0) {
+          res
+            .status(404)
+            .json({ message: `Salle avec l'ID ${id} non trouvée` });
+          return;
+        }
+
+        res.json({ message: "Salle mise à jour avec succès" });
+      }
+    );
+    connection.release(); // Libérer la connexion après vérification
   });
 });
-
-
-
 
 /**
  * @swagger
@@ -1192,25 +1335,32 @@ app.put('/updateSalle', authJwt.verifyToken, (req, res): void => {
  *       500:
  *         description: Erreur interne du serveur.
  */
-app.delete('/deleteSalle', authJwt.verifyToken, (req, res) => {
-  const { id } = req.query;
-  const sql = 'DELETE FROM Salles WHERE id = ?';
-  
-  connection.query(sql, [id], (error: any, result: any) => {
-    if (error) {
-      return res.status(500).json({ error: error.message });
+app.delete("/deleteSalle", authJwt.verifyToken, (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
     }
-    
-    const affectedRows = Array.isArray(result) ? result[0].affectedRows : result.affectedRows;
-    
-    if (affectedRows === 0) {
-      return res.status(404).json({ message: 'Salle non trouvée' });
-    }
+    const { id } = req.query;
+    const sql = "DELETE FROM Salles WHERE id = ?";
 
-    res.json({ message: 'Salle supprimée avec succès' });
+    connection.query(sql, [id], (error: any, result: any) => {
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      const affectedRows = Array.isArray(result)
+        ? result[0].affectedRows
+        : result.affectedRows;
+
+      if (affectedRows === 0) {
+        return res.status(404).json({ message: "Salle non trouvée" });
+      }
+
+      res.json({ message: "Salle supprimée avec succès" });
+    });
+    connection.release(); // Libérer la connexion après vérification
   });
 });
-
 
 // Start the server
 app.listen(PORT, () => {
