@@ -19,25 +19,31 @@ const ProfComponent: React.FC<ProfComponentProps> = ({ initialData, onDelete, on
   const [nom, setNom] = useState<string>(initialData?.name || '');
   const [typeProf, setTypeProf] = useState<'EXT' | 'INT'>(initialData?.type || 'INT');
   const [disponibilites, setDisponibilites] = useState<Disponibilites>(
-    initialData?.dispo ? JSON.parse(initialData.dispo) : {
-      lundiMatin: false,
-      lundiAprem: false,
-      mardiMatin: false,
-      mardiAprem: false,
-      mercrediMatin: false,
-      mercrediAprem: false,
-      jeudiMatin: false,
-      jeudiAprem: false,
-      vendrediMatin: false,
-      vendrediAprem: false,
-    }
+    // Vérifie si dispo est une chaîne avant de la parser
+    initialData?.dispo && typeof initialData.dispo === 'string'
+      ? JSON.parse(initialData.dispo)
+      : {
+          lundiMatin: false,
+          lundiAprem: false,
+          mardiMatin: false,
+          mardiAprem: false,
+          mercrediMatin: false,
+          mercrediAprem: false,
+          jeudiMatin: false,
+          jeudiAprem: false,
+          vendrediMatin: false,
+          vendrediAprem: false,
+        }
   );
 
   useEffect(() => {
     if (initialData) {
       setNom(initialData.name);
       setTypeProf(initialData.type);
-      setDisponibilites(JSON.parse(initialData.dispo));
+      // Vérifie si dispo est une chaîne avant de la parser
+      if (initialData.dispo && typeof initialData.dispo === 'string') {
+        setDisponibilites(JSON.parse(initialData.dispo));
+      }
     }
   }, [initialData]);
 
@@ -54,6 +60,7 @@ const ProfComponent: React.FC<ProfComponentProps> = ({ initialData, onDelete, on
       id: initialData?.id || 0,
       name: nom,
       type: typeProf,
+      // Convertit dispo en une chaîne JSON avant de l'envoyer
       dispo: JSON.stringify(disponibilites),
     };
     onUpdate(updatedProf);
