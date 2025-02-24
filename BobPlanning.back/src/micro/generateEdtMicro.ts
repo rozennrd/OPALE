@@ -24,7 +24,7 @@ export const generateEdtMicro = async (connection: any) : Promise<any> => {
     return {
       name: promo.Name,
       nombreEtudiants: promo.Nombre,
-      Cours: (coursesData as any[])
+      cours: (coursesData as any[])
         .filter((course) => {
           return course.promo == promo.Name;
         })
@@ -89,7 +89,7 @@ export const generateEdtMicro = async (connection: any) : Promise<any> => {
   //Generate Data EdtMicro 
   const calendrier = await generateDataEdtMicro(macro);
 
-  const data = {promos, profs, salles, calendrier};
+  const data = {Promos: promos, profs, salles, calendrier};
   return data;
 
   // //Call solver from microservice
