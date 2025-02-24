@@ -1419,62 +1419,80 @@ app.delete("/deleteSalle", authJwt.verifyToken, (req, res) => {
 });
 
 app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
-  console.log("Données reçues pour les matieres :", req.body);
+  console.log("Données reçues pour les matières :", req.body);
 
-  const insertPromises = req.body.courses.map((cours: { promo: string; name: string; UE: string; Semestre: string; Periode: string; Prof: string; typeSalle: string; heure: string }) => {
-    return new Promise<void>((resolve, reject) => {
-      const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE 
-                UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode), 
-                Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
 
-      connection.query(sql,
-        [cours.promo, cours.name, cours.UE, cours.Semestre, cours.Periode, cours.Prof, cours.typeSalle, cours.heure],
-        (error) => {
-          if (error) {
-            console.error("Erreur lors de l'insertion/mise à jour :", error);
-            return reject(error);
+    const insertPromises = req.body.courses.map((cours: { promo: string; name: string; UE: string; Semestre: string; Periode: string; Prof: string; typeSalle: string; heure: string }) => {
+      return new Promise<void>((resolve, reject) => {
+        const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                      ON DUPLICATE KEY UPDATE 
+                      UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode), 
+                      Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
+
+        connection.query(sql,
+          [cours.promo, cours.name, cours.UE, cours.Semestre, cours.Periode, cours.Prof, cours.typeSalle, cours.heure],
+          (error) => {
+            if (error) {
+              console.error("Erreur lors de l'insertion/mise à jour :", error);
+              return reject(error);
+            }
+            resolve();
           }
-          resolve();
-        }
-      );
-    });
-  });
-  Promise.all(insertPromises)
-    .then(() => {
-      res.json({ message: 'Informations des cours ajoutées avec succès.' });
-    })
-    .catch((error) => {
-      res.status(500).json({ error: error.message });
+        );
+      });
     });
 
+    Promise.all(insertPromises)
+      .then(() => {
+        res.json({ message: 'Informations des cours ajoutées avec succès.' });
+      })
+      .catch((error) => {
+        res.status(500).json({ error: error.message });
+      })
+      .finally(() => {
+        connection.release(); // Libérer la connexion après exécution
+      });
+  });
 });
 
 app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
   console.log("Données reçues pour la mise à jour du professeur :", req.body);
 
-  const updatePromises = req.body.courses.map((cours: { Prof: string; name: string }) => {
-    return new Promise<void>((resolve, reject) => {
-      const sql = `UPDATE Cours SET Prof = ? WHERE name = ?`;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
 
-      connection.query(sql, [cours.Prof, cours.name], (error) => {
-        if (error) {
-          console.error("Erreur lors de la mise à jour du professeur :", error);
-          return reject(error);
-        }
-        resolve();
+    const updatePromises = req.body.courses.map((cours: { promo: string; name: string; UE: string; Semestre: string; Periode: string; Prof: string; typeSalle: string; heure: string }) => {
+      return new Promise<void>((resolve, reject) => {
+        const sql = `UPDATE Cours SET Prof = ? WHERE name = ?`;
+
+        connection.query(sql, [cours.Prof, cours.name], (error) => {
+          if (error) {
+            console.error("Erreur lors de la mise à jour du professeur :", error);
+            return reject(error);
+          }
+          resolve();
+        });
       });
     });
-  });
 
-  Promise.all(updatePromises)
-    .then(() => {
-      res.json({ message: 'Professeurs mis à jour avec succès.' });
-    })
-    .catch((error) => {
-      res.status(500).json({ error: error.message });
-    });
+    Promise.all(updatePromises)
+      .then(() => {
+        res.json({ message: 'Professeurs mis à jour avec succès.' });
+      })
+      .catch((error) => {
+        res.status(500).json({ error: error.message });
+      })
+      .finally(() => {
+        connection.release(); // Libérer la connexion après exécution
+      });
+  });
 });
 
 
