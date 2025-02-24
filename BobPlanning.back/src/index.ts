@@ -1426,39 +1426,78 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
       return res.status(500).json({ error: err.message });
     }
 
-    const insertPromises = req.body.courses.map((cours: { promo: string; name: string; UE: string; Semestre: string; Periode: string; Prof: string; typeSalle: string; heure: string }) => {
-      return new Promise<void>((resolve, reject) => {
-        const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                      ON DUPLICATE KEY UPDATE 
-                      UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode), 
-                      Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
+    connection.beginTransaction((err) => {
+      if (err) {
+        connection.release();
+        return res.status(500).json({ error: err.message });
+      }
 
-        connection.query(sql,
-          [cours.promo, cours.name, cours.UE, cours.Semestre, cours.Periode, cours.Prof, cours.typeSalle, cours.heure],
-          (error) => {
-            if (error) {
-              console.error("Erreur lors de l'insertion/mise à jour :", error);
-              return reject(error);
-            }
-            resolve();
-          }
-        );
+      // Extraire la promo unique des cours
+      const promo = req.body.courses.length > 0 ? req.body.courses[0].promo : null;
+
+      if (!promo) {
+        connection.release();
+        return res.status(400).json({ error: "Aucune promotion fournie" });
+      }
+
+      // Supprimer les matières associées à cette promo
+      const deleteSql = `DELETE FROM Cours WHERE promo = ?`;
+
+      connection.query(deleteSql, [promo], (deleteErr) => {
+        if (deleteErr) {
+          return connection.rollback(() => {
+            connection.release();
+            res.status(500).json({ error: deleteErr.message });
+          });
+        }
+
+        // Insérer les nouvelles matières
+        const insertPromises = req.body.courses.map((cours: { promo: string; name: string; UE: string; Semestre: string; Periode: string; Prof: string; typeSalle: string; heure: string }) => {
+          return new Promise<void>((resolve, reject) => {
+            const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                          ON DUPLICATE KEY UPDATE 
+                          UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode), 
+                          Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
+
+            connection.query(sql,
+              [cours.promo, cours.name, cours.UE, cours.Semestre, cours.Periode, cours.Prof, cours.typeSalle, cours.heure],
+              (error) => {
+                if (error) {
+                  console.error("Erreur lors de l'insertion/mise à jour :", error);
+                  return reject(error);
+                }
+                resolve();
+              }
+            );
+          });
+        });
+
+        Promise.all(insertPromises)
+          .then(() => {
+            connection.commit((commitErr) => {
+              if (commitErr) {
+                return connection.rollback(() => {
+                  connection.release();
+                  res.status(500).json({ error: commitErr.message });
+                });
+              }
+              res.json({ message: 'Matières mises à jour avec succès pour la promo ' + promo });
+            });
+          })
+          .catch((error) => {
+            connection.rollback(() => {
+              res.status(500).json({ error: error.message });
+            });
+          })
+          .finally(() => {
+            connection.release();
+          });
       });
     });
-
-    Promise.all(insertPromises)
-      .then(() => {
-        res.json({ message: 'Informations des cours ajoutées avec succès.' });
-      })
-      .catch((error) => {
-        res.status(500).json({ error: error.message });
-      })
-      .finally(() => {
-        connection.release(); // Libérer la connexion après exécution
-      });
   });
 });
+
 
 app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
   console.log("Données reçues pour la mise à jour du professeur :", req.body);

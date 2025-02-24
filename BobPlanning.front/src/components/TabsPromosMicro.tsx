@@ -151,7 +151,7 @@ export default function TabPromosMicro({ }: FullWidthTabsProps) {
   };
 
 
-// Gestion du changement d'onglet
+  // Gestion du changement d'onglet
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -201,6 +201,7 @@ export default function TabPromosMicro({ }: FullWidthTabsProps) {
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flexDirection: 'column' }}>
               <h4>Importer la maquette  {getPromoName(promo)}  </h4>
               <InputFileUpload
+                promoName={promo}
                 onFileUpload={(file) => handleFileUpload(promo, file)}
                 uploadedFile={uploadedFiles[promo]}
                 responseData={responseData[promo]}

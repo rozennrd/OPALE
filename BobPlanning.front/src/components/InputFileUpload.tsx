@@ -22,6 +22,7 @@ const VisuallyHiddenInput = styled('input')({
 
 //props
 interface InputFileUploadProps {
+  promoName: string;
   onFileUpload: (file: File) => void;
   uploadedFile: File | null;
   responseData: any | null;
@@ -29,7 +30,7 @@ interface InputFileUploadProps {
 }
 
 
-export default function InputFileUpload({ onFileUpload, uploadedFile, responseData, onResponseData }: InputFileUploadProps) {
+export default function InputFileUpload({ promoName, onFileUpload, uploadedFile, responseData, onResponseData }: InputFileUploadProps) {
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -49,36 +50,36 @@ export default function InputFileUpload({ onFileUpload, uploadedFile, responseDa
         //callback
         onFileUpload(file);
         onResponseData(response.data);
-        saveCoursesToDB(response.data);
+        saveCoursesToDB(response.data, promoName);
       } catch (error) {
         console.error('Error uploading file : ', error);
       }
     }
   }
 
-  const saveCoursesToDB = async (data: any) => {
+  const saveCoursesToDB = async (data: any, promo: string) => {
     if (!data || !data.cours) return;
 
     try {
       const payload = {
         courses: data.cours.map((course: any) => ({
-          promo: "Promo 2024",  // À modifier dynamiquement si nécessaire
-                name: course.name,
-                UE: course.UE,
-                Semestre: course.semestre.join(','), // Convertir `[1]` en `"1"`
-                Periode: JSON.stringify(course.periode), // Stocker en JSON string
-                Prof: null, // Par défaut vide (sera mis à jour plus tard)
-                typeSalle: "classique", // Valeur par défaut
-                heure: JSON.stringify({
-                    total: course.heure.total ?? 0,
-                    totalAvecProf: course.heure.totalAvecProf ?? 0,
-                    coursMagistral: course.heure.coursMagistral ?? 0,
-                    coursInteractif: course.heure.coursInteractif ?? 0,
-                    td: course.heure.td ?? 0,
-                    tp: course.heure.tp ?? 0,
-                    projet: course.heure.projet ?? 0,
-                    elearning: course.heure.elearning ?? 0
-                })
+          promo,  // À modifier dynamiquement si nécessaire
+          name: course.name,
+          UE: course.UE,
+          Semestre: course.semestre.join(','), // Convertir `[1]` en `"1"`
+          Periode: JSON.stringify(course.periode), // Stocker en JSON string
+          Prof: null, // Par défaut vide (sera mis à jour plus tard)
+          typeSalle: "classique", // Valeur par défaut
+          heure: JSON.stringify({
+            total: course.heure.total ?? 0,
+            totalAvecProf: course.heure.totalAvecProf ?? 0,
+            coursMagistral: course.heure.coursMagistral ?? 0,
+            coursInteractif: course.heure.coursInteractif ?? 0,
+            td: course.heure.td ?? 0,
+            tp: course.heure.tp ?? 0,
+            projet: course.heure.projet ?? 0,
+            elearning: course.heure.elearning ?? 0
+          })
         })),
       };
 
