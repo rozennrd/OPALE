@@ -2,6 +2,7 @@ import axios from "axios";
 import { EdtMacroData } from "../types/EdtMacroData";
 import { generateDataEdtMicro } from "./generateDataEdtMicro";
 import { generateEdtSquelette } from './generateEdtSquelette';
+import e from "express";
 
 export const generateEdtMicro = async (connection: any) : Promise<any> => {
 
@@ -20,61 +21,76 @@ export const generateEdtMicro = async (connection: any) : Promise<any> => {
   const [calendrierData] = await connection.promise().query("SELECT * FROM calendrier");
 
   const promos: any[] = (promosData as any[]).map((promo) => {
-    
     return {
       name: promo.Name,
       nombreEtudiants: promo.Nombre,
       cours: (coursesData as any[])
-        .filter((course) => {
-          return course.promo == promo.Name;
-        })
+        .filter((course) => course.promo == promo.Name)
         .map((course) => {  
           let semestreParsed, heureParsed, periodeParsed;
-          
+  
           try {
             semestreParsed = JSON.parse(course.Semestre);
           } catch (error) {
-            semestreParsed = course.Semestre; 
+            semestreParsed = course.Semestre;
           }
   
           try {
             heureParsed = JSON.parse(course.heure);
           } catch (error) {
-            heureParsed = course.heure; 
+            heureParsed = course.heure;
           }
-
+  
           try {
             periodeParsed = JSON.parse(course.Periode);
           } catch (error) {
-            periodeParsed = course.Periode; 
+            periodeParsed = course.Periode;
           }
   
           return {
             name: course.name,
             UE: course.UE,
-            semestre: [semestreParsed],
+            semestre: Array.isArray(semestreParsed)
+              ? semestreParsed.map(Number) 
+              : typeof semestreParsed === "string"
+              ? semestreParsed.split(",").map(Number) 
+              : [semestreParsed],
             periode: periodeParsed,
-            prof: course.Prof || 0,
+            prof: String(course.Prof || ""),
             typeSalle: course.typeSalle,
             heure: heureParsed,
           };
         }),
     };
   });
-
+  
   const salles: any[] = (sallesData as any[]).map((salle) => ({
-    ID: salle.id,
+    ID: String(salle.id),
     type: salle.type,
     capacite: salle.capacite,
   }));
 
-  const profs: any[] = (profsData as any[]).map((prof) => ({
-    ID: prof.id,
-    name: prof.name,
-    type: prof.type,
-    dispo: prof.dispo ? JSON.parse(prof.dispo) : [],
-  }));
-
+  const profs: any[] = (profsData as any[]).map((prof) => {
+    let dispoParsed;
+    
+    try {
+      dispoParsed = prof.dispo ? JSON.parse(prof.dispo) : {};
+    } catch (error) {
+      dispoParsed = {};
+    }
+  
+    const dispoArray = Object.keys(dispoParsed)
+      .filter((key) => dispoParsed[key]) 
+      .map((key) => key.replace(/([A-Z])/g, "_$1").toLowerCase()); 
+  
+    return {
+      ID: String(prof.id),
+      name: prof.name,
+      type: prof.type,
+      dispo: dispoArray,
+    };
+  });
+  
   const macro: EdtMacroData = {
     DateDeb: calendrierData[0]?.dateDeb || null,
     DateFin: calendrierData[0]?.dateFin || null,
@@ -89,13 +105,12 @@ export const generateEdtMicro = async (connection: any) : Promise<any> => {
   //Generate Data EdtMicro 
   const calendrier = await generateDataEdtMicro(macro);
 
-  const data = {Promos: promos, profs, salles, calendrier};
-  return data;
+  const data = {Promos: promos, Profs: profs, Salles: salles, Calendrier: calendrier};
 
-  // //Call solver from microservice
-  const edtMicroArray : any[] = await axios.post('http://127.0.0.1:3001/getDataEdtMicro', data);;
+  const response = await axios.post('http://127.0.0.1:3001/getDataEdtMicro', data);
+  const edtMicroArray: any[] = response.data; 
 
-  // //Generate Excel file
+  //Generate Excel file
   const filePath = await generateEdtSquelette(edtMicroArray);
   return filePath;
 };

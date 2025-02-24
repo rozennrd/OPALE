@@ -206,7 +206,7 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                 for jour_index, jour in enumerate(semaine["jours_travailles"]):
                     for creneau_index in range(len(creneaux_horaires)):
                         if prof_id not in profs_info:
-                            print(f"⚠️ [ALERTE] Le prof {prof_id} n'existe pas dans la liste des profs.")
+                            # print(f"⚠️ [ALERTE] Le prof {prof_id} n'existe pas dans la liste des profs.")
                             continue
                         if is_prof_available(profs_info, prof_id, jour, creneaux_horaires[creneau_index]):
                             creneaux_valides.append((semaine_index, jour_index, creneau_index))
@@ -401,7 +401,7 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
         
     solver = cp_model.CpSolver()
     
-    solver.parameters.max_time_in_seconds = 60  # Stop après 10s de calcul
+    solver.parameters.max_time_in_seconds = 600  # Stop après 10s de calcul
     solver.parameters.num_search_workers = 5  # Utilise 4 cœurs (modifiable selon ton PC)
     solver.parameters.log_search_progress = True  # Affiche l’avancement pour debug
     # ✅ Éviter la recherche d'optimalité extrême
