@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost
--- Généré le : jeu. 13 fév. 2025 à 10:22
+-- Généré le : jeu. 20 fév. 2025 à 15:11
 -- Version du serveur : 10.11.6-MariaDB
 -- Version de PHP : 8.0.30
 
@@ -48,10 +48,11 @@ INSERT INTO `calendrier` (`id`, `dateDeb`, `dateFin`) VALUES
 
 CREATE TABLE `Cours` (
   `id` int(11) NOT NULL,
+  `promo` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `UE` varchar(255) NOT NULL,
-  `Semestre` text NOT NULL,
-  `Periode` int(11) DEFAULT NULL,
+  `Semestre` longtext NOT NULL,
+  `Periode` longtext DEFAULT NULL,
   `Prof` int(11) DEFAULT NULL,
   `typeSalle` enum('classique','electronique','informatique','projet') DEFAULT NULL,
   `heure` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`heure`))
@@ -69,6 +70,16 @@ CREATE TABLE `Professeurs` (
   `type` enum('EXT','INT') NOT NULL,
   `dispo` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+--
+-- Déchargement des données de la table `Professeurs`
+--
+
+INSERT INTO `Professeurs` (`id`, `name`, `type`, `dispo`) VALUES
+(1, 'Antoine pirog', 'INT', '{\"lundiMatin\":true,\"lundiAprem\":true,\"mardiMatin\":false,\"mardiAprem\":true,\"mercrediMatin\":false,\"mercrediAprem\":true,\"jeudiMatin\":true,\"jeudiAprem\":false,\"vendrediMatin\":false,\"vendrediAprem\":true}'),
+(6, 'Sassi', 'INT', '{\"lundiMatin\":true,\"lundiAprem\":true,\"mardiMatin\":false,\"mardiAprem\":true,\"mercrediMatin\":false,\"mercrediAprem\":true,\"jeudiMatin\":true,\"jeudiAprem\":false,\"vendrediMatin\":false,\"vendrediAprem\":true}'),
+(17, 'Jonathan', 'INT', '{\"lundiMatin\":true,\"lundiAprem\":true,\"mardiMatin\":false,\"mardiAprem\":true,\"mercrediMatin\":false,\"mercrediAprem\":true,\"jeudiMatin\":true,\"jeudiAprem\":false,\"vendrediMatin\":false,\"vendrediAprem\":true}'),
+(20, 'abdelkarim', 'INT', '{\"lundiMatin\":true,\"lundiAprem\":true,\"mardiMatin\":false,\"mardiAprem\":true,\"mercrediMatin\":false,\"mercrediAprem\":true,\"jeudiMatin\":true,\"jeudiAprem\":false,\"vendrediMatin\":false,\"vendrediAprem\":true}');
 
 -- --------------------------------------------------------
 
@@ -88,8 +99,8 @@ CREATE TABLE `promosData` (
 --
 
 INSERT INTO `promosData` (`id`, `Name`, `Nombre`, `Periode`) VALUES
-(1, 'ADI1', 4, '[{\"DateDebutP\":\"2025-09-03\",\"DateFinP\":\"2026-05-27\"}]'),
-(2, 'ADI2', 3, '[{\"DateDebutP\":\"2025-09-02\",\"DateFinP\":\"2026-05-27\"}]'),
+(1, 'ADI1', 1, '[{\"DateDebutP\":\"2025-09-03\",\"DateFinP\":\"2026-05-27\"}]'),
+(2, 'ADI2', 1, '[{\"DateDebutP\":\"2025-09-02\",\"DateFinP\":\"2026-05-27\"}]'),
 (3, 'CIR1', 3, '[{\"DateDebutP\":\"2025-09-02\",\"DateFinP\":\"2026-05-27\"}]'),
 (4, 'CIR2', 2, '[{\"DateDebutP\":\"2025-09-02\",\"DateFinP\":\"2026-05-27\"}]'),
 (5, 'AP3', 3, '[{\"DateDebutP\":\"2025-09-02\",\"nbSemaineP\":3,\"DateFinP\":\"2025-09-23\"}]'),
@@ -111,6 +122,17 @@ CREATE TABLE `Salles` (
   `type` enum('classique','electronique','informatique','projet') NOT NULL,
   `capacite` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+--
+-- Déchargement des données de la table `Salles`
+--
+
+INSERT INTO `Salles` (`id`, `name`, `type`, `capacite`) VALUES
+(5, '122', 'electronique', 3292),
+(7, 'fqdfqd', 'electronique', 123),
+(8, 'ici', 'electronique', 777),
+(10, 'MATHIASS', 'classique', 77777),
+(11, 'sfdq', 'informatique', 2000);
 
 -- --------------------------------------------------------
 
@@ -151,7 +173,8 @@ ALTER TABLE `calendrier`
 --
 ALTER TABLE `Cours`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_profs` (`Prof`);
+  ADD KEY `fk_profs` (`Prof`),
+  ADD KEY `fk_promo` (`promo`);
 
 --
 -- Index pour la table `Professeurs`
@@ -197,7 +220,7 @@ ALTER TABLE `Cours`
 -- AUTO_INCREMENT pour la table `Professeurs`
 --
 ALTER TABLE `Professeurs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT pour la table `promosData`
@@ -209,7 +232,7 @@ ALTER TABLE `promosData`
 -- AUTO_INCREMENT pour la table `Salles`
 --
 ALTER TABLE `Salles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT pour la table `Utilisateurs`
@@ -225,7 +248,8 @@ ALTER TABLE `Utilisateurs`
 -- Contraintes pour la table `Cours`
 --
 ALTER TABLE `Cours`
-  ADD CONSTRAINT `fk_profs` FOREIGN KEY (`Prof`) REFERENCES `Professeurs` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `fk_profs` FOREIGN KEY (`Prof`) REFERENCES `Professeurs` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_promo` FOREIGN KEY (`promo`) REFERENCES `promosData` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

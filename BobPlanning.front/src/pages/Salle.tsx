@@ -11,9 +11,11 @@ const Salle: React.FC = () => {
 
   const typesDisponibles = ['classique', 'electronique', 'informatique', 'projet'];
 
+  const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
+
   const loadSalles = async () => {
     try {
-      const response = await fetch('http://localhost:3000/getSallesData', {
+      const response = await fetch(`${RACINE_FETCHER_URL}/getSallesData`, {
         headers: {
           'x-access-token': localStorage.getItem('accessToken') ?? '',
         },
@@ -40,7 +42,7 @@ const Salle: React.FC = () => {
     }
 
     try {
-      const url = editId ? 'http://localhost:3000/updateSalle' : 'http://localhost:3000/setSallesData';
+      const url = editId ? `${RACINE_FETCHER_URL}/updateSalle` : `${RACINE_FETCHER_URL}/setSallesData`;
       const method = editId ? 'PUT' : 'POST';
       const body = editId ? { id: editId, name: nom, type, capacite: Number(capacite) } : { name: nom, type, capacite: Number(capacite) };
 
@@ -70,7 +72,7 @@ const Salle: React.FC = () => {
 
   const deleteSalle = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/deleteSalle?id=${id}`, {
+      const response = await fetch(`${RACINE_FETCHER_URL}/deleteSalle?id=${id}`, {
         method: 'DELETE',
         headers: {
           'x-access-token': localStorage.getItem('accessToken') ?? '',

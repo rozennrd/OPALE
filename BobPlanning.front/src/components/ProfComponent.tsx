@@ -6,10 +6,10 @@ type Disponibilites = {
 
 interface ProfComponentProps {
   initialData?: {
-    id: number;
+    id: any;
     name: string;
     type: 'EXT' | 'INT';
-    dispo: string;
+    dispo: Record<string, boolean>;
   };
   onDelete: () => void;
   onUpdate: (updatedProf: { id: number; name: string; type: 'EXT' | 'INT'; dispo: string }) => void;
@@ -57,7 +57,7 @@ const ProfComponent: React.FC<ProfComponentProps> = ({ initialData, onDelete, on
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const updatedProf = {
-      id: initialData?.id || 0,
+      id: initialData?.id || null,
       name: nom,
       type: typeProf,
       // Convertit dispo en une chaîne JSON avant de l'envoyer
