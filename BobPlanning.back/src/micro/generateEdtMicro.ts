@@ -1,4 +1,4 @@
-
+import axios from "axios";
 import { EdtMacroData } from "../types/EdtMacroData";
 import { generateDataEdtMicro } from "./generateDataEdtMicro";
 import { generateEdtSquelette } from './generateEdtSquelette';
@@ -10,7 +10,7 @@ export const generateEdtMicro = async (connection: any) : Promise<any> => {
   );
   
   const [coursesData] = await connection.promise().query(
-    `SELECT id, name, UE, Semestre, Periode, Prof, typeSalle, heure FROM Cours`
+    `SELECT id, promo, name, UE, Semestre, Periode, Prof, typeSalle, heure FROM Cours`
   );
   
   const [sallesData] = await connection.promise().query("SELECT * FROM Salles");
@@ -18,23 +18,49 @@ export const generateEdtMicro = async (connection: any) : Promise<any> => {
   const [profsData] = await connection.promise().query("SELECT * FROM Professeurs");
   
   const [calendrierData] = await connection.promise().query("SELECT * FROM calendrier");
-  
 
-  const promos: any[] = (promosData as any[]).map((promo) => ({
-    name: promo.Name,
-    nombreEtudiants: promo.Nombre,
-    Cours: (coursesData as any[])
-      .filter((course) => course.Periode === promo.id)
-      .map((course) => ({
-        name: course.name,
-        UE: course.UE,
-        Semestre: JSON.parse(course.Semestre),
-        Periode: [course.Periode],
-        Prof: course.Prof,
-        typeSalle: course.typeSalle,
-        Heure: JSON.parse(course.heure),
-      })),
-  }));
+  const promos: any[] = (promosData as any[]).map((promo) => {
+    
+    return {
+      name: promo.Name,
+      nombreEtudiants: promo.Nombre,
+      Cours: (coursesData as any[])
+        .filter((course) => {
+          return course.promo == promo.Name;
+        })
+        .map((course) => {  
+          let semestreParsed, heureParsed, periodeParsed;
+          
+          try {
+            semestreParsed = JSON.parse(course.Semestre);
+          } catch (error) {
+            semestreParsed = course.Semestre; 
+          }
+  
+          try {
+            heureParsed = JSON.parse(course.heure);
+          } catch (error) {
+            heureParsed = course.heure; 
+          }
+
+          try {
+            periodeParsed = JSON.parse(course.Periode);
+          } catch (error) {
+            periodeParsed = course.Periode; 
+          }
+  
+          return {
+            name: course.name,
+            UE: course.UE,
+            Semestre: [semestreParsed],
+            Periode: periodeParsed,
+            Prof: course.Prof,
+            typeSalle: course.typeSalle,
+            Heure: heureParsed,
+          };
+        }),
+    };
+  });
 
   const salles: any[] = (sallesData as any[]).map((salle) => ({
     ID: salle.id,
@@ -63,13 +89,13 @@ export const generateEdtMicro = async (connection: any) : Promise<any> => {
   //Generate Data EdtMicro 
   const calendrier = await generateDataEdtMicro(macro);
 
-  return {promos, profs, salles, calendrier};
+  const data = {promos, profs, salles, calendrier};
+  return data;
 
   // //Call solver from microservice
-  // //TODO
-  // const edtMicroArray : any[] = [];
+  const edtMicroArray : any[] = await axios.post('http://127.0.0.1:3001/getDataEdtMicro', data);;
 
   // //Generate Excel file
-  // const filePath = await generateEdtSquelette(edtMicroArray);
-  // return filePath;
+  const filePath = await generateEdtSquelette(edtMicroArray);
+  return filePath;
 };
