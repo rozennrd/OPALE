@@ -140,14 +140,14 @@ export const readMaquette = async (buffer: Buffer) : Promise<MaquetteData> => {
           semestre: semestre,
           periode: periode,
           heure: {
-            total: rowValues[nbHeures] && typeof rowValues[nbHeures] === 'object' && rowValues[nbHeures].hasOwnProperty('result') ? parseFloat(rowValues[nbHeures].result) : parseFloat(rowValues[nbHeures]),
-            totalAvecProf: rowValues[nbHeuresAvecProf] && typeof rowValues[nbHeuresAvecProf] === 'object' && rowValues[nbHeuresAvecProf].hasOwnProperty('result') ? parseFloat(rowValues[nbHeuresAvecProf].result) : parseFloat(rowValues[nbHeuresAvecProf]),
-            coursMagistral: parseFloat(rowValues[coursMagistral]),
-            coursInteractif: parseFloat(rowValues[coursInteractif]),
-            td: parseFloat(rowValues[td]),
-            tp: parseFloat(rowValues[tp]),
-            projet: parseFloat(rowValues[projet]),
-            elearning: parseFloat(rowValues[elearning])
+            total: (rowValues[nbHeures] && typeof rowValues[nbHeures] === 'object' && rowValues[nbHeures].hasOwnProperty('result') ? parseFloat(rowValues[nbHeures].result ?? 0) : parseFloat(rowValues[nbHeures]) ?? 0) || (rowValues[nbHeuresAvecProf] && typeof rowValues[nbHeuresAvecProf] === 'object' && rowValues[nbHeuresAvecProf].hasOwnProperty('result') ? parseFloat(rowValues[nbHeuresAvecProf].result ?? 0) : parseFloat(rowValues[nbHeuresAvecProf]) ?? 0) || 0,
+            totalAvecProf: (rowValues[nbHeuresAvecProf] && typeof rowValues[nbHeuresAvecProf] === 'object' && rowValues[nbHeuresAvecProf].hasOwnProperty('result') ? parseFloat(rowValues[nbHeuresAvecProf].result ?? 0) : parseFloat(rowValues[nbHeuresAvecProf]) ?? 0) || 0	,
+            coursMagistral: parseFloat(rowValues[coursMagistral] ?? 0) || 0	,
+            coursInteractif: parseFloat(rowValues[coursInteractif] ?? 0) || 0	,
+            td: parseFloat(rowValues[td] ?? 0) || 0	,
+            tp: parseFloat(rowValues[tp] ?? 0) || 0	,
+            projet: parseFloat(rowValues[projet] ?? 0) || 0	,
+            elearning: parseFloat(rowValues[elearning] ?? 0) || 0	
           }
         });
       }

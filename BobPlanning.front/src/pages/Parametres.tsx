@@ -252,4 +252,4 @@ const Parametres: React.FC = () => {
   };
 }
 
-export default Parametres;
+export default Parametres;        

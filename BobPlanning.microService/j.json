@@ -1,0 +1,170 @@
+[
+    {
+      "dateDebut": "2024-07-29T00:00:00Z",
+      "promos": [
+        {
+          "name": "ADI1",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": [
+                {
+                  "matiere": "Phy",
+                  "heureDebut": "14h",
+                  "heureFin": "18h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Info",
+                  "heureDebut": "8h",
+                  "heureFin": "12h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Info",
+                  "heureDebut": "13h",
+                  "heureFin": "14h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                }
+              ]
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": [
+                {
+                  "matiere": "Math",
+                  "heureDebut": "15h",
+                  "heureFin": "18h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Phy",
+                  "heureDebut": "8h",
+                  "heureFin": "12h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Phy",
+                  "heureDebut": "13h",
+                  "heureFin": "15h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                }
+              ]
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": [
+                {
+                  "matiere": "Math",
+                  "heureDebut": "8h",
+                  "heureFin": "12h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Math",
+                  "heureDebut": "13h",
+                  "heureFin": "16h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ADI2",
+          "semaine": [
+            {
+              "jour": "Lundi",
+              "enCours": true,
+              "message": "",
+              "cours": [
+                {
+                  "matiere": "Phy",
+                  "heureDebut": "8h",
+                  "heureFin": "12h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Phy",
+                  "heureDebut": "13h",
+                  "heureFin": "18h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                }
+              ]
+            },
+            {
+              "jour": "Mardi",
+              "enCours": true,
+              "message": "",
+              "cours": [
+                {
+                  "matiere": "Math",
+                  "heureDebut": "9h",
+                  "heureFin": "12h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Math",
+                  "heureDebut": "13h",
+                  "heureFin": "18h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                },
+                {
+                  "matiere": "Phy",
+                  "heureDebut": "8h",
+                  "heureFin": "9h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                }
+              ]
+            },
+            {
+              "jour": "Mercredi",
+              "enCours": true,
+              "message": "",
+              "cours": [
+                {
+                  "matiere": "Math",
+                  "heureDebut": "8h",
+                  "heureFin": "10h",
+                  "professeur": "Prof inconnu",
+                  "salleDeCours": "Salle inconnue"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dateDebut": "2024-08-05T00:00:00Z",
+      "promos": [
+        {
+          "name": "ADI1",
+          "semaine": []
+        },
+        {
+          "name": "ADI2",
+          "semaine": []
+        }
+      ]
+    }
+  ]
