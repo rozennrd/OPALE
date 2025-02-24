@@ -54,7 +54,7 @@ export const generateEdtMicro = async (connection: any) : Promise<any> => {
             UE: course.UE,
             semestre: [semestreParsed],
             periode: periodeParsed,
-            prof: course.Prof,
+            prof: course.Prof || 0,
             typeSalle: course.typeSalle,
             heure: heureParsed,
           };
