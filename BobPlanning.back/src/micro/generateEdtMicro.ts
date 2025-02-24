@@ -52,11 +52,11 @@ export const generateEdtMicro = async (connection: any) : Promise<any> => {
           return {
             name: course.name,
             UE: course.UE,
-            Semestre: [semestreParsed],
-            Periode: periodeParsed,
-            Prof: course.Prof,
+            semestre: [semestreParsed],
+            periode: periodeParsed,
+            prof: course.Prof,
             typeSalle: course.typeSalle,
-            Heure: heureParsed,
+            heure: heureParsed,
           };
         }),
     };
