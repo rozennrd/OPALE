@@ -8,7 +8,23 @@ import Box from '@mui/material/Box';
 // @ts-ignore
 import PromosData from '../models/promosData';
 import InputFileUpload from './InputFileUpload';
+import MaquetteDisplayTest from './MaquetteDisplayTest';
+const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
 
+interface Course {
+  promo: string;
+  name: string;
+  UE: string;
+  semestre: string;
+  Periode: string;
+  Prof: string;
+  typeSalle: string;
+  heure: string; // JSON sous forme de string
+}
+
+interface UE {
+  name: string;
+}
 // Liste des noms de promotions
 const promos = [
   'ADI1', 'ADI2',
@@ -102,6 +118,40 @@ interface FullWidthTabsProps {
 export default function TabPromosMicro({ }: FullWidthTabsProps) {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
+  const [cours, setCours] = React.useState<Course[]>([]);
+  const [reloadData, setReloadData] = React.useState(false);
+  
+  
+  const handleMaquetteUpload = () => {
+    setReloadData((prev) => !prev); 
+  };
+
+  
+  const extractUE = (cours: Course[], promo: string): UE[] => {
+    const ueSet = new Set(cours.filter((course) => course.promo === promo).map((course) => course.UE));
+    return Array.from(ueSet).map((ue) => ({ name: ue }));
+  };
+
+  React.useEffect(() => {
+    const fetchCours = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const response = await fetch(`${RACINE_FETCHER_URL}/getCours`, {
+          method: 'GET',
+          headers: {
+            "x-access-token": token ?? "", // Ajouter le token dans l'en-tête
+          },
+        });
+        const data = await response.json();
+        setCours([...data]);
+        console.log(data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des cours :", error);
+      }
+    }
+    fetchCours();
+  }, [reloadData]);
+
 
 
 
@@ -184,7 +234,26 @@ export default function TabPromosMicro({ }: FullWidthTabsProps) {
             ))}
           </CustomTabs>
         </AppBar>
-        {promos.map((promo, index) => (
+        {promos.map((promo, index) => 
+        {
+          const formattedData = React.useMemo(() => ({
+            UE: extractUE([...cours], promo), // ✅ Nouvelle référence pour éviter les valeurs figées
+            cours: cours
+              .filter((course) => course.promo === promo)
+              .map((course) => ({
+                promo: course.promo,   
+                name: course.name,
+                UE: course.UE,
+                semestre: course.semestre ? course.semestre.split(',').map(Number) : [],
+                Periode: course.Periode,
+                Prof: course.Prof,
+                typeSalle: course.typeSalle,
+                heure: JSON.parse(course.heure),
+              })),
+            reloadData, // ✅ Ajouté en tant que dépendance
+          }), [cours, reloadData]);
+          return(
+            
           <TabPanel value={value} index={index} dir={theme.direction} key={index}>
             <Typography
               variant="h4"
@@ -206,11 +275,20 @@ export default function TabPromosMicro({ }: FullWidthTabsProps) {
                 uploadedFile={uploadedFiles[promo]}
                 responseData={responseData[promo]}
                 onResponseData={(date) => handleResponseData(promo, date)}
+                onMaquetteUpload={handleMaquetteUpload}   
               />
+              
+              <MaquetteDisplayTest
+                data={formattedData}
+                
+              />
+
+
             </div>
 
-          </TabPanel>
-        ))}
+          </TabPanel> );
+        
+        })}
       </Box>
     </Box>
 
