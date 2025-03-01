@@ -12,6 +12,7 @@ import { EdtMicro } from "./types/EdtMicroData";
 import { generateEdtMicro } from "./micro/generateEdtMicro";
 import { getLogin } from "./database/getLogin";
 import authJwt from "./middleware/authJwt";
+import { get } from "http";
 
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
@@ -1418,6 +1419,9 @@ app.delete("/deleteSalle", authJwt.verifyToken, (req, res) => {
   });
 });
 
+
+
+
 app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
   console.log("Données reçues pour les matières :", req.body);
 
@@ -1534,6 +1538,27 @@ app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
   });
 });
 
+app.get("/getCours", authJwt.verifyToken, (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    const sql = "SELECT * FROM Cours"; // Remplace `Cours` par le nom de ta table en base de données
+
+    connection.query(sql, (error, results) => {
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      console.log("📢 Données des cours récupérées :", results); // Affichage en console
+
+      res.json(results);
+    });
+
+    connection.release(); // Libérer la connexion après l'exécution
+  });
+});
 
 // Start the server
 app.listen(PORT, () => {
