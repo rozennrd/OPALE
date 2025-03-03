@@ -5,7 +5,7 @@ import { getTokenFromLocalStorage } from '../auth/Token';
 
 const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
 
-interface ProfData {
+export interface ProfData {
   id: any;
   name: string;
   type: 'EXT' | 'INT';
@@ -161,7 +161,7 @@ const Profs: React.FC = () => {
           <div key={prof.id} className="prof-item">
             <ProfComponent
               initialData={prof}
-              onUpdate={(updatedProf) => updateProf(updatedProf, index, false)}
+              onUpdate={(updatedProf: ProfData) => updateProf(updatedProf, index, false)}
               onDelete={() => deleteProf(prof.id)}
             />
           </div>

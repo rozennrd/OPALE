@@ -1,7 +1,6 @@
 import { Accordion, AccordionDetails, AccordionSummary, MenuItem, Select, Table, TableBody, TableCell, TableRow, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
 interface Course {
