@@ -194,6 +194,7 @@ const Parametres: React.FC = () => {
       const data = await response.json();
       console.log('Réponse du serveur :', data);
       setMessage('Le fichier a été généré avec succès !');
+
       setFileUrl(data.fileUrl);
 
     } catch (error) {
