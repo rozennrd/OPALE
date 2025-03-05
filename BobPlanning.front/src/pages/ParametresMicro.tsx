@@ -13,8 +13,8 @@ const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
 const ParametresMicro: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-      const [message, setMessage] = React.useState<string | null>(null);
-      const [fileUrl, setFileUrl] = React.useState<string | null>(null);
+    const [message, setMessage] = React.useState<string | null>(null);
+    const [fileUrl, setFileUrl] = React.useState<string | null>(null);
     const [isLoading, setIsLoading] = React.useState(false);
     const { promosData } = location.state || {}; // Destructure the state object to get the promosData
     
