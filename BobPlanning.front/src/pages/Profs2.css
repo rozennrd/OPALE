@@ -1,0 +1,45 @@
+.container-global{
+    display:flex;
+    justify-content: center;
+    gap: 2%;
+
+}
+
+.container-add{
+    width: 30%;
+    height: fit-content;
+    max-width: 80%;
+    background-color: var(--section-color);
+    border-radius: 8px; 
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    
+}
+
+.form-group{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.form-group-dispo{
+    display:flex;
+    
+    
+    gap: 5px;
+}
+.container-list{
+    width: 60%;
+    height: fit-content;
+    max-width: 80%;
+    background-color: var(--section-color);
+    border-radius: 8px; 
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+.button-add{
+    display: flex;
+    justify-content: center;
+}
