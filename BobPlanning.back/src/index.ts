@@ -11,6 +11,8 @@ import { EdtMicro } from "./types/EdtMicroData";
 import { generateEdtMicro } from "./micro/generateEdtMicro";
 import { getLogin } from "./database/getLogin";
 import authJwt from "./middleware/authJwt";
+import  { Pool, PoolConnection } from 'mysql2';
+
 
 
 require('dotenv').config();
@@ -580,7 +582,7 @@ app.post("/addProf", authJwt.verifyToken, (req: Request, res: Response): void =>
     return;
   }
 
-  pool.getConnection((err, connection) => {
+  pool.getConnection((err: Error | null, connection: PoolConnection) => {
     if (err) {
       console.error("Erreur connexion DB :", err);
       res.status(500).json({ error: "Erreur connexion base de données." });
