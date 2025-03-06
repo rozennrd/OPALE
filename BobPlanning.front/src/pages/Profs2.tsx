@@ -66,7 +66,7 @@ const Profs2 = () => {
                 },
                 body: JSON.stringify({
                     ...newProf,
-                    dispo: JSON.stringify(newProf.dispo) // S'assurer que dispo est bien un string JSON
+                    dispo: newProf.dispo // S'assurer que dispo est bien un string JSON
                 }),
             });
             if (!response.ok) throw new Error('Erreur lors de l\'ajout du professeur');
@@ -79,14 +79,25 @@ const Profs2 = () => {
     };
 
     const toggleDispo = (jour: string, periode: string) => {
-        setNewProf((prev) => ({
-            ...prev,
-            dispo: {
-                ...prev.dispo,
-                [`${jour}${periode}`]: !prev.dispo[`${jour}${periode}`],
-            },
-        }));
+        setNewProf((prev) => {
+            const updatedDispo = { ...prev.dispo };
+    
+            // Assurer que toutes les périodes existent
+            jours.forEach(j => {
+                periodes.forEach(p => {
+                    if (!(j + p in updatedDispo)) {
+                        updatedDispo[j + p] = false;
+                    }
+                });
+            });
+    
+            // Basculer l'état de la période cliquée
+            updatedDispo[`${jour}${periode}`] = !prev.dispo[`${jour}${periode}`];
+    
+            return { ...prev, dispo: updatedDispo };
+        });
     };
+    
 
     const deleteProf = async (id: number) => {
         const token = getTokenFromLocalStorage();
