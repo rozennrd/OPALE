@@ -36,8 +36,9 @@ const Profs2 = () => {
 
                 const formattedData = data.map((prof: any) => ({
                     ...prof,
-                    dispo: prof.dispo ? JSON.parse(prof.dispo) : {} // Si dispo est vide, retourne un objet vide
+                    dispo: (typeof prof.dispo === 'string' && prof.dispo.trim().startsWith('{')) ? JSON.parse(prof.dispo) : {}
                 }));
+                
 
                 console.log("Données transformées :", formattedData);
                 setProfs(formattedData);
@@ -63,7 +64,10 @@ const Profs2 = () => {
                     'Content-Type': 'application/json',
                     'x-access-token': token,
                 },
-                body: JSON.stringify(newProf),
+                body: JSON.stringify({
+                    ...newProf,
+                    dispo: JSON.stringify(newProf.dispo) // S'assurer que dispo est bien un string JSON
+                }),
             });
             if (!response.ok) throw new Error('Erreur lors de l\'ajout du professeur');
             const data = await response.json();
