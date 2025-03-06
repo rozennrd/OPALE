@@ -65,6 +65,7 @@ button {
   color: #FFFFFF;
   cursor: pointer;
   transition: background-color 0.25s, border-color 0.25s;
+  width: fit-content;
 }
 
 button:hover {
@@ -87,7 +88,7 @@ button:focus-visible {
   }
   button {
     background-color: var(--secondary-color);
-    color: var(--text-color);
+    color: var(--text-color-dark-bg);
   }
 }
 

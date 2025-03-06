@@ -13,6 +13,7 @@ const TopBar = () => {
                 <Link to="/parametres">Paramètres</Link>
                 <Link to="/Salle">Salle</Link>
                 <Link to="/Profs">Profs</Link>
+                <Link to="/Profs2">Profs2</Link>
                 <Link to="/calendriers">Calendriers</Link>
                 <Link to="/contact">Contact</Link>
             </nav>

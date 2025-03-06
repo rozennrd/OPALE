@@ -12,7 +12,7 @@ import { EdtMicro } from "./types/EdtMicroData";
 import { generateEdtMicro } from "./micro/generateEdtMicro";
 import { getLogin } from "./database/getLogin";
 import authJwt from "./middleware/authJwt";
-import { get } from "http";
+
 
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
@@ -497,6 +497,11 @@ app.get("/getProfsData", authJwt.verifyToken, (req, res) => {
  *         description: Erreur interne du serveur.
  */
 app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
+  
+  console.log("Données reçues :", req.body);
+
+  
+  
   const insertedIds: number[] = [];
   const updatePromises = req.body.map(
     (prof: { id: any; name: any; type: any; dispo: any }) => {
@@ -559,6 +564,42 @@ app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
       res.status(500).json({ success: false, error: error.message });
     });
 });
+
+
+
+app.post("/addProf", authJwt.verifyToken, (req: Request, res: Response): void => {
+  console.log("Données reçues pour ajout :", req.body);
+
+  const { name, type, dispo } = req.body;
+
+  if (!name || !type) {
+    res.status(400).json({ error: "Le nom et le type sont obligatoires." });
+    return;
+  }
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Erreur connexion DB :", err);
+      res.status(500).json({ error: "Erreur connexion base de données." });
+      return;
+    }
+
+    const insertSql = "INSERT INTO Professeurs (name, type, dispo) VALUES (?, ?, ?)";
+    connection.query(insertSql, [name, type, JSON.stringify(dispo)], (error, results: any) => {
+      connection.release(); // Libérer la connexion après exécution
+
+      if (error) {
+        console.error("Erreur SQL :", error);
+        res.status(500).json({ error: "Erreur SQL lors de l'ajout." });
+        return;
+      }
+
+      console.log("Prof ajouté avec ID :", results.insertId);
+      res.json({ success: true, insertedId: results.insertId });
+    });
+  });
+});
+
 
 /**
  * @swagger
