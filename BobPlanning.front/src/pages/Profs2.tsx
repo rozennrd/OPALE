@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getTokenFromLocalStorage } from '../auth/Token';
 import './Profs2.css';
-import { Button, styled, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import ProfItem from '../components/ProfItem';
 
 interface ProfData {
@@ -139,7 +139,7 @@ const Profs2 = () => {
                         <ToggleButtonGroup
                             value={newProf.type}
                             exclusive
-                            onChange={(event, newType) => {
+                            onChange={(_event, newType) => {
                                 if (newType !== null) {
                                     setNewProf({ ...newProf, type: newType });
                                 }

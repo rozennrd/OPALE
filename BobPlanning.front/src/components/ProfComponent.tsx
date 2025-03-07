@@ -1,8 +1,10 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import {ProfData} from '../pages/Profs';
 
 type Disponibilites = {
   [key: string]: boolean;
 };
+
 
 interface ProfComponentProps {
   initialData?: {
@@ -12,7 +14,7 @@ interface ProfComponentProps {
     dispo: Record<string, boolean>;
   };
   onDelete: () => void;
-  onUpdate: (updatedProf: { id: number; name: string; type: 'EXT' | 'INT'; dispo: string }) => void;
+  onUpdate: (updatedProf: ProfData) => void;
 }
 
 const ProfComponent: React.FC<ProfComponentProps> = ({ initialData, onDelete, onUpdate }) => {
@@ -56,12 +58,11 @@ const ProfComponent: React.FC<ProfComponentProps> = ({ initialData, onDelete, on
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const updatedProf = {
+    const updatedProf : ProfData = {
       id: initialData?.id || null,
       name: nom,
       type: typeProf,
-      // Convertit dispo en une chaîne JSON avant de l'envoyer
-      dispo: JSON.stringify(disponibilites),
+      dispo: disponibilites,
     };
     onUpdate(updatedProf);
   };
