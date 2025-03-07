@@ -27,10 +27,11 @@ interface InputFileUploadProps {
   uploadedFile: File | null;
   responseData: any | null;
   onResponseData: (data: any) => void;
+  onMaquetteUpload: () => void; 
 }
 
 
-export default function InputFileUpload({ promoName, onFileUpload, uploadedFile, responseData, onResponseData }: InputFileUploadProps) {
+export default function InputFileUpload({ promoName, onFileUpload, uploadedFile, responseData, onResponseData , onMaquetteUpload}: InputFileUploadProps) {
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -51,6 +52,7 @@ export default function InputFileUpload({ promoName, onFileUpload, uploadedFile,
         onFileUpload(file);
         onResponseData(response.data);
         saveCoursesToDB(response.data, promoName);
+        onMaquetteUpload();
       } catch (error) {
         console.error('Error uploading file : ', error);
       }
@@ -97,6 +99,7 @@ export default function InputFileUpload({ promoName, onFileUpload, uploadedFile,
 
       const responseData = await response.json();
       console.log("Toutes les matières ont été enregistrées avec succès.", responseData);
+
     } catch (error) {
       console.error("Erreur lors de l'enregistrement des matières :", error);
     }
@@ -127,7 +130,7 @@ export default function InputFileUpload({ promoName, onFileUpload, uploadedFile,
         />
       </Button>
       {uploadedFile && <p>Fichier importé : {uploadedFile.name}</p>}
-      {responseData && <MaquetteDisplay data={responseData} />}
+      {/* {responseData && <MaquetteDisplay data={responseData} />} */}
     </div>
   );
 }

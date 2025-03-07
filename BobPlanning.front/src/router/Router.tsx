@@ -10,6 +10,7 @@ import TrueHome from "../pages/TrueHome";
 import Connexion from "../pages/Connexion";
 import Salle from "../pages/Salle";
 import Profs from "../pages/Profs";
+import Profs2 from "../pages/Profs2"
 
 const router = createBrowserRouter([
    // Route pour la connexion (sans Layout)
@@ -55,10 +56,11 @@ const router = createBrowserRouter([
         element: <Salle />,
         //  element: <Salle />,
       },
+    
       {
         path: "/Profs",
-        element: <Profs />,
-        //  element: <Profs />,
+        element: <Profs2 />,
+        
       }
     ],
   },
