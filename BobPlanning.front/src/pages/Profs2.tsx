@@ -117,34 +117,10 @@ const Profs2 = () => {
     }
 
 
-    // Style personnalisé pour les boutons
-    const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
-        width: 'auto',
-
-        border: `1px solid ${theme.palette.primary.main}`,
-        color: theme.palette.primary.main,
-        '&.Mui-selected': {
-            backgroundColor: theme.palette.primary.main,
-            color: '#fff',
-        },
-        '&:hover': {
-            backgroundColor: theme.palette.primary.light,
-            color: '#fff',
-        },
-    }));
-    const StyledButton = styled(Button)(({ theme }) => ({
-        minWidth: 90,
-        margin: '5px',
-        backgroundColor: '#ddd',
-        color: '#000',
-        '&.active': {
-            backgroundColor: theme.palette.primary.main,
-            color: '#fff',
-        },
-    }));
+    
     return (
         <div>
-            <h1>Profs2</h1>
+            <h1>Gestion des professeurs</h1>
             <div className='container-global'>
                 <div className="container-add">
                     <h3>Ajouter un nouveau professeur</h3>
