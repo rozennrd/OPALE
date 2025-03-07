@@ -115,6 +115,7 @@ interface FullWidthTabsProps {
 }
 
 // Composant principal
+// eslint-disable-next-line no-empty-pattern
 export default function TabPromosMicro({ }: FullWidthTabsProps) {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -237,7 +238,7 @@ export default function TabPromosMicro({ }: FullWidthTabsProps) {
         {promos.map((promo, index) => 
         {
           const formattedData = React.useMemo(() => ({
-            UE: extractUE([...cours], promo), // ✅ Nouvelle référence pour éviter les valeurs figées
+            UE: extractUE([...cours], promo), 
             cours: cours
               .filter((course) => course.promo === promo)
               .map((course) => ({

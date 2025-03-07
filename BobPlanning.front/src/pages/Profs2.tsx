@@ -155,6 +155,7 @@ const Profs2 = () => {
                             placeholder="Nom du professeur"
                             value={newProf.name}
                             onChange={(event) => setNewProf({ ...newProf, name: event.target.value })}
+                            fullWidth
                         />
                     </div>
                     <div className='form-group'>
