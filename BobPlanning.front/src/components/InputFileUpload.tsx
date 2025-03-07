@@ -3,7 +3,6 @@ import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
-import MaquetteDisplay from './MaquetteDisplay';
 import { getTokenFromLocalStorage } from '../auth/Token';
 
 const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
@@ -31,7 +30,7 @@ interface InputFileUploadProps {
 }
 
 
-export default function InputFileUpload({ promoName, onFileUpload, uploadedFile, responseData, onResponseData , onMaquetteUpload}: InputFileUploadProps) {
+export default function InputFileUpload({ promoName, onFileUpload, uploadedFile, onResponseData , onMaquetteUpload}: InputFileUploadProps) {
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
