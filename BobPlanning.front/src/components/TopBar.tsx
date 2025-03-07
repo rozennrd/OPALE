@@ -12,8 +12,8 @@ const TopBar = () => {
                 <Link to="/TrueHome">Home</Link>    
                 <Link to="/parametres">Paramètres</Link>
                 <Link to="/Salle">Salle</Link>
-                <Link to="/Profs">Profs</Link>
-                <Link to="/Profs2">Profs2</Link>
+        
+                <Link to="/Profs">Professeurs</Link>
                 <Link to="/calendriers">Calendriers</Link>
                 <Link to="/contact">Contact</Link>
             </nav>
