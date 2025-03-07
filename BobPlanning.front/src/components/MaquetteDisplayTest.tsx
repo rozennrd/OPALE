@@ -69,6 +69,20 @@ export default function MaquetteDisplayTest({ data }: { data: Data }) {
         fetchProfsData();
     }, []);
 
+    useEffect(() => {
+        if (professors.length > 0) {
+            const initialSelectedProfessors: { [key: string]: string } = {};
+            data.cours.forEach((course) => {
+                const foundProf = professors.find(prof => prof.id === Number(course.Prof));
+                if (foundProf) {
+                    initialSelectedProfessors[course.name] = foundProf.id.toString();
+                }
+            });
+            setSelectedProfessors(initialSelectedProfessors);
+        }
+    }, [data.cours, professors]); // Exécute cette mise à jour quand `data.cours` ou `professors` changent
+
+    
     const handleSelectChange = async (courseName: string, professorId: number) => {
         setSelectedProfessors((prev) => ({ ...prev, [courseName]: professorId.toString() }));
 
@@ -92,7 +106,7 @@ export default function MaquetteDisplayTest({ data }: { data: Data }) {
         <div style={{ padding: '20px' }}>
             <Accordion sx={accordionStyle}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6">📚 Voir les matières</Typography>
+                    <Typography variant="h6">Voir les matières</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     {data.UE.map((ue) => (
@@ -106,7 +120,7 @@ export default function MaquetteDisplayTest({ data }: { data: Data }) {
                                         .filter((course) => course.UE === ue.name)
                                         .map((course) => (
                                             <li key={course.name} style={{ marginBottom: '15px' }}>
-                                                <Typography sx={{ fontWeight: 'bold', color: '#FF9800' }}>
+                                                <Typography sx={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>
                                                     {course.name}
                                                 </Typography>
                                                 <Typography variant="body2">📅 Semestres : {course.semestre.join(', ')}</Typography>
@@ -119,7 +133,7 @@ export default function MaquetteDisplayTest({ data }: { data: Data }) {
                                                             </TableRow>
                                                         ))}
                                                         <TableRow>
-                                                            <TableCell>👨‍🏫 Professeur :</TableCell>
+                                                            <TableCell>Professeur :</TableCell>
                                                             <TableCell>
                                                                 <Select
                                                                     value={selectedProfessors[course.name] || ""}
