@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getTokenFromLocalStorage } from '../auth/Token';
 import './Profs2.css';
-import { Button, styled, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import ProfItem from '../components/ProfItem';
 
 interface ProfData {
@@ -118,30 +118,6 @@ const Profs2 = () => {
 
 
     // Style personnalisé pour les boutons
-    const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
-        width: 'auto',
-
-        border: `1px solid ${theme.palette.primary.main}`,
-        color: theme.palette.primary.main,
-        '&.Mui-selected': {
-            backgroundColor: theme.palette.primary.main,
-            color: '#fff',
-        },
-        '&:hover': {
-            backgroundColor: theme.palette.primary.light,
-            color: '#fff',
-        },
-    }));
-    const StyledButton = styled(Button)(({ theme }) => ({
-        minWidth: 90,
-        margin: '5px',
-        backgroundColor: '#ddd',
-        color: '#000',
-        '&.active': {
-            backgroundColor: theme.palette.primary.main,
-            color: '#fff',
-        },
-    }));
     return (
         <div>
             <h1>Professeurs</h1>
@@ -163,7 +139,7 @@ const Profs2 = () => {
                         <ToggleButtonGroup
                             value={newProf.type}
                             exclusive
-                            onChange={(event, newType) => {
+                            onChange={(_event, newType) => {
                                 if (newType !== null) {
                                     setNewProf({ ...newProf, type: newType });
                                 }
