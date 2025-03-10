@@ -144,7 +144,7 @@ const Profs2 = () => {
     }));
     return (
         <div>
-            <h1>Profs2</h1>
+            <h1>Professeurs</h1>
             <div className='container-global'>
                 <div className="container-add">
                     <h3>Ajouter un nouveau professeur</h3>

@@ -1,6 +1,7 @@
 To run the project : 
 
-Add a file .env at the root of the project that contains this : 
+Add a file .env at the root of the project that contains this :
+!!! You have to modify information of connection to your database !!!  
 *--------Fichier .env--------*
   MYSQL_ROOT_PASSWORD=rootpassword
   MYSQL_DATABASE=bobPlanning
@@ -12,6 +13,8 @@ Add a file .env at the root of the project that contains this :
   MYSQL_WAIT_TIMEOUT=28800
   MYSQL_INTERACTIVE_TIMEOUT=28800
 *--------------------------------*
+
+To create the database, you have to use the sql file in folder BobPlanning.database
 
  - For front : 
  Add this .env file in BobPlanning.front : 
@@ -31,7 +34,10 @@ Add a file .env at the root of the project that contains this :
     DB_NAME=nom_db
     DB_PORT=num_port
 *--------------------------------*
-
+ Add this .env file in BobPlanning.front : 
+ *--------Fichier .env--------*
+  VITE_RACINE_FETCHER_URL=http://localhost:3000
+ *--------------------------------*
  Go to BobPlanning.back --> cd .\BobPlanning.back
  Install library --> npm i
  Run the project --> npm run dev

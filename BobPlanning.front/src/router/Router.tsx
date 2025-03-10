@@ -9,7 +9,6 @@ import ParametresMicro from "../pages/ParametresMicro";
 import TrueHome from "../pages/TrueHome";
 import Connexion from "../pages/Connexion";
 import Salle from "../pages/Salle";
-import Profs from "../pages/Profs";
 import Profs2 from "../pages/Profs2"
 
 const router = createBrowserRouter([
