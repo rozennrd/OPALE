@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getTokenFromLocalStorage } from '../auth/Token';
 import './Profs2.css';
-import { Button, styled, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import ProfItem from '../components/ProfItem';
 
 interface ProfData {
@@ -116,11 +116,11 @@ const Profs2 = () => {
         }
     }
 
-
     
     return (
         <div>
             <h1>Gestion des professeurs</h1>
+
             <div className='container-global'>
                 <div className="container-add">
                     <h3>Ajouter un nouveau professeur</h3>
@@ -131,6 +131,7 @@ const Profs2 = () => {
                             placeholder="Nom du professeur"
                             value={newProf.name}
                             onChange={(event) => setNewProf({ ...newProf, name: event.target.value })}
+                            fullWidth
                         />
                     </div>
                     <div className='form-group'>
@@ -138,7 +139,7 @@ const Profs2 = () => {
                         <ToggleButtonGroup
                             value={newProf.type}
                             exclusive
-                            onChange={(event, newType) => {
+                            onChange={(_event, newType) => {
                                 if (newType !== null) {
                                     setNewProf({ ...newProf, type: newType });
                                 }

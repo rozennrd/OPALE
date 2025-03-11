@@ -115,6 +115,7 @@ interface FullWidthTabsProps {
 }
 
 // Composant principal
+// eslint-disable-next-line no-empty-pattern
 export default function TabPromosMicro({ }: FullWidthTabsProps) {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
