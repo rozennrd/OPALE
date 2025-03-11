@@ -12,18 +12,16 @@
                         1
                     ],
                     "periode": [],
-                    "heure": 
-                        {
-                            "total": 0,
-                            "totalAvecProf": 10,
-                            "coursMagistral": null,
-                            "coursInteractif": null,
-                            "td": null,
-                            "tp": null,
-                            "projet": null,
-                            "elearning": null
-                        }
-                    
+                    "heure": {
+                        "total": 0,
+                        "totalAvecProf": 10,
+                        "coursMagistral": null,
+                        "coursInteractif": null,
+                        "td": null,
+                        "tp": null,
+                        "projet": null,
+                        "elearning": null
+                    }
                 },
                 {
                     "name": "Phy",
@@ -33,18 +31,16 @@
                         1
                     ],
                     "periode": [],
-                    "heure": 
-                        {
-                            "total": 0,
-                            "totalAvecProf": 10,
-                            "coursMagistral": null,
-                            "coursInteractif": null,
-                            "td": null,
-                            "tp": null,
-                            "projet": null,
-                            "elearning": null
-                        }
-                    
+                    "heure": {
+                        "total": 0,
+                        "totalAvecProf": 10,
+                        "coursMagistral": null,
+                        "coursInteractif": null,
+                        "td": null,
+                        "tp": null,
+                        "projet": null,
+                        "elearning": null
+                    }
                 },
                 {
                     "name": "Info",
@@ -54,18 +50,16 @@
                         1
                     ],
                     "periode": [],
-                    "heure": 
-                        {
-                            "total": 0,
-                            "totalAvecProf": 5,
-                            "coursMagistral": null,
-                            "coursInteractif": null,
-                            "td": null,
-                            "tp": null,
-                            "projet": null,
-                            "elearning": null
-                        }
-                    
+                    "heure": {
+                        "total": 0,
+                        "totalAvecProf": 5,
+                        "coursMagistral": null,
+                        "coursInteractif": null,
+                        "td": null,
+                        "tp": null,
+                        "projet": null,
+                        "elearning": null
+                    }
                 }
             ]
         },
@@ -81,18 +75,16 @@
                         1
                     ],
                     "periode": [],
-                    "heure": 
-                        {
-                            "total": 10,
-                            "totalAvecProf": null,
-                            "coursMagistral": null,
-                            "coursInteractif": null,
-                            "td": null,
-                            "tp": null,
-                            "projet": null,
-                            "elearning": null
-                        }
-                    
+                    "heure": {
+                        "total": 10,
+                        "totalAvecProf": null,
+                        "coursMagistral": null,
+                        "coursInteractif": null,
+                        "td": null,
+                        "tp": null,
+                        "projet": null,
+                        "elearning": null
+                    }
                 },
                 {
                     "name": "Phy",
@@ -102,18 +94,16 @@
                         1
                     ],
                     "periode": [],
-                    "heure": 
-                        {
-                            "total": 10,
-                            "totalAvecProf": null,
-                            "coursMagistral": null,
-                            "coursInteractif": null,
-                            "td": null,
-                            "tp": null,
-                            "projet": null,
-                            "elearning": null
-                        }
-                    
+                    "heure": {
+                        "total": 10,
+                        "totalAvecProf": null,
+                        "coursMagistral": null,
+                        "coursInteractif": null,
+                        "td": null,
+                        "tp": null,
+                        "projet": null,
+                        "elearning": null
+                    }
                 }
             ]
         }
@@ -180,37 +170,78 @@
             "ID": "INT1",
             "name": "Emma Bernard",
             "type": "Externe",
-            "dispo": ["lundi_matin", "lundi_aprem","mardi_matin","mardi_aprem", "mercredi_matin", "mercredi_aprem"]
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem"
+            ]
         },
         {
             "ID": "INT2",
             "name": "Nadia Martin",
             "type": "Externe",
-            "dispo": ["mercredi_matin", "mercredi_aprem",  "jeudi_matin", "jeudi_aprem","vendredi_matin","vendredi_aprem"]
+            "dispo": [
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
         },
         {
             "ID": "INT3",
             "name": "Clara Durand",
             "type": "Interne",
-            "dispo": ["mercredi_matin", "mercredi_aprem",  "jeudi_matin", "jeudi_aprem","vendredi_matin","vendredi_aprem"]
+            "dispo": [
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
         },
         {
             "ID": "INT4",
             "name": "Marie Lemoine",
             "type": "Externe",
-            "dispo": ["lundi_matin", "lundi_aprem", "mardi_matin", "mercredi_aprem", "jeudi_matin", "jeudi_aprem", "vendredi_matin"]
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin"
+            ]
         },
         {
             "ID": "INT5",
             "name": "Jean Dupont",
             "type": "Interne",
-            "dispo": ["lundi_aprem", "mardi_matin", "mardi_aprem", "jeudi_matin", "vendredi_aprem"]
+            "dispo": [
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "jeudi_matin",
+                "vendredi_aprem"
+            ]
         },
         {
             "ID": "EXT6",
             "name": "Luc Dupont",
             "type": "Externe",
-            "dispo": ["lundi_aprem", "mardi_matin", "mardi_aprem", "jeudi_matin", "vendredi_aprem"]
+            "dispo": [
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "jeudi_matin",
+                "vendredi_aprem"
+            ]
         }
     ],
     "Calendrier": [
