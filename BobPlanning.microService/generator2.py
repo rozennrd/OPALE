@@ -401,18 +401,22 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
         
     solver = cp_model.CpSolver()
     
-    solver.parameters.max_time_in_seconds = 600  # Stop après 10s de calcul
-    solver.parameters.num_search_workers = 5  # Utilise 4 cœurs (modifiable selon ton PC)
+    solver.parameters.max_time_in_seconds = 60000  # Stop après 10s de calcul
+    solver.parameters.num_search_workers = 9  # Utilise 4 cœurs (modifiable selon ton PC)
     solver.parameters.log_search_progress = True  # Affiche l’avancement pour debug
     # ✅ Éviter la recherche d'optimalité extrême
     solver.parameters.optimize_with_core = False
     
     callback = DebugCallback(creneau_occupe)
-    status = solver.Solve(model)
+    
+    print(f"\n🔍 Model size: {len(model.Proto().constraints)} constraints, {len(model.Proto().variables)} variables.")
+    status = solver.Solve(model, callback)
     if status != cp_model.OPTIMAL and status != cp_model.FEASIBLE:
         
         print("\n❌ Aucune solution trouvée.")
         return []
+    else:
+        print("\n✅ Solution trouvée !")
 
     output = generate_schedule_output(data, solver, creneaux_horaires, creneau_occupe, promo_courses_info, calendar_info)
     

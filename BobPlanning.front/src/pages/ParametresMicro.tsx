@@ -22,8 +22,6 @@ const ParametresMicro: React.FC = () => {
     const handleSubmit = async () => {
         setIsLoading(true);
         try {
-            console.log("data");
-            console.log(promosData);
             const response = await fetch(`${RACINE_FETCHER_URL}/generateEdtMicro`, {
                 method: 'POST',
                 headers: {
@@ -38,7 +36,6 @@ const ParametresMicro: React.FC = () => {
             }
 
             const data = await response.json();
-            console.log('Réponse du serveur :', data);
             setMessage('Le fichier a été généré avec succès !');
             setFileUrl(data.fileUrl);
         } catch (error) {

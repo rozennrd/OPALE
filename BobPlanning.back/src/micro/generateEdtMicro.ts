@@ -107,10 +107,12 @@ export const generateEdtMicro = async (connection: any) : Promise<any> => {
 
   const data = {Promos: promos, Profs: profs, Salles: salles, Calendrier: calendrier};
 
+  return data;
+  
   const response = await axios.post('http://127.0.0.1:3001/getDataEdtMicro', data);
   const edtMicroArray: any[] = response.data; 
 
   //Generate Excel file
   const filePath = await generateEdtSquelette(edtMicroArray);
-  return filePath;
+  return data;
 };

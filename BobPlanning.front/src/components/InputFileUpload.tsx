@@ -46,7 +46,6 @@ export default function InputFileUpload({ promoName, onFileUpload, uploadedFile,
           },
         });
 
-        console.log('Uploading file successful', response.data);
         //callback
         onFileUpload(file);
         onResponseData(response.data);
@@ -97,7 +96,7 @@ export default function InputFileUpload({ promoName, onFileUpload, uploadedFile,
       }
 
       const responseData = await response.json();
-      console.log("Toutes les matières ont été enregistrées avec succès.", responseData);
+
 
     } catch (error) {
       console.error("Erreur lors de l'enregistrement des matières :", error);

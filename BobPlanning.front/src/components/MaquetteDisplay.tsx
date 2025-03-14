@@ -51,7 +51,7 @@ import { useEffect, useState } from "react";
 
 
                     const dataProf = await response.json();
-                    console.log('dataProf:', dataProf);
+
                     setProfessors(dataProf);
                 } catch (error) {
                     console.error('Error fetching profs data:', error);
@@ -85,7 +85,6 @@ import { useEffect, useState } from "react";
                     throw new Error("Échec de la mise à jour du professeur");
                 }
         
-                console.log(`Professeur (ID: ${professorId}) mis à jour pour le cours ${courseName}`);
             } catch (error) {
                 console.error("Erreur lors de la mise à jour du professeur :", error);
             }

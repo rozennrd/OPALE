@@ -38,9 +38,6 @@ const Profs2 = () => {
                     ...prof,
                     dispo: (typeof prof.dispo === 'string' && prof.dispo.trim().startsWith('{')) ? JSON.parse(prof.dispo) : {}
                 }));
-                
-
-                console.log("Données transformées :", formattedData);
                 setProfs(formattedData);
             } catch (error) {
                 console.error('Erreur lors de la récupération des professeurs:', error);

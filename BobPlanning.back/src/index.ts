@@ -16,7 +16,6 @@ import  { Pool, PoolConnection } from 'mysql2';
 
 
 require('dotenv').config();
-console.log('RACINE_FETCHER_URL:', process.env.VITE_RACINE_FETCHER_URL);
 
 const cors = require("cors");
 const mysql = require('mysql2');
@@ -217,8 +216,6 @@ app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
     Promos: [],
   };
 
-  console.log("Balise 1");
-
   const sql = "SELECT Name, Nombre, Periode FROM promosData";
   pool.getConnection((err: any, connection: any) => {
     if (err) {
@@ -266,11 +263,6 @@ app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
             .split("/")
             .reverse()
             .join("-"); // Inverser le format pour obtenir yyyy-mm-dd
-
-          console.log("calendarResults datedeb:", calendarResults[0].dateDeb);
-          console.log("calendarResults dateFin:", calendarResults[0].dateFin);
-          console.log("DateDeb:", promosData.DateDeb);
-          console.log("DateFin:", promosData.DateFin);
         }
 
         res.json(promosData);
@@ -349,7 +341,6 @@ app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
  */
 app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
   const { DateDeb, DateFin, Promos } = req.body;
-  console.log("req.body", req.body);
 
   const dateDeb = DateDeb || null;
   const dateFin = DateFin || null;
@@ -502,12 +493,7 @@ app.get("/getProfsData", authJwt.verifyToken, (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
-app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
-  
-  console.log("Données reçues :", req.body);
-
-  
-  
+app.post("/setProfsData", authJwt.verifyToken, (req, res) => { 
   const insertedIds: number[] = [];
   const updatePromises = req.body.map(
     (prof: { id: any; name: any; type: any; dispo: any }) => {
@@ -574,8 +560,6 @@ app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
 
 
 app.post("/addProf", authJwt.verifyToken, (req: Request, res: Response): void => { 
-    console.log("Données reçues pour ajout :", req.body);
-
     const { name, type, dispo } = req.body;
 
     if (!name || !type) {
@@ -600,7 +584,6 @@ app.post("/addProf", authJwt.verifyToken, (req: Request, res: Response): void =>
                 return;
             }
 
-            console.log("Prof ajouté avec ID :", results.insertId);
             res.json({ success: true, insertedId: results.insertId });
         });
     });
@@ -883,6 +866,7 @@ app.post("/generateEdtMicro", authJwt.verifyToken, async (req: Request, res: Res
         connection.release(); // Libérer la connexion après vérification
         res.status(200).json({
           message: "Excel file generated and saved on the server",
+          data: filePath,
           fileUrl: `${process.env.VITE_RACINE_FETCHER_URL}/download/EdtMicro`,
         });
       });
@@ -1245,7 +1229,6 @@ app.get("/getSallesData", authJwt.verifyToken, (req, res) => {
       return res.status(500).json({ error: err.message });
     }
     const sql = "SELECT * FROM Salles";
-    console.log("DB_HOST :", dbConfig.DB_HOST);
     connection.query(sql, (error: any, results: any[]) => {
       if (error) {
         return res.status(500).json({ error: error.message });
@@ -1451,11 +1434,7 @@ app.delete("/deleteSalle", authJwt.verifyToken, (req, res) => {
   });
 });
 
-
-
-
 app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
-  console.log("Données reçues pour les matières :", req.body);
 
   pool.getConnection((err: any, connection: any) => {
     if (err) {
@@ -1535,7 +1514,6 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
 });
 
 app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
-  console.log("Données reçues pour la mise à jour du professeur :", req.body);
 
   pool.getConnection((err: any, connection: any) => {
     if (err) {
@@ -1582,8 +1560,6 @@ app.get("/getCours", authJwt.verifyToken, (req, res) => {
         return res.status(500).json({ error: error.message });
       }
 
-      console.log("📢 Données des cours récupérées :", results); // Affichage en console
-
       res.json(results);
     });
 
@@ -1592,9 +1568,11 @@ app.get("/getCours", authJwt.verifyToken, (req, res) => {
 });
 
 // Start the server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   console.log(`Swagger docs available at http://localhost:${PORT}/docs`);
 });
+
+server.timeout = 0;
 
 export default app;

@@ -19,7 +19,6 @@ const Connexion: React.FC = () => {
 
   const handleLogin = async () => {
     const hashedPassword = hashPassword(password);
-    console.log('Hashed password : ', hashedPassword);
 
     try {
       const response = await fetch(`${RACINE_FETCHER_URL}/login`, {
@@ -37,7 +36,6 @@ const Connexion: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('accessToken', data.token);
-        console.log('Token : ', localStorage.getItem('accessToken'));
         navigate('/TrueHome');
       } else {
         const errorData = await response.json();

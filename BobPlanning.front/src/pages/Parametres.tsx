@@ -95,7 +95,6 @@ const Parametres: React.FC = () => {
 
   const isAllDataFilled = () => {
     const { DateDeb, DateFin, Promos } = promosData;
-    console.log("Vérification des données:", { DateDeb, DateFin, Promos });
     if (!DateDeb || !DateFin) {
       return false;
     }
@@ -116,7 +115,6 @@ const Parametres: React.FC = () => {
     const fetchPromosData = async () => {
       try {
         const token = localStorage.getItem("accessToken"); // Récupérer le token
-        console.log('fetcher url:', RACINE_FETCHER_URL);
         
         const response = await fetch(`${RACINE_FETCHER_URL}/getPromosData`,{
           method: 'GET',
@@ -192,7 +190,6 @@ const Parametres: React.FC = () => {
       }
 
       const data = await response.json();
-      console.log('Réponse du serveur :', data);
       setMessage('Le fichier a été généré avec succès !');
 
       setFileUrl(data.fileUrl);

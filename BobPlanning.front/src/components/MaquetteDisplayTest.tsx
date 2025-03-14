@@ -44,7 +44,6 @@ export default function MaquetteDisplayTest({ data }: { data: Data }) {
     const [professors, setProfessors] = useState<Prof[]>([]);
 
     useEffect(() => {
-        console.log("Données mises à jour :", data);
       }, [data.reloadData]);
       
     useEffect(() => {
@@ -59,7 +58,6 @@ export default function MaquetteDisplayTest({ data }: { data: Data }) {
                 if (!response.ok) throw new Error("Erreur lors de la récupération des professeurs");
 
                 const dataProf = await response.json();
-                console.log('Professeurs récupérés:', dataProf);
                 setProfessors(dataProf);
             } catch (error) {
                 console.error('Erreur de récupération des professeurs:', error);
@@ -96,7 +94,6 @@ export default function MaquetteDisplayTest({ data }: { data: Data }) {
 
             if (!response.ok) throw new Error("Échec de la mise à jour du professeur");
 
-            console.log(`✅ Professeur (ID: ${professorId}) mis à jour pour le cours: ${courseName}`);
         } catch (error) {
             console.error("Erreur mise à jour du professeur:", error);
         }

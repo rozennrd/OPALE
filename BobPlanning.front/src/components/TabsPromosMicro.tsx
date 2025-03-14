@@ -145,7 +145,6 @@ export default function TabPromosMicro({ }: FullWidthTabsProps) {
         });
         const data = await response.json();
         setCours([...data]);
-        console.log(data);
       } catch (error) {
         console.error("Erreur lors de la récupération des cours :", error);
       }

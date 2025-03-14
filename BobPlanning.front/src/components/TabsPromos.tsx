@@ -211,8 +211,6 @@ export default function TabsPromos({ setPromosData, promosData }: FullWidthTabsP
             ...prev,
             [promoName]: newValue
         }));
-
-        console.log("promosData", promosData);
     
         // Mise à jour des dates de début dans PromosData
         setPromosData((prevData: any) => {

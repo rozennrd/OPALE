@@ -4,8 +4,6 @@ import { generateToken } from '../utils/jwt';
 const getLogin = async (req: Request, res: Response, connection: any) => {
   const { email, password } = req.body;
 
-  console.log('Requête reçue avec email:', email); // Debug
-
   try {
     // Exécuter la requête pour obtenir l'utilisateur
     const [users] = await connection.promise().query('SELECT * FROM Utilisateurs WHERE Email = ?', [email]);
@@ -16,8 +14,6 @@ const getLogin = async (req: Request, res: Response, connection: any) => {
     }
 
     const user = users[0]; // Récupérer le premier utilisateur
-
-    console.log('Utilisateur trouvé:', user); // Debug
 
     // Vérifier si l'utilisateur est bloqué
     if (user.Bloque) {
