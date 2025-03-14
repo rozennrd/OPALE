@@ -42,6 +42,9 @@ To create the database, you have to use the sql file in folder BobPlanning.datab
  Install library --> npm i
  Run the project --> npm run dev
 
+ Pour l'utilisation de le partie, utilisation de postman en rajoutant dans le headers un x-access-token que vous pouvez le récupérer depuis votre front apres la connexion en tapant dans votre console web la commande : localStorage.accessToken qui vous renvoit votre token actuel. 
+ Sinon vous pouvez supprimer dans index.ts la demande de vérification du token, attention, ne pas supprimer pour la partie prod. 
+
  - For microService : 
  Go to BobPlanning.microService --> cd .\BobPlanning.microService
  Create a env mode for python --> python -m venv venv
