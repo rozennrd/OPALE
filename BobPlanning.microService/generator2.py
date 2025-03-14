@@ -156,7 +156,6 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
 
     promo_courses_info = extract_courses_info(data)
     calendar_info = extract_calendar_info(data)
-    # Extraire les profs une seule fois
     profs_info = extract_profs_info(data)
 
     creneaux_horaires = [f"{h}h-{h+1}h" for h in range(8, 18) if h != 12]
@@ -201,10 +200,29 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
             
             print(f"🛠 Création variable: {promo} - {course_name} ({total_heures}h)")
             
+            # 🚀 Étape 1 : Vérifier si le professeur existe
+            if prof_id not in profs_info:
+                print(f"⚠️ [ALERTE] Professeur {prof_id} inconnu pour {course_name} dans {promo}")
+                continue  # Ne pas créer de variables pour ce cours
+            
             creneaux_valides = []
             for semaine_index, semaine in enumerate(calendar_info[promo]):
                 for jour_index, jour in enumerate(semaine["jours_travailles"]):
+                    
+                        # 🚀 Étape 2 : Vérifier si le prof est disponible ce jour
+                    prof_dispo_ce_jour = any(
+                        is_prof_available(profs_info, prof_id, jour, creneaux_horaires[creneau_index])
+                        for creneau_index in range(len(creneaux_horaires))
+                    )
+
+                    if not prof_dispo_ce_jour:
+                        print(f"🚫 Prof {prof_id} indisponible pour {course_name} le {jour} (Promo {promo})")
+                        continue  # Passer au jour suivant
+
+                    
                     for creneau_index in range(len(creneaux_horaires)):
+                        
+                        
                         if prof_id not in profs_info:
                             # print(f"⚠️ [ALERTE] Le prof {prof_id} n'existe pas dans la liste des profs.")
                             continue
@@ -218,6 +236,9 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
                             creneau_occupe[(promo, unique_id, semaine_index, jour_index, creneau_index)] = model.NewBoolVar(
                                 f"creneau_occupe_{promo}_{course_name}_semaine_{semaine_index}_jour_{jour_index}_creneau_{creneau_index}"
                             )
+
+    print(f"🔢 Nombre total de variables créées : {len(creneau_occupe)}")
+
 
     # ✅ CONTRAINTE : Respect du volume horaire total pour chaque cours
     for promo, courses in promo_courses_info.items():
@@ -401,9 +422,9 @@ def generate_schedule(data: RequestData) -> List[CalendrierOutput]:
         
     solver = cp_model.CpSolver()
     
-    solver.parameters.max_time_in_seconds = 60000  # Stop après 10s de calcul
-    solver.parameters.num_search_workers = 9  # Utilise 4 cœurs (modifiable selon ton PC)
-    solver.parameters.log_search_progress = True  # Affiche l’avancement pour debug
+    # solver.parameters.max_time_in_seconds = 600  # Stop après 10s de calcul
+    solver.parameters.num_search_workers = 5  # Utilise 4 cœurs (modifiable selon ton PC)
+    #solver.parameters.log_search_progress = True  # Affiche l’avancement pour debug
     # ✅ Éviter la recherche d'optimalité extrême
     solver.parameters.optimize_with_core = False
     

@@ -9,6 +9,9 @@ import Box from '@mui/material/Box';
 import PromosData from '../models/promosData';
 import InputFileUpload from './InputFileUpload';
 import MaquetteDisplayTest from './MaquetteDisplayTest';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import { IconButton } from '@mui/material';
+
 const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
 
 interface Course {
@@ -118,16 +121,18 @@ interface FullWidthTabsProps {
 // eslint-disable-next-line no-empty-pattern
 export default function TabPromosMicro({ }: FullWidthTabsProps) {
   const theme = useTheme();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState(() => {
+    return parseInt(localStorage.getItem("selectedTab") || "0", 10);
+  });
   const [cours, setCours] = React.useState<Course[]>([]);
   const [reloadData, setReloadData] = React.useState(false);
-  
-  
+
+
   const handleMaquetteUpload = () => {
-    setReloadData((prev) => !prev); 
+    setReloadData((prev) => !prev);
   };
 
-  
+
   const extractUE = (cours: Course[], promo: string): UE[] => {
     const ueSet = new Set(cours.filter((course) => course.promo === promo).map((course) => course.UE));
     return Array.from(ueSet).map((ue) => ({ name: ue }));
@@ -204,6 +209,7 @@ export default function TabPromosMicro({ }: FullWidthTabsProps) {
   // Gestion du changement d'onglet
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+    localStorage.setItem("selectedTab", newValue.toString());
   };
 
   // Récupérer le nom de promo sans le dernier caractère
@@ -234,14 +240,13 @@ export default function TabPromosMicro({ }: FullWidthTabsProps) {
             ))}
           </CustomTabs>
         </AppBar>
-        {promos.map((promo, index) => 
-        {
+        {promos.map((promo, index) => {
           const formattedData = React.useMemo(() => ({
-            UE: extractUE([...cours], promo), 
+            UE: extractUE([...cours], promo),
             cours: cours
               .filter((course) => course.promo === promo)
               .map((course) => ({
-                promo: course.promo,   
+                promo: course.promo,
                 name: course.name,
                 UE: course.UE,
                 semestre: course.semestre ? course.semestre.split(',').map(Number) : [],
@@ -252,42 +257,48 @@ export default function TabPromosMicro({ }: FullWidthTabsProps) {
               })),
             reloadData, // ✅ Ajouté en tant que dépendance
           }), [cours, reloadData]);
-          return(
-            
-          <TabPanel value={value} index={index} dir={theme.direction} key={index}>
-            <Typography
-              variant="h4"
-              gutterBottom
-              sx={{
-                textAlign: 'left',
-                color: 'var(--primary-color)',
-                fontWeight: 'bold',
-                marginBottom: '20px',
-              }}
-            >
-              {promo}
-            </Typography>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flexDirection: 'column' }}>
-              <h4>Importer la maquette  {getPromoName(promo)}  </h4>
-              <InputFileUpload
-                promoName={promo}
-                onFileUpload={(file) => handleFileUpload(promo, file)}
-                uploadedFile={uploadedFiles[promo]}
-                responseData={responseData[promo]}
-                onResponseData={(date) => handleResponseData(promo, date)}
-                onMaquetteUpload={handleMaquetteUpload}   
-              />
-              
-              <MaquetteDisplayTest
-                data={formattedData}
-                
-              />
+          return (
+
+            <TabPanel value={value} index={index} dir={theme.direction} key={index}>
+              <Typography
+                variant="h4"
+                gutterBottom
+                sx={{
+                  textAlign: 'left',
+                  color: 'var(--primary-color)',
+                  fontWeight: 'bold',
+                  marginBottom: '20px',
+                }}
+              >
+                {promo}
+                <IconButton
+                  onClick={() => window.location.reload()}
+                >
+                  <RestartAltIcon />
+                  
+                </IconButton>
+              </Typography>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flexDirection: 'column' }}>
+                <h4>Importer la maquette  {getPromoName(promo)}  </h4>
+                <InputFileUpload
+                  promoName={promo}
+                  onFileUpload={(file) => handleFileUpload(promo, file)}
+                  uploadedFile={uploadedFiles[promo]}
+                  responseData={responseData[promo]}
+                  onResponseData={(date) => handleResponseData(promo, date)}
+                  onMaquetteUpload={handleMaquetteUpload}
+                />
+
+                <MaquetteDisplayTest
+                  data={formattedData}
+
+                />
 
 
-            </div>
+              </div>
 
-          </TabPanel> );
-        
+            </TabPanel>);
+
         })}
       </Box>
     </Box>

@@ -130,7 +130,7 @@ export default function MaquetteDisplayTest({ data }: { data: Data }) {
                                                             </TableRow>
                                                         ))}
                                                         <TableRow>
-                                                            <TableCell>👨‍🏫 Professeur :</TableCell>
+                                                            <TableCell>Professeur :</TableCell>
                                                             <TableCell>
                                                                 <Select
                                                                     value={selectedProfessors[course.name] || ""}

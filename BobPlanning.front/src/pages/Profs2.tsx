@@ -113,11 +113,13 @@ const Profs2 = () => {
         }
     }
 
+    
 
-    // Style personnalisé pour les boutons
+    
     return (
         <div>
-            <h1>Professeurs</h1>
+            <h1>Gestion des professeurs</h1>
+
             <div className='container-global'>
                 <div className="container-add">
                     <h3>Ajouter un nouveau professeur</h3>

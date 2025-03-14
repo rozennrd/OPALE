@@ -2,7 +2,6 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
-import axios from 'axios';
 import { getTokenFromLocalStorage } from '../auth/Token';
 
 const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
@@ -39,17 +38,23 @@ export default function InputFileUpload({ promoName, onFileUpload, uploadedFile,
       formData.append('file', file);
 
       try {
-        const response = await axios.post(`${RACINE_FETCHER_URL}/readMaquette`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
+        const response = await fetch(`${RACINE_FETCHER_URL}/readMaquette`, {
+            method: 'POST',
+            headers: {
             "x-access-token": getTokenFromLocalStorage() ?? "",
           },
+          body: formData,
         });
+        if (!response.ok) {
+          throw new Error('Erreur lors de la lecture de la maquette');
+        }
+        const responseData = await response.json();
 
+        console.log('Uploading file successful', responseData);
         //callback
         onFileUpload(file);
-        onResponseData(response.data);
-        saveCoursesToDB(response.data, promoName);
+        onResponseData(responseData);
+        saveCoursesToDB(responseData, promoName);
         onMaquetteUpload();
       } catch (error) {
         console.error('Error uploading file : ', error);
