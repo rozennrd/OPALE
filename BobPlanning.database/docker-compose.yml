@@ -1,0 +1,13 @@
+services:
+  db:
+    build: .
+    container_name: bobplanning-database
+    env_file: 
+      - .env
+    ports:
+      - "3306:3306"         # Expose MySQL sur le port local 3307
+    volumes:
+      - mysql_data:/var/lib/mysql  # Persistance des données
+
+volumes:
+  mysql_data:
