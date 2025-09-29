@@ -25,11 +25,22 @@
 ### 2. Backend
 Add file `db.conf` in src/database/config
 ```
-    DB_HOST=Hôte
-    DB_USER=User
-    DB_PASSWORD=Password
-    DB_NAME=nom_db
-    DB_PORT=num_port
+    DB_HOST=localhost
+    DB_USER=bob
+    DB_PASSWORD=thisIsBobPlanning!
+    DB_NAME=planning
+    DB_PORT=3306
+    
+    
+    MYSQL_ROOT_PASSWORD=rootpassword 
+    MYSQL_DATABASE=bobPlanning 
+    MYSQL_USER=bob 
+    MYSQL_PASSWORD=thisIsBobPlanning! 
+    MYSQL_ROOT_HOST=% 
+    MYSQL_INITDB_SKIP_TZINFO=1 
+    MYSQL_TCP_PORT=3306 
+    MYSQL_WAIT_TIMEOUT=28800 
+    MYSQL_INTERACTIVE_TIMEOUT=28800 
 ```
 * Go to BobPlanning.back --> cd .\BobPlanning.back
 * Install library --> npm i
@@ -55,6 +66,7 @@ You can stop here if you just want to run the project. Continue if you are tryin
  Sinon vous pouvez supprimer dans index.ts la demande de vérification du token, attention, ne pas supprimer pour la partie prod. 
 
 ## [work in progress] MicroService
+Service pour générer le micro-planning
  Go to BobPlanning.microService --> cd .\BobPlanning.microService
  Create a env mode for python --> python -m venv venv
  Go in env mode for python : 
