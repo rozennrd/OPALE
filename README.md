@@ -77,3 +77,71 @@ Service pour générer le micro-planning
 
  Pour mettre à jour les installations de lib --> pip freeze > requirements.txt
 
+## Database
+### Entity Relationship Diagram 
+#### Existing Database Schema : BOB
+```mermaid
+erDiagram
+%% =====================
+%% Schéma : bobPlanning
+%% =====================
+
+    calendrier {
+        int(11) id PK
+        date dateDeb
+        date dateFin
+    }
+
+    Cours {
+        int(11) id PK
+        int(11) promo FK  "→ promosData.id (CASCADE)"
+        varchar name
+        varchar UE
+        longtext Semestre
+        longtext Periode  "NULL"
+        int(11) Prof FK       "→ Professeurs.id (SET NULL)"
+        enum typeSalle    "classique|electronique|informatique|projet"
+        longtext heure    "JSON (CHECK json_valid(heure))"
+    }
+
+    Professeurs {
+        int(11) id PK
+        varchar name
+        enum type         "EXT|INT"
+        text dispo        
+    }
+
+    promosData {
+        int(11) id PK
+        varchar Name
+        int Nombre
+        longtext Periode  
+    }
+
+    Salles {
+        int(11) id PK
+        varchar name
+        enum type         "classique|electronique|informatique|projet"
+        int(11) capacite
+    }
+
+    Utilisateurs {
+        int IdUtilisateur PK
+        varchar Login
+        varchar Email
+        varchar Password
+        tinyint Bloque        "DEFAULT 0"
+        datetime DateBlocage  "NULL"
+        int TentativesEchouees "DEFAULT 0"
+    }
+
+%% =====================
+%% Relations
+%% =====================
+
+    Professeurs ||--o{ Cours : "enseigne (Prof)"
+    promosData  ||--|{ Cours : "regroupe (promo)"
+%% Note: pas de contrainte FK entre Cours.typeSalle et Salles
+%% Note: calendrier et Utilisateurs n'ont pas de relations explicites
+
+```
