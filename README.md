@@ -12,7 +12,7 @@
 
 ```
   MYSQL_ROOT_PASSWORD=rootpassword
-  MYSQL_DATABASE=bobPlanning
+  MYSQL_DATABASE=planning
   MYSQL_USER=bob
   MYSQL_PASSWORD=thisIsBobPlanning!
   MYSQL_ROOT_HOST=%
@@ -33,7 +33,7 @@ Add file `db.conf` in src/database/config
     
     
     MYSQL_ROOT_PASSWORD=rootpassword 
-    MYSQL_DATABASE=bobPlanning 
+    MYSQL_DATABASE=planning 
     MYSQL_USER=bob 
     MYSQL_PASSWORD=thisIsBobPlanning! 
     MYSQL_ROOT_HOST=% 
