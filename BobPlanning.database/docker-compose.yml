@@ -1,7 +1,7 @@
 services:
   db:
     build: .
-    container_name: bobplanning-database
+    container_name: opale-database
     env_file: 
       - .env
     ports:

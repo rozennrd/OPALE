@@ -100,7 +100,7 @@ export default function InputFileUpload({ promoName, onFileUpload, uploadedFile,
         throw new Error('Erreur lors de l\'enregistrement des matières');
       }
 
-      const responseData = await response.json();
+      await response.json();
 
 
     } catch (error) {

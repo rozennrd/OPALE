@@ -1,20 +1,45 @@
-# Utilisation de l'image Node.js officielle
-FROM node:latest
+# -------------------------------------------------
+# Étape 1 – Build (compilation TypeScript)
+# -------------------------------------------------
+FROM node:20-alpine AS builder
 
-# Définition du répertoire de travail
-WORKDIR /usr/src/app
+# Crée un répertoire de travail
+WORKDIR /app
 
-# Copie des fichiers package.json et package-lock.json
+# Copie uniquement les fichiers nécessaires au build
+# (package.json + lock + tsconfig + source)
 COPY package*.json ./
+COPY tsconfig.json ./
+COPY src ./src
+COPY eslint.config.mts ./
+COPY jest.config.ts ./
 
-# Installation des dépendances
-RUN node -v && npm -v
-RUN npm i
-RUN npm audit fix
-RUN npm run build --verbose || tail -n 20 /root/.npm/_logs/*.log
+# Installe les dépendances (production + dev, car on a besoin de tsc)
+RUN npm ci
 
-# Exposition du port de l'application
+# Compile le TypeScript dans le dossier /app/dist
+RUN npm run build   # suppose que "build" = "tsc"
+
+# -------------------------------------------------
+# Étape 2 – Runtime (image légère)
+# -------------------------------------------------
+FROM node:20-alpine AS runtime
+
+WORKDIR /app
+
+# Copie le code compilé
+COPY --from=builder /app/dist ./dist
+
+# Copie le fichier de config (ou le dossier complet)
+COPY src/database/config ./dist/database/config  
+
+# Copie le package.json pour installer les dépendances prod
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Si vous avez d’autres ressources statiques (ex. files)
+COPY files ./files
+
 EXPOSE 3000
-
-# Commande pour démarrer l'application
-CMD ["npm", "start"]
+ENV NODE_ENV=production
+CMD ["node", "dist/index.js"]
