@@ -176,6 +176,7 @@ const Parametres: React.FC = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
+      console.log(RACINE_FETCHER_URL);
       const response = await fetch(`${RACINE_FETCHER_URL}/generateEdtMacro`, {
         method: 'POST',
         headers: {
@@ -192,7 +193,7 @@ const Parametres: React.FC = () => {
       const data = await response.json();
       setMessage('Le fichier a été généré avec succès !');
 
-      setFileUrl(data.fileUrl);
+      setFileUrl(RACINE_FETCHER_URL + data.fileUrl);
 
     } catch (error) {
       console.error('Error:', error);
@@ -237,8 +238,8 @@ const Parametres: React.FC = () => {
           </div>}
 
         {/* Afficher le message et le lien de téléchargement */}
-        {message && <div className='message-success'>{message}</div>}
-        {fileUrl && (
+        {message ? <div className='message-success'> {message} </div> : null}
+        {fileUrl&& (
           <DownloadButton fileUrl={fileUrl} label="Télécharger le fichier" />
         )}
       </div>
@@ -250,4 +251,4 @@ const Parametres: React.FC = () => {
   };
 }
 
-export default Parametres;        
+export default Parametres;
