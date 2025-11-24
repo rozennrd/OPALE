@@ -1,7 +1,7 @@
 # -------------------------------------------------
 # Étape 1 – Build (compilation TypeScript)
 # -------------------------------------------------
-FROM node:20-alpine AS builder
+FROM node:lts-alpine3.22 AS builder
 
 # Crée un répertoire de travail
 WORKDIR /app
@@ -30,15 +30,9 @@ WORKDIR /app
 # Copie le code compilé
 COPY --from=builder /app/dist ./dist
 
-# Copie le fichier de config (ou le dossier complet)
-COPY src/database/config ./dist/database/config  
-
 # Copie le package.json pour installer les dépendances prod
 COPY package*.json ./
-RUN npm ci --only=production
 
-# Si vous avez d’autres ressources statiques (ex. files)
-COPY files ./files
 
 EXPOSE 3000
 ENV NODE_ENV=production
