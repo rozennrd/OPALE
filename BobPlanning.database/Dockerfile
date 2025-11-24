@@ -1,3 +1,3 @@
-FROM mysql:8.0
+FROM postgres:15
 
 COPY ./init-scripts/ /docker-entrypoint-initdb.d/

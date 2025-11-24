@@ -8,7 +8,6 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
-
 # Construire l'application frontend
 RUN npm run build --verbose
 
