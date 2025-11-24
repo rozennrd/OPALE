@@ -6,7 +6,7 @@ import { EdtMacroData } from '../types/EdtMacroData';
 export const generateEdtMacro = async (data: EdtMacroData) => {
 
   // Set date to lundi
-  let currentDate: Date = new Date(data.DateDeb);
+  const currentDate: Date = new Date(data.DateDeb);
   if (currentDate.getDay() !== 1) {
     currentDate.setDate(currentDate.getDate() - (currentDate.getDay() - 1));
   }
@@ -23,7 +23,7 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
   const worksheet = workbook.addWorksheet('MultiPromo');
 
   //Add columns
-  let columns = [
+  const columns = [
     { header: "Numéro de la semaine", key: "weekNumber", width: 20 },
     { header: "La semaine commence le lundi :", key: "mondayDate", width: 20 },
     { header: "Pedago dont jurys", key: "pedagoJury", width: 20 },
@@ -114,7 +114,7 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
     }
 
     //Initialisation informations semaine
-    let rowData: any = {
+    const rowData: any = {
       weekNumber: getWeekNumber(currentDate),
       mondayDate: currentDate.toLocaleDateString("fr-FR"),
       pedagoJury: '',
@@ -125,7 +125,7 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
       events: '',
     };
 
-    let promosEnCours: string[] = [];
+    const promosEnCours: string[] = [];
 
     let setFirstRattrapage = true; 
     let setSecondRattrapage = true;
@@ -231,7 +231,7 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
 
 
     //Ajout ligne
-    let row = worksheet.addRow(rowData);
+    const row = worksheet.addRow(rowData);
 
     if (adiStarted && !holidayDescription.includes("Vacances")) {
       weekCount++;

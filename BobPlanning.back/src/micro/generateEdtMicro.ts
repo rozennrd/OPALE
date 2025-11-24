@@ -2,7 +2,6 @@ import axios from "axios";
 import { EdtMacroData } from "../types/EdtMacroData";
 import { generateDataEdtMicro } from "./generateDataEdtMicro";
 import { generateEdtSquelette } from './generateEdtSquelette';
-import e from "express";
 
 export const generateEdtMicro = async (connection: any) : Promise<any> => {
 

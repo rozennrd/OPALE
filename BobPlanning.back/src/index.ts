@@ -11,17 +11,13 @@ import { EdtMicro } from "./types/EdtMicroData";
 import { generateEdtMicro } from "./micro/generateEdtMicro";
 import { getLogin } from "./database/getLogin";
 import authJwt from "./middleware/authJwt";
-import  { Pool, PoolConnection } from 'mysql2';
-
-
-
-require('dotenv').config();
-
-const cors = require("cors");
-const mysql = require('mysql2');
-const swaggerUi = require("swagger-ui-express");
-const multer = require("multer");
-const swaggerJsdoc = require("swagger-jsdoc");
+import  { PoolConnection } from 'mysql2';
+import 'dotenv/config';
+import cors from 'cors';
+import mysql from 'mysql2';
+import swaggerUi from 'swagger-ui-express';
+import multer from 'multer';
+import swaggerJsdoc from 'swagger-jsdoc';
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -719,7 +715,7 @@ app.post("/generateEdtMacro", authJwt.verifyToken, async (req: Request, res: Res
       const start = new Date(DateDeb as string);
       const end = new Date(DateFin as string);
 
-      const workbook = await generateEdtMacro({
+      await generateEdtMacro({
         DateDeb: start,
         DateFin: end,
         Promos: Promos,
@@ -841,8 +837,7 @@ app.post("/readMaquette", authJwt.verifyToken, upload.single("file"), async (req
     }
 
     try {
-      let data: MaquetteData;
-      data = await readMaquette(req.file.buffer);
+      const data: MaquetteData = await readMaquette(req.file.buffer);
       res.json(data);
     } catch (error) {
       res

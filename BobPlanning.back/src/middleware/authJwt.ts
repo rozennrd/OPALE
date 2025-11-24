@@ -9,7 +9,7 @@ interface AuthenticatedRequest extends Request {
 }
 
 const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
-  let token = req.headers["x-access-token"] as string;
+  const token = req.headers["x-access-token"] as string;
 
   if (!token) {
     res.status(403).send({ message: "No token provided!" });
