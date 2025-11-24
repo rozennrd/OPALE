@@ -11,14 +11,12 @@ import { EdtMicro } from "./types/EdtMicroData";
 import { generateEdtMicro } from "./micro/generateEdtMicro";
 import { getLogin } from "./database/getLogin";
 import authJwt from "./middleware/authJwt";
-import  { Pool, PoolConnection } from 'mysql2';
-
+import { pool } from "./database/pool";
 
 
 require('dotenv').config();
 
 const cors = require("cors");
-const mysql = require('mysql2');
 const swaggerUi = require("swagger-ui-express");
 const multer = require("multer");
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -33,18 +31,7 @@ const PORT = 3000;
 app.use(express.json({ limit: "50mb" }));
 app.use(cors());
 
-const pool = mysql.createPool({
-  host: dbConfig.DB_HOST,
-  user: dbConfig.DB_USER,
-  password: dbConfig.DB_PASSWORD,
-  database: dbConfig.DB_NAME,
-  port: dbConfig.DB_PORT,
-  waitForConnections: true,
-  connectionLimit: 10, // Nombre maximal de connexions dans le pool
-  queueLimit: 0, // Nombre maximal de requêtes en attente
-});
-
-pool.getConnection((err: any, connection: any) => {
+pool.connect((err: any, connection: any) => {
   if (err) {
     console.error("Erreur de connexion à la base de données:", err);
   } else {
@@ -143,11 +130,11 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  */
 app.post("/login", async (req: Request, res: Response) => {
   try {
-    pool.getConnection(async (err: any, connection: any) => {
+    pool.connect(async (err: any, connection: any) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      await getLogin(req, res, connection);
+      await getLogin(req, res);
       connection.release(); // Libérer la connexion après vérification
     });
   } catch (error) {
@@ -217,7 +204,7 @@ app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
   };
 
   const sql = "SELECT Name, Nombre, Periode FROM promosData";
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -344,7 +331,7 @@ app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
 
   const dateDeb = DateDeb || null;
   const dateFin = DateFin || null;
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -424,7 +411,7 @@ app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
  *         description: Une erreur est survenue
  */
 app.get("/getProfsData", authJwt.verifyToken, (req, res) => {
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -500,7 +487,7 @@ app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
       return new Promise<void>((resolve, reject) => {
         if (prof.id) {
           // Si un ID est fourni, mettre à jour le professeur existant
-          pool.getConnection((err: any, connection: any) => {
+          pool.connect((err: any, connection: any) => {
             if (err) {
               return res.status(500).json({ error: err.message });
             }
@@ -520,7 +507,7 @@ app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
           });
         } else {
           // Sinon, ajouter un nouveau professeur
-          pool.getConnection((err: any, connection: any) => {
+          pool.connect((err: any, connection: any) => {
             if (err) {
               return res.status(500).json({ error: err.message });
             }
@@ -559,35 +546,38 @@ app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
 
 
 
-app.post("/addProf", authJwt.verifyToken, (req: Request, res: Response): void => { 
-    const { name, type, dispo } = req.body;
+app.post("/addProf", authJwt.verifyToken, async (req, res) => {
+  const { name, type, dispo } = req.body;
 
-    if (!name || !type) {
-        res.status(400).json({ error: "Le nom et le type sont obligatoires." });
-        return;
-    }
+  if (!name || !type) {
+    res.status(400).json({ error: "Le nom et le type sont obligatoires." });
+    return;
+  }
 
-    pool.getConnection((err: Error | null, connection: PoolConnection) => {
-        if (err) {
-            console.error("Erreur connexion DB :", err);
-            res.status(500).json({ error: "Erreur connexion base de données." });
-            return;
-        }
+  try {
+    const client = await pool.connect();
 
-        const insertSql = "INSERT INTO Professeurs (name, type, dispo) VALUES (?, ?, ?)";
-        connection.query(insertSql, [name, type, JSON.stringify(dispo)], (error, results: any) => {
-            connection.release(); // Libérer la connexion après exécution
+    const sql =
+      "INSERT INTO professeur (nom, type, dispo) VALUES ($1, $2, $3) RETURNING id";
 
-            if (error) {
-                console.error("Erreur SQL :", error);
-                res.status(500).json({ error: "Erreur SQL lors de l'ajout." });
-                return;
-            }
+    const result = await client.query(sql, [
+      name,
+      type,
+      JSON.stringify(dispo),
+    ]);
 
-            res.json({ success: true, insertedId: results.insertId });
-        });
+    client.release();
+
+    res.json({
+      success: true,
+      insertedId: result.rows[0].id,
     });
+  } catch (err: any) {
+    console.error("Erreur SQL :", err);
+    res.status(500).json({ error: err.message });
+  }
 });
+
 
 
 
@@ -626,7 +616,7 @@ app.delete('/deleteProf/:id', authJwt.verifyToken, (req: Request, res: Response)
     return;
   }
 
-pool.getConnection((err: any, connection: any) => {
+pool.connect((err: any, connection: any) => {
             if (err) {
               return res.status(500).json({ error: err.message });
             }
@@ -858,7 +848,7 @@ app.post("/readMaquette", authJwt.verifyToken, upload.single("file"), async (req
  */
 app.post("/generateEdtMicro", authJwt.verifyToken, async (req: Request, res: Response) => {
     try {
-      pool.getConnection(async (err: any, connection: any) => {
+      pool.connect(async (err: any, connection: any) => {
         if (err) {
           return res.status(500).json({ error: err.message });
         }
@@ -1224,7 +1214,7 @@ app.post("/generateDataEdtMicro", authJwt.verifyToken, async (req: Request, res:
  *         description: Une erreur est survenue
  */
 app.get("/getSallesData", authJwt.verifyToken, (req, res) => { 
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -1277,7 +1267,7 @@ app.get("/getSallesData", authJwt.verifyToken, (req, res) => {
  *         description: Erreur interne du serveur.
  */
 app.post("/setSallesData", authJwt.verifyToken, (req, res) => {
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -1344,7 +1334,7 @@ app.put("/updateSalle", authJwt.verifyToken, (req, res): void => {
     return;
   }
 
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -1408,7 +1398,7 @@ app.put("/updateSalle", authJwt.verifyToken, (req, res): void => {
  *         description: Erreur interne du serveur.
  */
 app.delete("/deleteSalle", authJwt.verifyToken, (req, res) => {
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -1436,7 +1426,7 @@ app.delete("/deleteSalle", authJwt.verifyToken, (req, res) => {
 
 app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
 
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -1515,7 +1505,7 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
 
 app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
 
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -1548,7 +1538,7 @@ app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
 });
 
 app.get("/getCours", authJwt.verifyToken, (req, res) => {
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }

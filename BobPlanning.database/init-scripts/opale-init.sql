@@ -2,6 +2,8 @@
 -- Schéma OPALE - Création des types, tables et contraintes
 -- Base : PostgreSQL
 
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
 -- ==============================================================
 -- 1. Types ENUM
 -- ==============================================================
@@ -17,7 +19,7 @@ CREATE TYPE type_cours      AS ENUM ('TD', 'TP', 'PROJET', 'AUTRE');
 
 -- 2.1 professeur
 CREATE TABLE professeur (
-                            id          UUID PRIMARY KEY,
+                            id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                             nom         VARCHAR(255)        NOT NULL,
                             prenom      VARCHAR(255)        NOT NULL,
                             email       VARCHAR(255),
@@ -28,7 +30,7 @@ CREATE TABLE professeur (
 
 -- 2.2 salle
 CREATE TABLE salle (
-                       id          UUID PRIMARY KEY,
+                       id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                        nom         VARCHAR(100)        NOT NULL,
                        type        type_salle          NOT NULL,
                        capacite    INT,
@@ -38,7 +40,7 @@ CREATE TABLE salle (
 
 -- 2.3 event
 CREATE TABLE event (
-                       id              UUID PRIMARY KEY,
+                       id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                        type            type_event          NOT NULL,
                        nom             VARCHAR(255)        NOT NULL,
                        num_semaine     INT,
@@ -52,14 +54,14 @@ CREATE TABLE event (
 
 -- 2.4 cycle
 CREATE TABLE cycle (
-                       id      UUID PRIMARY KEY,
+                       id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                        nom     VARCHAR(255)    NOT NULL,
                        CONSTRAINT uq_cycle_nom UNIQUE (nom)
 );
 
 -- 2.5 promotion
 CREATE TABLE promotion (
-                           id          UUID PRIMARY KEY,
+                           id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                            nom         VARCHAR(255)    NOT NULL,
                            effectifs   INT             NOT NULL,
                            id_cycle    UUID            NOT NULL,
@@ -78,7 +80,7 @@ CREATE TABLE promotion (
 
 -- 2.6 groupe
 CREATE TABLE groupe (
-                        id          UUID PRIMARY KEY,
+                        id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                         id_promo    UUID           NOT NULL,
                         nom         VARCHAR(100)   NOT NULL,
                         effectifs   INT            NOT NULL,
@@ -92,7 +94,7 @@ CREATE TABLE groupe (
 
 -- 2.7 specialite
 CREATE TABLE specialite (
-                            id          UUID PRIMARY KEY,
+                            id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                             id_groupe   UUID           NULL,
                             id_promo    UUID           NULL,
                             nom         VARCHAR(255)   NOT NULL,
@@ -107,7 +109,7 @@ CREATE TABLE specialite (
 
 -- 2.8 matiere
 CREATE TABLE matiere (
-                         id                     UUID PRIMARY KEY,
+                         id                     UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                          nom                    VARCHAR(255)   NOT NULL,
                          volume_horaire         FLOAT          NOT NULL,
                          id_promo               UUID,
@@ -138,7 +140,7 @@ CREATE TABLE matiere (
 
 -- 3.1 cours
 CREATE TABLE cours (
-                       id             UUID PRIMARY KEY,
+                       id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                        id_event       UUID           NOT NULL,
                        type           type_cours     NOT NULL,
                        id_prof        UUID           NOT NULL,
@@ -165,7 +167,7 @@ CREATE TABLE cours (
 
 -- 3.2 disponibilite
 CREATE TABLE disponibilite (
-                               id           UUID PRIMARY KEY,
+                               id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                                id_prof      UUID        NOT NULL,
                                num_semaine  INT         NOT NULL,
                                dispo_micro  VARCHAR(10),
@@ -180,7 +182,7 @@ CREATE TABLE disponibilite (
 
 -- 3.3 localisation (event ↔ salle)
 CREATE TABLE localisation (
-                              id        UUID PRIMARY KEY,
+                              id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                               id_salle  UUID   NOT NULL,
                               id_event  UUID   NOT NULL,
                               CONSTRAINT fk_localisation_salle
@@ -199,7 +201,7 @@ CREATE TABLE localisation (
 
 -- 3.4 concerner (event ↔ promo / groupe / spécialité)
 CREATE TABLE concerner (
-                           id             UUID PRIMARY KEY,
+                           id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                            id_event       UUID    NOT NULL,
                            id_promo       UUID    NULL ,
                            id_groupe      UUID    NULL ,
@@ -236,7 +238,7 @@ CREATE TABLE concerner (
 
 -- 3.5 enseignement (matiere ↔ professeur)
 CREATE TABLE enseignement (
-                              id          UUID PRIMARY KEY,
+                              id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                               id_matiere  UUID    NOT NULL,
                               id_prof     UUID    NOT NULL,
                               nb_heures   INT,
@@ -254,6 +256,29 @@ CREATE TABLE enseignement (
                               CONSTRAINT uq_enseignement_unique UNIQUE (id_matiere, id_prof),
                               CONSTRAINT ck_enseignement_heures CHECK (nb_heures IS NULL OR nb_heures >= 0)
 );
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Utilisateurs`
+--
+
+CREATE TABLE utilisateurs (
+                              id_utilisateur      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                              login       VARCHAR(255)    NOT NULL,
+                              email       VARCHAR(255)    NOT NULL,
+                              password    VARCHAR(255)    NOT NULL,
+                              bloque      BOOLEAN         DEFAULT FALSE,
+                              date_blocage TIMESTAMP      NOT NULL,
+                              tentatives_echouees INT    DEFAULT 0 NOT NULL
+);
+
+--
+-- Déchargement des données de la table `Utilisateurs`
+--
+
+INSERT INTO utilisateurs (login, email, password, date_blocage, tentatives_echouees) VALUES
+    ('Daminou', 'Daminou', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533',  '2025-02-17 15:36:41', 0);
 
 -- ==============================================================
 -- Indices optionnels
