@@ -44,7 +44,17 @@ services:
     networks:
       - api-network
     ports:
-      - "5000:5000" 
+      - "5000:5000"
+
+  opale-new-frontend:
+    build: ./Opale.Front
+    container_name: opale-new-frontend
+    depends_on:
+      - node-app
+    networks:
+      - app-network
+    ports:
+      - "8080:80"
 
 networks:
   app-network:
