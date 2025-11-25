@@ -1219,8 +1219,6 @@ app.get("/getSallesData", authJwt.verifyToken, (req, res) => {
         : results && Array.isArray((results as any).rows)
           ? (results as any).rows
           : [];
-      console.log("salles results:", results);
-      console.log(salles)
 
       res.json(salles);
       connection.release(); // Libérer la connexion après vérification
