@@ -51,3 +51,6 @@ const Checklist: React.FC<ChecklistProps> = ({ items, onToggle }) => {
     )
 }
 
+export default Checklist
+
+
