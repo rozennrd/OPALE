@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import logoFull from '../assets/logo-full.png';
 import ThemeToggle from '../components/ThemeToggle';
 
-export default function Login(): Element {
+export default function Login() {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const navigate = useNavigate();

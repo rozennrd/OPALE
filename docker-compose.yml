@@ -18,6 +18,13 @@ services:
     container_name: opale-backend
     depends_on:
       - db
+
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ./BobPlanning.back:/usr/src/app
       - ./BobPlanning.back/src/database/config:/usr/src/app/dist/database/config
@@ -26,20 +33,22 @@ services:
       - api-network
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=production
+
 
   db:
     image: postgres:15
     container_name: postgres-database
+    env_file: 
+      - BobPlanning.database/.env
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5433:5432"   # port externe 5433 → port interne 5432
+      - "5433:5432"
     volumes:
       - ../bobPlanning.db:/var/lib/postgresql/data
+      - ./bobPlanning.database/init-scripts:/docker-entrypoint-initdb.d
     networks:
       - app-network
 
