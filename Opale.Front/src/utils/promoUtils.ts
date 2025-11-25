@@ -1,10 +1,19 @@
-// src/utils/promoUtils.js
+// src/utils/promoUtils.ts
+import { Promotion, GroupSpecialtyItem, Constraints } from '../models'
 
-export const uid = (p = 'id') =>
+interface PromoTotals {
+    totalStudents: number
+    groupsTotal: number
+    specialtiesTotal: number
+    groupsMismatch: boolean
+    specialtiesMismatch: boolean
+}
+
+export const uid = (p: string = 'id'): string =>
     `${p}-${Math.random().toString(36).slice(2, 9)}`
 
-export const makePromotions = (name, years) =>
-    Array.from({ length: years }, (_, i) => ({
+export const makePromotions = (name: string, years: number): Promotion[] =>
+    Array.from({ length: years }, (_, i): Promotion => ({
         id: uid('promo'),
         label: `${name} ${i + 1}`,
         students: 0,
@@ -12,9 +21,17 @@ export const makePromotions = (name, years) =>
         endDate: '',
         groups: [],
         specialties: [],
+        constraints: {
+            vacances: [],
+            entreprise: [],
+            stages: [],
+            international: [],
+            partiels: [],
+            rattrapages: [],
+        },
     }))
 
-export const distributeEvenly = (total, items) => {
+export const distributeEvenly = (total: number | string, items: GroupSpecialtyItem[]): GroupSpecialtyItem[] => {
     if (!items.length) return items
     const safeTotal = Number(total) || 0
     if (safeTotal <= 0) {
@@ -30,7 +47,7 @@ export const distributeEvenly = (total, items) => {
 }
 
 // Calcul des totaux + flags pour une promo
-export const computePromoTotals = (promo) => {
+export const computePromoTotals = (promo: Promotion | undefined): PromoTotals => {
     if (!promo) {
         return {
             totalStudents: 0,
@@ -46,11 +63,11 @@ export const computePromoTotals = (promo) => {
     const specialties = promo.specialties || []
 
     const groupsTotal = groups.reduce(
-        (sum, g) => sum + (Number(g.students) || 0),
+        (sum: number, g: GroupSpecialtyItem) => sum + (Number(g.students) || 0),
         0
     )
     const specialtiesTotal = specialties.reduce(
-        (sum, s) => sum + (Number(s.students) || 0),
+        (sum: number, s: GroupSpecialtyItem) => sum + (Number(s.students) || 0),
         0
     )
 
@@ -68,7 +85,7 @@ export const computePromoTotals = (promo) => {
 }
 
 // Pour afficher l'icône warning sur la ligne de promo
-export const hasPromoMismatch = (promo) => {
+export const hasPromoMismatch = (promo: Promotion | undefined): boolean => {
     const {
         groupsMismatch,
         specialtiesMismatch,

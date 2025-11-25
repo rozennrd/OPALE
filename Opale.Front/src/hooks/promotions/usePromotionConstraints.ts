@@ -1,8 +1,12 @@
-// src/hooks/promotions/usePromotionConstraints.js
+// src/hooks/promotions/usePromotionConstraints.ts
 import { useCallback } from 'react'
+import { Constraints, DateRange } from '../../models'
 import { uid } from '../../utils/promoUtils'
+import { EditingPromotion } from './usePromotionEditing'
 
-export const createEmptyConstraints = () => ({
+type ConstraintType = keyof Constraints
+
+export const createEmptyConstraints = (): Constraints => ({
     vacances: [],
     entreprise: [],
     stages: [],
@@ -11,8 +15,11 @@ export const createEmptyConstraints = () => ({
     rattrapages: [],
 })
 
-export function usePromotionConstraints(editingPromo, setEditingPromo) {
-    const handleAddConstraint = useCallback((type) => {
+export function usePromotionConstraints(
+    editingPromo: EditingPromotion | null,
+    setEditingPromo: React.Dispatch<React.SetStateAction<EditingPromotion | null>>
+) {
+    const handleAddConstraint = useCallback((type: ConstraintType): void => {
         setEditingPromo(prev => {
             if (!prev) return prev
             const base = prev.constraints || createEmptyConstraints()
@@ -34,7 +41,7 @@ export function usePromotionConstraints(editingPromo, setEditingPromo) {
         })
     }, [setEditingPromo])
 
-    const handleRemoveConstraint = useCallback((type, id) => {
+    const handleRemoveConstraint = useCallback((type: ConstraintType, id: string): void => {
         setEditingPromo(prev => {
             if (!prev) return prev
             const base = prev.constraints || createEmptyConstraints()
@@ -44,19 +51,19 @@ export function usePromotionConstraints(editingPromo, setEditingPromo) {
                 ...prev,
                 constraints: {
                     ...base,
-                    [type]: list.filter(r => r.id !== id),
+                    [type]: list.filter((r: DateRange) => r.id !== id),
                 },
             }
         })
     }, [setEditingPromo])
 
-    const handleUpdateConstraintRange = useCallback((type, id, field, value) => {
+    const handleUpdateConstraintRange = useCallback((type: ConstraintType, id: string, field: string, value: string): void => {
         setEditingPromo(prev => {
             if (!prev) return prev
             const base = prev.constraints || createEmptyConstraints()
             const ranges = base[type] || []
 
-            const updated = ranges.map(r =>
+            const updated = ranges.map((r: DateRange) =>
                 r.id === id ? { ...r, [field]: value } : r
             )
 

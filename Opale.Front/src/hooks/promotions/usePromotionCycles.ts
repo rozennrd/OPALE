@@ -1,12 +1,19 @@
-// src/hooks/promotions/usePromotionCycles.js
+// src/hooks/promotions/usePromotionCycles.ts
 import { useState, useEffect } from 'react'
+import { Cycle, Promotion } from '../../models'
 import {
     uid,
     makePromotions,
     hasPromoMismatch,
 } from '../../utils/promoUtils'
 
-const DEFAULT = [
+interface DefaultCycle {
+    id: string
+    name: string
+    years: number
+}
+
+const DEFAULT: DefaultCycle[] = [
     { id: 'cycle-adi',   name: 'ADI',   years: 2 },
     { id: 'cycle-sir',   name: 'SIR',   years: 2 },
     { id: 'cycle-isen',  name: 'ISEN',  years: 3 },
@@ -14,7 +21,7 @@ const DEFAULT = [
 ]
 
 export function usePromotionCycles() {
-    const [cycles, setCycles] = useState(() =>
+    const [cycles, setCycles] = useState<Cycle[]>(() =>
         DEFAULT.map(c => ({
             id: c.id,
             name: c.name,
@@ -23,7 +30,7 @@ export function usePromotionCycles() {
     )
 
     // Ajout d’un cycle
-    const addCycle = () => {
+    const addCycle = (): void => {
         const name = (window.prompt('Nom du cycle (diplôme) ?', 'Nouveau cycle') || '').trim()
         if (!name) return
 
@@ -31,7 +38,7 @@ export function usePromotionCycles() {
         if (!Number.isFinite(years)) years = 3
         years = Math.max(1, Math.min(6, years))
 
-        const newCycle = {
+        const newCycle: Cycle = {
             id: uid('cycle'),
             name,
             promotions: makePromotions(name, years),
@@ -44,7 +51,7 @@ export function usePromotionCycles() {
         })
     }
 
-    const removeCycle = (cycleId) => {
+    const removeCycle = (cycleId: string): void => {
         setCycles(prev => {
             const next = prev.filter(c => c.id !== cycleId)
             console.log('[CYCLES] remove', cycleId)
@@ -52,10 +59,10 @@ export function usePromotionCycles() {
         })
     }
 
-    const renameCycle = (cycleId, name) => {
+    const renameCycle = (cycleId: string, name: string): void => {
         setCycles(prev => prev.map(c => {
             if (c.id !== cycleId) return c
-            const renamed = {
+            const renamed: Cycle = {
                 ...c,
                 name,
                 promotions: c.promotions.map((p, i) => ({
@@ -68,7 +75,7 @@ export function usePromotionCycles() {
         }))
     }
 
-    const removePromotion = (cycleId, promoId) => {
+    const removePromotion = (cycleId: string, promoId: string): void => {
         setCycles(prev =>
             prev.map(c =>
                 c.id === cycleId

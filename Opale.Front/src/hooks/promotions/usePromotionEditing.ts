@@ -1,12 +1,31 @@
-// src/hooks/promotions/usePromotionEditing.js
+// src/hooks/promotions/usePromotionEditing.ts
 import { useState } from 'react'
+import { Cycle, GroupSpecialtyItem, Constraints } from '../../models'
 import { distributeEvenly } from '../../utils/promoUtils'
 import { createEmptyConstraints } from './usePromotionConstraints'
 
-export function usePromotionEditing(cycles, setCycles) {
-    const [editingPromo, setEditingPromo] = useState(null)
+export interface EditingPromotion {
+    cycleId: string
+    promoId: string
+    name: string
+    students: number
+    startDate: string
+    endDate: string
+    groups: GroupSpecialtyItem[]
+    specialties: GroupSpecialtyItem[]
+    constraints: Constraints
+}
 
-    const normalizeList = (rawList, prefix) =>
+export function usePromotionEditing(
+    cycles: Cycle[],
+    setCycles: React.Dispatch<React.SetStateAction<Cycle[]>>
+) {
+    const [editingPromo, setEditingPromo] = useState<EditingPromotion | null>(null)
+
+    const normalizeList = (
+        rawList: GroupSpecialtyItem[] | undefined,
+        prefix: string
+    ): GroupSpecialtyItem[] =>
         (rawList || []).map(item =>
             typeof item === 'string'
                 ? { id: `${prefix}-${item}`, name: item, students: 0 }
@@ -17,7 +36,7 @@ export function usePromotionEditing(cycles, setCycles) {
                 }
         )
 
-    const openEditPromotion = (cycleId, promoId) => {
+    const openEditPromotion = (cycleId: string, promoId: string): void => {
         const cycle = cycles.find(c => c.id === cycleId)
         const promo = cycle?.promotions.find(p => p.id === promoId)
         if (!cycle || !promo) return
@@ -38,13 +57,13 @@ export function usePromotionEditing(cycles, setCycles) {
         })
     }
 
-    const closeEditPromotion = () => setEditingPromo(null)
+    const closeEditPromotion = (): void => setEditingPromo(null)
 
-    const handleEditFieldChange = (field, value) => {
+    const handleEditFieldChange = (field: string, value: any): void => {
         setEditingPromo(prev => (prev ? { ...prev, [field]: value } : prev))
     }
 
-    const handleSavePromotion = (event) => {
+    const handleSavePromotion = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault()
         if (!editingPromo) return
 
@@ -76,7 +95,7 @@ export function usePromotionEditing(cycles, setCycles) {
     }
 
     // Groupes
-    const addGroup = () => {
+    const addGroup = (): void => {
         setEditingPromo(prev => {
             if (!prev) return prev
             const current = prev.groups || []
@@ -91,7 +110,7 @@ export function usePromotionEditing(cycles, setCycles) {
         })
     }
 
-    const removeGroup = (index) => {
+    const removeGroup = (index: number): void => {
         setEditingPromo(prev => {
             if (!prev) return prev
             const groups = prev.groups.filter((_, i) => i !== index)
@@ -99,7 +118,7 @@ export function usePromotionEditing(cycles, setCycles) {
         })
     }
 
-    const handleGroupChange = (index, field, value) => {
+    const handleGroupChange = (index: number, field: string, value: any): void => {
         setEditingPromo(prev => {
             if (!prev) return prev
             const groups = prev.groups.map((g, i) =>
@@ -115,7 +134,7 @@ export function usePromotionEditing(cycles, setCycles) {
     }
 
     // Spécialités
-    const addSpecialty = () => {
+    const addSpecialty = (): void => {
         setEditingPromo(prev => {
             if (!prev) return prev
             const current = prev.specialties || []
@@ -130,7 +149,7 @@ export function usePromotionEditing(cycles, setCycles) {
         })
     }
 
-    const removeSpecialty = (index) => {
+    const removeSpecialty = (index: number): void => {
         setEditingPromo(prev => {
             if (!prev) return prev
             const specialties = prev.specialties.filter((_, i) => i !== index)
@@ -138,7 +157,7 @@ export function usePromotionEditing(cycles, setCycles) {
         })
     }
 
-    const handleSpecialtyChange = (index, field, value) => {
+    const handleSpecialtyChange = (index: number, field: string, value: any): void => {
         setEditingPromo(prev => {
             if (!prev) return prev
             const specialties = prev.specialties.map((s, i) =>
