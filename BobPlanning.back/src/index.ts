@@ -1219,6 +1219,8 @@ app.get("/getSallesData", authJwt.verifyToken, (req, res) => {
         : results && Array.isArray((results as any).rows)
           ? (results as any).rows
           : [];
+      console.log("salles results:", results);
+      console.log(salles)
 
       res.json(salles);
       connection.release(); // Libérer la connexion après vérification
@@ -1266,17 +1268,17 @@ app.get("/getSallesData", authJwt.verifyToken, (req, res) => {
  */
 // File: `BobPlanning.back/src/index.ts`
 app.post("/setSallesData", authJwt.verifyToken, (req, res) => {
-  const { name, type, capacite } = req.body;
+  const { nom, type, capacite } = req.body;
 
   pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
 
-    const sql = "INSERT INTO salle (nom, type, capacite) VALUES ($1, $2, $3) RETURNING id";
+    const sql = "INSERT INTO salle (nom, type, capacite) VALUES ($1, $2, $3)";
     const capaciteNum = typeof capacite === "number" ? capacite : Number(capacite) || null;
 
-    connection.query(sql, [name, type, capaciteNum], (error: any, result: any) => {
+    connection.query(sql, [nom, type, capaciteNum], (error: any, result: any) => {
       connection.release(); // always release the client
 
       if (error) {
