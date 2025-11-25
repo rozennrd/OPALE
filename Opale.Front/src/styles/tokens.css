@@ -1,0 +1,64 @@
+/* v1.1.4 — Design tokens (couleurs, espaces, ombres, rayons, breakpoints) */
+
+@layer tokens {
+  :root {
+    /* Palette brute */
+    --gray-0: #ffffff;
+    --gray-1: #f7f7f7;
+    --gray-2: #eef2f7;
+    --gray-3: #e7e8ea;
+    --gray-4: #d9dbde;
+    --gray-5: #cfd1d4;
+    --gray-6: #c1c3c7;
+    --gray-8: #111827;
+
+    --brand-500: #2cd4d9;
+    --brand-600: #14b5b5;
+    --amber-400: #f6d68c;
+    --danger-100: #fee2e2;
+    --danger-200: #fecaca;
+    --danger-800: #7f1d1d;
+    --primary-500: #93c7a6;
+    --primary-600: #7db993;
+
+    /* Sémantique */
+    --bg: radial-gradient(circle at 30% 0%, var(--gray-3), var(--gray-4) 40%, var(--gray-5) 60%, var(--gray-6) 100%);
+    --panel: var(--gray-0);
+    --panel-soft: var(--gray-1);
+    --text: var(--gray-8);
+    --muted: #6b7280;
+
+    --brand: var(--brand-500);
+    --brand-hover: var(--brand-600);
+
+    --amber: var(--amber-400);
+    --primary: var(--primary-500);
+    --primary-hover: var(--primary-600);
+
+    /* ✅ nouveaux tokens pour harmoniser clair/sombre */
+    --surface-hover: #f2f2f2;   /* hover sidebar, etc. */
+    --surface-active: #e8f8f8;  /* actif sidebar (ex-#E8F8F8) */
+    --border: #e5e7eb;          /* bordures légères */
+    --input-bg: #ffffff;        /* fond d’input / petites surfaces */
+
+    --radius: 18px;
+    --radius-sm: 10px;
+    --radius-lg: 24px;
+
+    --shadow-sm: 0 2px 6px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+
+    /* Echelle d'espaces */
+    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+    --space-5: 20px; --space-6: 24px; --space-7: 32px; --space-8: 40px;
+
+    /* Breakpoints (utilisables dans les @media) */
+    --bp-md: 860px;
+    --bp-sm: 620px;
+
+    /* Tokens spécifiques "Add cycle" */
+    --add-cycle-border-width: 3px;
+    --add-cycle-border-color: #4F4F4F88;
+  }
+}
