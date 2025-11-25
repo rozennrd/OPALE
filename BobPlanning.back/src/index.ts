@@ -188,22 +188,21 @@ app.post("/login", async (req: Request, res: Response) => {
  */
 app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
   interface Promo {
-    Name: string;
-    Nombre: number;
-    Periode: {
-      DateDebutP: string;
-      DateFinP: string;
-      nbSemaineP?: number; // Cette clé est optionnelle
+    nom: string;
+    effectif: number;
+    periode: {
+      date_start: string;
+      date_end: string;
     }[];
   }
 
-  const promosData: { DateDeb: string; DateFin: string; Promos: Promo[] } = {
-    DateDeb: "",
-    DateFin: "",
+  const promosData: { date_start: string; date_end: string; Promos: Promo[] } = {
+    date_start: "",
+    date_end: "",
     Promos: [],
   };
 
-  const sql = "SELECT Name, Nombre, Periode FROM promosData";
+  const sql = "SELECT nom, effectifs, periode FROM promotion";
   pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
@@ -231,7 +230,7 @@ app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
           calendarResults[0].dateDeb &&
           calendarResults[0].dateFin
         ) {
-          promosData.DateDeb = calendarResults[0].dateDeb
+          promosData.date_start = calendarResults[0].dateDeb
             .toLocaleDateString("fr-FR", {
               year: "numeric",
               month: "2-digit",
@@ -241,7 +240,7 @@ app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
             .reverse()
             .join("-"); // Inverser le format pour obtenir yyyy-mm-dd
 
-          promosData.DateFin = calendarResults[0].dateFin
+          promosData.date_end = calendarResults[0].dateFin
             .toLocaleDateString("fr-FR", {
               year: "numeric",
               month: "2-digit",

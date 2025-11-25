@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { generateToken } from '../utils/jwt';
-import { pool } from './pool';  // ← ici
+import { pool } from './pool';
 
 const getLogin = async (req: Request, res: Response) => {
   const { email, password } = req.body;
