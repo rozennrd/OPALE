@@ -3,17 +3,17 @@ export interface Period {
     DateFinP: string;
 }
 
-export interface Promo {
-    Name: string;
-    Nombre: number;
+/*export interface Promo {
+    nom: string;
+    effectifs: number;
     Periode: Period[];
-}
+}*/
 
 interface PromosData {
-    Name: string;
-    DateDeb: string;
-    DateFin: string;
-    Promos: Promo[];
+    nom: string;
+    effectifs: number;
+    date_start: string;
+    date_end: string;
 }
 
 export default PromosData;

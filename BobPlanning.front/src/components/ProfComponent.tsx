@@ -8,7 +8,7 @@ type Disponibilites = {
 
 interface ProfComponentProps {
   initialData?: {
-    id: any;
+    id: string;
     name: string;
     type: 'EXT' | 'INT';
     dispo: Record<string, boolean>;

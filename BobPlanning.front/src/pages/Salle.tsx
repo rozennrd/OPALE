@@ -9,7 +9,7 @@ const Salle: React.FC = () => {
   const [error, setError] = useState('');
   const [editId, setEditId] = useState<number | null>(null);
 
-  const typesDisponibles = ['classique', 'electronique', 'informatique', 'projet'];
+  const typesDisponibles = ['projet', 'td', 'tp', 'reunion', 'autre'];
 
   const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
 

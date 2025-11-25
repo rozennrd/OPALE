@@ -11,14 +11,12 @@ import { EdtMicro } from "./types/EdtMicroData";
 import { generateEdtMicro } from "./micro/generateEdtMicro";
 import { getLogin } from "./database/getLogin";
 import authJwt from "./middleware/authJwt";
-import  { Pool, PoolConnection } from 'mysql2';
-
+import { pool } from "./database/pool";
 
 
 require('dotenv').config();
 
 const cors = require("cors");
-const mysql = require('mysql2');
 const swaggerUi = require("swagger-ui-express");
 const multer = require("multer");
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -33,18 +31,7 @@ const PORT = 3000;
 app.use(express.json({ limit: "50mb" }));
 app.use(cors());
 
-const pool = mysql.createPool({
-  host: dbConfig.DB_HOST,
-  user: dbConfig.DB_USER,
-  password: dbConfig.DB_PASSWORD,
-  database: dbConfig.DB_NAME,
-  port: dbConfig.DB_PORT,
-  waitForConnections: true,
-  connectionLimit: 10, // Nombre maximal de connexions dans le pool
-  queueLimit: 0, // Nombre maximal de requêtes en attente
-});
-
-pool.getConnection((err: any, connection: any) => {
+pool.connect((err: any, connection: any) => {
   if (err) {
     console.error("Erreur de connexion à la base de données:", err);
   } else {
@@ -143,11 +130,11 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  */
 app.post("/login", async (req: Request, res: Response) => {
   try {
-    pool.getConnection(async (err: any, connection: any) => {
+    pool.connect(async (err: any, connection: any) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      await getLogin(req, res, connection);
+      await getLogin(req, res);
       connection.release(); // Libérer la connexion après vérification
     });
   } catch (error) {
@@ -199,78 +186,61 @@ app.post("/login", async (req: Request, res: Response) => {
  *       500:
  *         description: Une erreur est survenue
  */
+// File: `BobPlanning.back/src/index.ts`
 app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
   interface Promo {
-    Name: string;
-    Nombre: number;
-    Periode: {
-      DateDebutP: string;
-      DateFinP: string;
-      nbSemaineP?: number; // Cette clé est optionnelle
-    }[];
+    nom: string;
+    effectif: number;
+    date_start: string;
+    date_end: string;
+    Periode?: any;
   }
 
-  const promosData: { DateDeb: string; DateFin: string; Promos: Promo[] } = {
-    DateDeb: "",
-    DateFin: "",
+  const promosData: { date_start: string; date_end: string; Promos: Promo[] } = {
+    date_start: "2024-08-01",
+    date_end: "2025-08-01",
     Promos: [],
   };
 
-  const sql = "SELECT Name, Nombre, Periode FROM promosData";
-  pool.getConnection((err: any, connection: any) => {
+  const sql = "SELECT nom, effectifs, date_start, date_end FROM promotion";
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    connection.query(sql, (error: any, results: any[]) => {
+
+    connection.query(sql, (error: any, results: any) => {
       if (error) {
+        connection.release();
         return res.status(500).json({ error: error.message });
       }
 
-      // Conversion de `Periode` en tableau d'objets JSON
-      const parsedResults = results.map((promo) => ({
+      // Normalize results to an array for different drivers
+      const rows = Array.isArray(results)
+        ? results
+        : results && Array.isArray((results as any).rows)
+          ? (results as any).rows
+          : [];
+
+      const parsedResults = rows.map((promo: any) => ({
         ...promo,
-        Periode: promo.Periode ? JSON.parse(promo.Periode) : [], // Conversion de la chaîne JSON
+        Periode: promo.Periode ? safeParse(promo.Periode) : [],
       }));
+
       promosData.Promos = parsedResults;
-
-      // Récupération des données du calendrier
-      const calendarSql = "SELECT dateDeb, dateFin FROM calendrier LIMIT 1";
-      connection.query(calendarSql, (error: any, calendarResults: any) => {
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-        if (
-          calendarResults.length > 0 &&
-          calendarResults[0].dateDeb &&
-          calendarResults[0].dateFin
-        ) {
-          promosData.DateDeb = calendarResults[0].dateDeb
-            .toLocaleDateString("fr-FR", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            })
-            .split("/")
-            .reverse()
-            .join("-"); // Inverser le format pour obtenir yyyy-mm-dd
-
-          promosData.DateFin = calendarResults[0].dateFin
-            .toLocaleDateString("fr-FR", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            })
-            .split("/")
-            .reverse()
-            .join("-"); // Inverser le format pour obtenir yyyy-mm-dd
-        }
-
-        res.json(promosData);
-      });
+      res.json(promosData);
+      connection.release();
     });
-    connection.release(); // Libérer la connexion après vérification
   });
+
+  function safeParse(value: any) {
+    try {
+      return typeof value === "string" ? JSON.parse(value) : value;
+    } catch {
+      return [];
+    }
+  }
 });
+
 
 /**
  * @swagger
@@ -344,49 +314,47 @@ app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
 
   const dateDeb = DateDeb || null;
   const dateFin = DateFin || null;
-  pool.getConnection((err: any, connection: any) => {
+  // TypeScript
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    const sql = "UPDATE calendrier SET dateDeb = ?, dateFin = ?";
+
+    const sql = "UPDATE promotion SET date_start = $1, date_end = $2";
     connection.query(sql, [dateDeb, dateFin], (error: any) => {
       if (error) {
+        connection.release();
         console.log("1. error", error);
         return res.status(500).json({ error: error.message });
       }
 
-      // Tableau de promesses pour chaque requête de mise à jour de promo
-      const updatePromises = Promos.map(
-        (promo: { Nombre: any; Periode: any; Name: any }) => {
-          const updatePromosSql =
-            "UPDATE promosData SET Nombre = ?, Periode = ? WHERE Name = ?";
-          return new Promise<void>((resolve, reject) => {
-            connection.query(
-              updatePromosSql,
-              [promo.Nombre, JSON.stringify(promo.Periode), promo.Name],
-              (error: any) => {
-                if (error) {
-                  return reject(error);
-                }
-                resolve();
-              }
-            );
-          });
-        }
-      );
+      const updatePromises = Promos.map((promo: { Nombre: any; DateDeb: any; DateFin: any; Name: any }) => {
+        return new Promise<void>((resolve, reject) => {
+          const updatePromosSql = "UPDATE promotion SET effectifs = $1, date_start = $2, date_end = $3 WHERE nom = $4";
+          connection.query(
+            updatePromosSql,
+            [promo.Nombre, promo.DateDeb, promo.DateFin, promo.Name],
+            (err2: any) => {
+              if (err2) return reject(err2);
+              resolve();
+            }
+          );
+        });
+      });
 
-      // Attendre que toutes les requêtes soient terminées avant d'envoyer une réponse
       Promise.all(updatePromises)
         .then(() => {
+          connection.release();
           res.json({ DateDeb, DateFin, Promos });
         })
-        .catch((error) => {
-          console.log("2. error", error);
-          res.status(500).json({ error: error.message });
+        .catch((errAll) => {
+          connection.release();
+          console.log("2. error", errAll);
+          res.status(500).json({ error: errAll.message });
         });
     });
-    connection.release(); // Libérer la connexion après vérification
   });
+
 });
 
 /**
@@ -424,11 +392,11 @@ app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
  *         description: Une erreur est survenue
  */
 app.get("/getProfsData", authJwt.verifyToken, (req, res) => {
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    const sql = "SELECT id, name, type, dispo FROM Professeurs";
+    const sql = "SELECT id, nom, type FROM professeur";
     connection.query(sql, (error: any, results: any[]) => {
       if (error) {
         return res.status(500).json({ error: error.message });
@@ -500,12 +468,12 @@ app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
       return new Promise<void>((resolve, reject) => {
         if (prof.id) {
           // Si un ID est fourni, mettre à jour le professeur existant
-          pool.getConnection((err: any, connection: any) => {
+          pool.connect((err: any, connection: any) => {
             if (err) {
               return res.status(500).json({ error: err.message });
             }
             const updateSql =
-              "UPDATE Professeurs SET name = ?, type = ?, dispo = ? WHERE id = ?";
+              "UPDATE professeur SET nom = ?, type = ? WHERE id = ?";
             connection.query(
               updateSql,
               [prof.name, prof.type, prof.dispo, prof.id],
@@ -520,12 +488,12 @@ app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
           });
         } else {
           // Sinon, ajouter un nouveau professeur
-          pool.getConnection((err: any, connection: any) => {
+          pool.connect((err: any, connection: any) => {
             if (err) {
               return res.status(500).json({ error: err.message });
             }
             const insertSql =
-              "INSERT INTO Professeurs (name, type, dispo) VALUES (?, ?, ?)";
+              "INSERT INTO professeur (nom, type) VALUES (?, ?)";
             connection.query(
               insertSql,
               [prof.name, prof.type, prof.dispo],
@@ -559,35 +527,38 @@ app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
 
 
 
-app.post("/addProf", authJwt.verifyToken, (req: Request, res: Response): void => { 
-    const { name, type, dispo } = req.body;
+app.post("/addProf", authJwt.verifyToken, async (req, res) => {
+  const { name, type, dispo } = req.body;
 
-    if (!name || !type) {
-        res.status(400).json({ error: "Le nom et le type sont obligatoires." });
-        return;
-    }
+  if (!name || !type) {
+    res.status(400).json({ error: "Le nom et le type sont obligatoires." });
+    return;
+  }
 
-    pool.getConnection((err: Error | null, connection: PoolConnection) => {
-        if (err) {
-            console.error("Erreur connexion DB :", err);
-            res.status(500).json({ error: "Erreur connexion base de données." });
-            return;
-        }
+  try {
+    const client = await pool.connect();
 
-        const insertSql = "INSERT INTO Professeurs (name, type, dispo) VALUES (?, ?, ?)";
-        connection.query(insertSql, [name, type, JSON.stringify(dispo)], (error, results: any) => {
-            connection.release(); // Libérer la connexion après exécution
+    const sql =
+      "INSERT INTO professeur (nom, type) VALUES ($1, $2) RETURNING id";
 
-            if (error) {
-                console.error("Erreur SQL :", error);
-                res.status(500).json({ error: "Erreur SQL lors de l'ajout." });
-                return;
-            }
+    const result = await client.query(sql, [
+      name,
+      type,
+      JSON.stringify(dispo),
+    ]);
 
-            res.json({ success: true, insertedId: results.insertId });
-        });
+    client.release();
+
+    res.json({
+      success: true,
+      insertedId: result.rows[0].id,
     });
+  } catch (err: any) {
+    console.error("Erreur SQL :", err);
+    res.status(500).json({ error: err.message });
+  }
 });
+
 
 
 
@@ -626,11 +597,11 @@ app.delete('/deleteProf/:id', authJwt.verifyToken, (req: Request, res: Response)
     return;
   }
 
-pool.getConnection((err: any, connection: any) => {
+pool.connect((err: any, connection: any) => {
             if (err) {
               return res.status(500).json({ error: err.message });
             }
-  const deleteSql = 'DELETE FROM Professeurs WHERE id = ?';
+  const deleteSql = 'DELETE FROM professeur WHERE id = ?';
   connection.query(deleteSql, [id], (error: any, results: any) => {
     if (error) {
       res.status(500).json({ error: error.message });
@@ -864,7 +835,7 @@ app.post("/readMaquette", authJwt.verifyToken, upload.single("file"), async (req
  */
 app.post("/generateEdtMicro", authJwt.verifyToken, async (req: Request, res: Response) => {
     try {
-      pool.getConnection(async (err: any, connection: any) => {
+      pool.connect(async (err: any, connection: any) => {
         if (err) {
           return res.status(500).json({ error: err.message });
         }
@@ -1229,21 +1200,32 @@ app.post("/generateDataEdtMicro", authJwt.verifyToken, async (req: Request, res:
  *       500:
  *         description: Une erreur est survenue
  */
-app.get("/getSallesData", authJwt.verifyToken, (req, res) => { 
-  pool.getConnection((err: any, connection: any) => {
+// TypeScript
+app.get("/getSallesData", authJwt.verifyToken, (req, res) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    const sql = "SELECT * FROM Salles";
-    connection.query(sql, (error: any, results: any[]) => {
+    const sql = "SELECT * FROM salle";
+    connection.query(sql, (error: any, results: any) => {
       if (error) {
+        connection.release();
         return res.status(500).json({ error: error.message });
       }
-      res.json(results);
+
+      // Normalize results: support drivers that return an array or an object with `rows`
+      const salles = Array.isArray(results)
+        ? results
+        : results && Array.isArray((results as any).rows)
+          ? (results as any).rows
+          : [];
+
+      res.json(salles);
+      connection.release(); // Libérer la connexion après vérification
     });
-    connection.release(); // Libérer la connexion après vérification
   });
 });
+
 
 /**
  * @swagger
@@ -1282,22 +1264,31 @@ app.get("/getSallesData", authJwt.verifyToken, (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
+// File: `BobPlanning.back/src/index.ts`
 app.post("/setSallesData", authJwt.verifyToken, (req, res) => {
-  pool.getConnection((err: any, connection: any) => {
+  const { name, type, capacite } = req.body;
+
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    const { name, type, capacite } = req.body;
-    const sql = "INSERT INTO Salles (name, type, capacite) VALUES (?, ?, ?)";
-    connection.query(sql, [name, type, capacite], (error: any) => {
+
+    const sql = "INSERT INTO salle (nom, type, capacite) VALUES ($1, $2, $3) RETURNING id";
+    const capaciteNum = typeof capacite === "number" ? capacite : Number(capacite) || null;
+
+    connection.query(sql, [name, type, capaciteNum], (error: any, result: any) => {
+      connection.release(); // always release the client
+
       if (error) {
         return res.status(500).json({ error: error.message });
       }
-      res.status(201).json({ message: "Salle ajoutée avec succès" });
+
+      const insertedId = result?.rows?.[0]?.id ?? null;
+      return res.status(201).json({ message: "Salle ajoutée avec succès", insertedId });
     });
-    connection.release(); // Libérer la connexion après vérification
   });
 });
+
 
 /**
  * @swagger
@@ -1350,13 +1341,13 @@ app.put("/updateSalle", authJwt.verifyToken, (req, res): void => {
     return;
   }
 
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
 
     const sql =
-      "UPDATE Salles SET name = ?, capacite = ?, type = ? WHERE id = ?";
+      "UPDATE salle SET nom = ?, capacite = ?, type = ? WHERE id = ?";
     connection.query(
       sql,
       [name, capacite, type, id],
@@ -1414,12 +1405,12 @@ app.put("/updateSalle", authJwt.verifyToken, (req, res): void => {
  *         description: Erreur interne du serveur.
  */
 app.delete("/deleteSalle", authJwt.verifyToken, (req, res) => {
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
     const { id } = req.query;
-    const sql = "DELETE FROM Salles WHERE id = ?";
+    const sql = "DELETE FROM salle WHERE id = ?";
 
     connection.query(sql, [id], (error: any, result: any) => {
       if (error) {
@@ -1442,7 +1433,7 @@ app.delete("/deleteSalle", authJwt.verifyToken, (req, res) => {
 
 app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
 
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -1462,7 +1453,7 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
       }
 
       // Supprimer les matières associées à cette promo
-      const deleteSql = `DELETE FROM Cours WHERE promo = ?`;
+      const deleteSql = `DELETE FROM concerner WHERE id_promo = ?`;
 
       connection.query(deleteSql, [promo], (deleteErr: any) => {
         if (deleteErr) {
@@ -1475,12 +1466,20 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
         // Insérer les nouvelles matières
         const insertPromises = req.body.courses.map((cours: { promo: string; name: string; UE: string; Semestre: string; Periode: string; Prof: string; typeSalle: string; heure: string }) => {
           return new Promise<void>((resolve, reject) => {
-            const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
-                          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                          ON DUPLICATE KEY UPDATE 
-                          UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode), 
-                          Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
+            // Ancienne requête permettant l'update d'une matière si elle existe déjà ou l'insert
+            // TODO : À garder jusqu'à ce que la fonction soit fonctionnelle avec la nouvelle base de données
+            // const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
+            //               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            //               ON DUPLICATE KEY UPDATE
+            //               UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode),
+            //               Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
 
+            const sql = `INSERT INTO matiere (id_promo, nom, semestre, volume_horaire)
+                            VALUES (?, ?, ?, ?)
+                            ON CONFLICT (id_promo, nom) 
+                            DO UPDATE SET 
+                              semestre = EXCLUDED.semestre,
+                              volume_horaire = EXCLUDED.volume_horaire`;
             connection.query(sql,
               [cours.promo, cours.name, cours.UE, cours.Semestre, cours.Periode, cours.Prof, cours.typeSalle, cours.heure],
               (error: any) => {
@@ -1521,14 +1520,14 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
 
 app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
 
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
 
     const updatePromises = req.body.courses.map((cours: { promo: string; name: string; UE: string; Semestre: string; Periode: string; Prof: string; typeSalle: string; heure: string }) => {
       return new Promise<void>((resolve, reject) => {
-        const sql = `UPDATE Cours SET Prof = ? WHERE name = ?`;
+        const sql = `UPDATE Cours SET id_prof = ? WHERE id_event = ?`;
 
         connection.query(sql, [cours.Prof, cours.name], (error: any) => {
           if (error) {
@@ -1554,7 +1553,7 @@ app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
 });
 
 app.get("/getCours", authJwt.verifyToken, (req, res) => {
-  pool.getConnection((err: any, connection: any) => {
+  pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }

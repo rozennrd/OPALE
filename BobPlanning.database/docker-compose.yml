@@ -2,12 +2,12 @@ services:
   db:
     build: .
     container_name: opale-database
-    env_file: 
+    env_file:
       - .env
     ports:
-      - "3306:3306"         # Expose MySQL sur le port local 3307
+      - "5432:5432"              # Expose PostgreSQL sur le port local 5432
     volumes:
-      - mysql_data:/var/lib/mysql  # Persistance des données
+      - postgres_data:/var/lib/postgresql/data   # Persistance des données
 
 volumes:
-  mysql_data:
+  postgres_data:

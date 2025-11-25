@@ -18,6 +18,9 @@ services:
     container_name: opale-backend
     depends_on:
       - db
+    volumes:
+      - ./BobPlanning.back:/usr/src/app
+      - ./BobPlanning.back/src/database/config:/usr/src/app/dist/database/config
     networks:
       - app-network
       - api-network
@@ -27,14 +30,28 @@ services:
       - NODE_ENV=production
 
   db:
-    build: ./BobPlanning.database
-    container_name: opale-database
-    env_file: 
-      - ./BobPlanning.database/.env
+    image: postgres:15
+    container_name: postgres-database
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "3306:3306"
+      - "5433:5432"   # port externe 5433 → port interne 5432
     volumes:
-      - mysql_data:/var/lib/mysql:z
+      - ../bobPlanning.db:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@email.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - "8080:80"  # pgAdmin accessible via http://localhost:8080
     networks:
       - app-network
 
@@ -59,8 +76,5 @@ services:
 networks:
   app-network:
     driver: bridge
-  api-network:
+  API_network:
     driver: bridge
-
-volumes:
-  mysql_data:

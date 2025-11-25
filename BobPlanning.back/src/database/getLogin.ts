@@ -1,57 +1,65 @@
 import { Request, Response } from 'express';
-import { generateToken } from '../utils/jwt'; 
+import { generateToken } from '../utils/jwt';
+import { pool } from './pool';
 
-const getLogin = async (req: Request, res: Response, connection: any) => {
+const getLogin = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    // Exécuter la requête pour obtenir l'utilisateur
-    const [users] = await connection.promise().query('SELECT * FROM Utilisateurs WHERE Email = ?', [email]);
+    const result = await pool.query(
+      'SELECT * FROM utilisateurs WHERE email = $1',
+      [email]
+    );
 
-    // Vérifier si l'utilisateur existe
-    if (!users || users.length === 0) {
+    const users = result.rows;
+
+    if (users.length === 0) {
       return res.status(401).json({ message: 'Identifiants incorrects' });
     }
 
-    const user = users[0]; // Récupérer le premier utilisateur
+    const user = users[0];
 
-    // Vérifier si l'utilisateur est bloqué
-    if (user.Bloque) {
-      return res.status(403).json({ message: 'Votre compte est bloqué. Veuillez contacter l\'administrateur.' });
+    if (user.bloque) {
+      return res.status(403).json({
+        message: "Votre compte est bloqué. Veuillez contacter l'administrateur."
+      });
     }
 
-    // Comparer directement les mots de passe hachés
-    if (user.Password !== password) {
-      console.log('Mot de passe incorrect');
-      
-      // Incrémenter le nombre de tentatives échouées
-      await connection.promise().query('UPDATE Utilisateurs SET TentativesEchouees = TentativesEchouees + 1 WHERE Email = ?', [email]);
+    if (user.password !== password) {
+      await pool.query(
+        'UPDATE utilisateurs SET tentatives_echouees = tentatives_echouees + 1 WHERE email = $1',
+        [email]
+      );
 
-      // Si l'utilisateur dépasse 10 tentatives échouées, bloquer son compte
-      const [updatedUser] = await connection.promise().query('SELECT TentativesEchouees FROM Utilisateurs WHERE Email = ?', [email]);
-      
-      if (updatedUser[0].TentativesEchouees >= 5) {
-        const now = new Date();
-        // Bloquer l'utilisateur et enregistrer la date du blocage
-        await connection.promise().query('UPDATE Utilisateurs SET Bloque = TRUE, DateBlocage = ? WHERE Email = ?', [now, email]);
+      const updated = await pool.query(
+        'SELECT tentatives_echouees FROM utilisateurs WHERE email = $1',
+        [email]
+      );
+
+      if (updated.rows[0].tentatives_echouees >= 5) {
+        await pool.query(
+          'UPDATE utilisateurs SET bloque = TRUE, date_blocage = NOW() WHERE email = $1',
+          [email]
+        );
+
         return res.status(403).json({
-          message: 'Votre compte est bloqué. Veuillez contacter l\'administrateur.'
+          message: "Votre compte est bloqué. Veuillez contacter l'administrateur."
         });
       }
-      
+
       return res.status(401).json({ message: 'Identifiants incorrects' });
     }
 
-    // Si l'utilisateur est valide, générer un token JWT
     const token = generateToken(user);
 
-    // Réinitialiser le compteur de tentatives échouées en cas de connexion réussie
-    await connection.promise().query('UPDATE Utilisateurs SET TentativesEchouees = 0 WHERE Email = ?', [email]);
+    await pool.query(
+      'UPDATE utilisateurs SET tentatives_echouees = 0 WHERE email = $1',
+      [email]
+    );
 
-    // Retourner le token en réponse
     return res.json({ token });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erreur serveur:', error);
     return res.status(500).json({ message: 'Erreur serveur' });
   }
