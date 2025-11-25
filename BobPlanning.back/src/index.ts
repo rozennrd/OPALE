@@ -186,12 +186,14 @@ app.post("/login", async (req: Request, res: Response) => {
  *       500:
  *         description: Une erreur est survenue
  */
+// File: `BobPlanning.back/src/index.ts`
 app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
   interface Promo {
     nom: string;
     effectif: number;
     date_start: string;
     date_end: string;
+    Periode?: any;
   }
 
   const promosData: { date_start: string; date_end: string; Promos: Promo[] } = {
@@ -200,30 +202,45 @@ app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
     Promos: [],
   };
 
-
-  const sql = "SELECT nom, effectifs, date_start,  date_end FROM promotion";
+  const sql = "SELECT nom, effectifs, date_start, date_end FROM promotion";
   pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    connection.query(sql, (error: any, results: any[]) => {
+
+    connection.query(sql, (error: any, results: any) => {
       if (error) {
+        connection.release();
         return res.status(500).json({ error: error.message });
       }
 
-      // Conversion de `Periode` en tableau d'objets JSON
-      const parsedResults = results.map((promo) => ({
+      // Normalize results to an array for different drivers
+      const rows = Array.isArray(results)
+        ? results
+        : results && Array.isArray((results as any).rows)
+          ? (results as any).rows
+          : [];
+
+      const parsedResults = rows.map((promo: any) => ({
         ...promo,
-        Periode: promo.Periode ? JSON.parse(promo.Periode) : [], // Conversion de la chaîne JSON
+        Periode: promo.Periode ? safeParse(promo.Periode) : [],
       }));
+
       promosData.Promos = parsedResults;
-
       res.json(promosData);
-
+      connection.release();
     });
-    connection.release(); // Libérer la connexion après vérification
   });
+
+  function safeParse(value: any) {
+    try {
+      return typeof value === "string" ? JSON.parse(value) : value;
+    } catch {
+      return [];
+    }
+  }
 });
+
 
 /**
  * @swagger
@@ -297,49 +314,47 @@ app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
 
   const dateDeb = DateDeb || null;
   const dateFin = DateFin || null;
+  // TypeScript
   pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    const sql = "UPDATE promotion SET date_start = ?, date_end = ?";
+
+    const sql = "UPDATE promotion SET date_start = $1, date_end = $2";
     connection.query(sql, [dateDeb, dateFin], (error: any) => {
       if (error) {
+        connection.release();
         console.log("1. error", error);
         return res.status(500).json({ error: error.message });
       }
 
-      // Tableau de promesses pour chaque requête de mise à jour de promo
-      const updatePromises = Promos.map(
-        (promo: { Nombre: any; Periode: any; Name: any }) => {
-          const updatePromosSql =
-            "UPDATE promotion SET effectifs = ?, date_start = ?, date_end = ? WHERE nom = ?";
-          return new Promise<void>((resolve, reject) => {
-            connection.query(
-              updatePromosSql,
-              [promo.Nombre, JSON.stringify(promo.Periode), promo.Name],
-              (error: any) => {
-                if (error) {
-                  return reject(error);
-                }
-                resolve();
-              }
-            );
-          });
-        }
-      );
+      const updatePromises = Promos.map((promo: { Nombre: any; DateDeb: any; DateFin: any; Name: any }) => {
+        return new Promise<void>((resolve, reject) => {
+          const updatePromosSql = "UPDATE promotion SET effectifs = $1, date_start = $2, date_end = $3 WHERE nom = $4";
+          connection.query(
+            updatePromosSql,
+            [promo.Nombre, promo.DateDeb, promo.DateFin, promo.Name],
+            (err2: any) => {
+              if (err2) return reject(err2);
+              resolve();
+            }
+          );
+        });
+      });
 
-      // Attendre que toutes les requêtes soient terminées avant d'envoyer une réponse
       Promise.all(updatePromises)
         .then(() => {
+          connection.release();
           res.json({ DateDeb, DateFin, Promos });
         })
-        .catch((error) => {
-          console.log("2. error", error);
-          res.status(500).json({ error: error.message });
+        .catch((errAll) => {
+          connection.release();
+          console.log("2. error", errAll);
+          res.status(500).json({ error: errAll.message });
         });
     });
-    connection.release(); // Libérer la connexion après vérification
   });
+
 });
 
 /**
@@ -1243,22 +1258,31 @@ app.get("/getSallesData", authJwt.verifyToken, (req, res) => {
  *       500:
  *         description: Erreur interne du serveur.
  */
+// File: `BobPlanning.back/src/index.ts`
 app.post("/setSallesData", authJwt.verifyToken, (req, res) => {
+  const { name, type, capacite } = req.body;
+
   pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    const { name, type, capacite } = req.body;
-    const sql = "INSERT INTO salle (nom, type, capacite) VALUES (?, ?, ?)";
-    connection.query(sql, [name, type, capacite], (error: any) => {
+
+    const sql = "INSERT INTO salle (nom, type, capacite) VALUES ($1, $2, $3) RETURNING id";
+    const capaciteNum = typeof capacite === "number" ? capacite : Number(capacite) || null;
+
+    connection.query(sql, [name, type, capaciteNum], (error: any, result: any) => {
+      connection.release(); // always release the client
+
       if (error) {
         return res.status(500).json({ error: error.message });
       }
-      res.status(201).json({ message: "Salle ajoutée avec succès" });
+
+      const insertedId = result?.rows?.[0]?.id ?? null;
+      return res.status(201).json({ message: "Salle ajoutée avec succès", insertedId });
     });
-    connection.release(); // Libérer la connexion après vérification
   });
 });
+
 
 /**
  * @swagger

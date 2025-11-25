@@ -12,6 +12,7 @@ CREATE TYPE type_professeur AS ENUM ('permanent', 'intervenant', 'invite');
 CREATE TYPE type_salle      AS ENUM ('projet', 'td', 'tp', 'reunion', 'autre');
 CREATE TYPE type_event      AS ENUM ('cours', 'examen', 'reunion', 'fermeture', 'soutenance', 'portes ouvertes', 'autre');
 CREATE TYPE type_cours      AS ENUM ('TD', 'TP', 'PROJET', 'AUTRE');
+CREATE TYPE type_cycle      AS ENUM ('Initial', 'Apprentissage');
 
 -- ==============================================================
 -- 2. Tables de base
@@ -54,9 +55,10 @@ CREATE TABLE event (
 
 -- 2.4 cycle
 CREATE TABLE cycle (
-                       id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                       id      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                        nom     VARCHAR(255)    NOT NULL,
-                       CONSTRAINT uq_cycle_nom UNIQUE (nom)
+                       type    type_cycle     NOT NULL,
+                       CONSTRAINT uq_cycle_nom UNIQUE (nom, type)
 );
 
 -- 2.5 promotion
@@ -273,12 +275,6 @@ CREATE TABLE utilisateurs (
                               tentatives_echouees INT    DEFAULT 0 NOT NULL
 );
 
---
--- Déchargement des données de la table `Utilisateurs`
---
-
-INSERT INTO utilisateurs (login, email, password, date_blocage, tentatives_echouees) VALUES
-    ('Daminou', 'Daminou', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533',  '2025-02-17 15:36:41', 0);
 
 -- ==============================================================
 -- Indices optionnels
@@ -292,3 +288,37 @@ CREATE INDEX idx_concerner_event        ON concerner (id_event);
 CREATE INDEX idx_localisation_event     ON localisation (id_event);
 CREATE INDEX idx_matiere_promo          ON matiere (id_promo);
 CREATE INDEX idx_matiere_specialite     ON matiere (id_specialite);
+
+-- ==============================================================
+-- Insertion des données initiales
+-- ==============================================================
+--
+-- Déchargement des données de la table `Utilisateurs`
+--
+INSERT INTO utilisateurs (login, email, password, date_blocage, tentatives_echouees) VALUES
+    ('Daminou', 'Daminou', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533',  '2025-02-17 15:36:41', 0);
+
+
+-- Déchargement des données de la table `cycle`
+-- Attention : A enlever une fois que la base de donnée sera correctement intégrée
+--
+INSERT INTO cycle (nom, type) VALUES
+    ('Cycle Préparatoire', 'Initial'),
+    ('Cycle Ingénieur',   'Initial'),
+    ('Cycle Ingénieur', 'Apprentissage');
+
+
+-- Déchargement des données de la table `promotions`
+-- Attention : A enlever une fois que la base de donnée sera correctement intégrée
+--
+INSERT INTO promotion (nom, effectifs, id_cycle, date_start, date_end) VALUES
+    ('ADI1',   20,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
+    ('ADI2',   22,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
+    ('CIR1',   21,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
+    ('CIR2',   25,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
+    ('AP3',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
+    ('AP4',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
+    ('AP5',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
+    ('ISEN3',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
+    ('ISEN4',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
+    ('ISEN5',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30');
