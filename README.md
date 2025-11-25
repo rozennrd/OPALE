@@ -131,3 +131,158 @@ erDiagram
 %% Note: calendrier et Utilisateurs n'ont pas de relations explicites
 
 ```
+
+#### New Database Schema : OPALE
+```mermaid
+erDiagram
+    professeur {
+        UUID id PK
+        varchar nom
+        varchar prenom
+        varchar email
+        type_professeur type
+        boolean distanciel
+    }
+
+    salle {
+        UUID id PK
+        varchar nom
+        type_salle type
+        int capacite
+        int etage
+    }
+
+    event {
+        UUID id PK
+        type_event type
+        varchar nom
+        int num_semaine
+        timestamp datetime_start
+        timestamp datetime_end
+        boolean show_macro
+        boolean show_micro
+        boolean is_blocking
+    }
+
+    cycle {
+        UUID id PK
+        varchar nom
+        type_cycle type
+    }
+
+    promotion {
+        UUID id PK
+        varchar nom
+        int effectifs
+        UUID id_cycle FK
+        date date_start
+        date date_end
+    }
+
+    groupe {
+        UUID id PK
+        UUID id_promo FK
+        varchar nom
+        int effectifs
+    }
+
+    specialite {
+        UUID id PK
+        UUID id_groupe FK
+        UUID id_promo FK
+        varchar nom
+        int effectifs
+    }
+
+    matiere {
+        UUID id PK
+        varchar nom
+        float volume_horaire
+        UUID id_promo FK
+        UUID id_specialite FK
+        int semestre
+        int nb_partiels
+        int nb_eval_intermediaire
+        int heures_td
+        int heures_tp
+    }
+
+    cours {
+        UUID id PK
+        UUID id_event FK
+        type_cours type
+        UUID id_prof FK
+        UUID id_matiere FK
+        boolean is_distanciel
+    }
+
+    disponibilite {
+        UUID id PK
+        UUID id_prof FK
+        int num_semaine
+        varchar dispo_micro
+    }
+
+    localisation {
+        UUID id PK
+        UUID id_salle FK
+        UUID id_event FK
+    }
+
+    concerner {
+        UUID id PK
+        UUID id_event FK
+        UUID id_promo FK
+        UUID id_groupe FK
+        UUID id_specialite FK
+    }
+
+    enseignement {
+        UUID id PK
+        UUID id_matiere FK
+        UUID id_prof FK
+        int nb_heures
+    }
+
+    utilisateurs {
+        UUID id_utilisateur PK
+        varchar login
+        varchar email
+        varchar password
+        boolean bloque
+        timestamp date_blocage
+        int tentatives_echouees
+    }
+
+%% ================================
+%%          RELATIONS
+%% ================================
+
+    cycle ||--o{ promotion : "1,n"
+
+    promotion ||--o{ groupe : "1,n"
+    promotion ||--o{ specialite : "1,n"
+    promotion ||--o{ matiere : "1,n"
+
+    groupe ||--o{ specialite : "1,n"
+
+    specialite ||--o{ matiere : "1,n"
+
+    professeur ||--o{ cours : "1,n"
+    matiere ||--o{ cours : "1,n"
+    event ||--o{ cours : "1,n"
+
+    professeur ||--o{ disponibilite : "1,n"
+
+    salle ||--o{ localisation : "1,n"
+    event ||--o{ localisation : "1,n"
+
+    event ||--o{ concerner : "1,n"
+    promotion ||--o{ concerner : "0,n"
+    groupe ||--o{ concerner : "0,n"
+    specialite ||--o{ concerner : "0,n"
+
+    professeur ||--o{ enseignement : "1,n"
+    matiere ||--o{ enseignement : "1,n"
+
+```
