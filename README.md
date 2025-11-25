@@ -11,36 +11,22 @@
 * Add a file .env at the root of the project that contains this :
 
 ```
-  MYSQL_ROOT_PASSWORD=rootpassword
-  MYSQL_DATABASE=bobPlanning
-  MYSQL_USER=bob
-  MYSQL_PASSWORD=thisIsBobPlanning!
-  MYSQL_ROOT_HOST=%
-  MYSQL_INITDB_SKIP_TZINFO=1
-  MYSQL_TCP_PORT=3306
-  MYSQL_WAIT_TIMEOUT=28800
-  MYSQL_INTERACTIVE_TIMEOUT=28800
+POSTGRES_DB=opale
+POSTGRES_USER=opale_user
+POSTGRES_PASSWORD=thisIsOpale!
 ```
 
 ### 2. Backend
 Add file `db.conf` in src/database/config
 ```
-    DB_HOST=localhost
-    DB_USER=bob
-    DB_PASSWORD=thisIsBobPlanning!
-    DB_NAME=planning
-    DB_PORT=3306
-    
-    
-    MYSQL_ROOT_PASSWORD=rootpassword 
-    MYSQL_DATABASE=bobPlanning 
-    MYSQL_USER=bob 
-    MYSQL_PASSWORD=thisIsBobPlanning! 
-    MYSQL_ROOT_HOST=% 
-    MYSQL_INITDB_SKIP_TZINFO=1 
-    MYSQL_TCP_PORT=3306 
-    MYSQL_WAIT_TIMEOUT=28800 
-    MYSQL_INTERACTIVE_TIMEOUT=28800 
+DB_HOST=localhost
+DB_USER=opale_user
+DB_PASSWORD=thisIsOpale!
+DB_NAME=opale
+DB_PORT=5432
+POSTGRES_DB=opale
+POSTGRES_USER=opale_user
+POSTGRES_PASSWORD=thisIsOpale!
 ```
 * Go to BobPlanning.back --> cd .\BobPlanning.back
 * Install library --> npm i
