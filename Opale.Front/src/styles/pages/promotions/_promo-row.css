@@ -1,0 +1,54 @@
+/* Ligne de promotion (nom + warning + boutons) */
+@layer pages {
+    .promo-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 14px;
+        background: var(--panel-soft);
+        border-radius: 12px;
+        min-width: 0;
+        flex-wrap: nowrap;
+    }
+
+    /* Conteneur nom + icône warning */
+    .promo-main {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .promo-label {
+        flex: 1 1 auto;
+        min-width: 0;
+        font-family: 'Roboto', sans-serif;
+        font-size: clamp(16px, 1.6vw, 20px);
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 620px) {
+        .promo-label {
+            white-space: normal;
+        }
+    }
+
+    /* Icône warning sur la ligne de promo */
+    .promo-warning {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+
+    .promo-actions {
+        display: flex;
+        gap: 8px;
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+}

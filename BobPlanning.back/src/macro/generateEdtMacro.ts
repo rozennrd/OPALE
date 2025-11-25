@@ -289,7 +289,6 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
 
   //Chemin fichier
   const filePath = path.join(__dirname, '../../files', 'EdtMacro.xlsx');
-
   //Writes files
   await workbook.xlsx.writeFile(filePath);
 

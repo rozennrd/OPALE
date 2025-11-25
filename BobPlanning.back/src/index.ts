@@ -683,6 +683,9 @@ app.post("/generateEdtMacro", authJwt.verifyToken, async (req: Request, res: Res
         res.status(400).send("Missing startDate, endDate or Promos");
         return;
       }
+      console.log("protocol:", req.protocol);
+      console.log("host:", req.get("host"));
+
 
       const start = new Date(DateDeb as string);
       const end = new Date(DateFin as string);
@@ -694,8 +697,11 @@ app.post("/generateEdtMacro", authJwt.verifyToken, async (req: Request, res: Res
       });
 
       res.status(200).json({
+        
         message: "Excel file generated and saved on the server",
-        fileUrl: `${process.env.VITE_RACINE_FETCHER_URL}/download/EdtMacro`,
+        fileUrl: `/download/EdtMacro`,
+        req: req.headers,
+        url: process.env.VITE_RACINE_FETCHER_URL,
       });
     } catch (error) {
       console.log(error);

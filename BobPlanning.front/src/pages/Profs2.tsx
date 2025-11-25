@@ -4,7 +4,7 @@ import './Profs2.css';
 import { TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import ProfItem from '../components/ProfItem';
 
-interface ProfData {
+export interface ProfData {
     id: number;
     name: string;
     type: 'EXT' | 'INT';

@@ -4,11 +4,10 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
-COPY . .
+RUN npm ci
 
-# Construire l'application frontend
-RUN npm run build --verbose
+COPY . .
+RUN npm run build
 
 
 # ---- Étape 2 : Run avec Nginx ----
