@@ -1,0 +1,110 @@
+/* Style de la page login */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background-color 0.3s, color 0.3s;
+    position: relative; /* Assure que l'élément parent est positionné pour le bouton */
+}
+
+.login-logo {
+    margin-bottom: 20px;
+}
+
+.login-logo img {
+    max-width: 200px; /* Ajuster la taille du logo */
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+.login-form {
+    background: var(--panel-soft);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    width: 100%;
+    max-width: 400px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text); /* Texte des labels en mode sombre */
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background-color: var(--input-bg);
+    color: var(--text);
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    border-color: var(--brand);
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--brand);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.login-btn:hover {
+    background-color: var(--brand-hover);
+}
+
+/* Conteneur du toggle sur la page login */
+.login-container {
+    position: relative; /* nécessaire pour l'absolute du wrapper */
+}
+
+/* Position du toggle sur la page login */
+.login-theme-toggle {
+    position: absolute;
+    top: 16px;
+    left: 16px;          /* tu peux mettre right:16px si tu le veux à droite */
+    z-index: 10;
+}
+
+/* Override du style global du toggle UNIQUEMENT sur la page login */
+.login-theme-toggle .theme-toggle-btn {
+    width: auto;              /* au lieu de 100% */
+    padding: 6px 12px;
+    justify-content: center;  /* texte centré dans la pilule */
+}
+
+/* Optionnel : réduire un peu le texte si tu veux un truc plus compact */
+.login-theme-toggle .theme-toggle-text {
+    font-size: 14px;
+}
+
+/* Ajuster les styles du bouton en mode sombre */
+body[data-theme="dark"] .theme-toggle-btn {
+    color: var(--text);
+}
+
+body[data-theme="dark"] .theme-toggle-thumb {
+    background-color: var(--text);
+}
+
+body[data-theme="dark"] .theme-toggle-text {
+    color: var(--text);
+}

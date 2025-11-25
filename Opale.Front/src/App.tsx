@@ -1,11 +1,15 @@
 import React from 'react'
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
-import Sidebar from './components/Sidebar.jsx'
-import Promotions from './pages/Promotions.jsx'
-import PlanningMacro from './pages/PlanningMacro.jsx'
-import Placeholder from './pages/Placeholder.jsx'
 
-function AppLayout() {
+import Sidebar from './components/Sidebar'
+import Promotions from './pages/Promotions'
+import PlanningMacro from './pages/PlanningMacro'
+import Placeholder from './pages/Placeholder'
+import Login from './pages/Login'
+
+import { useTheme } from './hooks/useTheme'
+
+function AppLayout(): Element {
     const handleDisconnect = () => {
         console.log('[AUTH] Se déconnecter')
     }
@@ -26,21 +30,27 @@ function AppLayout() {
     )
 }
 
-export default function App() {
+export default function App(): Element {
+    const { theme } = useTheme()
+
     return (
+        <div className={theme}>
+            <Routes>
+                {/* Routes sans layout */}
+                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="/login" element={<Login />} />
 
-        <Routes>
-            <Route element={<AppLayout />}>
-
-                <Route path="/" element={<Navigate to="/planning" replace />} />
-                <Route path="/planning" element={<PlanningMacro />} />
-                <Route path="/promotions" element={<Promotions />} />
-                <Route path="/evenements" element={<Placeholder title="Événements" />} />
-                <Route path="/enseignants" element={<Placeholder title="Enseignants" />} />
-                <Route path="/salles" element={<Placeholder title="Salles" />} />
-                <Route path="/parametres" element={<Placeholder title="Paramètres" />} />
-                <Route path="*" element={<Placeholder title="Page introuvable" notFound />} />
-            </Route>
-        </Routes>
+                {/* Routes avec layout */}
+                <Route element={<AppLayout />}>
+                    <Route path="/planning" element={<PlanningMacro />} />
+                    <Route path="/promotions" element={<Promotions />} />
+                    <Route path="/evenements" element={<Placeholder title="Événements" />} />
+                    <Route path="/enseignants" element={<Placeholder title="Enseignants" />} />
+                    <Route path="/salles" element={<Placeholder title="Salles" />} />
+                    <Route path="/parametres" element={<Placeholder title="Paramètres" />} />
+                    <Route path="*" element={<Placeholder title="Page introuvable" notFound />} />
+                </Route>
+            </Routes>
+        </div>
     )
 }

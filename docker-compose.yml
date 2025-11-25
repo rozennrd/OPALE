@@ -43,6 +43,7 @@ services:
     networks:
       - app-network
 
+
   python-api:
     build: ./BobPlanning.microService
     container_name: opale-python-api
