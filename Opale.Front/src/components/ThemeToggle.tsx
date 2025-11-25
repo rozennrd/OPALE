@@ -1,8 +1,8 @@
-// src/components/ThemeToggle.jsx
+// src/components/ThemeToggle.tsx
 import React from 'react'
-import { useTheme } from '../hooks/useTheme.js'
+import { useTheme } from '../hooks/useTheme'
 
-export default function ThemeToggle() {
+export const ThemeToggle: React.FC = () => {
     const { theme, toggleTheme } = useTheme()
     const isDark = theme === 'dark'
 
@@ -21,3 +21,4 @@ export default function ThemeToggle() {
         </button>
     )
 }
+

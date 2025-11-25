@@ -1,17 +1,41 @@
-// src/components/promotions/PromoEditDialog.jsx
+// src/components/promotions/PromoEditDialog.tsx
 import React from 'react'
+import { Constraints } from '../../models'
+import { EditingPromotion } from '../../hooks/promotions/usePromotionEditing'
 import { computePromoTotals } from '../../utils/promoUtils'
 
-import PromoMainInfo from './sections/PromoMainInfo.jsx'
-import PromoGroups from './sections/PromoGroups.jsx'
-import PromoSpecialties from './sections/PromoSpecialties.jsx'
-import ConstraintsSection from './constraints/ConstraintsSection.jsx'
+import PromoMainInfo from './sections/PromoMainInfo'
+import PromoGroups from './sections/PromoGroups'
+import PromoSpecialties from './sections/PromoSpecialties'
+import ConstraintsSection from './constraints/ConstraintsSection'
 
-export default function PromoEditDialog(props) {
+interface PromoEditDialogProps {
+    editingPromo: EditingPromotion
+    onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+    onClose: () => void
+    onFieldChange: (field: string, value: any) => void
+    onStudentsBlur?: () => void
+    onGroupChange: (index: number, field: string, value: any) => void
+    onAddGroup: () => void
+    onRemoveGroup: (index: number) => void
+    onSpecialtyChange: (index: number, field: string, value: any) => void
+    onAddSpecialty: () => void
+    onRemoveSpecialty: (index: number) => void
+    constraints: Constraints
+    onAddConstraint: (type: keyof Constraints) => void
+    onRemoveConstraint: (type: keyof Constraints, id: string) => void
+    onUpdateConstraintRange: (type: keyof Constraints, id: string, field: string, value: string) => void
+}
+
+const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
     const { editingPromo } = props
     if (!editingPromo) return null
 
-    const totals = computePromoTotals(editingPromo)
+    const totals = computePromoTotals({
+        students: editingPromo.students,
+        groups: editingPromo.groups,
+        specialties: editingPromo.specialties,
+    } as any)
 
     return (
         <div className="promo-edit-overlay">
@@ -80,3 +104,4 @@ export default function PromoEditDialog(props) {
         </div>
     )
 }
+export default PromoEditDialog

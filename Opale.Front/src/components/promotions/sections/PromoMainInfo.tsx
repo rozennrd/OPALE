@@ -1,4 +1,17 @@
-export default function PromoMainInfo({ editingPromo, onFieldChange, onStudentsBlur }) {
+import React from 'react'
+import { EditingPromotion } from '../../../hooks/promotions/usePromotionEditing'
+
+interface PromoMainInfoProps {
+    editingPromo: EditingPromotion
+    onFieldChange: (field: string, value: any) => void
+    onStudentsBlur?: () => void
+}
+
+const PromoMainInfo: React.FC<PromoMainInfoProps> = ({
+    editingPromo,
+    onFieldChange,
+    onStudentsBlur,
+}) => {
     return (
         <section className="promo-section promo-section-main">
             <h4 className="promo-section-title">Informations principales</h4>
@@ -58,3 +71,4 @@ export default function PromoMainInfo({ editingPromo, onFieldChange, onStudentsB
         </section>
     )
 }
+export default PromoMainInfo

@@ -4,14 +4,23 @@ import icWarning from '../../../assets/ic-warning.png'
 import icModif from '../../../assets/ic-modif.png'
 
 import { hasPromoMismatch } from '../../../utils/promoUtils'
+import { Cycle } from '../../../models'
 
-export default function CycleCard({
-                                      cycle,
-                                      renameCycle,
-                                      removeCycle,
-                                      openEditPromotion,
-                                      removePromotion
-                                  }) {
+interface CycleCardProps {
+    cycle: Cycle
+    renameCycle: (cycleId: string, name: string) => void
+    removeCycle: (cycleId: string) => void
+    openEditPromotion: (cycleId: string, promoId: string) => void
+    removePromotion: (cycleId: string, promoId: string) => void
+}
+
+const CycleCard: React.FC<CycleCardProps> = ({
+    cycle,
+    renameCycle,
+    removeCycle,
+    openEditPromotion,
+    removePromotion,
+}) => {
     return (
         <section className="card cycle-card">
             <div className="cycle-head">
@@ -70,3 +79,4 @@ export default function CycleCard({
         </section>
     )
 }
+export default CycleCard

@@ -1,17 +1,32 @@
 import React from 'react'
 import icWarning from '../assets/ic-warning.png'
 
-export default function Checklist({ items, onToggle }) {
+interface ChecklistItem {
+    id: string
+    label: string
+    checked: boolean
+    status: 'ok' | 'alert'
+    warning?: boolean
+}
+
+interface ChecklistProps {
+    items: ChecklistItem[]
+    onToggle?: (index: number, checked: boolean) => void
+}
+
+const Checklist: React.FC<ChecklistProps> = ({ items, onToggle }) => {
+    const handleToggle = (idx: number, it: ChecklistItem): void => {
+        console.log(`[CHECKBOX] ${it.id} -> ${!it.checked}`)
+        onToggle?.(idx, !it.checked)
+    }
+
     return (
         <div className="checklist">
             {items.map((it, idx) => (
                 <button
                     key={it.id}
                     className="cl-item"
-                    onClick={() => {
-                        console.log(`[CHECKBOX] ${it.id} -> ${!it.checked}`)
-                        onToggle?.(idx, !it.checked)
-                    }}
+                    onClick={() => handleToggle(idx, it)}
                 >
                     <span
                         className={`badge ${it.status === 'ok' ? 'ok' : 'alert'} ${it.checked ? 'checked' : ''}`}
@@ -35,3 +50,4 @@ export default function Checklist({ items, onToggle }) {
         </div>
     )
 }
+

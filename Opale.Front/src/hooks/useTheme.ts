@@ -1,10 +1,11 @@
-// src/hooks/useTheme.js
+// src/hooks/useTheme.ts
 import { useEffect, useState } from 'react'
+import { Theme } from '../models/Theme'
 
 const THEME_KEY = 'opale-theme'
 
 export function useTheme() {
-    const [theme, setTheme] = useState(() => {
+    const [theme, setTheme] = useState<Theme>(() => {
         if (typeof window === 'undefined') return 'light'
 
         const stored = window.localStorage.getItem(THEME_KEY)
@@ -26,5 +27,6 @@ export function useTheme() {
 
     const toggleTheme = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'))
 
-    return { theme, setTheme, toggleTheme }
+
+   return { theme, setTheme, toggleTheme }
 }

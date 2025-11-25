@@ -1,15 +1,25 @@
-// src/hooks/promotions/usePromotionAdjustPopup.js
+// src/hooks/promotions/usePromotionAdjustPopup.ts
 import { useState, useEffect, useCallback } from 'react'
 import { distributeEvenly } from '../../utils/promoUtils'
+import { EditingPromotion } from './usePromotionEditing'
 
-export function usePromotionAdjustPopup(editingPromo, setEditingPromo) {
-    const [adjustPopup, setAdjustPopup] = useState({
+interface AdjustPopupState {
+    open: boolean
+    groups: boolean
+    specialties: boolean
+}
+
+export function usePromotionAdjustPopup(
+    editingPromo: EditingPromotion | null,
+    setEditingPromo: React.Dispatch<React.SetStateAction<EditingPromotion | null>>
+) {
+    const [adjustPopup, setAdjustPopup] = useState<AdjustPopupState>({
         open: false,
         groups: false,
         specialties: false,
     })
 
-    const [lastStudentsPrompt, setLastStudentsPrompt] = useState(null)
+    const [lastStudentsPrompt, setLastStudentsPrompt] = useState<number | null>(null)
 
     const handleStudentsBlur = useCallback(() => {
         if (!editingPromo) return
@@ -75,7 +85,7 @@ export function usePromotionAdjustPopup(editingPromo, setEditingPromo) {
 
     // ESC : ferme le popup ou la modale
     useEffect(() => {
-        const handleKeyDown = (event) => {
+        const handleKeyDown = (event: KeyboardEvent): void => {
             if (event.key !== 'Escape') return
 
             if (adjustPopup.open) {

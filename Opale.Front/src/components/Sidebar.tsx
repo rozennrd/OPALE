@@ -1,4 +1,4 @@
-// src/components/Sidebar.jsx
+// src/components/Sidebar.tsx
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import logoFull from '../assets/logo-full.png'
@@ -10,9 +10,15 @@ import icEnseignants from '../assets/ic-profs.png'
 import icSalles from '../assets/ic-salles.png'
 import icLogout from '../assets/ic-logout.png'
 import icContact from '../assets/ic-contact.png'
-import ThemeToggle from './ThemeToggle.jsx'
+import {ThemeToggle} from './ThemeToggle'
 
-const items = [
+interface NavItem {
+    to: string
+    label: string
+    ic: string
+}
+
+const items: NavItem[] = [
     { to: '/planning',   label: 'Planning',    ic: icPlanning },
     { to: '/promotions', label: 'Promotions',  ic: icPromotions },
     { to: '/evenements', label: 'Evenements',  ic: icEvenements },

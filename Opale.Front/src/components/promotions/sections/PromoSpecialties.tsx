@@ -1,9 +1,19 @@
-export default function PromoSpecialties({
-                                             specialties,
-                                             onAddSpecialty,
-                                             onSpecialtyChange,
-                                             onRemoveSpecialty,
-                                         }) {
+import React from 'react'
+import { GroupSpecialtyItem } from '../../../models'
+
+interface PromoSpecialtiesProps {
+    specialties: GroupSpecialtyItem[]
+    onAddSpecialty: () => void
+    onSpecialtyChange: (index: number, field: string, value: any) => void
+    onRemoveSpecialty: (index: number) => void
+}
+
+const PromoSpecialties: React.FC<PromoSpecialtiesProps> = ({
+    specialties,
+    onAddSpecialty,
+    onSpecialtyChange,
+    onRemoveSpecialty,
+}) => {
     return (
         <section className="promo-section">
             <h4 className="promo-section-title">Spécialités</h4>
@@ -46,3 +56,4 @@ export default function PromoSpecialties({
         </section>
     )
 }
+export default PromoSpecialties

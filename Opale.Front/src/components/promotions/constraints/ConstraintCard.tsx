@@ -1,20 +1,40 @@
-// src/components/promotions/constraints/ConstraintCard.jsx
+// src/components/promotions/constraints/ConstraintCard.tsx
 import React from 'react'
-import ConstraintPill from './ConstraintPill.jsx'
+import ConstraintPill from './ConstraintPill'
+import { DateRange } from '../../../models'
 
-export default function ConstraintCard({
-                                           type,
-                                           title,
-                                           cardClass,
-                                           pillClass,
-                                           ranges,
-                                           editingRange,
-                                           onRangeClick,
-                                           onRangeDateChange,
-                                           onRemoveRange,
-                                           onAddConstraint,
-                                           canRemove = true,
-                                       }) {
+interface EditingRange {
+    type: string
+    id: string
+}
+
+interface ConstraintCardProps {
+    type: string
+    title: string
+    cardClass: string
+    pillClass: string
+    ranges: DateRange[]
+    editingRange: EditingRange | null
+    onRangeClick: (type: string, id: string) => void
+    onRangeDateChange: (type: string, id: string, field: 'start' | 'end', value: string) => void
+    onRemoveRange: (type: string, id: string) => void
+    onAddConstraint: (type: string) => void
+    canRemove?: boolean
+}
+
+const ConstraintCard: React.FC<ConstraintCardProps> = ({
+    type,
+    title,
+    cardClass,
+    pillClass,
+    ranges,
+    editingRange,
+    onRangeClick,
+    onRangeDateChange,
+    onRemoveRange,
+    onAddConstraint,
+    canRemove = true,
+}) => {
     return (
         <div className={cardClass}>
             <div className="constraint-card-header">
@@ -22,7 +42,7 @@ export default function ConstraintCard({
                 <button
                     type="button"
                     className="constraint-add-btn"
-                    onClick={() => onAddConstraint && onAddConstraint(type)}
+                    onClick={() => onAddConstraint(type)}
                     aria-label={`Ajouter une contrainte ${title}`}
                 >
                     +
@@ -32,9 +52,9 @@ export default function ConstraintCard({
             <div className="constraint-tags">
                 {ranges.map((range) => {
                     const isEditing =
-                        editingRange &&
+                        !!(editingRange &&
                         editingRange.type === type &&
-                        editingRange.id === range.id
+                        editingRange.id === range.id)
 
                     return (
                         <ConstraintPill
@@ -55,3 +75,5 @@ export default function ConstraintCard({
         </div>
     )
 }
+
+export default ConstraintCard
