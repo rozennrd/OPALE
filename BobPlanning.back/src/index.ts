@@ -1179,21 +1179,32 @@ app.post("/generateDataEdtMicro", authJwt.verifyToken, async (req: Request, res:
  *       500:
  *         description: Une erreur est survenue
  */
-app.get("/getSallesData", authJwt.verifyToken, (req, res) => { 
+// TypeScript
+app.get("/getSallesData", authJwt.verifyToken, (req, res) => {
   pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
     const sql = "SELECT * FROM salle";
-    connection.query(sql, (error: any, results: any[]) => {
+    connection.query(sql, (error: any, results: any) => {
       if (error) {
+        connection.release();
         return res.status(500).json({ error: error.message });
       }
-      res.json(results);
+
+      // Normalize results: support drivers that return an array or an object with `rows`
+      const salles = Array.isArray(results)
+        ? results
+        : results && Array.isArray((results as any).rows)
+          ? (results as any).rows
+          : [];
+
+      res.json(salles);
+      connection.release(); // Libérer la connexion après vérification
     });
-    connection.release(); // Libérer la connexion après vérification
   });
 });
+
 
 /**
  * @swagger

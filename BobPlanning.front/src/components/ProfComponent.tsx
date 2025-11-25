@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import {ProfData} from '../pages/Profs';
+import {ProfData} from '../pages/Profs2';
 
 type Disponibilites = {
   [key: string]: boolean;
@@ -8,7 +8,7 @@ type Disponibilites = {
 
 interface ProfComponentProps {
   initialData?: {
-    id: any;
+    id: string;
     name: string;
     type: 'EXT' | 'INT';
     dispo: Record<string, boolean>;
