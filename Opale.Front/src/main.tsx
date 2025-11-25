@@ -11,7 +11,7 @@ import './styles/pages/promotions/index.css'
 import './styles/utilities.css'
 import './styles/themes/dark.css'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <BrowserRouter>
             <App />
