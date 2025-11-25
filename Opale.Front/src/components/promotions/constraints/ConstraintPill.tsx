@@ -1,25 +1,38 @@
-// src/components/promotions/constraints/ConstraintPill.jsx
+// src/components/promotions/constraints/ConstraintPill.tsx
 import React from 'react'
+import { DateRange } from '../../../models'
 
-export default function ConstraintPill({
-                                           type,
-                                           title,
-                                           pillClass,
-                                           range,
-                                           isEditing,
-                                           onRangeClick,
-                                           onRangeDateChange,
-                                           onRemoveRange,
-                                           canRemove = true,
-                                       }) {
-    const formatDateLabel = (iso) => {
+interface ConstraintPillProps {
+    type: string
+    title: string
+    pillClass: string
+    range: DateRange
+    isEditing: boolean
+    onRangeClick: (type: string, id: string) => void
+    onRangeDateChange: (type: string, id: string, field: 'start' | 'end', value: string) => void
+    onRemoveRange: (type: string, id: string) => void
+    canRemove?: boolean
+}
+
+const ConstraintPill: React.FC<ConstraintPillProps> = ({
+    type,
+    title,
+    pillClass,
+    range,
+    isEditing,
+    onRangeClick,
+    onRangeDateChange,
+    onRemoveRange,
+    canRemove = true,
+}) => {
+    const formatDateLabel = (iso: string): string => {
         if (!iso) return 'jj/mm/aaaa'
         const [y, m, d] = (iso || '').split('-')
         if (!y || !m || !d) return 'jj/mm/aaaa'
         return `${d}/${m}/${y}`
     }
 
-    const formatRangeLabel = (range) =>
+    const formatRangeLabel = (range: DateRange): string =>
         `${formatDateLabel(range.start)} - ${formatDateLabel(range.end)}`
 
     return (
@@ -80,3 +93,4 @@ export default function ConstraintPill({
         </div>
     )
 }
+export default ConstraintPill

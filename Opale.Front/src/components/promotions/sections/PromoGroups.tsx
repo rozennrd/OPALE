@@ -1,4 +1,19 @@
-export default function PromoGroups({ groups, onAddGroup, onGroupChange, onRemoveGroup }) {
+import React from 'react'
+import { GroupSpecialtyItem } from '../../../models'
+
+interface PromoGroupsProps {
+    groups: GroupSpecialtyItem[]
+    onAddGroup: () => void
+    onGroupChange: (index: number, field: string, value: any) => void
+    onRemoveGroup: (index: number) => void
+}
+
+const PromoGroups: React.FC<PromoGroupsProps> = ({
+    groups,
+    onAddGroup,
+    onGroupChange,
+    onRemoveGroup,
+}) => {
     return (
         <section className="promo-section">
             <h4 className="promo-section-title">Groupes</h4>
@@ -41,3 +56,4 @@ export default function PromoGroups({ groups, onAddGroup, onGroupChange, onRemov
         </section>
     )
 }
+export default PromoGroups

@@ -1,32 +1,48 @@
-// src/components/promotions/constraints/ConstraintsSection.jsx
+// src/components/promotions/constraints/ConstraintsSection.tsx
 import React, { useState } from 'react'
-import ConstraintCard from './ConstraintCard.jsx'
+import ConstraintCard from './ConstraintCard'
+import { Constraints } from '../../../models'
 
-const isApPromo = (name) => /^AP/i.test(name || '')
+interface EditingRange {
+    type: string
+    id: string
+}
 
-export default function ConstraintsSection({
-                                               promoName,
-                                               constraints,
-                                               onAddConstraint,
-                                               onRemoveConstraint,
-                                               onUpdateConstraintRange,
-                                           }) {
-    const [editingRange, setEditingRange] = useState(null) // { type, id } ou null
+type ConstraintType = keyof Constraints
+
+interface ConstraintsSectionProps {
+    promoName: string
+    constraints: Constraints
+    onAddConstraint: (type: string) => void
+    onRemoveConstraint: (type: string, id: string) => void
+    onUpdateConstraintRange: (type: string, id: string, field: 'start' | 'end', value: string) => void
+}
+
+const isApPromo = (name: string): boolean => /^AP/i.test(name || '')
+
+const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
+    promoName,
+    constraints,
+    onAddConstraint,
+    onRemoveConstraint,
+    onUpdateConstraintRange,
+}) => {
+    const [editingRange, setEditingRange] = useState<EditingRange | null>(null)
 
     const safeConstraints = constraints || {}
-    const getRanges = (type) => safeConstraints[type] || []
+    const getRanges = (type: string) => safeConstraints[type] || []
 
-    const handleRangeClick = (type, id) => {
+    const handleRangeClick = (type: string, id: string): void => {
         setEditingRange({ type, id })
     }
 
-    const handleRangeDateChange = (type, id, field, value) => {
+    const handleRangeDateChange = (type: string, id: string, field: 'start' | 'end', value: string): void => {
         if (onUpdateConstraintRange) {
             onUpdateConstraintRange(type, id, field, value)
         }
     }
 
-    const handleRemoveRange = (type, id) => {
+    const handleRemoveRange = (type: string, id: string): void => {
         if (onRemoveConstraint) {
             onRemoveConstraint(type, id)
         }
@@ -128,3 +144,4 @@ export default function ConstraintsSection({
         </section>
     )
 }
+export default ConstraintsSection
