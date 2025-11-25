@@ -36,7 +36,7 @@ export default function App() {
                 <Route path="/planning" element={<PlanningMacro />} />
                 <Route path="/promotions" element={<Promotions />} />
                 <Route path="/evenements" element={<Placeholder title="Événements" />} />
-                <Route path="/enseignants" element={<Placeholder title="Enseignants" />} />
+                <Route path="/enseignants" element={<Placeholder title="Enseignantsqqqq" />} />
                 <Route path="/salles" element={<Placeholder title="Salles" />} />
                 <Route path="/parametres" element={<Placeholder title="Paramètres" />} />
                 <Route path="*" element={<Placeholder title="Page introuvable" notFound />} />
