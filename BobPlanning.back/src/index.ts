@@ -190,19 +190,18 @@ app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
   interface Promo {
     nom: string;
     effectif: number;
-    periode: {
-      date_start: string;
-      date_end: string;
-    }[];
+    date_start: string;
+    date_end: string;
   }
 
   const promosData: { date_start: string; date_end: string; Promos: Promo[] } = {
-    date_start: "",
-    date_end: "",
+    date_start: "2024-08-01",
+    date_end: "2025-08-01",
     Promos: [],
   };
 
-  const sql = "SELECT nom, effectifs, periode FROM promotion";
+
+  const sql = "SELECT nom, effectifs, date_start,  date_end FROM promotion";
   pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
@@ -219,40 +218,8 @@ app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
       }));
       promosData.Promos = parsedResults;
 
-      // Récupération des données du calendrier
-      const calendarSql = "SELECT dateDeb, dateFin FROM calendrier LIMIT 1";
-      connection.query(calendarSql, (error: any, calendarResults: any) => {
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-        if (
-          calendarResults.length > 0 &&
-          calendarResults[0].dateDeb &&
-          calendarResults[0].dateFin
-        ) {
-          promosData.date_start = calendarResults[0].dateDeb
-            .toLocaleDateString("fr-FR", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            })
-            .split("/")
-            .reverse()
-            .join("-"); // Inverser le format pour obtenir yyyy-mm-dd
+      res.json(promosData);
 
-          promosData.date_end = calendarResults[0].dateFin
-            .toLocaleDateString("fr-FR", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            })
-            .split("/")
-            .reverse()
-            .join("-"); // Inverser le format pour obtenir yyyy-mm-dd
-        }
-
-        res.json(promosData);
-      });
     });
     connection.release(); // Libérer la connexion après vérification
   });
@@ -334,7 +301,7 @@ app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    const sql = "UPDATE calendrier SET dateDeb = ?, dateFin = ?";
+    const sql = "UPDATE promotion SET date_start = ?, date_end = ?";
     connection.query(sql, [dateDeb, dateFin], (error: any) => {
       if (error) {
         console.log("1. error", error);
@@ -345,7 +312,7 @@ app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
       const updatePromises = Promos.map(
         (promo: { Nombre: any; Periode: any; Name: any }) => {
           const updatePromosSql =
-            "UPDATE promosData SET Nombre = ?, Periode = ? WHERE Name = ?";
+            "UPDATE promotion SET effectifs = ?, date_start = ?, date_end = ? WHERE nom = ?";
           return new Promise<void>((resolve, reject) => {
             connection.query(
               updatePromosSql,
@@ -414,7 +381,7 @@ app.get("/getProfsData", authJwt.verifyToken, (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    const sql = "SELECT id, name, type, dispo FROM Professeurs";
+    const sql = "SELECT id, nom, type FROM professeur";
     connection.query(sql, (error: any, results: any[]) => {
       if (error) {
         return res.status(500).json({ error: error.message });
@@ -491,7 +458,7 @@ app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
               return res.status(500).json({ error: err.message });
             }
             const updateSql =
-              "UPDATE Professeurs SET name = ?, type = ?, dispo = ? WHERE id = ?";
+              "UPDATE professeur SET nom = ?, type = ? WHERE id = ?";
             connection.query(
               updateSql,
               [prof.name, prof.type, prof.dispo, prof.id],
@@ -511,7 +478,7 @@ app.post("/setProfsData", authJwt.verifyToken, (req, res) => {
               return res.status(500).json({ error: err.message });
             }
             const insertSql =
-              "INSERT INTO Professeurs (name, type, dispo) VALUES (?, ?, ?)";
+              "INSERT INTO professeur (nom, type) VALUES (?, ?)";
             connection.query(
               insertSql,
               [prof.name, prof.type, prof.dispo],
@@ -557,7 +524,7 @@ app.post("/addProf", authJwt.verifyToken, async (req, res) => {
     const client = await pool.connect();
 
     const sql =
-      "INSERT INTO professeur (nom, type, dispo) VALUES ($1, $2, $3) RETURNING id";
+      "INSERT INTO professeur (nom, type) VALUES ($1, $2) RETURNING id";
 
     const result = await client.query(sql, [
       name,
@@ -619,7 +586,7 @@ pool.connect((err: any, connection: any) => {
             if (err) {
               return res.status(500).json({ error: err.message });
             }
-  const deleteSql = 'DELETE FROM Professeurs WHERE id = ?';
+  const deleteSql = 'DELETE FROM professeur WHERE id = ?';
   connection.query(deleteSql, [id], (error: any, results: any) => {
     if (error) {
       res.status(500).json({ error: error.message });
@@ -1217,7 +1184,7 @@ app.get("/getSallesData", authJwt.verifyToken, (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    const sql = "SELECT * FROM Salles";
+    const sql = "SELECT * FROM salle";
     connection.query(sql, (error: any, results: any[]) => {
       if (error) {
         return res.status(500).json({ error: error.message });
@@ -1271,7 +1238,7 @@ app.post("/setSallesData", authJwt.verifyToken, (req, res) => {
       return res.status(500).json({ error: err.message });
     }
     const { name, type, capacite } = req.body;
-    const sql = "INSERT INTO Salles (name, type, capacite) VALUES (?, ?, ?)";
+    const sql = "INSERT INTO salle (nom, type, capacite) VALUES (?, ?, ?)";
     connection.query(sql, [name, type, capacite], (error: any) => {
       if (error) {
         return res.status(500).json({ error: error.message });
@@ -1339,7 +1306,7 @@ app.put("/updateSalle", authJwt.verifyToken, (req, res): void => {
     }
 
     const sql =
-      "UPDATE Salles SET name = ?, capacite = ?, type = ? WHERE id = ?";
+      "UPDATE salle SET nom = ?, capacite = ?, type = ? WHERE id = ?";
     connection.query(
       sql,
       [name, capacite, type, id],
@@ -1402,7 +1369,7 @@ app.delete("/deleteSalle", authJwt.verifyToken, (req, res) => {
       return res.status(500).json({ error: err.message });
     }
     const { id } = req.query;
-    const sql = "DELETE FROM Salles WHERE id = ?";
+    const sql = "DELETE FROM salle WHERE id = ?";
 
     connection.query(sql, [id], (error: any, result: any) => {
       if (error) {
@@ -1445,7 +1412,7 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
       }
 
       // Supprimer les matières associées à cette promo
-      const deleteSql = `DELETE FROM Cours WHERE promo = ?`;
+      const deleteSql = `DELETE FROM concerner WHERE id_promo = ?`;
 
       connection.query(deleteSql, [promo], (deleteErr: any) => {
         if (deleteErr) {
@@ -1458,12 +1425,20 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
         // Insérer les nouvelles matières
         const insertPromises = req.body.courses.map((cours: { promo: string; name: string; UE: string; Semestre: string; Periode: string; Prof: string; typeSalle: string; heure: string }) => {
           return new Promise<void>((resolve, reject) => {
-            const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
-                          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                          ON DUPLICATE KEY UPDATE 
-                          UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode), 
-                          Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
+            // Ancienne requête permettant l'update d'une matière si elle existe déjà ou l'insert
+            // TODO : À garder jusqu'à ce que la fonction soit fonctionnelle avec la nouvelle base de données
+            // const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
+            //               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            //               ON DUPLICATE KEY UPDATE
+            //               UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode),
+            //               Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
 
+            const sql = `INSERT INTO matiere (id_promo, nom, semestre, volume_horaire)
+                            VALUES (?, ?, ?, ?)
+                            ON CONFLICT (id_promo, nom) 
+                            DO UPDATE SET 
+                              semestre = EXCLUDED.semestre,
+                              volume_horaire = EXCLUDED.volume_horaire`;
             connection.query(sql,
               [cours.promo, cours.name, cours.UE, cours.Semestre, cours.Periode, cours.Prof, cours.typeSalle, cours.heure],
               (error: any) => {
@@ -1511,7 +1486,7 @@ app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
 
     const updatePromises = req.body.courses.map((cours: { promo: string; name: string; UE: string; Semestre: string; Periode: string; Prof: string; typeSalle: string; heure: string }) => {
       return new Promise<void>((resolve, reject) => {
-        const sql = `UPDATE Cours SET Prof = ? WHERE name = ?`;
+        const sql = `UPDATE Cours SET id_prof = ? WHERE id_event = ?`;
 
         connection.query(sql, [cours.Prof, cours.name], (error: any) => {
           if (error) {
