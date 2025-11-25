@@ -1266,7 +1266,7 @@ app.get("/getSallesData", authJwt.verifyToken, (req, res) => {
  */
 // File: `BobPlanning.back/src/index.ts`
 app.post("/setSallesData", authJwt.verifyToken, (req, res) => {
-  const { name, type, capacite } = req.body;
+  const { nom, type, capacite } = req.body;
 
   pool.connect((err: any, connection: any) => {
     if (err) {
@@ -1276,7 +1276,7 @@ app.post("/setSallesData", authJwt.verifyToken, (req, res) => {
     const sql = "INSERT INTO salle (nom, type, capacite) VALUES ($1, $2, $3) RETURNING id";
     const capaciteNum = typeof capacite === "number" ? capacite : Number(capacite) || null;
 
-    connection.query(sql, [name, type, capaciteNum], (error: any, result: any) => {
+    connection.query(sql, [nom, type, capaciteNum], (error: any, result: any) => {
       connection.release(); // always release the client
 
       if (error) {
@@ -1334,9 +1334,9 @@ app.post("/setSallesData", authJwt.verifyToken, (req, res) => {
  *         description: Erreur interne du serveur.
  */
 app.put("/updateSalle", authJwt.verifyToken, (req, res): void => {
-  const { id, name, capacite, type } = req.body;
+  const { id, nom, capacite, type } = req.body;
 
-  if (!id || !name || !capacite || !type) {
+  if (!id || !nom || !capacite || !type) {
     res.status(400).json({ message: "Tous les champs sont requis." });
     return;
   }
@@ -1347,10 +1347,10 @@ app.put("/updateSalle", authJwt.verifyToken, (req, res): void => {
     }
 
     const sql =
-      "UPDATE salle SET nom = ?, capacite = ?, type = ? WHERE id = ?";
+      "UPDATE salle SET nom = $1, capacite = $2, type = $3 WHERE id = $4";
     connection.query(
       sql,
-      [name, capacite, type, id],
+      [nom, capacite, type, id],
       (error: any, result: any) => {
         if (error) {
           console.error(error);

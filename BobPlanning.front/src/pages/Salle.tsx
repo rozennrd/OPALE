@@ -44,7 +44,7 @@ const Salle: React.FC = () => {
     try {
       const url = editId ? `${RACINE_FETCHER_URL}/updateSalle` : `${RACINE_FETCHER_URL}/setSallesData`;
       const method = editId ? 'PUT' : 'POST';
-      const body = editId ? { id: editId, name: nom, type, capacite: Number(capacite) } : { name: nom, type, capacite: Number(capacite) };
+      const body = editId ? { id: editId, nom, type, capacite: Number(capacite) } : { nom, type, capacite: Number(capacite) };
 
       const response = await fetch(url, {
         method,
@@ -61,7 +61,7 @@ const Salle: React.FC = () => {
         setType('');
         setCapacite('');
         setEditId(null);
-        setError(''); 
+        setError('');
       } else {
         setError("Erreur lors de l'enregistrement de la salle");
       }
@@ -81,7 +81,7 @@ const Salle: React.FC = () => {
 
       if (response.ok) {
         loadSalles();
-        setError(''); 
+        setError('');
       } else {
         setError('Erreur lors de la suppression de la salle');
       }
@@ -92,7 +92,7 @@ const Salle: React.FC = () => {
 
   const startEdit = (salle: any) => {
     setEditId(salle.id);
-    setNom(salle.name);
+    setNom(salle.nom);
     setType(salle.type);
     setCapacite(salle.capacite ? salle.capacite.toString() : '');
   };
@@ -134,7 +134,7 @@ const Salle: React.FC = () => {
           <TableBody>
             {salles.map((salle: any) => (
               <TableRow key={salle.id}>
-                <TableCell>{salle.name}</TableCell>
+                <TableCell>{salle.nom}</TableCell>
                 <TableCell>{salle.type}</TableCell>
                 <TableCell>{salle.capacite}</TableCell>
                 <TableCell>
