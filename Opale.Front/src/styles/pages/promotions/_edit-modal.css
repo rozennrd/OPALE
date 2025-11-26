@@ -8,6 +8,9 @@
         align-items: center;
         justify-content: center;
         background: rgba(15, 23, 42, 0.45); /* sombre, semi-transparent */
+
+        /* ✅ ajoute un "coussin" haut/bas */
+        padding: 24px 0;
     }
 
     .promo-edit-card {
@@ -16,6 +19,13 @@
         display: flex;
         flex-direction: column;
         gap: 16px;
+
+        /* ✅ ne jamais dépasser la hauteur de la fenêtre
+           (on enlève 48px = 24px top + 24px bottom) */
+        max-height: calc(100vh - 48px);
+
+        /* ✅ si le contenu est trop grand, on scrolle dans la card */
+        overflow-y: auto;
     }
 
     .promo-edit-title {
@@ -276,10 +286,12 @@
         }
     }
 
-    /* Responsive */
     @media (max-width: 980px) {
         .promo-edit-card {
             width: 94vw;
+
+            /* on garde la même logique de hauteur en mobile */
+            max-height: calc(100vh - 48px);
         }
     }
 
@@ -287,6 +299,9 @@
         .promo-edit-card {
             width: 94vw;
             padding: 16px 14px 12px;
+
+            /* idem ici */
+            max-height: calc(100vh - 48px);
         }
     }
 }

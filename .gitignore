@@ -28,3 +28,4 @@ dist
 *.pdf
 db.conf
 .env
+*.zip
