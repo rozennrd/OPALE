@@ -1836,7 +1836,6 @@ app.get('/getCycleById', authJwt.verifyToken, (req: Request, res: Response): voi
   });
 });
 
-
 // Add a cycle
 app.post('/addCycle', authJwt.verifyToken, (req: Request, res: Response): void => {
   const { nom, type } = req.body;
