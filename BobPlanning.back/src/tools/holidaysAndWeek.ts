@@ -24,12 +24,12 @@ export async function getPublicHolidays(startYear: number): Promise<Record<strin
   let holidays: Record<string, string> = {};
 
   try {
-    const [holidays2023, holidays2024] = await Promise.all([
+    const [holidaysCurrentYear, holidaysNextYear] = await Promise.all([
       fetch(urlFirstYear).then((response) => response.json()),
       fetch(urlLastYear).then((response) => response.json()),
     ]);
 
-    holidays = { ...holidays2023, ...holidays2024 };
+    holidays = { ...holidaysCurrentYear, ...holidaysNextYear };
 
   } catch (error) {
     console.error("Error fetching public holidays: ", error);
