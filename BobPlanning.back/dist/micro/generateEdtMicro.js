@@ -11,41 +11,80 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateEdtMicro = void 0;
 const generateDataEdtMicro_1 = require("./generateDataEdtMicro");
-const generateEdtSquelette_1 = require("./generateEdtSquelette");
 const generateEdtMicro = (connection) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
-    //Get data from database and formated data
-    const [promosData] = yield connection.query("SELECT id, Name, Nombre, Periode FROM promosData");
-    const [coursesData] = yield connection.query(`SELECT C.id, C.name, C.UE, C.Semestre, C.Periode, C.Prof, C.typeSalle, C.heure FROM Cours C`);
-    const [sallesData] = yield connection.query("SELECT * FROM Salles");
-    const [profsData] = yield connection.query("SELECT * FROM Professeurs");
-    const [calendrierData] = yield connection.query("SELECT * FROM calendrier");
-    const promos = promosData.map((promo) => ({
-        name: promo.Name,
-        nombreEtudiants: promo.Nombre,
-        Cours: coursesData
-            .filter((course) => course.Periode === promo.id)
-            .map((course) => ({
-            name: course.name,
-            UE: course.UE,
-            Semestre: JSON.parse(course.Semestre),
-            Periode: [course.Periode],
-            Prof: course.Prof,
-            typeSalle: course.typeSalle,
-            Heure: JSON.parse(course.heure),
-        })),
-    }));
+    const [promosData] = yield connection.promise().query("SELECT id, nom, effectifs, date_start, date_end FROM promotion");
+    const [coursesData] = yield connection.promise().query(`SELECT c.id, co.id_promo, e.nom as nom_cours, m.nom nom_matiere, m.semestre, e.datetime_start, e.datetime_end, c.id_prof, s.type, m.volume_horaire 
+    FROM cours c, event e, concerner co, matiere m, salle s
+    WHERE c.id_matiere = m.id`);
+    const [sallesData] = yield connection.promise().query("SELECT * FROM salle");
+    const [profsData] = yield connection.promise().query("SELECT * FROM professeur");
+    const [calendrierData] = yield connection.promise().query("SELECT datetime_start, datetime_end FROM event");
+    const promos = promosData.map((promo) => {
+        return {
+            name: promo.Name,
+            nombreEtudiants: promo.Nombre,
+            cours: coursesData
+                .filter((course) => course.promo == promo.Name)
+                .map((course) => {
+                let semestreParsed, heureParsed, periodeParsed;
+                try {
+                    semestreParsed = JSON.parse(course.Semestre);
+                }
+                catch (error) {
+                    semestreParsed = course.Semestre;
+                }
+                try {
+                    heureParsed = JSON.parse(course.heure);
+                }
+                catch (error) {
+                    heureParsed = course.heure;
+                }
+                try {
+                    periodeParsed = JSON.parse(course.Periode);
+                }
+                catch (error) {
+                    periodeParsed = course.Periode;
+                }
+                return {
+                    name: course.name,
+                    UE: course.UE,
+                    semestre: Array.isArray(semestreParsed)
+                        ? semestreParsed.map(Number)
+                        : typeof semestreParsed === "string"
+                            ? semestreParsed.split(",").map(Number)
+                            : [semestreParsed],
+                    periode: periodeParsed,
+                    prof: String(course.Prof || ""),
+                    typeSalle: course.typeSalle,
+                    heure: heureParsed,
+                };
+            }),
+        };
+    });
     const salles = sallesData.map((salle) => ({
-        ID: salle.id,
+        ID: String(salle.id),
         type: salle.type,
         capacite: salle.capacite,
     }));
-    const profs = profsData.map((prof) => ({
-        ID: prof.id,
-        name: prof.name,
-        type: prof.type,
-        dispo: prof.dispo ? JSON.parse(prof.dispo) : [],
-    }));
+    const profs = profsData.map((prof) => {
+        let dispoParsed;
+        try {
+            dispoParsed = prof.dispo ? JSON.parse(prof.dispo) : {};
+        }
+        catch (error) {
+            dispoParsed = {};
+        }
+        const dispoArray = Object.keys(dispoParsed)
+            .filter((key) => dispoParsed[key])
+            .map((key) => key.replace(/([A-Z])/g, "_$1").toLowerCase());
+        return {
+            ID: String(prof.id),
+            name: prof.name,
+            type: prof.type,
+            dispo: dispoArray,
+        };
+    });
     const macro = {
         DateDeb: ((_a = calendrierData[0]) === null || _a === void 0 ? void 0 : _a.dateDeb) || null,
         DateFin: ((_b = calendrierData[0]) === null || _b === void 0 ? void 0 : _b.dateFin) || null,
@@ -56,13 +95,9 @@ const generateEdtMicro = (connection) => __awaiter(void 0, void 0, void 0, funct
             Periode: promo.Periode ? JSON.parse(promo.Periode) : [],
         })),
     };
-    //Generate Data EdtMicro 
+    //Generate Data EdtMicro
     const calendrier = yield (0, generateDataEdtMicro_1.generateDataEdtMicro)(macro);
-    //Call solver from microservice
-    //TODO
-    const edtMicroArray = [];
-    //Generate Excel file
-    const filePath = yield (0, generateEdtSquelette_1.generateEdtSquelette)(edtMicroArray);
-    return filePath;
+    const data = { Promos: promos, Profs: profs, Salles: salles, Calendrier: calendrier };
+    return data;
 });
 exports.generateEdtMicro = generateEdtMicro;

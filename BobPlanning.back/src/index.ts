@@ -1746,6 +1746,100 @@ app.put("/updateCycle", authJwt.verifyToken, (req, res): void => {
   });
 });
 
+
+// Get all cycles
+app.get('/getCycles', authJwt.verifyToken, (req: Request, res: Response): void => {
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    const sql = "SELECT * FROM cycle";
+
+    connection.query(sql, (error: any, results: any) => {
+      connection.release(); // always release the client
+
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      return res.json(results);
+    });
+  });
+});
+// Add a cycle
+app.post('/addCycle', authJwt.verifyToken, (req: Request, res: Response): void => {
+  const { nom, type } = req.body;
+
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    const sql = "INSERT INTO cycle (nom, type) VALUES ($1, $2)";
+
+    connection.query(sql, [nom, type], (error: any, result: any) => {
+      connection.release(); // always release the client
+
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      const insertedId = result?.rows?.[0]?.id ?? null;
+      return res.status(201).json({ message: "Cycle ajouté avec succès", insertedId });
+    });
+  });
+});
+// Get enum type_cycle
+/*app.get('/getCycleTypes', authJwt.verifyToken, (req: Request, res: Response): void => {
+  console.log("Fetching cycle types...");
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    const sql = "SELECT unnest(enum_range(NULL::type_cycle)) AS type";
+
+    connection.query(sql, (error: any, results: any) => {
+      connection.release(); // always release the client
+
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      return res.json(results.map((row: any) => row.type));
+    });
+  });
+});*/
+
+
+app.get("/getCycleTypes", authJwt.verifyToken, (req, res) => {
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    const sql = "SELECT unnest(enum_range(NULL::type_cycle)) AS type";
+    connection.query(sql, (error: any, results: any) => {
+      if (error) {
+        connection.release();
+        return res.status(500).json({ error: error.message });
+      }
+
+      // Normalize results: support drivers that return an array or an object with `rows`
+      const cyclceTypes = Array.isArray(results)
+        ? results
+        : results && Array.isArray((results as any).rows)
+          ? (results as any).rows
+          : [];
+
+      res.json(cyclceTypes);
+      console.log("Cycle Types:", cyclceTypes);
+      connection.release(); // Libérer la connexion après vérification
+    });
+  });
+});
+
+
 // Start the server
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
