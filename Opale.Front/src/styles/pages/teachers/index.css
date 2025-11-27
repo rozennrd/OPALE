@@ -330,16 +330,31 @@
 /* Couleurs par mode (ok en clair et sombre) */
 
 .teacher-mode-distanciel {
+    background: rgba(59, 130, 246, 0.10);
+    color: #1d4ed8;  /* bleu foncé lisible */
+}
+
+.teacher-mode-hybride {
+    background: rgba(139, 92, 246, 0.10);
+    color: #6d28d9;  /* violet foncé lisible */
+}
+
+.teacher-mode-presentiel {
+    background: rgba(16, 185, 129, 0.10);
+    color: #047857;  /* vert foncé lisible */
+}
+
+[data-theme="dark"] .teacher-mode-distanciel {
     background: rgba(59, 130, 246, 0.18);
     color: #bfdbfe;
 }
 
-.teacher-mode-hybride {
+[data-theme="dark"] .teacher-mode-hybride {
     background: rgba(139, 92, 246, 0.18);
     color: #ddd6fe;
 }
 
-.teacher-mode-presentiel {
+[data-theme="dark"] .teacher-mode-presentiel {
     background: rgba(16, 185, 129, 0.18);
     color: #a7f3d0;
 }
