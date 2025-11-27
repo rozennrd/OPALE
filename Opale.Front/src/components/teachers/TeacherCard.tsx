@@ -2,6 +2,7 @@
 import React from 'react'
 import { Teacher } from '../../models/Teacher'
 import TeacherModeBadge from './TeacherModeBadge'
+import icTel from '../../assets/ic-tel.png'
 
 interface TeacherCardProps {
     teacher: Teacher
@@ -19,15 +20,13 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
                     {teacher.lastName.toUpperCase()} {teacher.firstName}
                 </div>
                 <div className="teacher-card-phone">
-          <span className="teacher-card-phone-icon" aria-hidden="true">
-            📞
-          </span>
+                    <img src={icTel} alt="" className="teacher-card-phone-icon"/>
                     <span>{teacher.phone}</span>
                 </div>
             </div>
 
             <div className="teacher-card-mode">
-                <TeacherModeBadge mode={teacher.mode} />
+                <TeacherModeBadge mode={teacher.mode}/>
             </div>
         </article>
     )

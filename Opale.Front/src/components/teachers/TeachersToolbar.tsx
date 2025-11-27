@@ -1,5 +1,6 @@
 // src/components/teachers/TeachersToolbar.tsx
 import React, { useState } from 'react'
+import icSearch from '../../assets/ic-search.png'
 
 export default function TeachersToolbar() {
     const [searchValue, setSearchValue] = useState('')
@@ -22,9 +23,11 @@ export default function TeachersToolbar() {
         <div className="teachers-toolbar">
             <div className="teachers-toolbar-left">
                 <div className="teachers-search">
-                    <span className="teachers-search-icon" aria-hidden="true">
-                        🔍
-                    </span>
+                    <img
+                        src={icSearch}
+                        alt=""
+                        className="teachers-search-icon"
+                    />
 
                     <input
                         type="text"
