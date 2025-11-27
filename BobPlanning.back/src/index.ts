@@ -1206,7 +1206,7 @@ app.get("/getSallesData", authJwt.verifyToken, (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    const sql = "SELECT * FROM salle";
+    const sql = "SELECT * FROM salle ORDER BY nom ASC";
     connection.query(sql, (error: any, results: any) => {
       if (error) {
         connection.release();
