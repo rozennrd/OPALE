@@ -48,7 +48,7 @@ const PromoMainInfo: React.FC<PromoMainInfoProps> = ({
                 </label>
 
                 <label className="promo-edit-field">
-                    <span className="promo-edit-label">Date de début (rentrée)</span>
+                    <span className="promo-edit-label">Date de début</span>
                     <input
                         type="date"
                         className="promo-edit-input"

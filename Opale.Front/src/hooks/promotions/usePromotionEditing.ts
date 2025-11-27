@@ -63,8 +63,13 @@ export function usePromotionEditing(
         setEditingPromo(prev => (prev ? { ...prev, [field]: value } : prev))
     }
 
-    const handleSavePromotion = (event: React.FormEvent<HTMLFormElement>): void => {
-        event.preventDefault()
+    /**
+     * Sauvegarde de la promotion :
+     * - Ne gère plus d'event de formulaire (preventDefault fait côté composant)
+     * - Met à jour cycles
+     * - Ferme le mode édition
+     */
+    const handleSavePromotion = (): void => {
         if (!editingPromo) return
 
         setCycles(prev =>
@@ -99,11 +104,14 @@ export function usePromotionEditing(
         setEditingPromo(prev => {
             if (!prev) return prev
             const current = prev.groups || []
-            const next = [...current, {
-                id: `grp-${current.length + 1}`,
-                name: `Groupe ${current.length + 1}`,
-                students: 0,
-            }]
+            const next = [
+                ...current,
+                {
+                    id: `grp-${current.length + 1}`,
+                    name: `Groupe ${current.length + 1}`,
+                    students: 0,
+                },
+            ]
             const distributed = distributeEvenly(prev.students, next)
             console.log('[GROUPS] add', distributed)
             return { ...prev, groups: distributed }
@@ -138,11 +146,14 @@ export function usePromotionEditing(
         setEditingPromo(prev => {
             if (!prev) return prev
             const current = prev.specialties || []
-            const next = [...current, {
-                id: `spec-${current.length + 1}`,
-                name: `Spécialité ${current.length + 1}`,
-                students: 0,
-            }]
+            const next = [
+                ...current,
+                {
+                    id: `spec-${current.length + 1}`,
+                    name: `Spécialité ${current.length + 1}`,
+                    students: 0,
+                },
+            ]
             const distributed = distributeEvenly(prev.students, next)
             console.log('[SPECIALTIES] add', distributed)
             return { ...prev, specialties: distributed }

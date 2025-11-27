@@ -1,4 +1,4 @@
-/* v1.1.4 — Composants globaux: boutons, checklist, etc. */
+/* Composants globaux: boutons, checklist, etc. */
 
 @layer components {
   /* NavLink: enlever l'aspect lien (soulignement/couleur par défaut) */
@@ -113,6 +113,44 @@
 
   /* Bouton Générer : bas-droite */
   .btn-generate { position: absolute; right: 20px; bottom: 20px; }
+
+  /* Pop-up confirmation modification */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.45);
+  }
+
+  .confirm-dialog-card {
+    width: min(420px, 94vw);
+    padding: 18px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .confirm-dialog-title {
+    margin: 0 0 4px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .confirm-dialog-body {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .confirm-dialog-actions {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
 }
 
 /* ========== Theme toggle ========== */
