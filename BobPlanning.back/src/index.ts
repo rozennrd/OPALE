@@ -1572,6 +1572,47 @@ app.get("/getCours", authJwt.verifyToken, (req, res) => {
   });
 });
 
+// Update cycle
+app.put("/updateCycle", authJwt.verifyToken, (req, res): void => {
+  const { id, nom, type} = req.body;
+
+  if (!id || !nom || !type) {
+    res.status(400).json({ message: "Tous les champs sont requis." });
+    return;
+  }
+
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    const sql =
+      "UPDATE cycle SET nom = $2, type = $3 WHERE id = $1";
+    connection.query(
+      sql,
+      [id, nom, type],
+      (error: any, result: any) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({ error: error.message });
+          return;
+        }
+
+        const affectedRows = result.affectedRows;
+        if (affectedRows === 0) {
+          res
+            .status(404)
+            .json({ message: `Cycle avec l'ID ${id} non trouvé` });
+          return;
+        }
+
+        res.json({ message: "Cycle mis à jour avec succès" });
+      }
+    );
+    connection.release(); // Libérer la connexion après vérification
+  });
+});
+
 // Start the server
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
