@@ -5,12 +5,9 @@
 .teachers-page {
     margin-top: 1.5rem;
     padding: 1.5rem;
-    background: var(--color-surface-elevated, #ffffff);
+    background: var(--panel-soft);          /* panel-soft = adapté light/dark */
     border-radius: var(--radius-lg, 16px);
-    box-shadow: var(
-            --shadow-soft,
-            0 10px 30px rgba(15, 23, 42, 0.06)
-    );
+    box-shadow: var(--shadow-lg);           /* utilise les tokens d’ombre */
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -19,12 +16,12 @@
 .page-title {
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--color-text-strong, #111827);
+    color: var(--text);                     /* texte adapté au thème */
 }
 
 .page-sub {
     margin-top: 0.25rem;
-    color: var(--color-text-muted, #6b7280);
+    color: var(--muted);                    /* texte secondaire adapté */
     font-size: 0.95rem;
 }
 
@@ -63,9 +60,9 @@
     left: 0.85rem;
     top: 50%;
     transform: translateY(-50%);
-    width: 1.1rem;        /* taille ajustable */
+    width: 1.1rem;
     height: 1.1rem;
-    opacity: 0.8;
+    opacity: 0.9;
     pointer-events: none;
 }
 
@@ -74,10 +71,10 @@
     height: 2.5rem;
     padding: 0 0.9rem 0 2.4rem;
     border-radius: 999px;
-    border: 1px solid var(--color-border-subtle, #e5e7eb);
-    background: var(--color-surface-subtle, #f9fafb);
+    border: 1px solid var(--border);
+    background: var(--panel-soft);            /* input-bg géré en dark.css */
     font-size: 0.95rem;
-    color: var(--color-text-main, #111827);
+    color: var(--text);
     outline: none;
     transition:
             border-color 150ms ease,
@@ -86,13 +83,13 @@
 }
 
 .teachers-search-input::placeholder {
-    color: var(--color-text-muted, #9ca3af);
+    color: var(--muted);
 }
 
 .teachers-search-input:focus {
-    border-color: var(--color-primary, #4f46e5);
-    background: var(--color-surface, #ffffff);
-    box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.1);
+    border-color: var(--brand);
+    background: var(--panel-soft);
+    box-shadow: 0 0 0 1px rgba(50, 224, 230, 0.25);
 }
 
 /* Filtres */
@@ -103,10 +100,13 @@
     gap: 0.4rem;
     padding: 0.45rem 0.9rem;
     border-radius: 999px;
-    border: 1px solid var(--color-border-subtle, #e5e7eb);
-    background: transparent;
+
+    /* même style que l’input */
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+
     font-size: 0.9rem;
-    color: var(--color-text-main, #374151);
+    color: var(--text);
     cursor: pointer;
     transition:
             background-color 150ms ease,
@@ -115,8 +115,8 @@
 }
 
 .teachers-filter-btn:hover {
-    background: var(--color-surface-subtle, #f3f4f6);
-    border-color: var(--color-border-emphasis, #d1d5db);
+    background: var(--surface-hover); /* même hover que les inputs */
+    border-color: var(--border);
 }
 
 .teachers-filter-btn:active {
@@ -152,31 +152,39 @@
 .teacher-section-title {
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--color-text-main, #111827);
+    color: var(--text);
     position: relative;
-    display: inline-block; /* important pour que le trait suive le titre */
+    display: inline-block;
 }
 
 .teacher-section-title::after {
     content: "";
-    display: block;
+    position: absolute;
+    left: 0;                     /* démarre à gauche */
+    bottom: -4px;                /* espace sous le titre */
     height: 2px;
-    width: 0%;
-    background: var(--color-border-subtle, #d1d5db);
-    margin: 0.2rem auto 0;
+    width: 100px;                 /* trait final = 120% */
+    background: var(--border);
+    transform: scaleX(0);        /* invisible au début */
+    transform-origin: left;      /* ✨ ANIMATION PAR LA GAUCHE ✨ */
+    transition: transform 250ms ease;
     border-radius: 2px;
-    transition: width 200ms ease;
 }
 
-.teacher-section-header .teacher-section-chevron.is-open ~ .teacher-section-title::after,
+/* Boost contraste en thème sombre */
+[data-theme='dark'] .teacher-section-title::after {
+    background: var(--muted); /* ou une couleur fixe un peu plus claire */
+    opacity: 0.9;
+}
+
 .teacher-section-header.is-open .teacher-section-title::after {
-    width: 120%;
+    transform: scaleX(1);
 }
 
 .teacher-section-chevron {
     font-size: 0.85rem;
     transition: transform 150ms ease;
-    color: var(--color-text-muted, #6b7280);
+    color: var(--muted);
 }
 
 .teacher-section-chevron.is-open {
@@ -192,8 +200,8 @@
 .teacher-empty-state {
     padding: 1.25rem 1rem 1rem;
     border-radius: 0.75rem;
-    background: var(--color-surface-subtle, #f9fafb);
-    color: var(--color-text-muted, #6b7280);
+    background: var(--panel-soft);
+    color: var(--muted);
     font-size: 0.9rem;
 }
 
@@ -216,8 +224,12 @@
     align-items: stretch;
     justify-content: space-between;
     border-radius: 0.9rem;
-    border: 1px solid var(--color-border-subtle, #e5e7eb);
-    background: var(--color-surface-subtle, #f9fafb);
+
+    /* 🔥 même style que cyclecards */
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+
     overflow: hidden;
     cursor: pointer;
     transition:
@@ -230,9 +242,9 @@
 
 .teacher-card:hover {
     transform: translateY(-2px);
-    background: var(--color-surface, #ffffff);
-    border-color: var(--color-border-emphasis, #d1d5db);
-    box-shadow: 0 12px 25px rgba(15, 23, 42, 0.07);
+    background: var(--panel-soft);
+    border-color: var(--border);
+    box-shadow: var(--shadow-xl);
 }
 
 .teacher-card-main {
@@ -247,7 +259,7 @@
 .teacher-card-name {
     font-size: 0.95rem;
     font-weight: 600;
-    color: var(--color-text-main, #111827);
+    color: var(--text);
     letter-spacing: 0.01em;
 }
 
@@ -256,9 +268,10 @@
     align-items: center;
     gap: 0.35rem;
     font-size: 0.85rem;
-    color: var(--color-text-muted, #6b7280);
+    color: var(--muted);
 }
 
+/* Phone icon */
 .teacher-card-phone-icon {
     width: 1rem;
     height: 1rem;
@@ -271,8 +284,8 @@
 .teacher-card-mode {
     width: 90px;
     min-width: 90px;
-    border-left: 1px solid var(--color-border-subtle, #e5e7eb);
-    background: var(--color-surface, #ffffff);
+    border-left: 1px solid var(--border);
+    background: var(--panel-soft);
     display: flex;
     align-items: stretch;
     justify-content: center;
@@ -309,29 +322,26 @@
     display: block;
 }
 
-/* si tu veux réduire le texte */
 .teacher-mode-label {
     font-size: 0.75rem;
     line-height: 1.1;
 }
 
-/* Couleurs par mode
-   (adapte les couleurs aux tokens de ta charte si tu en as déjà)
-*/
+/* Couleurs par mode (ok en clair et sombre) */
 
 .teacher-mode-distanciel {
-    background: rgba(59, 130, 246, 0.08);
-    color: #1d4ed8;
+    background: rgba(59, 130, 246, 0.18);
+    color: #bfdbfe;
 }
 
 .teacher-mode-hybride {
-    background: rgba(139, 92, 246, 0.08);
-    color: #6d28d9;
+    background: rgba(139, 92, 246, 0.18);
+    color: #ddd6fe;
 }
 
 .teacher-mode-presentiel {
-    background: rgba(16, 185, 129, 0.08);
-    color: #047857;
+    background: rgba(16, 185, 129, 0.18);
+    color: #a7f3d0;
 }
 
 /* ================================
