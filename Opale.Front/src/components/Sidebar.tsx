@@ -24,7 +24,7 @@ const items: NavItem[] = [
     { to: '/planning',    label: 'Planning',    ic: icPlanning },
     { to: '/promotions',  label: 'Promotions',  ic: icPromotions },
     { to: '/evenements',  label: 'Evenements',  ic: icEvenements },
-    { to: '/enseignants', label: 'Enseignants', ic: icEnseignants },
+    { to: '/teachers',    label: 'Enseignants', ic: icEnseignants },
     { to: '/salles',      label: 'Salles',      ic: icSalles },
 ]
 
