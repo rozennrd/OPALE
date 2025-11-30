@@ -6,27 +6,28 @@ import icTel from '../../assets/ic-tel.png'
 
 interface TeacherCardProps {
     teacher: Teacher
+    onSelect: () => void
 }
 
-export default function TeacherCard({ teacher }: TeacherCardProps) {
+export default function TeacherCard({ teacher, onSelect }: TeacherCardProps) {
     const handleClick = () => {
         console.log('[TEACHERS] Click teacher card', teacher)
     }
 
     return (
-        <article className="teacher-card" onClick={handleClick}>
+        <article className="teacher-card" onClick={onSelect}>
             <div className="teacher-card-main">
                 <div className="teacher-card-name">
                     {teacher.lastName.toUpperCase()} {teacher.firstName}
                 </div>
                 <div className="teacher-card-phone">
                     <img src={icTel} alt="" className="teacher-card-phone-icon"/>
-                    <span>{teacher.phone}</span>
+                    {teacher.phone}
                 </div>
             </div>
 
             <div className="teacher-card-mode">
-                <TeacherModeBadge mode={teacher.mode}/>
+                <TeacherModeBadge mode={teacher.mode} />
             </div>
         </article>
     )

@@ -6,9 +6,10 @@ import TeacherCardsGrid from './TeacherCardsGrid'
 interface TeacherSectionProps {
     title: string
     teachers: Teacher[]
+    onSelectTeacher: (t: Teacher) => void
 }
 
-export default function TeacherSection({ title, teachers }: TeacherSectionProps) {
+export default function TeacherSection({ title, teachers, onSelectTeacher }: TeacherSectionProps) {
     const [isOpen, setIsOpen] = useState(true)
 
     const handleToggle = () => {
@@ -38,7 +39,7 @@ export default function TeacherSection({ title, teachers }: TeacherSectionProps)
             {isOpen && (
                 <div className="teacher-section-body">
                     {teachers.length > 0 ? (
-                        <TeacherCardsGrid teachers={teachers} />
+                        <TeacherCardsGrid teachers={teachers} onSelectTeacher={onSelectTeacher} />
                     ) : (
                         <div className="teacher-empty-state">
                             Aucun enseignant dans cette section.

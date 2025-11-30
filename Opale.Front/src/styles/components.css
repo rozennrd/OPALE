@@ -1,4 +1,4 @@
-/* Composants globaux: boutons, checklist, etc. */
+/* v1.1.4 — Composants globaux: boutons, checklist, etc. */
 
 @layer components {
   /* NavLink: enlever l'aspect lien (soulignement/couleur par défaut) */
@@ -190,6 +190,105 @@
 .theme-toggle-text {
   flex: 1;
   text-align: left;
+}
+
+.action-buttons-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* ============================================
+   DateRangePill — Style générique réutilisable
+   ============================================ */
+
+/* DateRangePill – style générique, neutre */
+@layer components {
+  /* DateRangePill – style générique, neutre */
+  .date-range-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--color-surface-subtle, #f3f4f6);
+    border: 1px solid var(--color-border-subtle, #e5e7eb);
+    border-radius: 999px;
+    padding: 4px 8px;
+    font-size: 0.85rem;
+    color: var(--color-text-main, #111827);
+    cursor: pointer;
+    transition:
+            background-color 120ms ease,
+            border-color 120ms ease,
+            box-shadow 120ms ease;
+  }
+
+  .date-range-pill:hover {
+    background: var(--color-surface, #ffffff);
+    border-color: var(--color-border-emphasis, #d1d5db);
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+  }
+
+  .date-range-pill-main {
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    font-size: inherit;
+    color: inherit;
+  }
+
+  .date-range-pill-editor {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .date-range-date-input {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-border-subtle, #d1d5db);
+    background: var(--color-surface, #fff);
+    color: var(--color-text-main, #111827);
+    outline: none;
+    transition: border-color 120ms ease;
+  }
+
+  .date-range-date-input:focus {
+    border-color: var(--color-primary, #4f46e5);
+  }
+
+  .date-range-date-separator {
+    opacity: 0.6;
+    font-size: 0.75rem;
+  }
+
+  .date-range-pill-remove {
+    border: none;
+    background: var(--color-surface, #ffffff);
+    color: var(--color-text-muted, #6b7280);
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--color-border-subtle, #e5e7eb);
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1;
+    transition:
+            background-color 120ms ease,
+            border-color 120ms ease,
+            color 120ms ease;
+  }
+
+  .date-range-pill-remove:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: rgba(220, 38, 38, 1);
+  }
 }
 
 /* En sidebar compacte (mobile), on garde juste l’icône ronde */
