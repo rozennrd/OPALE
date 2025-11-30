@@ -4,10 +4,9 @@ import Sidebar from './components/Sidebar.jsx'
 import Promotions from './pages/Promotions.jsx'
 import PlanningMacro from './pages/PlanningMacro.jsx'
 import Placeholder from './pages/Placeholder.jsx'
+import Login from './pages/Login'
 
 import Teachers from './pages/Teachers'
-
-import Login from './pages/Login'
 
 import { useTheme } from './hooks/useTheme'
 
@@ -48,12 +47,14 @@ export default function App() {
                     <Route path="/promotions" element={<Promotions />} />
                     <Route path="/evenements" element={<Placeholder title="Événements" />} />
                     <Route path="/enseignants" element={<Teachers/>} />
-                    <Route path="/login" element={<Login/>} />
+                    
                     <Route path="/salles" element={<Placeholder title="Salles" />} />
                     <Route path="/parametres" element={<Placeholder title="Paramètres" />} />
                     <Route path="*" element={<Placeholder title="Page introuvable" notFound />} />
                 </Route>
+                <Route path="/login" element={<Login/>} />
             </Routes>
         </div>
+
     )
 }

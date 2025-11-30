@@ -26,8 +26,8 @@ services:
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - ./BobPlanning.back:/usr/src/app
-      - ./BobPlanning.back/src/database/config:/usr/src/app/dist/database/config
+      - ./BobPlanning.back:/usr/src/app:z
+      - ./BobPlanning.back/src/database/config:/usr/src/app/dist/database/config:z
     networks:
       - app-network
       - api-network
@@ -47,8 +47,8 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - ../bobPlanning.db:/var/lib/postgresql/data
-      - ./bobPlanning.database/init-scripts:/docker-entrypoint-initdb.d
+      - ../bobPlanning.db:/var/lib/postgresql/data:z
+      - ./bobPlanning.database/init-scripts:/docker-entrypoint-initdb.d:z
     networks:
       - app-network
 

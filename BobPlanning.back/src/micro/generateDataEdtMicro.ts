@@ -38,7 +38,6 @@ export const generateDataEdtMicro = async (macro: EdtMacroData) : Promise<EdtMic
   let i: number = 0;
 
   //Tri vacances par date
-  let isPublicHolliday: boolean = false;
   const sortedHolidays = holidays.sort((a: any, b: any) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
   let holydayStartDate = new Date(sortedHolidays[i].start_date);
   let holydayEndDate = new Date(sortedHolidays[i].end_date);
