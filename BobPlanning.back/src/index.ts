@@ -304,6 +304,7 @@ app.get('/getPromoById', authJwt.verifyToken, (req: Request, res: Response): voi
 });
 
 
+// TODO : Supprimer ce endpoint une fois que le front ne l'utilisera plus : Utilisation de /setPromotion à la place
 /**
  * @swagger
  * /setPromosData:
@@ -419,6 +420,7 @@ app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
 
 });
 
+<<<<<<< HEAD
 // Update a promotion
 app.put("/updatePromotion", authJwt.verifyToken, (req, res): void => {
   const { id, nom, effectifs, date_start, date_end} = req.body;
@@ -490,6 +492,9 @@ app.delete('/deletePromotion', authJwt.verifyToken, (req: Request, res: Response
   });
 });
 
+=======
+// TODO : Utiliser ce endpoint pour le nouveau front
+>>>>>>> 67cde06 (:art: add comments for the next integration of endpoints in front)
 // Set promotion
 app.post("/addPromotion", authJwt.verifyToken, (req, res) => {
   const { nom, effectifs, id_cycle, date_start, date_end } = req.query;
