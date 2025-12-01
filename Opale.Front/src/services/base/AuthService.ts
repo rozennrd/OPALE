@@ -2,7 +2,7 @@
 
 import { apiClient } from './ApiClient'
 import { LoginCredentials, LoginResponse, User, VerifyResponse } from './types'
-import CryptoJS from 'crypto-js';
+import * as CryptoJS from 'crypto-js'
 
 class AuthService {
   // Store user context in memory (could be expanded to include user data)

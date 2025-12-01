@@ -61,7 +61,7 @@ export default function App() {
     const { theme } = useTheme()
     return (
 
-        <div className={theme}>
+
 
             <Routes>
                 <Route element={<AppLayout />}>
@@ -78,7 +78,7 @@ export default function App() {
                 </Route>
                 <Route path="/login" element={<Login/>} />
             </Routes>
-        </div>
+
 
 
     )
