@@ -14,12 +14,15 @@ services:
 #      - ./BobPlanning.front/dockerization/nginx.conf:/etc/nginx/nginx.conf:z
 
   node-app:
-    build: ./BobPlanning.back
+    build:
+      context: ./BobPlanning.back
+      dockerfile: Dockerfile.dev
     container_name: opale-backend
     depends_on:
       - db
 
     environment:
+      NODE_ENV: development
       DB_HOST: db
       DB_PORT: 5432
       DB_NAME: ${POSTGRES_DB}
@@ -27,12 +30,14 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ./BobPlanning.back:/usr/src/app:z
-      - ./BobPlanning.back/src/database/config:/usr/src/app/dist/database/config:z
+      - /usr/src/app/node_modules
     networks:
       - app-network
       - api-network
     ports:
       - "3000:3000"
+    stdin_open: true
+    tty: true
 
 
   db:
@@ -51,7 +56,6 @@ services:
       - ./bobPlanning.database/init-scripts:/docker-entrypoint-initdb.d:z
     networks:
       - app-network
-
 
   python-api:
     build: ./BobPlanning.microService
@@ -77,6 +81,7 @@ services:
       - "5173:5173"
     environment:
       - NODE_ENV=development
+      - VITE_RACINE_FETCHER_URL=http://localhost:3000
     stdin_open: true
     tty: true
 

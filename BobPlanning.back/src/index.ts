@@ -12,6 +12,8 @@ import { generateEdtMicro } from "./micro/generateEdtMicro";
 import { getLogin } from "./database/getLogin";
 import authJwt from "./middleware/authJwt";
 import { pool } from "./database/pool";
+import cookieParser from "cookie-parser";
+
 
 
 require('dotenv').config();
@@ -29,7 +31,23 @@ const dbConfig = getDBConfig();
 const app = express();
 const PORT = 3000;
 app.use(express.json({ limit: "50mb" }));
-app.use(cors());
+app.use(cors({
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: string | boolean) => void) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    // Allow localhost origins for development
+    if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
+      callback(null, origin || true);
+    } else {
+      callback(null, 'http://localhost:5173'); // Explicit for Vite dev server
+    }
+  },
+  credentials: true,  // Important since your ApiClient uses credentials: 'include'
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Set-Cookie']  // If you're using cookies for auth
+}));
+// After express.json() middleware:
+app.use(cookieParser());  // Add this line!
 
 pool.connect((err: any, connection: any) => {
   if (err) {
@@ -59,6 +77,24 @@ const swaggerOptions = {
 };
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+/**
+ * @swagger
+ * /verify-auth:
+ *   get:
+ *     summary: Vérifie si l'utilisateur est authentifié
+ *     description: Endpoint léger pour vérifier que le JWT dans le cookie est valide
+ *     tags:
+ *       - Authentification
+ *     responses:
+ *       200:
+ *         description: Utilisateur authentifié
+ *       401:
+ *         description: Non authentifié
+ */
+app.get("/verify-auth", authJwt.verifyToken, (req: Request, res: Response) => {
+  res.json({ authenticated: true, userId: (req as any).userId });
+});
 
 /**
  * @swagger
@@ -1957,6 +1993,12 @@ app.post('/setGroup', authJwt.verifyToken, (req: Request, res: Response): void =
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   console.log(`Swagger docs available at http://localhost:${PORT}/docs`);
+});
+
+// In index.ts
+app.post('/logout', (req: Request, res: Response) => {
+  res.clearCookie('jwt', { path: '/' });
+  res.json({ message: 'Logged out' });
 });
 
 server.timeout = 0;

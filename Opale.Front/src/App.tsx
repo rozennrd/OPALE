@@ -1,10 +1,12 @@
-import React from 'react'
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Routes, Route, Navigate, Outlet, useNavigate } from 'react-router-dom'
 import Sidebar from './components/Sidebar.jsx'
 import Promotions from './pages/Promotions.jsx'
 import PlanningMacro from './pages/PlanningMacro.jsx'
 import Placeholder from './pages/Placeholder.jsx'
 import Login from './pages/Login'
+import { authService } from './services/base/AuthService'
+
 
 import Teachers from './pages/Teachers'
 
@@ -13,8 +15,32 @@ import { useTheme } from './hooks/useTheme'
 
 function AppLayout() {
 
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const checkAuthentication = async () => {
+            const isAuthenticated = await authService.verifyAuthentication();
+
+            if (!isAuthenticated) {
+                console.log('[AUTH] Authentication check failed, redirecting to login');
+                navigate('/login');
+            }
+        };
+
+        // Check immediately on mount
+        checkAuthentication();
+
+        // Check every minute (60000ms)
+        const interval = setInterval(checkAuthentication, 60000);
+
+        return () => clearInterval(interval);
+    }, [navigate]);
+
+
     const handleDisconnect = () => {
         console.log('[AUTH] Se déconnecter')
+        authService.logout();
+        navigate('/login');
     }
 
     return (
@@ -55,6 +81,7 @@ export default function App() {
                 <Route path="/login" element={<Login/>} />
             </Routes>
         </div>
+
 
     )
 }

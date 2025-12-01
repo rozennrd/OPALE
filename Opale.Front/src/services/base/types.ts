@@ -37,7 +37,9 @@ export interface LoginResponse {
 
 // Default API configuration
 export const DEFAULT_API_CONFIG = {
-  baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
+  baseUrl: import.meta.env.VITE_RACINE_FETCHER_URL || 'http://localhost:3000',
   timeout: 10000,
   retries: 2,
 }
+
+

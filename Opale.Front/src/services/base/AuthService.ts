@@ -1,7 +1,8 @@
 // Authentication service for managing JWT tokens and user sessions
 
 import { apiClient } from './ApiClient'
-import { ApiResponse, LoginCredentials, LoginResponse, User } from './types'
+import { LoginCredentials, LoginResponse, User } from './types'
+import CryptoJS from 'crypto-js';
 
 class AuthService {
   private readonly STORAGE_KEY = 'opale:auth'
@@ -9,22 +10,28 @@ class AuthService {
   // Store user context in memory (could be expanded to include user data)
   private user: User | null = null
 
-  async login(credentials: LoginCredentials): Promise<ApiResponse<LoginResponse>> {
-    const response = await apiClient.post<LoginResponse>('/login', credentials)
+  hashPassword = (password: string) => {
+    return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
+  };
 
+  async login(credentials: LoginCredentials): Promise<Boolean>{
+    credentials.password = this.hashPassword(credentials.password);
+    const response = await apiClient.post<LoginResponse>('/login', credentials)
+    var hasLoggedIn = false;
     if (response.success && response.data) {
-      // Store minimal user context (assuming backend sets JWT in cookie)
-      // If we need to store additional user info, fetch it here
+      // Store minimal user context
+      // JWT is stored in HTTP-only cookie by backend, not in localStorage
+      hasLoggedIn = true;
       this.user = {
         id: response.data.userId,
         email: credentials.email,
       }
 
-      // Optionally store in localStorage for persistence across sessions
+      // Store email in localStorage for UI purposes only (not for authentication)
       this.persistAuth(credentials.email)
     }
 
-    return response
+    return hasLoggedIn
   }
 
   logout(): void {
@@ -39,6 +46,16 @@ class AuthService {
     // For cookie-based auth, we trust the cookie to be valid
     // If we need user details, we could call a /me endpoint
     return this.user
+  }
+
+  async verifyAuthentication(): Promise<boolean> {
+    try {
+      // Call a lightweight endpoint that requires authentication
+      const response = await apiClient.get('/verify-auth');
+      return response.success;
+    } catch (error) {
+      return false;
+    }
   }
 
   isAuthenticated(): boolean {

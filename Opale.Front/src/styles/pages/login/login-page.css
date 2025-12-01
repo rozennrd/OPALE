@@ -108,3 +108,7 @@ body[data-theme="dark"] .theme-toggle-thumb {
 body[data-theme="dark"] .theme-toggle-text {
     color: var(--text);
 }
+
+.error-message {
+    color: var(--danger-800)
+}

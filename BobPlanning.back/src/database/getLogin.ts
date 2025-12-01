@@ -57,7 +57,16 @@ const getLogin = async (req: Request, res: Response) => {
       [email]
     );
 
-    return res.json({ token });
+    //return res.json({ token });
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: false, // Set to true in production with HTTPS
+      sameSite: 'lax', // Allows cross-origin for development
+      // No domain specified - works better for localhost development
+      path: '/', // Root path
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+return res.json({ message: 'Connexion réussie', userId: user.id });
 
   } catch (error: any) {
     console.error('Erreur serveur:', error);

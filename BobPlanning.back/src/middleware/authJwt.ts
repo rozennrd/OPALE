@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt, { JwtPayload, VerifyErrors } from "jsonwebtoken";
 import config from "../config/auth.config";
 
 
@@ -9,16 +9,21 @@ interface AuthenticatedRequest extends Request {
 }
 
 const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
-  let token = req.headers["x-access-token"] as string;
+  let token = req.cookies?.jwt;
+  //let token = req.headers["x-access-token"] as string;
+
+   if (!token) {
+    token = req.headers["x-access-token"] as string;
+  }
 
   if (!token) {
     res.status(403).send({ message: "No token provided!" });
     return;
   }
 
-  jwt.verify(token, config.secret, (err, decoded) => {
+  jwt.verify(token, config.secret, (err: VerifyErrors | null, decoded: string | JwtPayload | undefined) => {
     if (err) {
-      res.status(401).send({ message: "Unauthorized pour toi!" });
+      res.status(401).send({ message: "Unauthorized!" });
       return;
     }
 
