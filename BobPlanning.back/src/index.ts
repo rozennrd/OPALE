@@ -420,7 +420,7 @@ app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
 
 });
 
-<<<<<<< HEAD
+
 // Update a promotion
 app.put("/updatePromotion", authJwt.verifyToken, (req, res): void => {
   const { id, nom, effectifs, date_start, date_end} = req.body;
@@ -492,9 +492,9 @@ app.delete('/deletePromotion', authJwt.verifyToken, (req: Request, res: Response
   });
 });
 
-=======
+
 // TODO : Utiliser ce endpoint pour le nouveau front
->>>>>>> 67cde06 (:art: add comments for the next integration of endpoints in front)
+
 // Set promotion
 app.post("/addPromotion", authJwt.verifyToken, (req, res) => {
   const { nom, effectifs, id_cycle, date_start, date_end } = req.query;
@@ -1746,6 +1746,7 @@ app.put("/updateCycle", authJwt.verifyToken, (req, res): void => {
       return res.status(500).json({ error: err.message });
     }
 
+
     const sql =
       "UPDATE cycle SET nom = $2, type = $3 WHERE id = $1";
     connection.query(
@@ -1878,10 +1879,12 @@ app.post('/addCycle', authJwt.verifyToken, (req: Request, res: Response): void =
       connection.release(); // always release the client
 
       if (error) {
+
         return res.status(500).json({ error: error.message });
       }
 
       const insertedId = result?.rows?.[0]?.id ?? null;
+
       return res.status(201).json({ message: "Cycle ajouté avec succès", insertedId });
     });
   });
@@ -1916,7 +1919,37 @@ app.delete('/deleteCycle', authJwt.verifyToken, (req: Request, res: Response): v
       }
 
       return res.json({ message: "Cycle supprimé avec succès" });
+
     });
+  });
+});
+
+app.post('/setGroup', authJwt.verifyToken, (req: Request, res: Response): void => {
+  const { id_promo, nom, effectifs } = req.body;
+  pool.connect((err: any, connection: any) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      const sql = "INSERT INTO groupe (id_promo, nom, effectifs) VALUES ($1, $2, $3);";
+
+    connection.query(sql, [id_promo, nom, effectifs], (error: any, result: any) => {
+      connection.release();
+
+      if (error) {
+        if (error.constraint === "uq_groupe_nom_promo") {
+          return res.status(409).json({
+            error: "Un groupe portant ce nom existe déjà pour cette promotion."
+          });
+        }
+           return res.status(500).json({ error: error.message });
+      }
+
+      const insertedId = result?.rows?.[0]?.id ?? null;
+      return res.status(201).json({
+        message: "Groupe ajouté avec succès !",
+        insertedId
+      });
+});
   });
 });
 
