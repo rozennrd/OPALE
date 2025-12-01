@@ -18,12 +18,10 @@ function AppLayout() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const checkAuthentication = async () => {
-            const isAuthenticated = await authService.verifyAuthentication();
-
-            if (!isAuthenticated) {
-                console.log('[AUTH] Authentication check failed, redirecting to login');
-                navigate('/login');
+        const checkAuthentication = () => {
+            if (!authService.isAuthenticated()) {
+                console.log('[AUTH] Token expired or no auth, redirecting to login');
+                navigate('/login', { replace: true });
             }
         };
 

@@ -12,8 +12,6 @@ import { generateEdtMicro } from "./micro/generateEdtMicro";
 import { getLogin } from "./database/getLogin";
 import authJwt from "./middleware/authJwt";
 import { pool } from "./database/pool";
-import cookieParser from "cookie-parser";
-
 
 
 require('dotenv').config();
@@ -34,20 +32,14 @@ app.use(express.json({ limit: "50mb" }));
 app.use(cors({
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: string | boolean) => void) {
     // Allow requests with no origin (mobile apps, curl, etc.)
-    // Allow localhost origins for development
     if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
-      callback(null, origin || true);
+      return callback(null, origin || true);
     } else {
-      callback(null, 'http://localhost:5173'); // Explicit for Vite dev server
+      return callback(null, false);
     }
   },
-  credentials: true,  // Important since your ApiClient uses credentials: 'include'
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Set-Cookie']  // If you're using cookies for auth
+  credentials: true,
 }));
-// After express.json() middleware:
-app.use(cookieParser());  // Add this line!
 
 pool.connect((err: any, connection: any) => {
   if (err) {
@@ -292,6 +284,9 @@ app.get('/getPromotions', authJwt.verifyToken, (req: Request, res: Response): vo
         return res.status(500).json({ error: error.message });
       }
 
+
+
+
       // Normalize results: support drivers that return an array or an object with `rows`
       const promotions = Array.isArray(results)
         ? results
@@ -456,7 +451,6 @@ app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
 
 });
 
-
 // Update a promotion
 app.put("/updatePromotion", authJwt.verifyToken, (req, res): void => {
   const { id, nom, effectifs, date_start, date_end} = req.body;
@@ -529,6 +523,7 @@ app.delete('/deletePromotion', authJwt.verifyToken, (req: Request, res: Response
 });
 
 
+
 // TODO : Utiliser ce endpoint pour le nouveau front
 
 // Set promotion
@@ -552,6 +547,7 @@ app.post("/addPromotion", authJwt.verifyToken, (req, res) => {
     });
   });
 })
+
 
 /**
  * @swagger
@@ -1811,6 +1807,7 @@ app.put("/updateCycle", authJwt.verifyToken, (req, res): void => {
 });
 
 
+
 // Get all cycles
 app.get('/getCycles', authJwt.verifyToken, (req: Request, res: Response): void => {
   pool.connect((err: any, connection: any) => {
@@ -1993,12 +1990,6 @@ app.post('/setGroup', authJwt.verifyToken, (req: Request, res: Response): void =
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   console.log(`Swagger docs available at http://localhost:${PORT}/docs`);
-});
-
-// In index.ts
-app.post('/logout', (req: Request, res: Response) => {
-  res.clearCookie('jwt', { path: '/' });
-  res.json({ message: 'Logged out' });
 });
 
 server.timeout = 0;

@@ -33,6 +33,12 @@ export interface LoginCredentials {
 export interface LoginResponse {
   message: string
   userId: string
+  token: string
+}
+
+export interface VerifyResponse {
+  authenticated: boolean
+  userId: string
 }
 
 // Default API configuration
@@ -41,5 +47,3 @@ export const DEFAULT_API_CONFIG = {
   timeout: 10000,
   retries: 2,
 }
-
-

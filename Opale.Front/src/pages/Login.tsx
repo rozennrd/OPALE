@@ -20,17 +20,18 @@ export default function Login(): React.ReactElement<any> {
         if (username && password) {
             const loginData: LoginCredentials = {email: username, password}
             try {
-               const hasLoggedIn = await authService.login(loginData);
-               if (hasLoggedIn) {
-                console.log(hasLoggedIn)
+               const result = await authService.login(loginData);
+               if (result.success && result.response && result.response.data) {
                 console.log('Connexion réussie');
+                // Store token in localStorage for client-side expiration checks
+                localStorage.setItem('authToken', result.response.data.token);
                 navigate('/planning');
                }
             } catch (error) {
                 console.log("erreur de connexion");
                 setHasError(true);
             }
-            
+
         } else {
             console.log("Veuillez entrer un nom d'utilisateur et un mot de passe");
         }
