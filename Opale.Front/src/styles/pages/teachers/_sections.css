@@ -1,0 +1,79 @@
+/* src/styles/pages/teachers/_sections.css */
+
+@layer pages {
+    .teacher-section:last-of-type {
+        margin-top: 0.5rem;
+    }
+
+    .teacher-section-header {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.5rem 0.25rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        text-align: left;
+    }
+
+    .teacher-section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text);
+        position: relative;
+        display: inline-block;
+    }
+
+    .teacher-section-title::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        height: 2px;
+        width: 100px;
+        background: var(--border);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 250ms ease;
+        border-radius: 2px;
+    }
+
+    [data-theme='dark'] .teacher-section-title::after {
+        background: var(--muted);
+        opacity: 0.9;
+    }
+
+    .teacher-section-header.is-open .teacher-section-title::after {
+        transform: scaleX(1);
+    }
+
+    .teacher-section-chevron {
+        font-size: 0.85rem;
+        transition: transform 150ms ease;
+        color: var(--muted);
+    }
+
+    .teacher-section-chevron.is-open {
+        transform: rotate(180deg);
+    }
+
+    .teacher-section-body {
+        margin-top: 0.75rem;
+    }
+
+    .teacher-empty-state {
+        padding: 1.25rem 1rem 1rem;
+        border-radius: 0.75rem;
+        background: var(--panel-soft);
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+
+    .teacher-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+    }
+}

@@ -25,6 +25,10 @@
         padding: 16px;
         min-width: 0;
         box-shadow: var(--shadow-lg);
+
+        background: var(--panel-soft);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
     }
 
     .cycle-head {

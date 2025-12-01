@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
 
 import Sidebar from './components/Sidebar'
 import Promotions from './pages/Promotions'
+import Teachers from './pages/Teachers'
 import PlanningMacro from './pages/PlanningMacro'
 import Placeholder from './pages/Placeholder'
 import Login from './pages/Login'
@@ -45,7 +46,7 @@ export default function App(): Element {
                     <Route path="/planning" element={<PlanningMacro />} />
                     <Route path="/promotions" element={<Promotions />} />
                     <Route path="/evenements" element={<Placeholder title="Événements" />} />
-                    <Route path="/enseignants" element={<Placeholder title="Enseignants" />} />
+                    <Route path="/teachers" element={<Teachers />} />
                     <Route path="/salles" element={<Placeholder title="Salles" />} />
                     <Route path="/parametres" element={<Placeholder title="Paramètres" />} />
                     <Route path="*" element={<Placeholder title="Page introuvable" notFound />} />

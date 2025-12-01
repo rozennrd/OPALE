@@ -1,4 +1,4 @@
-/* v1.1.4 — Dark theme overrides (activer via <html data-theme="dark">) */
+/* Dark theme overrides (activer via <html data-theme="dark">) */
 
 @layer tokens {
   :root[data-theme="dark"] {
@@ -31,5 +31,3 @@
     --add-cycle-border-color: #F9F9F9;
   }
 }
-
-

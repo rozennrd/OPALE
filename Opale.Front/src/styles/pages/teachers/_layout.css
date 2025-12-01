@@ -1,0 +1,33 @@
+/* src/styles/pages/teachers/_layout.css */
+
+@layer pages {
+    .teachers-page {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        background: var(--panel-soft);
+        border-radius: var(--radius-lg, 16px);
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .page-sub {
+        margin-top: 0.25rem;
+        color: var(--muted);
+        font-size: 0.95rem;
+    }
+
+    /* responsive global */
+    @media (max-width: 640px) {
+        .teachers-page {
+            padding: 1rem;
+        }
+    }
+}
