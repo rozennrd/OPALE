@@ -52,8 +52,8 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - ../bobPlanning.db:/var/lib/postgresql/data:z
-      - ./bobPlanning.database/init-scripts:/docker-entrypoint-initdb.d:z
+      - postgres_data:/var/lib/postgresql/data:z
+      - ./BobPlanning.database/init-scripts:/docker-entrypoint-initdb.d:z
     networks:
       - app-network
 
@@ -90,3 +90,6 @@ networks:
     driver: bridge
   api-network:
     driver: bridge
+
+volumes:
+  postgres_data:
