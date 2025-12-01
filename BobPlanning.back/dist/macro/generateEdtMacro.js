@@ -51,7 +51,6 @@ const generateEdtMacro = (data) => __awaiter(void 0, void 0, void 0, function* (
         }
         ;
         if (promo.Name === "ADI1") {
-            console.log(promo.Periode[0].DateFinP);
             endPeriodeInitial = new Date(promo.Periode[0].DateFinP);
         }
     });
@@ -175,14 +174,12 @@ const generateEdtMacro = (data) => __awaiter(void 0, void 0, void 0, function* (
                     }
                 }
                 else {
-                    console.log(`Aucune période définie pour la promo ${promo.Name}`);
                     rowData[promo.Name] = "Aucune période";
                 }
             }
             //Gestion formation continue
             else if (promo.Name === "AP3" || promo.Name === "AP4" || promo.Name === "AP5") {
                 // Remplir les semaines pour "AP3", "AP4", "AP5"
-                console.log("promo.name : " + promo.Name + "promo.Periode[promo.i] : " + JSON.stringify(promo.Periode[promo.i]));
                 if (promo.Periode && promo.Periode.length > 0 && new Date(promo.Periode[promo.i].DateDebutP) <= currentDate && new Date(promo.Periode[promo.i].DateFinP) >= currentDate) {
                     rowData[promo.Name] = "";
                     promosEnCours.push(promo.Name);

@@ -66,6 +66,7 @@ const readMaquette = (buffer) => __awaiter(void 0, void 0, void 0, function* () 
         let projet = -1;
         let elearning = -1;
         worksheet.eachRow((row, rowNumber) => {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
             const rowValuesWithN = row.values;
             if (!rowValuesWithN)
                 return;
@@ -152,14 +153,14 @@ const readMaquette = (buffer) => __awaiter(void 0, void 0, void 0, function* () 
                     semestre: semestre,
                     periode: periode,
                     heure: {
-                        total: rowValues[nbHeures] && typeof rowValues[nbHeures] === 'object' && rowValues[nbHeures].hasOwnProperty('result') ? parseFloat(rowValues[nbHeures].result) : parseFloat(rowValues[nbHeures]),
-                        totalAvecProf: rowValues[nbHeuresAvecProf] && typeof rowValues[nbHeuresAvecProf] === 'object' && rowValues[nbHeuresAvecProf].hasOwnProperty('result') ? parseFloat(rowValues[nbHeuresAvecProf].result) : parseFloat(rowValues[nbHeuresAvecProf]),
-                        coursMagistral: parseFloat(rowValues[coursMagistral]),
-                        coursInteractif: parseFloat(rowValues[coursInteractif]),
-                        td: parseFloat(rowValues[td]),
-                        tp: parseFloat(rowValues[tp]),
-                        projet: parseFloat(rowValues[projet]),
-                        elearning: parseFloat(rowValues[elearning])
+                        total: (rowValues[nbHeures] && typeof rowValues[nbHeures] === 'object' && rowValues[nbHeures].hasOwnProperty('result') ? parseFloat((_a = rowValues[nbHeures].result) !== null && _a !== void 0 ? _a : 0) : (_b = parseFloat(rowValues[nbHeures])) !== null && _b !== void 0 ? _b : 0) || (rowValues[nbHeuresAvecProf] && typeof rowValues[nbHeuresAvecProf] === 'object' && rowValues[nbHeuresAvecProf].hasOwnProperty('result') ? parseFloat((_c = rowValues[nbHeuresAvecProf].result) !== null && _c !== void 0 ? _c : 0) : (_d = parseFloat(rowValues[nbHeuresAvecProf])) !== null && _d !== void 0 ? _d : 0) || 0,
+                        totalAvecProf: (rowValues[nbHeuresAvecProf] && typeof rowValues[nbHeuresAvecProf] === 'object' && rowValues[nbHeuresAvecProf].hasOwnProperty('result') ? parseFloat((_e = rowValues[nbHeuresAvecProf].result) !== null && _e !== void 0 ? _e : 0) : (_f = parseFloat(rowValues[nbHeuresAvecProf])) !== null && _f !== void 0 ? _f : 0) || 0,
+                        coursMagistral: parseFloat((_g = rowValues[coursMagistral]) !== null && _g !== void 0 ? _g : 0) || 0,
+                        coursInteractif: parseFloat((_h = rowValues[coursInteractif]) !== null && _h !== void 0 ? _h : 0) || 0,
+                        td: parseFloat((_j = rowValues[td]) !== null && _j !== void 0 ? _j : 0) || 0,
+                        tp: parseFloat((_k = rowValues[tp]) !== null && _k !== void 0 ? _k : 0) || 0,
+                        projet: parseFloat((_l = rowValues[projet]) !== null && _l !== void 0 ? _l : 0) || 0,
+                        elearning: parseFloat((_m = rowValues[elearning]) !== null && _m !== void 0 ? _m : 0) || 0
                     }
                 });
             }

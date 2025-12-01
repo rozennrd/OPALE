@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import {ProfData} from '../pages/Profs2';
+import {ProfData} from '../pages/Profs';
 
 type Disponibilites = {
   [key: string]: boolean;

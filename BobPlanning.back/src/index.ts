@@ -1746,6 +1746,124 @@ app.put("/updateCycle", authJwt.verifyToken, (req, res): void => {
   });
 });
 
+
+// Get all cycles
+app.get('/getCycles', authJwt.verifyToken, (req: Request, res: Response): void => {
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    const sql = "SELECT * FROM cycle";
+
+    connection.query(sql, (error: any, results: any) => {
+      connection.release(); // always release the client
+
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      // Normalize results: support drivers that return an array or an object with `rows`
+      const cycles = Array.isArray(results)
+        ? results
+        : results && Array.isArray((results as any).rows)
+          ? (results as any).rows
+          : [];
+
+      return res.json(cycles);
+    });
+  });
+});
+
+// Get enum type_cycle
+app.get("/getCycleTypes", authJwt.verifyToken, (req, res) => {
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    const sql = "SELECT unnest(enum_range(NULL::type_cycle)) AS type";
+    connection.query(sql, (error: any, results: any) => {
+      if (error) {
+        connection.release();
+        return res.status(500).json({ error: error.message });
+      }
+
+      // Normalize results: support drivers that return an array or an object with `rows`
+      const cylceTypes = Array.isArray(results)
+        ? results
+        : results && Array.isArray((results as any).rows)
+          ? (results as any).rows
+          : [];
+
+      res.json(cylceTypes);
+      console.log("Cycle Types:", cylceTypes);
+      connection.release(); // Libérer la connexion après vérification
+    });
+  });
+});
+
+// Show cycle by id
+app.get('/getCycleById', authJwt.verifyToken, (req: Request, res: Response): void => {
+  const { id } = req.query;
+
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    const sql = "SELECT * FROM cycle WHERE id = $1";
+
+    connection.query(sql, [id], (error: any, results: any) => {
+      connection.release(); // always release the client
+
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ message: "Cycle non trouvé" });
+      }
+
+      // Normalize results: support drivers that return an array or an object with `rows`
+      const cycleById = Array.isArray(results)
+        ? results
+        : results && Array.isArray((results as any).rows)
+          ? (results as any).rows
+          : [];
+
+      return res.json(cycleById);
+    });
+  });
+});
+
+// Add a cycle
+app.post('/addCycle', authJwt.verifyToken, (req: Request, res: Response): void => {
+  const { nom, type } = req.body;
+
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    const sql = "INSERT INTO cycle (nom, type) VALUES ($1, $2)";
+
+    connection.query(sql, [nom, type], (error: any, result: any) => {
+      connection.release(); // always release the client
+
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      const insertedId = result?.rows?.[0]?.id ?? null;
+      return res.status(201).json({ message: "Cycle ajouté avec succès", insertedId });
+    });
+  });
+});
+
+
+
+
+
 // Start the server
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

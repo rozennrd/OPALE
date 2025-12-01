@@ -83,12 +83,10 @@ const generateDataEdtMicro = (macro) => __awaiter(void 0, void 0, void 0, functi
                 // Custom logic for promos with multiple periods
                 if (enCours && promoMacro.Periode && promoMacro.Periode.length > 0) {
                     const currentPeriod = promoMacro.Periode[promoMacro.i];
-                    console.log(currentPeriod);
                     // Check if current week is beyond the current period
                     if (new Date(currentPeriod.DateFinP) < currentWeek) {
                         // Move to the next period if available
                         if (promoMacro.i < promoMacro.Periode.length - 1) {
-                            console.log(promoMacro.i);
                             promoMacro.i = promoMacro.i + 1;
                         }
                         else {
