@@ -490,6 +490,28 @@ app.delete('/deletePromotion', authJwt.verifyToken, (req: Request, res: Response
   });
 });
 
+// Set promotion
+app.post("/addPromotion", authJwt.verifyToken, (req, res) => {
+  const { nom, effectifs, id_cycle, date_start, date_end } = req.query;
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    const sql = "INSERT INTO promotion (nom, effectifs, id_cycle, date_start, date_end) VALUES ($1, $2, $3, $4, $5) RETURNING id";
+    connection.query(sql, [nom, effectifs, id_cycle, date_start, date_end], (error: any, result: any) => {
+      connection.release(); // always release the client
+      if (error) {
+        if (error.message.startsWith("insert or update on table") && error.message.includes("violates foreign key constraint")) {
+          return res.status(400).json({ error: "Cycle invalide pour la promotion." });
+        }
+        return res.status(500).json({ error: error.message });
+      }
+      const insertedId = result?.rows?.[0]?.id ?? null;
+      return res.status(201).json({ message: "Promotion ajoutée avec succès", insertedId });
+    });
+  });
+})
+
 /**
  * @swagger
  * /getProfsData:
