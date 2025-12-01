@@ -241,6 +241,40 @@ app.get("/getPromosData", authJwt.verifyToken, (req, res) => {
   }
 });
 
+// Get promotion by ID
+app.get('/getPromoById', authJwt.verifyToken, (req: Request, res: Response): void => {
+  const { id } = req.query;
+
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    const sql = "SELECT * FROM promotion WHERE id = $1";
+
+    connection.query(sql, [id], (error: any, results: any) => {
+      connection.release(); // always release the client
+
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ message: "Promotion non trouvée" });
+      }
+
+      // Normalize results: support drivers that return an array or an object with `rows`
+      const promoById = Array.isArray(results)
+        ? results
+        : results && Array.isArray((results as any).rows)
+          ? (results as any).rows
+          : [];
+
+      return res.json(promoById);
+    });
+  });
+});
+
 
 /**
  * @swagger
