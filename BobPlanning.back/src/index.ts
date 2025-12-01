@@ -422,7 +422,6 @@ app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
 // Update a promotion
 app.put("/updatePromotion", authJwt.verifyToken, (req, res): void => {
   const { id, nom, effectifs, date_start, date_end} = req.body;
-
   if (!id || !nom || !effectifs || !date_start || !date_end) {
     res.status(400).json({ message: "Tous les champs sont requis, à l'exception d'id_cycle." });
     return;
@@ -460,6 +459,36 @@ app.put("/updatePromotion", authJwt.verifyToken, (req, res): void => {
   });
 });
 
+app.delete('/deletePromotion', authJwt.verifyToken, (req: Request, res: Response): void => {
+  const { id } = req.query;
+    const sql = "DELETE FROM promotion WHERE id = $1";
+
+    pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    connection.query(sql, [id], (error: any, result: any) => {
+      connection.release(); // always release the client
+
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      if ( id == undefined || Array.isArray(id)) {
+        return res.status(400).json({ message: "ID de la promotion invalide" });
+      }
+
+      const affectedRows = result.rowCount;
+
+      if (affectedRows === 0) {
+        return res.status(404).json({ message: "Promotion non trouvée" });
+      }
+
+      return res.json({ message: "Promotion supprimée avec succès" });
+    });
+  });
+});
 
 /**
  * @swagger
