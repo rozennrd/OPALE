@@ -1,10 +1,12 @@
+// src/components/promotions/cycles/CycleCard.tsx
 import React from 'react'
 import icMoins from '../../../assets/ic-moins.png'
 import icWarning from '../../../assets/ic-warning.png'
 import icModif from '../../../assets/ic-modif.png'
 
 import { hasPromoMismatch } from '../../../utils/promoUtils'
-import { Cycle } from '../../../models'
+import { Cycle } from '../../models'
+import CycleImportDropzone from './CycleImportDropzone'
 
 interface CycleCardProps {
     cycle: Cycle
@@ -15,12 +17,12 @@ interface CycleCardProps {
 }
 
 const CycleCard: React.FC<CycleCardProps> = ({
-    cycle,
-    renameCycle,
-    removeCycle,
-    openEditPromotion,
-    removePromotion,
-}) => {
+                                                 cycle,
+                                                 renameCycle,
+                                                 removeCycle,
+                                                 openEditPromotion,
+                                                 removePromotion,
+                                             }) => {
     return (
         <section className="card cycle-card">
             <div className="cycle-head">
@@ -34,8 +36,10 @@ const CycleCard: React.FC<CycleCardProps> = ({
                     <button
                         className="btn-danger btn-icon-responsive"
                         onClick={() => removeCycle(cycle.id)}
+                        aria-label="Supprimer le cycle"
+                        title="Supprimer le cycle"
                     >
-                        <img src={icMoins} alt="" />
+                        <img src={icMoins} alt="" aria-hidden="true" />
                         <span className="btn-label">Supprimer le cycle</span>
                     </button>
                 </div>
@@ -43,7 +47,9 @@ const CycleCard: React.FC<CycleCardProps> = ({
 
             <div className="promotions">
                 {cycle.promotions.length === 0 && (
-                    <div className="empty">Aucune promotion affichée pour ce cycle.</div>
+                    <div className="empty">
+                        Aucune promotion affichée pour ce cycle.
+                    </div>
                 )}
 
                 {cycle.promotions.map((promo) => (
@@ -52,7 +58,11 @@ const CycleCard: React.FC<CycleCardProps> = ({
                             <span className="promo-label">{promo.label}</span>
 
                             {hasPromoMismatch(promo) && (
-                                <img src={icWarning} className="promo-warning" alt="" />
+                                <img
+                                    src={icWarning}
+                                    alt="Répartition d'étudiants incohérente"
+                                    className="promo-warning"
+                                />
                             )}
                         </div>
 
@@ -60,23 +70,41 @@ const CycleCard: React.FC<CycleCardProps> = ({
                             <button
                                 className="btn-tertiary btn-icon-responsive"
                                 onClick={() => openEditPromotion(cycle.id, promo.id)}
+                                aria-label="Modifier la promotion"
+                                title="Modifier la promotion"
                             >
-                                <img src={icModif} alt="" />
+                                <img src={icModif} alt="" aria-hidden="true" />
                                 <span className="btn-label">Modifier</span>
                             </button>
 
                             <button
                                 className="btn-danger btn-icon-responsive"
                                 onClick={() => removePromotion(cycle.id, promo.id)}
+                                aria-label="Supprimer la promotion"
+                                title="Supprimer la promotion"
                             >
-                                <img src={icMoins} alt="" />
+                                <img src={icMoins} alt="" aria-hidden="true" />
                                 <span className="btn-label">Supprimer</span>
                             </button>
                         </div>
                     </div>
                 ))}
+
+                {/* Dropzone Excel sous la dernière promo */}
+                <CycleImportDropzone
+                    cycleId={cycle.id}
+                    onFilesSelected={(files) => {
+                        // Pour l’instant : logique simulée côté front
+                        console.log(
+                            '[CycleCard] Fichiers Excel reçus pour le cycle',
+                            cycle.id,
+                            files,
+                        )
+                    }}
+                />
             </div>
         </section>
     )
 }
+
 export default CycleCard

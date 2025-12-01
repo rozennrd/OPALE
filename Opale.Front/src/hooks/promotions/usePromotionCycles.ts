@@ -1,72 +1,20 @@
 // src/hooks/promotions/usePromotionCycles.ts
 import { useState, useEffect } from 'react'
 import { Cycle, Promotion } from '../../models'
+import { buildMockCycles } from '../../mocks/promotionCycles.mock'
 import {
     uid,
     makePromotions,
     hasPromoMismatch,
 } from '../../utils/promoUtils'
 
-interface DefaultCycle {
-    id: string
-    name: string
-    type: string
-}
-
-const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
-
-
-
-
-const DEFAULT: DefaultCycle[] = [
-    { id: 'cycle-adi',   name: 'ADI',   years: 2 },
-    { id: 'cycle-sir',   name: 'SIR',   years: 2 },
-    { id: 'cycle-isen',  name: 'ISEN',  years: 3 },
-    { id: 'cycle-fisen', name: 'FISEN', years: 3 },
-]
-
-
-
 export function usePromotionCycles() {
-
-    const [error, setError] = useState('');
-    const [cycleTypes, setCycleTypes] = useState([]);
-
-// TODO : Récupérer les types de cycles par défaut
-    const loadCycleTypes = async () => {
-        try {
-            const response = await fetch(`${RACINE_FETCHER_URL}/getCycleTypes`, {
-                headers: {
-                    'x-access-token': localStorage.getItem('accessToken') ?? '',
-                },
-            });
-            if (response.ok) {
-                const data = await response.json();
-                setCycleTypes(data);
-            } else {
-                throw new Error('Erreur lors du chargement des salles');
-            }
-        } catch (err) {
-            setError('Problème de connexion avec le serveur');
-        }
-    };
-
-    console.log('Cycle Types:', cycleTypes);
-
-
-    const [cycles, setCycles] = useState<Cycle[]>(() =>
-        DEFAULT.map(c => ({
-            id: c.id,
-            name: c.name,
-            promotions: makePromotions(c.name, c.years),
-        }))
-    )
+    const [cycles, setCycles] = useState<Cycle[]>(() => buildMockCycles())
 
     // Ajout d’un cycle
     const addCycle = (): void => {
         const name = (window.prompt('Nom du cycle (diplôme) ?', 'Nouveau cycle') || '').trim()
         if (!name) return
-
 
         let years = Number(window.prompt('Nombre d’années (1 à 6) ?', '3'))
         if (!Number.isFinite(years)) years = 3
