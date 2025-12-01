@@ -419,6 +419,48 @@ app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
 
 });
 
+// Update a promotion
+app.put("/updatePromotion", authJwt.verifyToken, (req, res): void => {
+  const { id, nom, effectifs, date_start, date_end} = req.body;
+
+  if (!id || !nom || !effectifs || !date_start || !date_end) {
+    res.status(400).json({ message: "Tous les champs sont requis, à l'exception d'id_cycle." });
+    return;
+  }
+
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    const sql =
+      "UPDATE promotion SET nom = $2, effectifs = $3, date_start = $4, date_end = $5 WHERE id = $1";
+    connection.query(
+      sql,
+      [id, nom, effectifs, date_start, date_end],
+      (error: any, result: any) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({ error: error.message });
+          return;
+        }
+
+        const affectedRows = result.rowCount;
+        if (affectedRows === 0 ) {
+          res
+            .status(404)
+            .json({ message: `Promotion avec l'ID ${id} non trouvé` });
+          return;
+        }
+
+        res.json({ message: `Promotion mise à jour avec succès` });
+      }
+    );
+    connection.release(); // Libérer la connexion après vérification
+  });
+});
+
+
 /**
  * @swagger
  * /getProfsData:
