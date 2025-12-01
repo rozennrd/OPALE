@@ -22,6 +22,9 @@ export function usePromotionEditing(
 ) {
     const [editingPromo, setEditingPromo] = useState<EditingPromotion | null>(null)
 
+    // ✅ snapshot initial pour détecter les changements
+    const [initialPromo, setInitialPromo] = useState<EditingPromotion | null>(null)
+
     const normalizeList = (
         rawList: GroupSpecialtyItem[] | undefined,
         prefix: string
@@ -41,7 +44,7 @@ export function usePromotionEditing(
         const promo = cycle?.promotions.find(p => p.id === promoId)
         if (!cycle || !promo) return
 
-        setEditingPromo({
+        const draft: EditingPromotion = {
             cycleId,
             promoId,
             name: promo.label || '',
@@ -54,20 +57,24 @@ export function usePromotionEditing(
                 ...createEmptyConstraints(),
                 ...(promo.constraints || {}),
             },
-        })
+        }
+
+        setEditingPromo(draft)
+        // ✅ snapshot initial pour comparaison ultérieure
+        setInitialPromo(draft)
     }
 
-    const closeEditPromotion = (): void => setEditingPromo(null)
+    const closeEditPromotion = (): void => {
+        setEditingPromo(null)
+        setInitialPromo(null)
+    }
 
     const handleEditFieldChange = (field: string, value: any): void => {
         setEditingPromo(prev => (prev ? { ...prev, [field]: value } : prev))
     }
 
     /**
-     * Sauvegarde de la promotion :
-     * - Ne gère plus d'event de formulaire (preventDefault fait côté composant)
-     * - Met à jour cycles
-     * - Ferme le mode édition
+     * Sauvegarde de la promotion
      */
     const handleSavePromotion = (): void => {
         if (!editingPromo) return
@@ -87,7 +94,8 @@ export function usePromotionEditing(
                             endDate: editingPromo.endDate,
                             groups: editingPromo.groups || [],
                             specialties: editingPromo.specialties || [],
-                            constraints: editingPromo.constraints || createEmptyConstraints(),
+                            constraints:
+                                editingPromo.constraints || createEmptyConstraints(),
                         }
                         console.log('[PROMO] updated', updated)
                         return updated
@@ -97,6 +105,7 @@ export function usePromotionEditing(
         )
 
         setEditingPromo(null)
+        setInitialPromo(null)
     }
 
     // Groupes
@@ -183,6 +192,12 @@ export function usePromotionEditing(
         })
     }
 
+    // 🔍 comparaison simple via JSON (suffisant ici)
+    const hasChanges =
+        editingPromo && initialPromo
+            ? JSON.stringify(editingPromo) !== JSON.stringify(initialPromo)
+            : false
+
     return {
         editingPromo,
         setEditingPromo,
@@ -196,5 +211,7 @@ export function usePromotionEditing(
         addSpecialty,
         removeSpecialty,
         handleSpecialtyChange,
+        // ✅ exposer pour la modale
+        hasChanges,
     }
 }

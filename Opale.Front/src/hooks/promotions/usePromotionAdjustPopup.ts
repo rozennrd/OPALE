@@ -93,9 +93,9 @@ export function usePromotionAdjustPopup(
                 return
             }
 
-            if (editingPromo) {
-                setEditingPromo(null)
-            }
+            // if (editingPromo) {
+            //     setEditingPromo(null)
+            // }
         }
 
         window.addEventListener('keydown', handleKeyDown)

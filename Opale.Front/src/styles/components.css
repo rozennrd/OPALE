@@ -1,4 +1,4 @@
-/* v1.1.4 — Composants globaux: boutons, checklist, etc. */
+/* Composants globaux: boutons, checklist, etc. */
 
 @layer components {
   /* NavLink: enlever l'aspect lien (soulignement/couleur par défaut) */
@@ -30,6 +30,7 @@
     font-weight: 600;
     box-shadow: none;                       /* ✅ pas d'ombre */
     transition: background .2s;
+    white-space: nowrap;
   }
   .btn-primary:hover { background: var(--primary-hover); }
 
@@ -126,11 +127,28 @@
   }
 
   .confirm-dialog-card {
-    width: min(420px, 94vw);
+    position: relative;
+    width: auto;
     padding: 18px 20px 16px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+  }
+
+  .confirm-dialog-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--muted);
+  }
+
+  .confirm-dialog-close:hover {
+    color: var(--text);
   }
 
   .confirm-dialog-title {
@@ -150,6 +168,7 @@
     display: flex;
     justify-content: flex-end;
     gap: 8px;
+    flex-wrap: wrap;
   }
 }
 
