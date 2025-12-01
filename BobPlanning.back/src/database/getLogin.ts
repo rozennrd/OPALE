@@ -66,7 +66,7 @@ const getLogin = async (req: Request, res: Response) => {
       path: '/', // Root path
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
-return res.json({ message: 'Connexion réussie', userId: user.id });
+return res.json({ message: 'Connexion réussie', userId: user.id, token: token }); // TODO for production, remove token (here for compatibility with former frontend & postman requests)
 
   } catch (error: any) {
     console.error('Erreur serveur:', error);
