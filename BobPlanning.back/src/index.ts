@@ -1953,6 +1953,44 @@ app.post('/setGroup', authJwt.verifyToken, (req: Request, res: Response): void =
   });
 });
 
+// Delete a group
+app.delete(
+    '/deleteGroup',
+    authJwt.verifyToken,
+    (req: Request, res: Response): void => {
+      const { id } = req.query;
+
+      if (!id) {
+        res.status(400).json({ message: "Veuillez passer un id en paramètre." });
+        return;
+      }
+
+      pool.connect((err: any, connection: any) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        const sql = 'DELETE FROM groupe WHERE id = $1';
+
+        connection.query(sql, [id], (error: any, result: any) => {
+          connection.release(); // Libérer la connexion
+
+          if (error) {
+            return res.status(500).json({ error: error.message });
+          }
+
+          const affectedRows = result.rowCount;
+
+          if (affectedRows === 0) {
+            return res.status(404).json({ message: 'Groupe non trouvé' });
+          }
+
+          return res.json({ message: 'Groupe supprimé avec succès' });
+        });
+      });
+    },
+);
+
 // Start the server
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
