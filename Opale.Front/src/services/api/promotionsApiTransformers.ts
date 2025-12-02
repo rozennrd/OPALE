@@ -1,0 +1,57 @@
+// Data transformers for promotion API
+
+import { BackendPromotion } from './promotionsApi'
+import { BackendCycle } from './cyclesApi'
+import { Promotion, Cycle } from '../../models'
+
+// Transform backend promotion to frontend promotion model
+export const transformBackendPromotionToFrontend = (backend: BackendPromotion): Promotion => ({
+  id: backend.id.toString(),
+  label: backend.nom,
+  students: backend.effectifs,
+  startDate: backend.date_start,
+  endDate: backend.date_end,
+  groups: [], // Not stored in backend yet, provide empty arrays
+  specialties: [], // Not stored in backend yet, provide empty arrays
+  constraints: {
+    vacances: [],
+    entreprise: [],
+    stages: [],
+    international: [],
+    partiels: [],
+    rattrapages: [],
+  }, // Default constraints
+})
+
+// Transform frontend promotion to backend promotion model for creation
+export const transformFrontendPromotionToBackendCreate = (
+  frontend: Promotion,
+  cycleId?: number
+): any => ({
+  nom: frontend.label,
+  effectifs: frontend.students,
+  id_cycle: cycleId,
+  date_start: frontend.startDate,
+  date_end: frontend.endDate,
+})
+
+// Transform frontend promotion to backend promotion model for update
+export const transformFrontendPromotionToBackendUpdate = (
+  frontend: Promotion
+): any => ({
+  id: parseInt(frontend.id),
+  nom: frontend.label,
+  effectifs: frontend.students,
+  date_start: frontend.startDate,
+  date_end: frontend.endDate,
+})
+
+// Transform backend cycle to frontend cycle model
+export const transformBackendCycleToFrontend = (
+  backend: BackendCycle,
+  promotions: Promotion[] = []
+): Cycle => ({
+  id: backend.id.toString(),
+  name: backend.nom,
+  promotions,
+})
