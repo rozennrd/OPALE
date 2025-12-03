@@ -29,7 +29,17 @@ const dbConfig = getDBConfig();
 const app = express();
 const PORT = 3000;
 app.use(express.json({ limit: "50mb" }));
-app.use(cors());
+app.use(cors({
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: string | boolean) => void) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
+      return callback(null, origin || true);
+    } else {
+      return callback(null, false);
+    }
+  },
+  credentials: true,
+}));
 
 pool.connect((err: any, connection: any) => {
   if (err) {
@@ -59,6 +69,24 @@ const swaggerOptions = {
 };
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+/**
+ * @swagger
+ * /verify-auth:
+ *   get:
+ *     summary: Vérifie si l'utilisateur est authentifié
+ *     description: Endpoint léger pour vérifier que le JWT dans le cookie est valide
+ *     tags:
+ *       - Authentification
+ *     responses:
+ *       200:
+ *         description: Utilisateur authentifié
+ *       401:
+ *         description: Non authentifié
+ */
+app.get("/verify-auth", authJwt.verifyToken, (req: Request, res: Response) => {
+  res.json({ authenticated: true, userId: (req as any).userId });
+});
 
 /**
  * @swagger
@@ -256,6 +284,9 @@ app.get('/getPromotions', authJwt.verifyToken, (req: Request, res: Response): vo
         return res.status(500).json({ error: error.message });
       }
 
+
+
+
       // Normalize results: support drivers that return an array or an object with `rows`
       const promotions = Array.isArray(results)
         ? results
@@ -420,7 +451,6 @@ app.post("/setPromosData", authJwt.verifyToken, (req, res) => {
 
 });
 
-
 // Update a promotion
 app.put("/updatePromotion", authJwt.verifyToken, (req, res): void => {
   const { id, nom, effectifs, date_start, date_end} = req.body;
@@ -493,6 +523,7 @@ app.delete('/deletePromotion', authJwt.verifyToken, (req: Request, res: Response
 });
 
 
+
 // TODO : Utiliser ce endpoint pour le nouveau front
 
 // Set promotion
@@ -516,6 +547,7 @@ app.post("/addPromotion", authJwt.verifyToken, (req, res) => {
     });
   });
 })
+
 
 /**
  * @swagger
@@ -1773,6 +1805,7 @@ app.put("/updateCycle", authJwt.verifyToken, (req, res): void => {
     connection.release(); // Libérer la connexion après vérification
   });
 });
+
 
 
 // Get all cycles
