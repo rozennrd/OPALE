@@ -1,6 +1,6 @@
 // src/hooks/promotions/usePromotionCycles.ts
 import { useState, useEffect } from 'react'
-import { Cycle, Promotion } from '../../models'
+import { Cycle } from '../../models'
 import { buildMockCycles } from '../../mocks/promotionCycles.mock'
 import {
     uid,
