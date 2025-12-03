@@ -5,13 +5,18 @@ import TeacherCard from './TeacherCard'
 
 interface TeacherCardsGridProps {
     teachers: Teacher[]
+    onSelectTeacher: (t: Teacher) => void
 }
 
-export default function TeacherCardsGrid({ teachers }: TeacherCardsGridProps) {
+export default function TeacherCardsGrid({ teachers, onSelectTeacher }: TeacherCardsGridProps) {
     return (
         <div className="teacher-cards-grid">
             {teachers.map((teacher) => (
-                <TeacherCard key={teacher.id} teacher={teacher} />
+                <TeacherCard
+                    key={teacher.id}
+                    teacher={teacher}
+                    onSelect={() => onSelectTeacher(teacher)}
+                />
             ))}
         </div>
     )

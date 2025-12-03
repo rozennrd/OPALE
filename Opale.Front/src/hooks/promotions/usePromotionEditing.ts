@@ -1,5 +1,5 @@
 // src/hooks/promotions/usePromotionEditing.ts
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Cycle, GroupSpecialtyItem, Constraints } from '../../models'
 import { distributeEvenly } from '../../utils/promoUtils'
 import { createEmptyConstraints } from './usePromotionConstraints'
@@ -22,8 +22,9 @@ export function usePromotionEditing(
 ) {
     const [editingPromo, setEditingPromo] = useState<EditingPromotion | null>(null)
 
-    // ✅ snapshot initial pour détecter les changements
-    const [initialPromo, setInitialPromo] = useState<EditingPromotion | null>(null)
+    // ✅ snapshot "dernière sauvegarde"
+    const [savedSnapshot, setSavedSnapshot] = useState<EditingPromotion | null>(null)
+    const [hasChanges, setHasChanges] = useState(false)
 
     const normalizeList = (
         rawList: GroupSpecialtyItem[] | undefined,
@@ -44,7 +45,7 @@ export function usePromotionEditing(
         const promo = cycle?.promotions.find(p => p.id === promoId)
         if (!cycle || !promo) return
 
-        const draft: EditingPromotion = {
+        const normalized: EditingPromotion = {
             cycleId,
             promoId,
             name: promo.label || '',
@@ -59,22 +60,38 @@ export function usePromotionEditing(
             },
         }
 
-        setEditingPromo(draft)
-        // ✅ snapshot initial pour comparaison ultérieure
-        setInitialPromo(draft)
+        setEditingPromo(normalized)
+        setSavedSnapshot(normalized)
+        setHasChanges(false)
     }
 
     const closeEditPromotion = (): void => {
         setEditingPromo(null)
-        setInitialPromo(null)
+        setSavedSnapshot(null)
+        setHasChanges(false)
     }
+
+    // ✅ recalcul de hasChanges par rapport au snapshot
+    useEffect(() => {
+        if (!editingPromo || !savedSnapshot) {
+            setHasChanges(false)
+            return
+        }
+
+        const current = JSON.stringify(editingPromo)
+        const base = JSON.stringify(savedSnapshot)
+
+        setHasChanges(current !== base)
+    }, [editingPromo, savedSnapshot])
 
     const handleEditFieldChange = (field: string, value: any): void => {
         setEditingPromo(prev => (prev ? { ...prev, [field]: value } : prev))
     }
 
     /**
-     * Sauvegarde de la promotion
+     * Sauvegarde de la promotion :
+     * - Met à jour cycles
+     * - NE FERME PLUS la modale (l'utilisateur choisit ensuite de fermer)
      */
     const handleSavePromotion = (): void => {
         if (!editingPromo) return
@@ -104,11 +121,12 @@ export function usePromotionEditing(
             })
         )
 
-        setEditingPromo(null)
-        setInitialPromo(null)
+        // ✅ après sauvegarde, on met à jour le snapshot et on remet hasChanges à false
+        setSavedSnapshot(editingPromo)
+        setHasChanges(false)
     }
 
-    // Groupes
+    // Groupes / spécialités : inchangé
     const addGroup = (): void => {
         setEditingPromo(prev => {
             if (!prev) return prev
@@ -150,7 +168,6 @@ export function usePromotionEditing(
         })
     }
 
-    // Spécialités
     const addSpecialty = (): void => {
         setEditingPromo(prev => {
             if (!prev) return prev
@@ -192,12 +209,6 @@ export function usePromotionEditing(
         })
     }
 
-    // 🔍 comparaison simple via JSON (suffisant ici)
-    const hasChanges =
-        editingPromo && initialPromo
-            ? JSON.stringify(editingPromo) !== JSON.stringify(initialPromo)
-            : false
-
     return {
         editingPromo,
         setEditingPromo,
@@ -211,7 +222,6 @@ export function usePromotionEditing(
         addSpecialty,
         removeSpecialty,
         handleSpecialtyChange,
-        // ✅ exposer pour la modale
-        hasChanges,
+        hasChanges, // 👈 important pour PromoEditDialog
     }
 }
