@@ -1,18 +1,44 @@
-import React from 'react'
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
-
-import Sidebar from './components/Sidebar'
-import Promotions from './pages/Promotions'
-import Teachers from './pages/Teachers'
-import PlanningMacro from './pages/PlanningMacro'
-import Placeholder from './pages/Placeholder'
+import React, { useEffect } from 'react'
+import { Routes, Route, Navigate, Outlet, useNavigate } from 'react-router-dom'
+import Sidebar from './components/Sidebar.jsx'
+import Promotions from './pages/Promotions.jsx'
+import PlanningMacro from './pages/PlanningMacro.jsx'
+import Placeholder from './pages/Placeholder.jsx'
 import Login from './pages/Login'
+import { authService } from './services/base/AuthService'
+
+
+import Teachers from './pages/Teachers'
 
 import { useTheme } from './hooks/useTheme'
 
-function AppLayout(): Element {
+
+function AppLayout() {
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const checkAuthentication = () => {
+            if (!authService.isAuthenticated()) {
+                console.log('[AUTH] Token expired or no auth, redirecting to login');
+                navigate('/login', { replace: true });
+            }
+        };
+
+        // Check immediately on mount
+        checkAuthentication();
+
+        // Check every minute (60000ms)
+        const interval = setInterval(checkAuthentication, 60000);
+
+        return () => clearInterval(interval);
+    }, [navigate]);
+
+
     const handleDisconnect = () => {
         console.log('[AUTH] Se déconnecter')
+        authService.logout();
+        navigate('/login');
     }
 
     return (
@@ -31,27 +57,29 @@ function AppLayout(): Element {
     )
 }
 
-export default function App(): Element {
+export default function App() {
     const { theme } = useTheme()
-
     return (
-        <div className={theme}>
-            <Routes>
-                {/* Routes sans layout */}
-                <Route path="/" element={<Navigate to="/login" replace />} />
-                <Route path="/login" element={<Login />} />
 
-                {/* Routes avec layout */}
+
+
+            <Routes>
                 <Route element={<AppLayout />}>
+
+                    <Route path="/" element={<Navigate to="/planning" replace />} />
                     <Route path="/planning" element={<PlanningMacro />} />
                     <Route path="/promotions" element={<Promotions />} />
                     <Route path="/evenements" element={<Placeholder title="Événements" />} />
-                    <Route path="/teachers" element={<Teachers />} />
+                    <Route path="/enseignants" element={<Teachers/>} />
+                    
                     <Route path="/salles" element={<Placeholder title="Salles" />} />
                     <Route path="/parametres" element={<Placeholder title="Paramètres" />} />
                     <Route path="*" element={<Placeholder title="Page introuvable" notFound />} />
                 </Route>
+                <Route path="/login" element={<Login/>} />
             </Routes>
-        </div>
+
+
+
     )
 }

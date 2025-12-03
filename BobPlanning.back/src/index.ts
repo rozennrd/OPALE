@@ -27,8 +27,18 @@ const dbConfig = getDBConfig();
 
 const app = express();
 const PORT = 3000;
-app.use(express.json({ limit: '50mb' }));
-app.use(cors());
+app.use(express.json({ limit: "50mb" }));
+app.use(cors({
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: string | boolean) => void) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
+      return callback(null, origin || true);
+    } else {
+      return callback(null, false);
+    }
+  },
+  credentials: true,
+}));
 
 pool.connect((err: any, connection: any) => {
   if (err) {
@@ -58,6 +68,24 @@ const swaggerOptions = {
 };
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+/**
+ * @swagger
+ * /verify-auth:
+ *   get:
+ *     summary: Vérifie si l'utilisateur est authentifié
+ *     description: Endpoint léger pour vérifier que le JWT dans le cookie est valide
+ *     tags:
+ *       - Authentification
+ *     responses:
+ *       200:
+ *         description: Utilisateur authentifié
+ *       401:
+ *         description: Non authentifié
+ */
+app.get("/verify-auth", authJwt.verifyToken, (req: Request, res: Response) => {
+  res.json({ authenticated: true, userId: (req as any).userId });
+});
 
 /**
  * @swagger
@@ -259,12 +287,13 @@ app.get(
           return res.status(500).json({ error: error.message });
         }
 
-        // Normalize results: support drivers that return an array or an object with `rows`
-        const promotions = Array.isArray(results)
-          ? results
-          : results && Array.isArray((results as any).rows)
-            ? (results as any).rows
-            : [];
+
+      // Normalize results: support drivers that return an array or an object with `rows`
+      const promotions = Array.isArray(results)
+        ? results
+        : results && Array.isArray((results as any).rows)
+          ? (results as any).rows
+          : [];
 
         return res.json(promotions);
       });
@@ -509,6 +538,7 @@ app.delete(
   },
 );
 
+
 // TODO : Utiliser ce endpoint pour le nouveau front
 
 // Set promotion
@@ -544,6 +574,7 @@ app.post('/addPromotion', authJwt.verifyToken, (req, res) => {
     );
   });
 });
+
 
 /**
  * @swagger
@@ -1853,6 +1884,8 @@ app.put('/updateCycle', authJwt.verifyToken, (req, res): void => {
   });
 });
 
+
+
 // Get all cycles
 app.get(
   '/getCycles',
@@ -2107,6 +2140,44 @@ app.put('/updateGroup', authJwt.verifyToken, (req, res): void => {
     connection.release(); // Libérer la connexion
   });
 });
+
+// Delete a group
+app.delete(
+    '/deleteGroup',
+    authJwt.verifyToken,
+    (req: Request, res: Response): void => {
+      const { id } = req.query;
+
+      if (!id) {
+        res.status(400).json({ message: "Veuillez passer un id en paramètre." });
+        return;
+      }
+
+      pool.connect((err: any, connection: any) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        const sql = 'DELETE FROM groupe WHERE id = $1';
+
+        connection.query(sql, [id], (error: any, result: any) => {
+          connection.release(); // Libérer la connexion
+
+          if (error) {
+            return res.status(500).json({ error: error.message });
+          }
+
+          const affectedRows = result.rowCount;
+
+          if (affectedRows === 0) {
+            return res.status(404).json({ message: 'Groupe non trouvé' });
+          }
+
+          return res.json({ message: 'Groupe supprimé avec succès' });
+        });
+      });
+    },
+);
 
 // Start the server
 const server = app.listen(PORT, () => {
