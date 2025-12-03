@@ -16,6 +16,7 @@
     }
 
     .promo-edit-card {
+        position: relative;
         width: min(1280px, 96vw);
         padding: 20px 20px 16px;
         display: flex;
@@ -28,6 +29,23 @@
 
         /* ✅ si le contenu est trop grand, on scrolle dans la card */
         overflow-y: auto;
+    }
+
+    .promo-edit-close {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 18px;
+        line-height: 1;
+        padding: 2px;
+        color: var(--muted);
+    }
+
+    .promo-edit-close:hover {
+        color: var(--text);
     }
 
     .promo-edit-title {

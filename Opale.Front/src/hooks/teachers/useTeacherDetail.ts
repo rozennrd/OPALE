@@ -1,5 +1,5 @@
 // src/hooks/teachers/useTeacherDetail.ts
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Teacher, TeacherAvailabilityPeriod } from '../../models/Teacher'
 
 const normalizeAvailability = (value?: string): string => {
@@ -163,6 +163,21 @@ export const useTeacherDetail = (teacher: Teacher) => {
         })
     }
 
+    // ✅ Calcul du "dirty state"
+    const hasChanges = useMemo(() => {
+        const initialTeacher = cloneTeacher(teacher)
+        const currentTeacher = teacherDraft
+
+        const sameTeacher =
+            JSON.stringify(initialTeacher) === JSON.stringify(currentTeacher)
+
+        const initialPeriods = buildInitialPeriods(teacher)
+        const samePeriods =
+            JSON.stringify(initialPeriods) === JSON.stringify(periods)
+
+        return !(sameTeacher && samePeriods)
+    }, [teacher, teacherDraft, periods])
+
     return {
         teacherDraft,
         periods,
@@ -177,5 +192,6 @@ export const useTeacherDetail = (teacher: Teacher) => {
         handleRemovePeriod,
         handlePeriodDateChange,
         handleSave,
+        hasChanges, // 👈 exposé au composant
     }
 }
