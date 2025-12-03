@@ -1,0 +1,213 @@
+/* src/styles/pages/rooms/_cards.css */
+
+@layer pages {
+    .room-card {
+        display: flex;
+        align-items: stretch;
+        justify-content: space-between;
+
+        border-radius: 0.9rem;
+        background: var(--panel-soft);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+        cursor: pointer;
+
+        transition:
+            transform 120ms ease,
+            box-shadow 120ms ease,
+            border-color 120ms ease,
+            background-color 120ms ease;
+
+        min-height: 4.5rem;
+        width: 100%;
+        min-width: 0; /* permet au texte de gérer l'espace proprement */
+    }
+
+    .room-card:hover {
+        transform: translateY(-2px);
+        background: var(--panel-soft);
+        border-color: var(--border);
+        box-shadow: var(--shadow-xl);
+    }
+
+    /* ============================
+       COLONNE GAUCHE (texte)
+       ============================ */
+
+    .room-card-main {
+        flex: 1 1 auto; /* 👈 permet au contenu de s'adapter */
+        min-width: 0;   /* 👈 empêche l'overflow du texte */
+        flex: 1;
+        padding: 0.75rem 0.9rem 0.75rem 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+
+    .room-card-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text);
+        letter-spacing: 0.01em;
+
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis; /* 👈 coupe proprement */
+    }
+
+    .room-card-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.85rem;
+        color: var(--muted);
+
+        min-width: 0; /* safe shrink */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .room-card-code {
+        font-variant-numeric: tabular-nums;
+    }
+
+    .room-card-separator {
+        opacity: 0.5;
+    }
+
+    .room-card-floor {
+        white-space: nowrap;
+    }
+
+    /* ============================
+       COLONNE DROITE (badge)
+       ============================ */
+
+    .room-card-type {
+        flex: 0 0 115px; /* 👈 largeur fixe mais raisonnable */
+        max-width: 115px;
+        border-left: 1px solid var(--border);
+        background: var(--panel-soft);
+
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+
+        padding: 0; /* comme teacher-card */
+    }
+
+    @media (max-width: 520px) {
+        /* badge un peu plus compact sur petits écrans */
+        .room-card-type {
+            flex: 0 0 94px;
+            max-width: 94px;
+        }
+    }
+
+    /* Badge interne (exactement comme teachers) */
+
+    .room-type-badge {
+        width: 100%;
+        padding: 0.5rem 0.4rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+
+        font-size: 0.78rem;
+        text-align: center;
+        font-weight: 500;
+    }
+
+    .room-type-icon {
+        width: 1.9rem;
+        height: 1.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .room-type-icon img {
+        max-width: 100%;
+        max-height: 100%;
+        display: block;
+    }
+
+    .room-type-label {
+        font-size: 0.75rem;
+        line-height: 1.1;
+    }
+
+    /* ============================
+       Couleurs par type
+       ============================ */
+
+    .room-type-td {
+        background: rgba(59, 130, 246, 0.10);
+        color: #1d4ed8;
+    }
+
+    .room-type-tp_electronique {
+        background: rgba(16, 185, 129, 0.10);
+        color: #047857;
+    }
+
+    .room-type-tp_numerique {
+        background: rgba(14, 165, 233, 0.10);
+        color: #0369a1;
+    }
+
+    .room-type-projet {
+        background: rgba(234, 179, 8, 0.12);
+        color: #92400e;
+    }
+
+    .room-type-autre {
+        background: rgba(148, 163, 184, 0.12);
+        color: #475569;
+    }
+
+    /* ============================
+       Thème sombre
+       ============================ */
+
+    [data-theme="dark"] .room-card {
+        background: #2a3442;
+        border-color: rgba(148, 163, 184, 0.35);
+        box-shadow: 0 18px 35px rgba(15, 23, 42, 0.65);
+    }
+
+    [data-theme="dark"] .room-card:hover {
+        border-color: var(--primary-soft);
+        box-shadow: 0 22px 45px rgba(15, 23, 42, 0.8);
+    }
+
+    [data-theme="dark"] .room-type-td {
+        background: rgba(59, 130, 246, 0.18);
+        color: #bfdbfe;
+    }
+
+    [data-theme="dark"] .room-type-tp_electronique {
+        background: rgba(16, 185, 129, 0.18);
+        color: #a7f3d0;
+    }
+
+    [data-theme="dark"] .room-type-tp_numerique {
+        background: rgba(14, 165, 233, 0.18);
+        color: #bae6fd;
+    }
+
+    [data-theme="dark"] .room-type-projet {
+        background: rgba(234, 179, 8, 0.20);
+        color: #fef3c7;
+    }
+
+    [data-theme="dark"] .room-type-autre {
+        background: rgba(148, 163, 184, 0.20);
+        color: #e5e7eb;
+    }
+}

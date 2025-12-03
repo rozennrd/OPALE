@@ -1,0 +1,6 @@
+/* src/styles/pages/rooms/index.css */
+
+@import './_layout.css';
+@import './_sections.css';
+@import './_cards.css';
+@import './_detail-modal.css';

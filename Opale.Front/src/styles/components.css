@@ -310,6 +310,74 @@
   }
 }
 
+@layer components {
+  .section-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0.25rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .section-header-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .section-header-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text);
+    position: relative;
+    display: inline-block;
+  }
+
+  .section-header-title::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    height: 2px;
+    width: 100px;
+    background: var(--border);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 250ms ease;
+    border-radius: 2px;
+  }
+
+  [data-theme='dark'] .section-header-title::after {
+    background: var(--muted);
+    opacity: 0.9;
+  }
+
+  .section-header.is-open .section-header-title::after {
+    transform: scaleX(1);
+  }
+
+  .section-header-subtitle {
+    margin-top: 0.1rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .section-header-chevron {
+    font-size: 0.85rem;
+    transition: transform 150ms ease;
+    color: var(--muted);
+  }
+
+  .section-header-chevron.is-open {
+    transform: rotate(180deg);
+  }
+}
+
 /* En sidebar compacte (mobile), on garde juste l’icône ronde */
 @media (max-width: 860px) {
   .theme-toggle-btn {
