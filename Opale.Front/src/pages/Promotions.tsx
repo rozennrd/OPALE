@@ -15,7 +15,7 @@ import {
     usePromotionAdjustPopup,
 } from '../hooks/promotions'
 
-import { hasPromoMismatch } from '../utils/promoUtils'   // ✅ Re-intégré !
+import { hasPromoMismatch } from '../utils/promoUtils'
 
 export default function Promotions() {
     const {

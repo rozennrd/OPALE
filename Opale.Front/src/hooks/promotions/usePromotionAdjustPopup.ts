@@ -92,10 +92,6 @@ export function usePromotionAdjustPopup(
                 setAdjustPopup({ open: false, groups: false, specialties: false })
                 return
             }
-
-            // if (editingPromo) {
-            //     setEditingPromo(null)
-            // }
         }
 
         window.addEventListener('keydown', handleKeyDown)
