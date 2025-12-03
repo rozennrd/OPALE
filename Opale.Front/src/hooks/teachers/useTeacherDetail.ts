@@ -1,5 +1,5 @@
 // src/hooks/teachers/useTeacherDetail.ts
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Teacher, TeacherAvailabilityPeriod } from '../../models/Teacher'
 
 const normalizeAvailability = (value?: string): string => {
@@ -34,22 +34,52 @@ const cloneTeacher = (t: Teacher): Teacher => ({
     subjects: t.subjects ? t.subjects.map((s) => ({ ...s })) : [],
 })
 
+type TeacherSnapshot = {
+    teacher: Teacher
+    periods: TeacherAvailabilityPeriod[]
+}
+
 export const useTeacherDetail = (teacher: Teacher) => {
     const [teacherDraft, setTeacherDraft] = useState<Teacher>(() => cloneTeacher(teacher))
     const [periods, setPeriods] = useState<TeacherAvailabilityPeriod[]>(() =>
         buildInitialPeriods(teacher),
     )
-    const [selectedPeriodId, setSelectedPeriodId] = useState<string | null>(
-        () => buildInitialPeriods(teacher)[0]?.id ?? null,
+    const [selectedPeriodId, setSelectedPeriodId] = useState<string | null>(() =>
+        buildInitialPeriods(teacher)[0]?.id ?? null,
     )
 
-    // Reset complet si on ouvre la card pour un autre enseignant
+    // ✅ snapshot "dernière sauvegarde"
+    const [snapshot, setSnapshot] = useState<TeacherSnapshot | null>(null)
+    const [hasChanges, setHasChanges] = useState(false)
+
+    // Reset complet quand on change d’enseignant
     useEffect(() => {
-        const initial = buildInitialPeriods(teacher)
-        setTeacherDraft(cloneTeacher(teacher))
-        setPeriods(initial)
-        setSelectedPeriodId(initial[0]?.id ?? null)
+        const initialPeriods = buildInitialPeriods(teacher)
+        const cloned = cloneTeacher(teacher)
+
+        setTeacherDraft(cloned)
+        setPeriods(initialPeriods)
+        setSelectedPeriodId(initialPeriods[0]?.id ?? null)
+
+        setSnapshot({
+            teacher: cloned,
+            periods: initialPeriods,
+        })
+        setHasChanges(false)
     }, [teacher])
+
+    // ✅ Détection des changements par rapport au snapshot
+    useEffect(() => {
+        if (!snapshot) return
+
+        const current = JSON.stringify({
+            teacher: teacherDraft,
+            periods,
+        })
+        const base = JSON.stringify(snapshot)
+
+        setHasChanges(current !== base)
+    }, [teacherDraft, periods, snapshot])
 
     /* ------------ Edition colonnes 1 & 2 ------------ */
 
@@ -161,22 +191,14 @@ export const useTeacherDetail = (teacher: Teacher) => {
             updatedTeacher: teacherDraft,
             availabilityPeriods: periods,
         })
+
+        // ✅ après "sauvegarde", on met à jour le snapshot
+        setSnapshot({
+            teacher: teacherDraft,
+            periods,
+        })
+        setHasChanges(false)
     }
-
-    // ✅ Calcul du "dirty state"
-    const hasChanges = useMemo(() => {
-        const initialTeacher = cloneTeacher(teacher)
-        const currentTeacher = teacherDraft
-
-        const sameTeacher =
-            JSON.stringify(initialTeacher) === JSON.stringify(currentTeacher)
-
-        const initialPeriods = buildInitialPeriods(teacher)
-        const samePeriods =
-            JSON.stringify(initialPeriods) === JSON.stringify(periods)
-
-        return !(sameTeacher && samePeriods)
-    }, [teacher, teacherDraft, periods])
 
     return {
         teacherDraft,
@@ -192,6 +214,6 @@ export const useTeacherDetail = (teacher: Teacher) => {
         handleRemovePeriod,
         handlePeriodDateChange,
         handleSave,
-        hasChanges, // 👈 exposé au composant
+        hasChanges, // 👈 utilisé par TeacherDetailCard
     }
 }
