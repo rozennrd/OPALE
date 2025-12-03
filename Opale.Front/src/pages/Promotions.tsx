@@ -6,6 +6,9 @@ import PromoEditDialog from '../components/promotions/PromoEditDialog.tsx'
 import PromoAdjustDialog from '../components/promotions/PromoAdjustDialog.tsx'
 import CycleCard from '../components/promotions/cycles/CycleCard'
 
+import CycleCreateDialog from '../components/promotions/CycleCreateDialog'
+
+
 import {
     usePromotionCycles,
     usePromotionEditing,
@@ -19,7 +22,12 @@ export default function Promotions() {
     const {
         cycles,
         setCycles,
-        addCycle,
+        loading,
+        error,
+        isCreateModalOpen,
+        openCreateModal,
+        closeCreateModal,
+        createCycleWithPromotions,
         removeCycle,
         renameCycle,
         removePromotion,
@@ -78,7 +86,7 @@ export default function Promotions() {
                 <button
                     type="button"
                     className="card add-cycle-card"
-                    onClick={addCycle}
+                    onClick={openCreateModal}
                     aria-label="Ajouter un cycle"
                     title="Ajouter un cycle"
                 >
@@ -117,6 +125,13 @@ export default function Promotions() {
                     onValidate={handleAdjustValidate}
                 />
             )}
+
+            {/* Modal de création de cycle */}
+            <CycleCreateDialog
+                isOpen={isCreateModalOpen}
+                onSubmit={createCycleWithPromotions}
+                onClose={closeCreateModal}
+            />
         </div>
     )
 }

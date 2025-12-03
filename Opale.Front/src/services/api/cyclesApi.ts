@@ -10,6 +10,10 @@ export interface BackendCycle {
   type: string
 }
 
+export interface BackendCycleType {
+  type: string
+}
+
 export interface CycleCreateRequest {
   nom: string
   type: string
@@ -40,8 +44,8 @@ class CyclesApi {
   /**
    * Get available cycle types
    */
-  async getCycleTypes(): Promise<ApiResponse<string[]>> {
-    return apiClient.get<string[]>('/getCycleTypes')
+  async getCycleTypes(): Promise<ApiResponse<BackendCycleType[]>> {
+    return apiClient.get<BackendCycleType[]>('/getCycleTypes')
   }
 
   /**

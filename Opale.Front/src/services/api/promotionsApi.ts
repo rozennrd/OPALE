@@ -25,6 +25,7 @@ export interface PromotionUpdateRequest {
   id: number
   nom: string
   effectifs: number
+  id_cycle?: number | null
   date_start: string
   date_end: string
 }
@@ -53,19 +54,7 @@ class PromotionsApi {
    * Add a new promotion
    */
   async addPromotion(promotion: PromotionCreateRequest): Promise<ApiResponse<{ message: string; insertedId: number }>> {
-    // Backend expects query parameters for this endpoint
-    const queryParams = new URLSearchParams({
-      nom: promotion.nom,
-      effectifs: promotion.effectifs.toString(),
-      date_start: promotion.date_start,
-      date_end: promotion.date_end,
-    })
-
-    if (promotion.id_cycle !== null && promotion.id_cycle !== undefined) {
-      queryParams.append('id_cycle', promotion.id_cycle.toString())
-    }
-
-    return apiClient.post<{ message: string; insertedId: number }>(`/addPromotion?${queryParams}`)
+    return apiClient.post<{ message: string; insertedId: number }>('/addPromotion', promotion)
   }
 
   /**

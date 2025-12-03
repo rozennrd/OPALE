@@ -21,14 +21,17 @@ export default function Login(): React.ReactElement {
             const loginData: LoginCredentials = {email: username, password}
             try {
                const result = await authService.login(loginData);
-               if (result.success && result.response && result.response.data) {
+               if (result.success) {
                 console.log('Connexion réussie');
-                // Store token in localStorage for client-side expiration checks
-                localStorage.setItem('authToken', result.response.data.token);
+                // Token is now stored in HTTP-only cookie by backend
+                // Navigate to main page after successful login
                 navigate('/planning');
+               } else {
+                console.log("Échec de connexion", result.response?.error);
+                setHasError(true);
                }
             } catch (error) {
-                console.log("erreur de connexion");
+                console.log("Erreur de connexion:", error);
                 setHasError(true);
             }
 
@@ -47,7 +50,7 @@ export default function Login(): React.ReactElement {
             </div>
 
             <div className="login-logo">
-                <img src={logoFull} alt="Logo OPALE" />
+                <p>OPALE LOGIN</p>
             </div>
 
             <form onSubmit={handleSubmit} className="login-form">
