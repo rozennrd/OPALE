@@ -50,6 +50,7 @@ CREATE TABLE event (
                        show_macro      BOOLEAN             DEFAULT TRUE,
                        show_micro      BOOLEAN             DEFAULT TRUE,
                        is_blocking     BOOLEAN             DEFAULT FALSE,
+                       is_exceptional  BOOLEAN             DEFAULT FALSE,
                        CONSTRAINT ck_event_dates CHECK (datetime_start < datetime_end)
 );
 
