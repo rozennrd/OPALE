@@ -1,283 +1,326 @@
 import ExcelJS from 'exceljs';
 import path from 'path';
 import { getWeekNumber, getPublicHolidays, getHolidays } from '../tools/holidaysAndWeek';
-import { EdtMacroData } from '../types/EdtMacroData';
+import { EdtMacroData, Promos } from '../types/EdtMacroData';
 
 export const generateEdtMacro = async (data: EdtMacroData) => {
 
-  // Set date to lundi
-  let currentDate: Date = new Date(data.DateDeb);
+  // --- Align start date on Monday ---
+  let currentDate = new Date(data.DateDeb);
   if (currentDate.getDay() !== 1) {
     currentDate.setDate(currentDate.getDate() - (currentDate.getDay() - 1));
   }
 
-  //For column cypre
+  // CyPré week calculation
   let weekCount = 1;
   let adiStarted = false;
   let adiStartWeek = 1;
-  let endPeriodeInitial = new Date();
+  let endperiodeInitial = new Date();
 
-  //Generate Excel
+  // --- Excel init ---
   const workbook = new ExcelJS.Workbook();
-  //Add a page to the Excel
   const worksheet = workbook.addWorksheet('MultiPromo');
 
-  //Add columns
-  let columns = [
+  let columns: any[] = [
     { header: "Numéro de la semaine", key: "weekNumber", width: 20 },
     { header: "La semaine commence le lundi :", key: "mondayDate", width: 20 },
     { header: "Pedago dont jurys", key: "pedagoJury", width: 20 },
     { header: "Jurys", key: "jury", width: 20 },
     { header: "Jour fériés / congés", key: "holidays", width: 20 },
     { header: "Semaine de cours num CyPré", key: "cypreWeek", width: 20 },
-    { header: "Nombre Epreuves surveillées semaine (cellule conditionnelle)", key: "examsNumber", width: 20 },
-    { header: "Evenements Promo/ RE/conf/salon", key: "events", width: 20 },
+    { header: "Nombre Epreuves surveillées semaine", key: "examsNumber", width: 20 },
+    { header: "Evenements Promo / RE / conf / salon", key: "events", width: 20 },
   ];
-  data.Promos.forEach(promo => {
-    columns.push({ header: promo.Name, key: promo.Name, width: 20 });
-    //Order periode
-    if (Array.isArray(promo.Periode) && promo.Periode.length > 0) {
+
+  // Add promo columns
+  data.Promos.forEach((promo: Promos) => {
+    columns.push({ header: promo.nom, key: promo.nom, width: 20 });
+
+    // Sort periods if any
+    if (promo.periode && promo.periode.length > 0) {
       promo.i = 0;
-      promo.Periode.sort((a: any, b: any) => new Date(a.DateDebutP).getTime() - new Date(b.DateDebutP).getTime());
-    };
-    if (promo.Name === "ADI1") {
-      endPeriodeInitial = new Date(promo.Periode[0].DateFinP);
+      promo.periode.sort((a, b) =>
+        new Date(a.DateDebutP).getTime() - new Date(b.DateDebutP).getTime()
+      );
     }
+
+    // First ADI period for CyPré
+    if (promo.nom === "ADI1" && promo.periode.length > 0) {
+      endperiodeInitial = new Date(promo.periode[0].DateFinP);
+    }
+
+    console.log("PROMO", promo.nom, "periode:", promo.periode);
   });
+
   worksheet.columns = columns;
 
-  // Appliquer la couleur verte à la première ligne
+  // Header formatting
   const headerRow = worksheet.getRow(1);
-  const examsNumberCell = worksheet.getCell('G1');
-  examsNumberCell.fill = {
+  worksheet.getCell('G1').fill = {
     type: 'pattern',
     pattern: 'solid',
-    fgColor: { argb: 'FF99FF99' }, // vert clair
+    fgColor: { argb: 'FF99FF99' },
   };
-
   headerRow.height = 50;
   headerRow.alignment = { wrapText: true };
 
-  //Get holidays
+  // Holidays
   const publicHolidays = await getPublicHolidays(data.DateDeb.getFullYear());
   const holidays = await getHolidays("Bordeaux", data.DateDeb.getFullYear());
 
-  let i: number = 0;
+  let i = 0;
+  const sortedHolidays = holidays.sort(
+    (a: { start_date: string; end_date: string; description: string },
+     b: { start_date: string; end_date: string; description: string }) =>
+      new Date(a.start_date).getTime() - new Date(b.start_date).getTime()
+  );
 
-  //Tri vacances par date
-  let isPublicHolliday: boolean = false;
-  const sortedHolidays = holidays.sort((a: any, b: any) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
-  let holydayStartDate = new Date(sortedHolidays[i].start_date);
-  let holydayEndDate = new Date(sortedHolidays[i].end_date);
+  let holydayStart = new Date(sortedHolidays[i].start_date);
+  let holydayEnd = new Date(sortedHolidays[i].end_date);
 
-  let rattrapageFirstSemester = true;
-  let rattrapageSecondSemester = true;
-  //Loop through the weeks
+  let rattrapageFirst = true;
+  let rattrapageSecond = true;
+
+  // --- MAIN LOOP THROUGH WEEKS ---
   while (currentDate < data.DateFin) {
-    let holidayDescription: string = "";
-    isPublicHolliday = false;
 
-    //gestion vacances scolaires
-    if (currentDate > holydayStartDate && currentDate < holydayEndDate) {
-      // 1 seule semaine de vacances pour la toussaint (sur jours feries)
+    // Holiday detection
+    let holidayDescription = "";
+    let isPublicHoliday = false;
+
+    if (currentDate > holydayStart && currentDate < holydayEnd) {
+
+      // Toussaint case
       if (sortedHolidays[i].description === "Vacances de la Toussaint") {
-        for (let i = 0; i < 7; i++) {
-          const currentWeekDate = new Date(currentDate);
-          currentWeekDate.setDate(currentWeekDate.getDate() + i);
-          if (publicHolidays[currentWeekDate.toISOString().split('T')[0]]) {
-            ;
-            holidayDescription += "Vacances de la toussaint + toussaint";
+        for (let j = 0; j < 7; j++) {
+          const d = new Date(currentDate);
+          d.setDate(d.getDate() + j);
+          if (publicHolidays[d.toISOString().split('T')[0]]) {
+            holidayDescription += "Vacances de la Toussaint + Toussaint";
           }
         }
-        //Ajout des vacances scolaires
       } else {
-        holidayDescription += " " + sortedHolidays[i].description;
+        holidayDescription += sortedHolidays[i].description;
       }
+
     } else {
-      //Verif jours feries seulement sur jour ouvert (lundi au vendredi)
-      for (let i = 0; i < 5; i++) {
-        const currentWeekDate = new Date(currentDate);
-        currentWeekDate.setDate(currentWeekDate.getDate() + i);
-        if (publicHolidays[currentWeekDate.toISOString().split('T')[0]]) {
-          ;
-          holidayDescription += " " + publicHolidays[currentWeekDate.toISOString().split('T')[0]];
-          isPublicHolliday = true;
+      // Weekday public holidays
+      for (let j = 0; j < 5; j++) {
+        const d = new Date(currentDate);
+        d.setDate(d.getDate() + j);
+        const key = d.toISOString().split('T')[0];
+        if (publicHolidays[key]) {
+          holidayDescription += " " + publicHolidays[key];
+          isPublicHoliday = true;
         }
       }
     }
 
-    // Si vacances terminé, on passe a la prochaine
-    if (holydayEndDate < currentDate && i < sortedHolidays.length - 1) {
+    // Move to next holiday period
+    if (holydayEnd < currentDate && i < sortedHolidays.length - 1) {
       i++;
-      holydayStartDate = new Date(sortedHolidays[i].start_date);
-      holydayEndDate = new Date(sortedHolidays[i].end_date);
+      holydayStart = new Date(sortedHolidays[i].start_date);
+      holydayEnd = new Date(sortedHolidays[i].end_date);
     }
 
-    //Initialisation informations semaine
+    // Row structure
     let rowData: any = {
       weekNumber: getWeekNumber(currentDate),
       mondayDate: currentDate.toLocaleDateString("fr-FR"),
-      pedagoJury: '',
-      jury: '',
+      pedagoJury: "",
+      jury: "",
       holidays: holidayDescription,
-      cypreWeek: '',
-      examsNumber: '',
-      events: '',
+      cypreWeek: "",
+      examsNumber: "",
+      events: "",
     };
 
     let promosEnCours: string[] = [];
 
-    let setFirstRattrapage = true; 
-    let setSecondRattrapage = true;
-    //Information semaine par promo
+    let setFirst = true;
+    let setSecond = true;
+
+    // --- PROCESS PROMOS ---
     data.Promos.forEach(promo => {
 
-      //Gestion formation initiale
-      if (promo.Name === "ADI1" || promo.Name === "ADI2" || promo.Name === "CIR1" || promo.Name === "CIR2" || promo.Name === "ISEN3" || promo.Name === "ISEN4" || promo.Name === "ISEN5") {
-        if (promo.Periode && promo.Periode.length > 0) {
-          if (new Date(promo.Periode[0].DateFinP) < currentDate) {
-            if (rattrapageSecondSemester) {
-              setSecondRattrapage = false;
-              rowData[promo.Name] = "Rattrapage semestre 2 ou 4";
-            } else if (promo.Name === "ADI1" || promo.Name === "CIR1") {
-              rowData[promo.Name] = "Stage Exécutant 1 mois";
-            } else if (promo.Name === "ADI2" || promo.Name === "CIR2") {
-              rowData[promo.Name] = "Stage International Break 2 mois";
-            } else {
-              rowData[promo.Name] = "";
-              //TODO gerer cas isen (voir avec damien cas précis)
-            }
-          } else if (holidayDescription.includes("Vacances")) {
-            if (rattrapageFirstSemester && holidayDescription.includes("Vacances d'Hiver")) {
-                setFirstRattrapage = false;
-                rowData[promo.Name] = "Rattrapage semestre 1 ou 3";
-            } else {
-              rowData[promo.Name] = "VACANCES";
-            }
-          } else if (new Date(promo.Periode[0].DateDebutP) <= currentDate) {
-            rowData[promo.Name] = "";
-            promosEnCours.push(promo.Name);
-            if (!adiStarted) {
-              adiStarted = true;
-              adiStartWeek = weekCount; // Capture the start week for ADI
-            }
-          } else {
-            //Pour bordure
-            rowData[promo.Name] = "";
-          }
+      // ============================
+      // UNIVERSAL PROTECTION
+      // ============================
+      if (!promo.periode || promo.periode.length === 0) {
+
+        if (holidayDescription.includes("Vacances")) {
+          rowData[promo.nom] = "VACANCES";
         } else {
-          rowData[promo.Name] = "Aucune période";
+          rowData[promo.nom] = "";
+          promosEnCours.push(promo.nom);
+        }
+
+        return; // ← STOP HERE — avoids any access to promo.periode[i]
+      }
+
+      const currentPeriod = promo.periode[promo.i];
+      const dStart = new Date(currentPeriod.DateDebutP);
+      const dEnd = new Date(currentPeriod.DateFinP);
+
+      // ============================
+      // FORMATION INITIALE
+      // ============================
+      if (["ADI1","ADI2","CIR1","CIR2","ISEN3","ISEN4","ISEN5"].includes(promo.nom)) {
+
+        if (dEnd < currentDate) {
+
+          if (rattrapageSecond) {
+            setSecond = false;
+            rowData[promo.nom] = "Rattrapage semestre 2 ou 4";
+          }
+          else if (["ADI1","CIR1"].includes(promo.nom)) {
+            rowData[promo.nom] = currentPeriod.type;  // Stage 1 mois
+          }
+          else if (["ADI2","CIR2"].includes(promo.nom)) {
+            rowData[promo.nom] = currentPeriod.type;  // Stage 2 mois
+          }
+          else {
+            rowData[promo.nom] = "";
+          }
+
+        }
+        else if (holidayDescription.includes("Vacances")) {
+
+          if (rattrapageFirst && holidayDescription.includes("Vacances d'Hiver")) {
+            setFirst = false;
+            rowData[promo.nom] = "Rattrapage semestre 1 ou 3";
+          } else {
+            rowData[promo.nom] = "VACANCES";
+          }
+
+        }
+        else if (dStart <= currentDate) {
+
+          rowData[promo.nom] = "";
+          promosEnCours.push(promo.nom);
+
+          if (!adiStarted) {
+            adiStarted = true;
+            adiStartWeek = weekCount;
+          }
+
+        } else {
+          rowData[promo.nom] = "";
         }
       }
 
-      //Gestion formation continue
-    
-      else if (promo.Name === "AP3" || promo.Name === "AP4" || promo.Name === "AP5") {
+        // ============================
+        // FORMATION CONTINUE : AP3 / AP4 / AP5
+      // ============================
+      else if (["AP3","AP4","AP5"].includes(promo.nom)) {
 
-        // Remplir les semaines pour "AP3", "AP4", "AP5"
-        if (promo.Periode && promo.Periode.length > 0 && new Date(promo.Periode[promo.i].DateDebutP) <= currentDate && new Date(promo.Periode[promo.i].DateFinP) >= currentDate) {
-          rowData[promo.Name] = "";
-          promosEnCours.push(promo.Name);
+        if (dStart <= currentDate && dEnd >= currentDate) {
+          rowData[promo.nom] = "";
+          promosEnCours.push(promo.nom);
         }
 
-        // Cas spécifique pour "Mobilité Internationale" pour "AP4"
-        else if (promo.Name === "AP4" && promo.Periode && promo.i === promo.Periode.length - 1 && new Date(promo.Periode[promo.i].DateFinP) < currentDate) {
-          rowData[promo.Name] = "Mobilité Internationale";
+        else if (promo.nom === "AP4" && promo.i === promo.periode.length - 1 && dEnd < currentDate) {
+          rowData[promo.nom] = "Mobilité Internationale";
         }
 
-        // Cas spécifique pour "Projet de fin d'études" uniquement jusqu'à l'avant-dernière semaine
-        else if (promo.Name === "AP5" && promo.Periode && promo.i === promo.Periode.length - 1 && new Date(promo.Periode[promo.i].DateFinP) < currentDate && currentDate.getTime() < data.DateFin.getTime() - 7 * 24 * 60 * 60 * 1000) {
-          rowData[promo.Name] = "Projet de fin d'études";
+        else if (
+          promo.nom === "AP5" &&
+          promo.i === promo.periode.length - 1 &&
+          dEnd < currentDate &&
+          currentDate.getTime() < data.DateFin.getTime() - 7*24*60*60*1000
+        ) {
+          rowData[promo.nom] = "Projet de fin d'études";
         }
 
-        // Cas général pour "Entreprise"
-        else if (promo.Periode && new Date(promo.Periode[promo.i].DateFinP) < currentDate) {
-          if (i < promo.Periode.length) {
-            promo.i++;
-          }
-          rowData[promo.Name] = "Entreprise";
-        } else if (promo.Periode && new Date(promo.Periode[promo.i].DateDebutP) > currentDate) {
-          rowData[promo.Name] = "Entreprise";
-        } else {
-          rowData[promo.Name] = "";
+        else if (dEnd < currentDate) {
+          if (promo.i < promo.periode.length - 1) promo.i++;
+          rowData[promo.nom] = "Entreprise";
         }
 
-        // Ajouter "Soutenance" uniquement pour la dernière semaine
-        if (promo.Name === "AP5" && currentDate.getTime() >= data.DateFin.getTime() - 7 * 24 * 60 * 60 * 1000) {
-          rowData[promo.Name] = "Soutenance";
+        else if (dStart > currentDate) {
+          rowData[promo.nom] = "Entreprise";
         }
+
+        else {
+          rowData[promo.nom] = "";
+        }
+
+        // Soutenance (dernière semaine)
+        if (
+          promo.nom === "AP5" &&
+          currentDate.getTime() >= data.DateFin.getTime() - 7*24*60*60*1000
+        ) {
+          rowData[promo.nom] = "Soutenance";
+        }
+
       }
 
     });
 
-    
-    if (!setFirstRattrapage) {
-      rattrapageFirstSemester = false;
-    }
-    if (!setSecondRattrapage) {
-      rattrapageSecondSemester = false;
-    }
+    // Update rattrapage flags
+    if (!setFirst) rattrapageFirst = false;
+    if (!setSecond) rattrapageSecond = false;
 
-
+    // CyPré logic
     if (adiStarted) {
       if (holidayDescription.includes("Vacances") || holidayDescription.includes("Stage")) {
-        rowData.cypreWeek = ""; // Case vide si vacances
-      } else if (currentDate < endPeriodeInitial) {
-        rowData.cypreWeek = `Se${((weekCount - adiStartWeek) % 16) + 1}`; // Compter jusqu'à 16 puis repartir de 1
+        rowData.cypreWeek = "";
+      } else if (currentDate < endperiodeInitial) {
+        rowData.cypreWeek = `Se${((weekCount - adiStartWeek) % 16) + 1}`;
       }
-    } else {
-      rowData.cypreWeek = ""; // Case vide si pas encore commencé
     }
 
-
-    //Ajout ligne
+    // Add row
     let row = worksheet.addRow(rowData);
 
     if (adiStarted && !holidayDescription.includes("Vacances")) {
       weekCount++;
     }
+
+    // Colors : Soutenance
     data.Promos.forEach(promo => {
-      if (rowData[promo.Name] == "Soutenance") {
-        row.getCell(promo.Name).fill = {
+      if (rowData[promo.nom] === "Soutenance") {
+        row.getCell(promo.nom).fill = {
           type: 'pattern',
           pattern: 'solid',
           fgColor: { argb: 'FFFF99CC' },
         };
-        row.getCell(promo.Name).font = { bold: true };
+        row.getCell(promo.nom).font = { bold: true };
       }
     });
 
+    // Colors : Rattrapage
     data.Promos.forEach(promo => {
-      if (rowData[promo.Name].includes("Rattrapage semestre")) {
-        row.getCell(promo.Name).fill = {
+      if (rowData[promo.nom]?.includes("Rattrapage")) {
+        row.getCell(promo.nom).fill = {
           type: 'pattern',
           pattern: 'solid',
           fgColor: { argb: 'FFFFFF00' },
         };
-        row.getCell(promo.Name).font = { bold: true };
+        row.getCell(promo.nom).font = { bold: true };
       }
     });
 
-    promosEnCours.forEach(promEnCours => {
-      row.getCell(promEnCours).fill = {
+    // Colors : cours (green)
+    promosEnCours.forEach(nom => {
+      row.getCell(nom).fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'FF99FF99' }, //TODO change color
-
+        fgColor: { argb: 'FF99FF99' },
       };
     });
 
-    // Jours feries en rouge
-    if (isPublicHolliday) {
+    // Public holiday : red
+    if (isPublicHoliday) {
       row.getCell('holidays').font = { color: { argb: 'FF0000' } };
     }
 
-    // Go to next week
     currentDate.setDate(currentDate.getDate() + 7);
   }
 
-  worksheet.eachRow((row) => {
-    row.eachCell((cell) => {
+  // Borders
+  worksheet.eachRow(row => {
+    row.eachCell(cell => {
       cell.border = {
         top: { style: 'thin' },
         left: { style: 'thin' },
@@ -287,9 +330,8 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
     });
   });
 
-  //Chemin fichier
+  // Save file
   const filePath = path.join(__dirname, '../../files', 'EdtMacro.xlsx');
-  //Writes files
   await workbook.xlsx.writeFile(filePath);
 
   return filePath;
