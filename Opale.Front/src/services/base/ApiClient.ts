@@ -56,6 +56,21 @@ class ApiClient {
         // Handle HTTP errors
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
+
+          // Automatically redirect to login on 401 Unauthorized
+          if (response.status === 401) {
+            console.log('[AUTH] 401 received, redirecting to login')
+            window.location.href = '/login'
+            return {
+              success: false,
+              error: {
+                code: 401,
+                message: 'Session expired, please login again',
+                details: errorData,
+              },
+            }
+          }
+
           const error: ApiError = {
             code: response.status,
             message: errorData.message || `HTTP ${response.status}: ${response.statusText}`,

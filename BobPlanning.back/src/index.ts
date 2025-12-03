@@ -27,8 +27,18 @@ const dbConfig = getDBConfig();
 
 const app = express();
 const PORT = 3000;
-app.use(express.json({ limit: '50mb' }));
-app.use(cors());
+app.use(express.json({ limit: "50mb" }));
+app.use(cors({
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: string | boolean) => void) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
+      return callback(null, origin || true);
+    } else {
+      return callback(null, false);
+    }
+  },
+  credentials: true,
+}));
 
 pool.connect((err: any, connection: any) => {
   if (err) {
@@ -58,6 +68,24 @@ const swaggerOptions = {
 };
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+/**
+ * @swagger
+ * /verify-auth:
+ *   get:
+ *     summary: Vérifie si l'utilisateur est authentifié
+ *     description: Endpoint léger pour vérifier que le JWT dans le cookie est valide
+ *     tags:
+ *       - Authentification
+ *     responses:
+ *       200:
+ *         description: Utilisateur authentifié
+ *       401:
+ *         description: Non authentifié
+ */
+app.get("/verify-auth", authJwt.verifyToken, (req: Request, res: Response) => {
+  res.json({ authenticated: true, userId: (req as any).userId });
+});
 
 /**
  * @swagger
@@ -259,6 +287,7 @@ app.get(
           return res.status(500).json({ error: error.message });
         }
 
+
         // Normalize results: support drivers that return an array or an object with `rows`
         const promotions = Array.isArray(results)
           ? results
@@ -310,6 +339,7 @@ app.get(
   },
 );
 
+// TODO : Supprimer ce endpoint une fois que le front ne l'utilisera plus : Utilisation de /setPromotion à la place
 /**
  * @swagger
  * /setPromosData:
@@ -507,6 +537,44 @@ app.delete(
     });
   },
 );
+
+
+// TODO : Utiliser ce endpoint pour le nouveau front
+
+// Set promotion
+app.post('/addPromotion', authJwt.verifyToken, (req, res) => {
+  const { nom, effectifs, id_cycle, date_start, date_end } = req.query;
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    const sql =
+      'INSERT INTO promotion (nom, effectifs, id_cycle, date_start, date_end) VALUES ($1, $2, $3, $4, $5) RETURNING id';
+    connection.query(
+      sql,
+      [nom, effectifs, id_cycle, date_start, date_end],
+      (error: any, result: any) => {
+        connection.release(); // always release the client
+        if (error) {
+          if (
+            error.message.startsWith('insert or update on table') &&
+            error.message.includes('violates foreign key constraint')
+          ) {
+            return res
+              .status(400)
+              .json({ error: 'Cycle invalide pour la promotion.' });
+          }
+          return res.status(500).json({ error: error.message });
+        }
+        const insertedId = result?.rows?.[0]?.id ?? null;
+        return res
+          .status(201)
+          .json({ message: 'Promotion ajoutée avec succès', insertedId });
+      },
+    );
+  });
+});
+
 
 /**
  * @swagger
@@ -1816,7 +1884,168 @@ app.put('/updateCycle', authJwt.verifyToken, (req, res): void => {
   });
 });
 
-// Get all groups
+// Get all cycles
+app.get(
+  '/getCycles',
+  authJwt.verifyToken,
+  (req: Request, res: Response): void => {
+    pool.connect((err: any, connection: any) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      const sql = 'SELECT * FROM cycle';
+
+      connection.query(sql, (error: any, results: any) => {
+        connection.release(); // always release the client
+
+        if (error) {
+          return res.status(500).json({ error: error.message });
+        }
+
+        // Normalize results: support drivers that return an array or an object with `rows`
+        const cycles = Array.isArray(results)
+          ? results
+          : results && Array.isArray((results as any).rows)
+            ? (results as any).rows
+            : [];
+
+        return res.json(cycles);
+      });
+    });
+  },
+);
+
+// Get enum type_cycle
+app.get('/getCycleTypes', authJwt.verifyToken, (req, res) => {
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    const sql = 'SELECT unnest(enum_range(NULL::type_cycle)) AS type';
+    connection.query(sql, (error: any, results: any) => {
+      if (error) {
+        connection.release();
+        return res.status(500).json({ error: error.message });
+      }
+
+      // Normalize results: support drivers that return an array or an object with `rows`
+      const cylceTypes = Array.isArray(results)
+        ? results
+        : results && Array.isArray((results as any).rows)
+          ? (results as any).rows
+          : [];
+
+      res.json(cylceTypes);
+      console.log('Cycle Types:', cylceTypes);
+      connection.release(); // Libérer la connexion après vérification
+    });
+  });
+});
+
+// Show cycle by id
+app.get(
+  '/getCycleById',
+  authJwt.verifyToken,
+  (req: Request, res: Response): void => {
+    const { id } = req.query;
+
+    pool.connect((err: any, connection: any) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      const sql = 'SELECT * FROM cycle WHERE id = $1';
+
+      connection.query(sql, [id], (error: any, results: any) => {
+        connection.release(); // always release the client
+
+        if (error) {
+          return res.status(500).json({ error: error.message });
+        }
+
+        if (results.length === 0) {
+          return res.status(404).json({ message: 'Cycle non trouvé' });
+        }
+
+        // Normalize results: support drivers that return an array or an object with `rows`
+        const cycleById = Array.isArray(results)
+          ? results
+          : results && Array.isArray((results as any).rows)
+            ? (results as any).rows
+            : [];
+
+        return res.json(cycleById);
+      });
+    });
+  },
+);
+
+// Add a cycle
+app.post(
+  '/addCycle',
+  authJwt.verifyToken,
+  (req: Request, res: Response): void => {
+    const { nom, type } = req.body;
+
+    pool.connect((err: any, connection: any) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      const sql = 'INSERT INTO cycle (nom, type) VALUES ($1, $2)';
+
+      connection.query(sql, [nom, type], (error: any, result: any) => {
+        connection.release(); // always release the client
+
+        if (error) {
+          return res.status(500).json({ error: error.message });
+        }
+
+        const insertedId = result?.rows?.[0]?.id ?? null;
+
+        return res
+          .status(201)
+          .json({ message: 'Cycle ajouté avec succès', insertedId });
+      });
+    });
+  },
+);
+
+// Delete a cycle
+app.delete(
+  '/deleteCycle',
+  authJwt.verifyToken,
+  (req: Request, res: Response): void => {
+    const { id } = req.query;
+
+    pool.connect((err: any, connection: any) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      const sql = 'DELETE FROM cycle WHERE id = $1';
+
+      connection.query(sql, [id], (error: any, result: any) => {
+        connection.release(); // always release the client
+
+        if (error) {
+          return res.status(500).json({ error: error.message });
+        }
+
+        const affectedRows = result.rowCount;
+
+        if (affectedRows === 0) {
+          return res.status(404).json({ message: 'Cycle non trouvé' });
+        }
+
+        return res.json({ message: 'Cycle supprimé avec succès' });
+      });
+    });
+  },
+);
+
+
 app.get('/getGroups', authJwt.verifyToken, (req: Request, res: Response): void => {
 
   pool.connect((err: any, connection: any) => {
@@ -1830,6 +2059,89 @@ app.get('/getGroups', authJwt.verifyToken, (req: Request, res: Response): void =
         connection.release();
         if (error) {
           return res.status(500).json({ error: error.message });
+        }
+        return res.status(200).json(result.rows);
+      });
+    });
+  },
+);
+
+
+app.post(
+  '/setGroup',
+  authJwt.verifyToken,
+  (req: Request, res: Response): void => {
+    const { id_promo, nom, effectifs } = req.body;
+    pool.connect((err: any, connection: any) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      const sql =
+        'INSERT INTO groupe (id_promo, nom, effectifs) VALUES ($1, $2, $3);';
+
+      connection.query(
+        sql,
+        [id_promo, nom, effectifs],
+        (error: any, result: any) => {
+          connection.release();
+
+          if (error) {
+            if (error.constraint === 'uq_groupe_nom_promo') {
+              return res.status(409).json({
+                error:
+                  'Un groupe portant ce nom existe déjà pour cette promotion.',
+              });
+            }
+            return res.status(500).json({ error: error.message });
+          }
+
+          const insertedId = result?.rows?.[0]?.id ?? null;
+          return res.status(201).json({
+            message: 'Groupe ajouté avec succès !',
+            insertedId,
+          });
+        },
+      );
+    });
+  },
+);
+
+// Update group
+app.put('/updateGroup', authJwt.verifyToken, (req, res): void => {
+  const { id, id_promo, nom, effectifs } = req.body;
+
+  // Field verification
+  if (!id || !id_promo || !nom || !effectifs) {
+    res.status(400).json({ message: 'Tous les champs sont requis.' });
+    return;
+  }
+
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+
+    const sql =
+      'UPDATE groupe SET id_promo = $2, nom = $3, effectifs = $4 WHERE id = $1';
+
+    connection.query(
+      sql,
+      [id, id_promo, nom, effectifs],
+      (error: any, result: any) => {
+        if (error) {
+
+          // Unicity constraint name/promo
+          if (error.constraint === 'uq_groupe_nom_promo') {
+            res.status(409).json({
+              error:
+                'Un groupe portant ce nom existe déjà pour cette promotion.',
+            });
+            return;
+          }
+
+          res.status(500).json({ error: error.message });
+          return;
         }
         return res.status(200).json(result.rows);
       });
@@ -1868,6 +2180,44 @@ app.get('/getGroupById', authJwt.verifyToken, (req: Request, res: Response): voi
     });
   });
 });
+
+// Delete a group
+app.delete(
+    '/deleteGroup',
+    authJwt.verifyToken,
+    (req: Request, res: Response): void => {
+      const { id } = req.query;
+
+      if (!id) {
+        res.status(400).json({ message: "Veuillez passer un id en paramètre." });
+        return;
+      }
+
+      pool.connect((err: any, connection: any) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        const sql = 'DELETE FROM groupe WHERE id = $1';
+
+        connection.query(sql, [id], (error: any, result: any) => {
+          connection.release(); // Libérer la connexion
+
+          if (error) {
+            return res.status(500).json({ error: error.message });
+          }
+
+          const affectedRows = result.rowCount;
+
+          if (affectedRows === 0) {
+            return res.status(404).json({ message: 'Groupe non trouvé' });
+          }
+
+          return res.json({ message: 'Groupe supprimé avec succès' });
+        });
+      });
+    },
+);
 
 // Start the server
 const server = app.listen(PORT, () => {

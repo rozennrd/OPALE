@@ -4,22 +4,39 @@ import { useNavigate } from 'react-router-dom';
 
 import logoFull from '../assets/logo-full.png';
 import ThemeToggle from '../components/ThemeToggle';
+import { LoginCredentials } from '../services/base/types';
+import { authService } from '../services/base/AuthService';
 
-export default function Login(): Element {
+export default function Login(): React.ReactElement<any> {
+
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const navigate = useNavigate();
+    const [hasError, setHasError] = useState(false);
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (username && password) {
-            console.log('Connexion réussie');
-            navigate('/planning');
+            const loginData: LoginCredentials = {email: username, password}
+            try {
+               const result = await authService.login(loginData);
+               if (result.success && result.response && result.response.data) {
+                console.log('Connexion réussie');
+                // Store token in localStorage for client-side expiration checks
+                localStorage.setItem('authToken', result.response.data.token);
+                navigate('/planning');
+               }
+            } catch (error) {
+                console.log("erreur de connexion");
+                setHasError(true);
+            }
+
         } else {
             console.log("Veuillez entrer un nom d'utilisateur et un mot de passe");
         }
     };
+
 
     return (
         <div className="login-container">
@@ -59,6 +76,7 @@ export default function Login(): Element {
                 <button type="submit" className="login-btn">
                     Se connecter
                 </button>
+                {hasError && <span className="error-message">Login ou mot de passe non reconnu</span>}
             </form>
         </div>
     );

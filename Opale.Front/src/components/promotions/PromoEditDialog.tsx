@@ -8,7 +8,8 @@ import PromoMainInfo from './sections/PromoMainInfo'
 import PromoGroups from './sections/PromoGroups'
 import PromoSpecialties from './sections/PromoSpecialties'
 import ConstraintsSection from './constraints/ConstraintsSection'
-import ConfirmDialog from '../common/ConfirmDialog'
+
+import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 
 interface PromoEditDialogProps {
     editingPromo: EditingPromotion
@@ -30,7 +31,6 @@ interface PromoEditDialogProps {
 
 const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
     const { editingPromo } = props
-    const [showConfirm, setShowConfirm] = React.useState(false)
 
     if (!editingPromo) return null
 
@@ -40,35 +40,15 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
         specialties: editingPromo.specialties,
     } as any)
 
-    /**
-     * Soumission du formulaire : on bloque le submit natif
-     * et on affiche la boîte de confirmation.
-     */
-    const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        setShowConfirm(true)
-    }
-
-    /**
-     * Confirmation : on déclenche la sauvegarde (logique dans le hook)
-     */
-    const handleConfirmSave = () => {
-        console.log('Mettre à jour la BDD (simulation front)')
+    const handleSave = () => {
+        console.log('[PROMOS] Enregistrer les modifications')
+        console.log('→ mettre à jour la BDD côté back')
         props.onSubmit()
-        setShowConfirm(false)
-    }
-
-    /**
-     * Annulation de la confirmation : on ne sauvegarde pas
-     */
-    const handleCancelSave = () => {
-        console.log('Rétablir front avec l’état de la BDD')
-        setShowConfirm(false)
     }
 
     return (
         <div className="promo-edit-overlay">
-            <form className="card promo-edit-card" onSubmit={handleFormSubmit}>
+            <form className="card promo-edit-card" onSubmit={(e) => e.preventDefault()}>
                 <h3 className="promo-edit-title">Modifier la promotion</h3>
 
                 <div className="promo-edit-layout">
@@ -118,30 +98,24 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                     </div>
                 )}
 
+                {/* Remplace totalement l'ancien bloc d'actions */}
                 <div className="promo-edit-actions">
-                    <button type="button" className="btn-tertiary" onClick={props.onClose}>
-                        Annuler
-                    </button>
-                    <button type="submit" className="btn-primary">
-                        Enregistrer
-                    </button>
+                    <ActionButtonsWithConfirm
+                        onCancel={props.onClose}
+                        onSave={handleSave}
+                        confirmMessage={
+                            <>
+                                Vous êtes sur le point d’enregistrer les modifications apportées à la promotion{' '}
+                                <strong>{editingPromo.name}</strong>.
+                                <br />
+                                Confirmer ?
+                            </>
+                        }
+                        confirmLabel="Enregistrer"
+                        cancelLabel="Annuler"
+                    />
                 </div>
             </form>
-
-            <ConfirmDialog
-                open={showConfirm}
-                title="Confirmer les modifications"
-                message={
-                    <>
-                        <p>Des modifications ont été apportées à cette promotion.</p>
-                        <p>Souhaitez-vous confirmer et enregistrer ces changements&nbsp;?</p>
-                    </>
-                }
-                confirmLabel="Oui, enregistrer"
-                cancelLabel="Annuler"
-                onConfirm={handleConfirmSave}
-                onCancel={handleCancelSave}
-            />
         </div>
     )
 }

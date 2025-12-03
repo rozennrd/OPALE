@@ -11,7 +11,7 @@ interface ChecklistItem {
     warning?: boolean
 }
 
-export default function PlanningMacro(): Element {
+export default function PlanningMacro(): React.ReactElement<any> {
     const [hasPromosMismatch, setHasPromosMismatch] = useState<boolean>(() => {
         if (typeof window === 'undefined') return false
         return window.localStorage.getItem('opale:promosMismatch') === '1'

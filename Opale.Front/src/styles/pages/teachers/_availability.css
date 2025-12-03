@@ -1,0 +1,190 @@
+/* src/styles/pages/teachers/_availability.css */
+
+@layer pages {
+    .teacher-periods-header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        align-items: center;
+        margin-top: 0.25rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .teacher-period-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        border-radius: 999px;
+        padding: 0.15rem 0.45rem 0.15rem 0.75rem;
+        background: var(--panel-soft);
+        border: 1px solid var(--border);
+        font-size: 0.8rem;
+        color: var(--text);
+        transition:
+                background-color 120ms ease,
+                border-color 120ms ease,
+                box-shadow 120ms ease;
+    }
+
+    .teacher-period-pill.is-active {
+        background: rgba(129, 140, 248, 0.14);
+        border-color: rgba(129, 140, 248, 0.7);
+        box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.35);
+    }
+
+    .teacher-period-pill-main {
+        border: none;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+        font: inherit;
+        color: inherit;
+    }
+
+    .teacher-period-pill-remove {
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        border: none;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        line-height: 1;
+        cursor: pointer;
+        color: var(--muted);
+        transition:
+                background-color 120ms ease,
+                color 120ms ease;
+    }
+
+    .teacher-period-pill-remove:hover {
+        background: rgba(0, 0, 0, 0.06);
+        color: var(--text);
+    }
+
+    .teacher-period-add-pill {
+        border-radius: 999px;
+        border: 1px dashed var(--border);
+        padding: 0.18rem 0.9rem;
+        font-size: 0.8rem;
+        background: transparent;
+        cursor: pointer;
+        color: var(--muted);
+        white-space: nowrap;
+        transition:
+                background-color 120ms ease,
+                border-color 120ms ease,
+                color 120ms ease,
+                transform 80ms ease;
+    }
+
+    .teacher-period-add-pill:hover {
+        background: var(--panel-soft);
+        border-color: var(--border);
+        color: var(--text);
+    }
+
+    .teacher-period-add-pill:active {
+        transform: translateY(1px);
+    }
+
+    .teacher-period-range {
+        margin-bottom: 0.5rem;
+    }
+
+    .teacher-period-range-pill {
+        background: rgba(148, 163, 184, 0.08);
+    }
+
+    .teacher-availability-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.35rem;
+        margin-top: 0.5rem;
+        align-items: center;
+    }
+
+    .ta-day {
+        text-align: center;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--color-text-muted, #6b7280);
+    }
+
+    .ta-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--color-text-main, #111827);
+        display: flex;
+        align-items: center;
+    }
+
+    .ta-cell {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        padding: 0;
+        cursor: pointer;
+        display: inline-block;
+        transition:
+                transform 120ms ease,
+                box-shadow 120ms ease,
+                background-color 120ms ease,
+                border-color 120ms ease;
+    }
+
+    .ta-cell.is-available {
+        background: rgba(16, 185, 129, 0.3);
+        border-color: rgba(16, 185, 129, 0.6);
+    }
+
+    .ta-cell.is-unavailable {
+        background: rgba(239, 68, 68, 0.25);
+        border-color: rgba(239, 68, 68, 0.5);
+    }
+
+    .ta-cell:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.15);
+    }
+
+    .ta-cell.legend {
+        cursor: default;
+        transform: none;
+        box-shadow: none;
+        aspect-ratio: 1 / 1;
+    }
+
+    .ta-cell.legend:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .teacher-availability-legend {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.75rem;
+        font-size: 0.8rem;
+        color: var(--color-text-muted, #6b7280);
+    }
+
+    .ta-legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .ta-legend-item .ta-cell.legend {
+        width: 14px;
+        border-radius: 4px;
+    }
+
+    @media (max-width: 900px) {
+        .teacher-availability-grid {
+            grid-template-columns: repeat(6, 1fr);
+        }
+    }
+}

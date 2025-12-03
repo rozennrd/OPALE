@@ -1,6 +1,7 @@
 // src/components/promotions/constraints/ConstraintPill.tsx
 import React from 'react'
 import { DateRange } from '../../../models'
+import DateRangePill from '../../common/DateRangePill'
 
 interface ConstraintPillProps {
     type: string
@@ -15,82 +16,31 @@ interface ConstraintPillProps {
 }
 
 const ConstraintPill: React.FC<ConstraintPillProps> = ({
-    type,
-    title,
-    pillClass,
-    range,
-    isEditing,
-    onRangeClick,
-    onRangeDateChange,
-    onRemoveRange,
-    canRemove = true,
-}) => {
-    const formatDateLabel = (iso: string): string => {
-        if (!iso) return 'jj/mm/aaaa'
-        const [y, m, d] = (iso || '').split('-')
-        if (!y || !m || !d) return 'jj/mm/aaaa'
-        return `${d}/${m}/${y}`
-    }
-
-    const formatRangeLabel = (range: DateRange): string =>
-        `${formatDateLabel(range.start)} - ${formatDateLabel(range.end)}`
-
+                                                           type,
+                                                           title,
+                                                           pillClass,
+                                                           range,
+                                                           isEditing,
+                                                           onRangeClick,
+                                                           onRangeDateChange,
+                                                           onRemoveRange,
+                                                           canRemove = true,
+                                                       }) => {
     return (
-        <div className={`constraint-pill ${pillClass}`}>
-            <button
-                type="button"
-                className="constraint-pill-main"
-                onClick={() => onRangeClick(type, range.id)}
-            >
-                {isEditing ? (
-                    <div className="constraint-pill-editor">
-                        <input
-                            type="date"
-                            className="constraint-date-input"
-                            value={range.start || ''}
-                            onChange={(e) =>
-                                onRangeDateChange(
-                                    type,
-                                    range.id,
-                                    'start',
-                                    e.target.value
-                                )
-                            }
-                        />
-                        <span className="constraint-date-separator">-</span>
-                        <input
-                            type="date"
-                            className="constraint-date-input"
-                            value={range.end || ''}
-                            onChange={(e) =>
-                                onRangeDateChange(
-                                    type,
-                                    range.id,
-                                    'end',
-                                    e.target.value
-                                )
-                            }
-                        />
-                    </div>
-                ) : (
-                    formatRangeLabel(range)
-                )}
-            </button>
-
-            {canRemove && (
-                <button
-                    type="button"
-                    className="constraint-pill-remove"
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        onRemoveRange(type, range.id)
-                    }}
-                    aria-label={`Supprimer cette plage ${title}`}
-                >
-                    −
-                </button>
-            )}
-        </div>
+        <DateRangePill
+            range={range}
+            isEditing={isEditing}
+            pillClass={pillClass}                // ex: "constraint-pill-vacances"
+            rootClassName="constraint-pill"      // ⬅️ style promos existant
+            canRemove={canRemove}
+            ariaRemoveLabel={`Supprimer cette plage ${title}`}
+            onClick={(id) => onRangeClick(type, id)}
+            onDateChange={(id, field, value) =>
+                onRangeDateChange(type, id, field, value)
+            }
+            onRemove={(id) => onRemoveRange(type, id)}
+        />
     )
 }
+
 export default ConstraintPill

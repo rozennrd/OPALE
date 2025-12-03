@@ -1,0 +1,465 @@
+/* src/styles/pages/teachers/_detail-modal.css */
+
+@layer pages {
+    .teacher-detail-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    }
+
+    .teacher-detail-card {
+        background: var(--color-surface, #fff);
+        border-radius: 1rem;
+        padding: 2rem;
+        /* largeur confortable mais bornée à la fenêtre */
+        width: min(1080px, 96vw);
+        box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        position: relative;
+        animation: fadeInUp 180ms ease;
+        overflow: hidden; /* évite le débordement visuel */
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .teacher-detail-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: transparent;
+        border: none;
+        font-size: 1.3rem;
+        cursor: pointer;
+    }
+
+    /* ============================
+       Header : pill
+       ============================ */
+
+    .teacher-detail-header-badge {
+        width: 100%;
+        margin-bottom: 1.6rem;
+    }
+
+    /* On écrase le layout colonne de .teacher-mode-badge */
+    .teacher-mode-badge.teacher-mode-badge-header {
+        display: flex;
+        flex-direction: row;          /* <<< titre à gauche, icône à droite */
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.4rem;
+        border-radius: 22px;
+        border: 1px solid transparent;
+        box-shadow: var(--shadow-md);
+        min-height: 68px;
+        text-align: left;             /* on évite le centrage global */
+    }
+
+    /* Colonne gauche : titre + sous-titre */
+    .teacher-mode-header-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .teacher-mode-header-title {
+        font-size: 1.18rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .teacher-mode-header-subtitle {
+        font-size: 0.9rem;
+        color: var(--muted);
+    }
+
+    /* Colonne droite : icône + label du mode */
+    .teacher-mode-header-right {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-shrink: 0;
+    }
+
+    .teacher-mode-header-right .teacher-mode-icon {
+        width: 2.2rem;
+        height: 2.2rem;
+    }
+
+    .teacher-mode-header-right .teacher-mode-label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    /* Couleurs selon le mode */
+    .teacher-mode-badge-header.teacher-mode-presentiel {
+        background: rgba(16, 185, 129, 0.18);
+        border-color: rgba(16, 185, 129, 0.4);
+        color: #065f46;
+    }
+
+    .teacher-mode-badge-header.teacher-mode-distanciel {
+        background: rgba(59, 130, 246, 0.18);
+        border-color: rgba(59, 130, 246, 0.4);
+        color: #1d4ed8;
+    }
+
+    .teacher-mode-badge-header.teacher-mode-hybride {
+        background: rgba(139, 92, 246, 0.18);
+        border-color: rgba(139, 92, 246, 0.4);
+        color: #6d28d9;
+    }
+
+    /* Responsive : on empile sur mobile */
+    @media (max-width: 640px) {
+        .teacher-mode-badge.teacher-mode-badge-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.8rem;
+            padding: 1rem;
+        }
+    }
+
+    /* ============================
+       Colonnes de la modale
+       ============================ */
+
+    .teacher-detail-columns {
+        display: grid;
+        /* Col 1 la plus large, col 2 resserrée, col 3 confortable */
+        grid-template-columns: 1.4fr 0.9fr 1.1fr;
+        gap: 1.75rem;
+        margin-top: 0.75rem;
+    }
+
+    .teacher-detail-col {
+        font-size: 0.9rem;
+        color: var(--text);
+    }
+
+    .teacher-detail-col h4 {
+        margin-bottom: 0.5rem;
+        font-size: 1.05rem;
+        font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+        .teacher-detail-card {
+            width: min(1040px, 96vw);
+            padding: 1.6rem;
+        }
+
+        .teacher-detail-columns {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+    }
+
+    /* ============================
+       Colonne 1 : informations
+       ============================ */
+
+    .teacher-detail-list {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+    }
+
+    .teacher-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .teacher-detail-item dt {
+        min-width: 80px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+    }
+
+    .teacher-detail-item dd {
+        margin: 0;
+        flex: 1;
+    }
+
+    .teacher-detail-input,
+    .teacher-detail-select {
+        width: 100%;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        padding: 6px 10px;
+        font-family: inherit;
+        font-size: 0.9rem;
+        background: var(--input-bg, #f9fafb);
+        color: var(--text);
+        outline: none;
+        transition:
+                border-color 140ms ease,
+                box-shadow 140ms ease,
+                background-color 140ms ease;
+    }
+
+    .teacher-detail-input:focus,
+    .teacher-detail-select:focus {
+        border-color: var(--brand);
+        box-shadow: 0 0 0 1px rgba(50, 224, 230, 0.25);
+        background: var(--color-surface, #fff);
+    }
+
+    .teacher-detail-select {
+        padding-right: 28px;
+    }
+
+    /* ============================
+       Colonne 2 : matières
+       ============================ */
+
+    .teacher-subjects-edit-list {
+        margin: 0.3rem 0 0.4rem;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .teacher-subject-row {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .teacher-subject-input {
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        padding: 5px 10px;
+        font-size: 0.85rem;
+        background: var(--panel-soft);
+        color: var(--text);
+        min-width: 0;
+        outline: none;
+        transition:
+                border-color 140ms ease,
+                background-color 140ms ease;
+    }
+
+    .teacher-subject-input:focus {
+        border-color: var(--brand);
+        background: var(--color-surface, #fff);
+    }
+
+    .teacher-subject-input-name {
+        flex: 1.6;
+    }
+
+    .teacher-subject-input-promo {
+        flex: 0.9;
+        max-width: 130px;   /* évite que la 2ᵉ input s'étire trop */
+        text-align: center;
+    }
+
+    .teacher-subject-sep {
+        text-align: center;
+        font-size: 0.8rem;
+        color: var(--muted);
+    }
+
+    .teacher-subject-remove {
+        width: 20px;
+        height: 20px;
+        border-radius: 999px;
+        border: none;
+        background: rgba(0,0,0,0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        cursor: pointer;
+        color: var(--muted);
+        transition:
+                background-color 120ms ease,
+                color 120ms ease;
+    }
+
+    .teacher-subject-remove:hover {
+        background: rgba(0,0,0,0.12);
+        color: var(--text);
+    }
+
+    .teacher-subject-add-btn {
+        margin-top: 0.4rem;
+        border-radius: 999px;
+        border: 1px dashed var(--border);
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+        background: transparent;
+        cursor: pointer;
+        color: var(--muted);
+        transition:
+                background-color 120ms ease,
+                border-color 120ms ease,
+                color 120ms ease;
+    }
+
+    .teacher-subject-add-btn:hover {
+        background: var(--panel-soft);
+        border-color: var(--border);
+        color: var(--text);
+    }
+
+    .teacher-detail-muted {
+        margin-top: 0.25rem;
+        font-size: 0.88rem;
+        color: var(--muted);
+    }
+
+    /* ============================
+       Footer
+       ============================ */
+
+    .teacher-detail-footer {
+        margin-top: 1.75rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* ============================================
+   🔥 THEME SOMBRE — Carte détail enseignant
+   ============================================ */
+
+    [data-theme="dark"] .teacher-detail-card {
+        background: var(--panel-soft);
+        box-shadow: 0 25px 60px rgba(0,0,0,0.55);
+        color: var(--text);
+    }
+
+    /* Texte du header */
+    [data-theme="dark"] .teacher-mode-header-title {
+        color: var(--text);
+    }
+
+    [data-theme="dark"] .teacher-mode-header-subtitle {
+        color: var(--muted);
+    }
+
+    /* Inputs */
+    [data-theme="dark"] .teacher-detail-input,
+    [data-theme="dark"] .teacher-detail-select {
+        background: #1f2735;                     /* fond sombre harmonisé */
+        border-color: rgba(255,255,255,0.15);
+        color: var(--text);
+    }
+
+    [data-theme="dark"] .teacher-detail-input:focus,
+    [data-theme="dark"] .teacher-detail-select:focus {
+        background: #252f42;
+        border-color: var(--brand);
+    }
+
+    /* Matières */
+    [data-theme="dark"] .teacher-subject-input {
+        background: #1f2735;
+        border-color: rgba(255,255,255,0.15);
+        color: var(--text);
+    }
+
+    [data-theme="dark"] .teacher-subject-input:focus {
+        background: #252f42;
+    }
+
+    /* Boutons "ajouter matière" / "ajouter période" */
+    [data-theme="dark"] .teacher-subject-add-btn,
+    [data-theme="dark"] .teacher-period-add-btn {
+        border-color: rgba(255,255,255,0.2);
+        color: var(--muted);
+    }
+
+    [data-theme="dark"] .teacher-subject-add-btn:hover,
+    [data-theme="dark"] .teacher-period-add-btn:hover {
+        background: rgba(255,255,255,0.05);
+        border-color: rgba(255,255,255,0.3);
+    }
+
+    /* Header mode – pour recoloriser le texte selon le fond */
+    [data-theme="dark"] .teacher-mode-badge-header.teacher-mode-presentiel {
+        background: rgba(16, 185, 129, 0.22);
+        border-color: rgba(16, 185, 129, 0.6);
+        color: #a7f3d0;
+    }
+
+    [data-theme="dark"] .teacher-mode-badge-header.teacher-mode-distanciel {
+        background: rgba(59,130,246,0.22);
+        border-color: rgba(59,130,246,0.6);
+        color: #bfdbfe;
+    }
+
+    [data-theme="dark"] .teacher-mode-badge-header.teacher-mode-hybride {
+        background: rgba(139,92,246,0.22);
+        border-color: rgba(139,92,246,0.6);
+        color: #ddd6fe;
+    }
+
+    /* Disponibilités */
+    [data-theme="dark"] .ta-cell.is-available {
+        background: rgba(16,185,129,0.35);
+        border-color: rgba(16,185,129,0.7);
+    }
+
+    [data-theme="dark"] .ta-cell.is-unavailable {
+        background: rgba(239,68,68,0.35);
+        border-color: rgba(239,68,68,0.7);
+    }
+
+    [data-theme="dark"] .ta-day {
+        color: var(--text);
+    }
+
+    [data-theme="dark"] .ta-label {
+        color: var(--text);
+    }
+
+    /* Légende */
+    [data-theme="dark"] .teacher-availability-legend {
+        color: var(--muted);
+    }
+
+    /* Pills périodes */
+    [data-theme="dark"] .teacher-period-pill {
+        background: #1f2735;
+        border-color: rgba(255,255,255,0.15);
+        color: var(--text);
+    }
+
+    [data-theme="dark"] .teacher-period-pill.is-active {
+        background: rgba(129,140,248,0.25);
+        border-color: rgba(129,140,248,0.7);
+        box-shadow: 0 0 0 1px rgba(129,140,248,0.5);
+    }
+
+    /* Inputs date dans les périodes */
+    [data-theme="dark"] .constraint-date-input,
+    [data-theme="dark"] .teacher-period-range-pill input[type="date"] {
+        background: #1f2735;
+        border-color: rgba(255,255,255,0.2);
+        color: var(--text);
+    }
+
+    [data-theme="dark"] .constraint-date-input:focus {
+        border-color: var(--brand);
+    }
+}

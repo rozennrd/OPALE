@@ -1,0 +1,138 @@
+/* src/styles/pages/teachers/_cards.css */
+
+@layer pages {
+    .teacher-card {
+        display: flex;
+        align-items: stretch;
+        justify-content: space-between;
+        border-radius: 0.9rem;
+        background: var(--panel-soft);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+        cursor: pointer;
+        transition:
+                transform 120ms ease,
+                box-shadow 120ms ease,
+                border-color 120ms ease,
+                background-color 120ms ease;
+        min-height: 4.5rem;
+    }
+
+    .teacher-card:hover {
+        transform: translateY(-2px);
+        background: var(--panel-soft);
+        border-color: var(--border);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .teacher-card-main {
+        flex: 1;
+        padding: 0.75rem 0.9rem 0.75rem 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+
+    .teacher-card-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text);
+        letter-spacing: 0.01em;
+    }
+
+    .teacher-card-phone {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.85rem;
+        color: var(--muted);
+    }
+
+    .teacher-card-phone-icon {
+        width: 1rem;
+        height: 1rem;
+        opacity: 0.75;
+        display: block;
+    }
+
+    .teacher-card-mode {
+        width: 90px;
+        min-width: 90px;
+        border-left: 1px solid var(--border);
+        background: var(--panel-soft);
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+    }
+
+    .teacher-mode-badge {
+        width: 100%;
+        padding: 0.5rem 0.4rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        font-size: 0.78rem;
+        text-align: center;
+        font-weight: 500;
+    }
+
+    .teacher-mode-icon {
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .teacher-mode-icon img {
+        max-width: 100%;
+        max-height: 100%;
+        display: block;
+    }
+
+    .teacher-mode-label {
+        font-size: 0.75rem;
+        line-height: 1.1;
+    }
+
+    .teacher-mode-distanciel {
+        background: rgba(59, 130, 246, 0.10);
+        color: #1d4ed8;
+    }
+
+    .teacher-mode-hybride {
+        background: rgba(139, 92, 246, 0.10);
+        color: #6d28d9;
+    }
+
+    .teacher-mode-presentiel {
+        background: rgba(16, 185, 129, 0.10);
+        color: #047857;
+    }
+
+    [data-theme="dark"] .teacher-mode-distanciel {
+        background: rgba(59, 130, 246, 0.18);
+        color: #bfdbfe;
+    }
+
+    [data-theme="dark"] .teacher-mode-hybride {
+        background: rgba(139, 92, 246, 0.18);
+        color: #ddd6fe;
+    }
+
+    [data-theme="dark"] .teacher-mode-presentiel {
+        background: rgba(16, 185, 129, 0.18);
+        color: #a7f3d0;
+    }
+
+    @media (max-width: 640px) {
+        .teacher-card-mode {
+            width: 80px;
+            min-width: 80px;
+        }
+    }
+}
