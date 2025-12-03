@@ -288,12 +288,12 @@ app.get(
         }
 
 
-      // Normalize results: support drivers that return an array or an object with `rows`
-      const promotions = Array.isArray(results)
-        ? results
-        : results && Array.isArray((results as any).rows)
-          ? (results as any).rows
-          : [];
+        // Normalize results: support drivers that return an array or an object with `rows`
+        const promotions = Array.isArray(results)
+          ? results
+          : results && Array.isArray((results as any).rows)
+            ? (results as any).rows
+            : [];
 
         return res.json(promotions);
       });
@@ -1884,8 +1884,6 @@ app.put('/updateCycle', authJwt.verifyToken, (req, res): void => {
   });
 });
 
-
-
 // Get all cycles
 app.get(
   '/getCycles',
@@ -2047,6 +2045,28 @@ app.delete(
   },
 );
 
+
+app.get('/getGroups', authJwt.verifyToken, (req: Request, res: Response): void => {
+
+  pool.connect((err: any, connection: any) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      const sql = 'SELECT * FROM groupe ORDER BY id;';
+
+      connection.query(sql, (error: any, result: any) => {
+        connection.release();
+        if (error) {
+          return res.status(500).json({ error: error.message });
+        }
+        return res.status(200).json(result.rows);
+      });
+    });
+  },
+);
+
+
 app.post(
   '/setGroup',
   authJwt.verifyToken,
@@ -2123,21 +2143,41 @@ app.put('/updateGroup', authJwt.verifyToken, (req, res): void => {
           res.status(500).json({ error: error.message });
           return;
         }
+        return res.status(200).json(result.rows);
+      });
+    });
+  },
+);
 
-        const affectedRows = result.rowCount;
+// Get group by Id
+app.get('/getGroupById', authJwt.verifyToken, (req: Request, res: Response): void => {
+  const { id } = req.query;
 
-        if (affectedRows === 0) {
-          res
-            .status(404)
-            .json({ message: `Groupe avec l'ID ${id} non trouvé` });
-          return;
-        }
+  if (!id) {
+    res.status(400).json({ error: "Veuillez passer un id en paramètre." });
+    return;
+  }
 
-        res.json({ message: 'Groupe mis à jour avec succès' });
-      },
-    );
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
 
-    connection.release(); // Libérer la connexion
+    const sql = 'SELECT * FROM groupe WHERE id = $1;';
+
+    connection.query(sql, [id], (error: any, result: any) => {
+      connection.release();
+
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: "Groupe non trouvé." });
+      }
+
+      return res.status(200).json(result.rows[0]);
+    });
   });
 });
 
