@@ -13,6 +13,8 @@ import { getLogin } from './database/getLogin';
 import authJwt from './middleware/authJwt';
 import { pool } from './database/pool';
 
+import { Periode, Promos } from "./types/EdtMacroData";
+
 require('dotenv').config();
 
 const cors = require('cors');
@@ -22,6 +24,9 @@ const swaggerJsdoc = require('swagger-jsdoc');
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
+
+import dotenv from "dotenv";
+dotenv.config();
 
 const dbConfig = getDBConfig();
 
@@ -834,6 +839,39 @@ app.delete(
   },
 );
 
+app.get('/getEventsMacro', authJwt.verifyToken, (req, res) => {
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    const sql =
+      "SELECT p.id as id_promotion, e.datetime_start, e.datetime_end, e.type, e.nom \n" +
+      "FROM event e, promotion p, concerner c\n" +
+      "WHERE e.show_macro = True\n  " +
+      "AND e.type in ('stage', 'mobilite', 'PFE')\n    " +
+      "AND e.id = c.id_event\n" +
+      "AND p.id = c.id_promo\n" +
+      "ORDER BY nom ASC";
+    connection.query(sql, (error: any, results: any) => {
+      if (error) {
+        connection.release();
+        return res.status(500).json({ error: error.message });
+      }
+
+      // Normalize results: support drivers that return an array or an object with `rows`
+      const eventsMacro = Array.isArray(results)
+        ? results
+        : results && Array.isArray((results as any).rows)
+          ? (results as any).rows
+          : [];
+
+      res.json(eventsMacro);
+      connection.release();
+    });
+  });
+})
+
+
 /**
  * @swagger
  * /generateEdtMacro:
@@ -891,41 +929,113 @@ app.delete(
  *       500:
  *         description: Internal server error
  */
+
+
 app.post(
-  '/generateEdtMacro',
+  "/generateEdtMacro",
   authJwt.verifyToken,
   async (req: Request, res: Response) => {
     try {
-      const { DateDeb, DateFin, Promos } = req.body;
 
-      if (!DateDeb || !DateFin || !Promos) {
-        res.status(400).send('Missing startDate, endDate or Promos');
-        return;
+      const BACKEND_URL = process.env.BACKEND_URL;
+      const token = req.headers["x-access-token"] as string;
+
+      // Récupération des promotions
+      const promotionsResponse = await fetch(`${BACKEND_URL}/getPromotions`, {
+        method: "GET",
+        headers: {
+          "x-access-token": token,
+        },
+      });
+
+      if (!promotionsResponse.ok) {
+        throw new Error("Erreur lors de la récupération des promotions");
       }
-      console.log('protocol:', req.protocol);
-      console.log('host:', req.get('host'));
 
-      const start = new Date(DateDeb as string);
-      const end = new Date(DateFin as string);
+      const promotions: Promos[] = await promotionsResponse.json();
+      console.log("Promotions récupérées :", promotions);
 
-      const workbook = await generateEdtMacro({
+      // Récupération des événements macro
+      const eventsResponse = await fetch(`${BACKEND_URL}/getEventsMacro`, {
+        method: "GET",
+        headers: {
+          "x-access-token": token,
+        },
+      });
+
+      if (!eventsResponse.ok) {
+        throw new Error("Erreur lors de la récupération des événements");
+      }
+
+      const events = await eventsResponse.json();
+      console.log("Événements récupérés :", events);
+
+      // Typage local des événements SQL
+      type RawMacroEvent = {
+        id_promotion: string;
+        datetime_start: string;
+        datetime_end: string;
+        type: string;
+        nom: string;
+      };
+
+      // Injection des périodes dans CHAQUE promotion
+      const promotionsWithPeriods: Promos[] = promotions.map((promo) => {
+        const promoPeriods: Periode[] = events
+          .filter(
+            (ev: RawMacroEvent) => ev.id_promotion === promo.id
+          )
+          .map(
+            (ev: RawMacroEvent): Periode => ({
+              DateDebutP: new Date(ev.datetime_start),
+              DateFinP: new Date(ev.datetime_end),
+              type: ev.nom,
+            })
+          )
+          .sort(
+            (a: Periode, b: Periode) =>
+              a.DateDebutP.getTime() - b.DateDebutP.getTime()
+          );
+
+        return {
+          ...promo,
+          periode: promoPeriods,
+          i: 0, // toujours initialisé pour ton algo
+        };
+      });
+
+      console.log("Promotions enrichies :", promotionsWithPeriods);
+
+      //
+      // 5️⃣ Définition des dates fixes
+      //
+      const start = new Date("2025-09-01");
+      const end = new Date("2026-08-31");
+
+      //
+      // 6️⃣ Appel du générateur Excel
+      //
+      await generateEdtMacro({
         DateDeb: start,
         DateFin: end,
-        Promos: Promos,
+        Promos: promotionsWithPeriods,
       });
 
+      //
+      // 7️⃣ Réponse finale
+      //
       res.status(200).json({
-        message: 'Excel file generated and saved on the server',
-        fileUrl: `/download/EdtMacro`,
-        req: req.headers,
-        url: process.env.VITE_RACINE_FETCHER_URL,
+        message: "Excel généré avec succès",
+        fileUrl: "/download/EdtMacro",
       });
     } catch (error) {
-      console.log(error);
-      res.status(500).send('Internal server error' + error);
+      console.error(error);
+      res.status(500).send("Internal server error: " + error);
     }
-  },
+  }
 );
+
+
 
 /**
  * @swagger
