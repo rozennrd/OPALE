@@ -175,6 +175,8 @@ app.post('/login', async (req: Request, res: Response) => {
   }
 });
 
+/*========== PROMOTIONS ==========*/
+
 // TODO : A supprimer une fois que l'ancien back n'est plus utilisé. Pour le nouveau front, utiliser : /getPromotions
 /**
  * @swagger
@@ -576,6 +578,8 @@ app.post('/addPromotion', authJwt.verifyToken, (req, res) => {
   });
 });
 
+/*========== PROFESSEURS ==========*/
+
 /**
  * @swagger
  * /getProfsData:
@@ -834,6 +838,8 @@ app.delete(
   },
 );
 
+/*========== GENERATION MACRO ==========*/
+
 /**
  * @swagger
  * /generateEdtMacro:
@@ -944,6 +950,8 @@ app.get('/download/EdtMacro', authJwt.verifyToken, (req, res) => {
     }
   });
 });
+
+/*========== GENERATION MICRO ==========*/
 
 /**
  * @swagger
@@ -1398,6 +1406,8 @@ app.post(
   },
 );
 
+/*========== SALLES ==========*/
+
 /**
  * @swagger
  * /getSallesData:
@@ -1665,6 +1675,8 @@ app.delete('/deleteSalle', authJwt.verifyToken, (req, res) => {
   });
 });
 
+/*========== COURS ==========*/
+
 app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
   pool.connect((err: any, connection: any) => {
     if (err) {
@@ -1849,6 +1861,8 @@ app.get('/getCours', authJwt.verifyToken, (req, res) => {
     connection.release(); // Libérer la connexion après l'exécution
   });
 });
+
+/*========== CYCLE ==========*/
 
 // Update cycle
 app.put('/updateCycle', authJwt.verifyToken, (req, res): void => {
@@ -2045,6 +2059,8 @@ app.delete(
   },
 );
 
+/*========== GROUPE ==========*/
+
 app.get(
   '/getGroups',
   authJwt.verifyToken,
@@ -2230,6 +2246,8 @@ app.delete(
     });
   },
 );
+
+/*========== EVENEMENT ==========*/
 
 // Update event
 app.put('/updateEvent', authJwt.verifyToken, (req: Request, res: Response): void => {
