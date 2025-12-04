@@ -198,7 +198,7 @@ export function usePromotionCycles() {
         openCreateModal,
         closeCreateModal,
         createCycleWithPromotions,
-        addCycle,
+
         removeCycle,
         renameCycle,
         removePromotion,
