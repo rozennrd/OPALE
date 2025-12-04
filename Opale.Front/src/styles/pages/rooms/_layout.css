@@ -1,0 +1,35 @@
+/* src/styles/pages/rooms/_layout.css */
+
+@layer pages {
+    .rooms-page {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        background: var(--panel-soft);
+        border-radius: var(--radius-lg, 16px);
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .rooms-page-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    /* on réutilise .page-title / .page-sub déjà définis côté teachers */
+
+    .rooms-sections {
+        margin-top: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 640px) {
+        .rooms-page {
+            padding: 1rem;
+        }
+    }
+}

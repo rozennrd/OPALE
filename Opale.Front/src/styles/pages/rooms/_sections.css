@@ -1,0 +1,25 @@
+/* src/styles/pages/rooms/_sections.css */
+
+@layer pages {
+    .rooms-section:first-of-type {
+        margin-top: 0;
+    }
+
+    .rooms-section:last-of-type {
+        margin-top: 0.5rem;
+    }
+
+    /* tu peux garder rooms-section-body si tu en as besoin plus tard */
+    .rooms-grid {
+        display: grid;
+        grid-auto-flow: row dense;
+        grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    /* Agrandir le soulignement uniquement pour les sections Rooms */
+    .rooms-section-title::after {
+        width: 170px;
+    }
+}

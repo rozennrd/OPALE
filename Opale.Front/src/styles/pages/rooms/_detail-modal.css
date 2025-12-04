@@ -1,0 +1,451 @@
+/* src/styles/pages/rooms/_detail-modal.css */
+
+@layer pages {
+    .room-detail-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    }
+
+    .room-detail-card {
+        background: var(--color-surface, #fff);
+        border-radius: 1rem;
+        width: min(1080px, 96vw);
+        max-height: min(720px, 96vh);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        position: relative;
+        animation: roomFadeInUp 180ms ease;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    @keyframes roomFadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .room-detail-close {
+        position: absolute;
+        top: 0.5rem;
+        right: 1rem;
+        background: transparent;
+        border: none;
+        font-size: 1.3rem;
+        cursor: pointer;
+        color: var(--muted-strong, #64748b);
+    }
+
+    .room-detail-close:hover {
+        color: var(--primary);
+    }
+
+    /* ============================
+       Header : pill comme enseignants
+       ============================ */
+
+    .room-detail-header-badge {
+        width: 100%;
+    }
+
+    .room-type-badge.room-type-badge-header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.4rem;
+        border-radius: 22px;
+        border: 1px solid transparent;
+        box-shadow: var(--shadow-md);
+        min-height: 68px;
+        text-align: left;
+    }
+
+    .room-header-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .room-header-title {
+        font-size: 1.18rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .room-header-subtitle {
+        font-size: 0.9rem;
+        color: var(--muted);
+    }
+
+    .room-header-right {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-shrink: 0;
+    }
+
+    .room-header-right .room-type-icon {
+        width: 2.2rem;
+        height: 2.2rem;
+    }
+
+    .room-header-right .room-type-label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .room-type-badge-header.room-type-td {
+        background: rgba(59, 130, 246, 0.18);
+        border-color: rgba(59, 130, 246, 0.4);
+        color: #1d4ed8;
+    }
+
+    .room-type-badge-header.room-type-tp_electronique {
+        background: rgba(16, 185, 129, 0.18);
+        border-color: rgba(16, 185, 129, 0.4);
+        color: #065f46;
+    }
+
+    .room-type-badge-header.room-type-tp_numerique {
+        background: rgba(14, 165, 233, 0.18);
+        border-color: rgba(14, 165, 233, 0.4);
+        color: #0369a1;
+    }
+
+    .room-type-badge-header.room-type-projet {
+        background: rgba(234, 179, 8, 0.18);
+        border-color: rgba(234, 179, 8, 0.4);
+        color: #92400e;
+    }
+
+    .room-type-badge-header.room-type-autre {
+        background: rgba(148, 163, 184, 0.20);
+        border-color: rgba(148, 163, 184, 0.45);
+        color: #475569;
+    }
+
+    @media (max-width: 640px) {
+        .room-type-badge.room-type-badge-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.8rem;
+            padding: 1rem;
+        }
+    }
+
+    /* ============================
+       Corps : 2 colonnes
+       ============================ */
+
+    .room-detail-section {
+        border-top: 1px solid var(--border-subtle);
+        padding-top: 0.9rem;
+    }
+
+    .room-detail-section-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.45rem;
+    }
+
+    .room-detail-hint {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-bottom: 0.5rem;
+    }
+
+    .room-detail-hint-small {
+        font-size: 0.75rem;
+        color: var(--muted);
+    }
+
+    .room-detail-types,
+    .room-detail-types-main {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .room-detail-types-main {
+        margin-bottom: 0.2rem;
+    }
+
+    /* ============================
+       PILLS TYPES – centrage
+       ============================ */
+
+    .room-type-chip {
+        border-radius: 999px;
+        border: 1px solid var(--border-subtle);
+        background: var(--panel-soft);
+        padding: 0.28rem 0.75rem;
+        font-size: 0.8rem;
+        cursor: pointer;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        line-height: 1;
+
+        transition:
+                background 120ms ease,
+                border-color 120ms ease,
+                transform 120ms ease;
+    }
+
+    .room-type-chip:hover {
+        transform: translateY(-1px);
+        border-color: var(--primary-soft);
+    }
+
+    .room-type-chip-selected {
+        background: var(--primary-soft);
+        border-color: var(--primary);
+        color: var(--primary-strong-contrast, #0f172a);
+    }
+
+    .room-type-chip-label {
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+    }
+
+    /* ============================
+       PILLS TYPES – centrage
+       ============================ */
+
+    .room-type-chip {
+        position: relative;                 /* permet de placer l'icône en absolu */
+        border-radius: 999px;
+        border: 1px solid var(--border-subtle);
+        background: var(--panel-soft);
+        padding: 0.28rem 1rem;              /* padding horizontal "de base" */
+        font-size: 0.8rem;
+        cursor: pointer;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;            /* centre le contenu (le label) */
+        line-height: 1;
+
+        transition:
+                background 120ms ease,
+                border-color 120ms ease,
+                transform 120ms ease;
+    }
+
+    .room-type-chip:hover {
+        transform: translateY(-1px);
+        border-color: var(--primary-soft);
+    }
+
+    .room-type-chip-selected {
+        background: var(--primary-soft);
+        border-color: var(--primary);
+        color: var(--primary-strong-contrast, #0f172a);
+    }
+
+    /* label centré dans la pill */
+    .room-type-chip-label {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+    /* Type principal : on ajoute juste un peu de place à gauche pour le dot */
+    .room-type-chip-main {
+        padding-left: 1.4rem;               /* = place réservée au dot */
+        padding-right: 1.4rem;               /* = place réservée au dot */
+    }
+
+    /* Dot "radio" pour type principal */
+    .room-type-chip-dot {
+        position: absolute;
+        left: 0.8rem;
+        top: 50%;
+        transform: translateY(-50%);
+
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border-subtle);
+        background: transparent;
+        flex-shrink: 0;
+    }
+
+    .room-type-chip-main-selected .room-type-chip-dot {
+        border-color: var(--primary);
+        background: var(--primary);
+    }
+
+    /* Types disponibles : checkbox visuelle à gauche */
+    .room-type-chip-checkbox {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+
+        width: 12px;
+        height: 12px;
+        border-radius: 4px;
+        border: 1px solid var(--border-subtle);
+        background: transparent;
+        box-sizing: border-box;
+        flex-shrink: 0;
+    }
+
+    .room-type-chip-checkbox.is-checked {
+        border-color: var(--primary);
+        background: var(--primary-soft);
+    }
+
+    /* Tag "(principal)" dans les types dispos */
+    .room-type-chip-main-tag {
+        font-size: 0.75rem;
+        opacity: 0.85;
+        margin-left: 0.25rem;
+    }
+
+    .room-type-chip-main-lock {
+        cursor: default;
+    }
+
+    .room-type-chip-main-lock.room-type-chip-selected:hover {
+        transform: none;
+        border-color: var(--primary);
+    }
+
+
+    .room-detail-textarea {
+        width: 100%;
+        min-height: 120px;
+        resize: vertical;
+        border-radius: 0.75rem;
+        border: 1px solid var(--border);
+        padding: 0.6rem 0.75rem;
+        font-family: inherit;
+        font-size: 0.9rem;
+        background: var(--panel-soft);
+        color: inherit;
+    }
+
+    .room-detail-textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 40%, transparent);
+    }
+
+    /* ===== Layout 2 colonnes (desktop) ===== */
+
+    @media (min-width: 900px) {
+        .room-detail-card {
+            display: grid;
+            grid-template-columns: 1.4fr 1.1fr;
+            grid-auto-rows: auto;
+            gap: 1.75rem 2rem;
+            width: min(1040px, 96vw);
+            padding: 1.6rem;
+        }
+
+        .room-detail-header-badge {
+            grid-column: 1 / -1;
+        }
+
+        .room-detail-card > .room-detail-section:nth-of-type(1),
+        .room-detail-card > .room-detail-section:nth-of-type(2) {
+            grid-column: 1 / 2;
+        }
+
+        .room-detail-card > .room-detail-section:nth-of-type(3) {
+            grid-column: 2 / 3;
+            grid-row: 2 / 4;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .room-detail-card > .room-detail-section:nth-of-type(3) .room-detail-textarea {
+            flex: 1;
+            min-height: 0;
+        }
+    }
+
+    /* ============================
+       THEME SOMBRE – carte salles
+       ============================ */
+
+    [data-theme='dark'] .room-detail-card {
+        background: var(--panel-soft);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+        color: var(--text);
+    }
+
+    [data-theme='dark'] .room-type-chip {
+        background: #1f2735;
+        border-color: rgba(255, 255, 255, 0.15);
+        color: var(--text);
+    }
+
+    [data-theme='dark'] .room-type-chip-selected {
+        background: rgba(129, 140, 248, 0.25);
+        border-color: rgba(129, 140, 248, 0.7);
+        color: var(--text);
+    }
+
+    [data-theme='dark'] .room-detail-textarea {
+        background: #1f2735;
+        border-color: rgba(255, 255, 255, 0.2);
+        color: var(--text);
+    }
+
+    [data-theme='dark'] .room-detail-textarea:focus {
+        background: #252f42;
+        border-color: var(--primary);
+    }
+
+    [data-theme='dark'] .room-type-badge-header.room-type-td {
+        background: rgba(59, 130, 246, 0.22);
+        border-color: rgba(59, 130, 246, 0.6);
+        color: #bfdbfe;
+    }
+
+    [data-theme='dark'] .room-type-badge-header.room-type-tp_electronique {
+        background: rgba(16, 185, 129, 0.22);
+        border-color: rgba(16, 185, 129, 0.6);
+        color: #a7f3d0;
+    }
+
+    [data-theme='dark'] .room-type-badge-header.room-type-tp_numerique {
+        background: rgba(14, 165, 233, 0.22);
+        border-color: rgba(14, 165, 233, 0.6);
+        color: #bae6fd;
+    }
+
+    [data-theme='dark'] .room-type-badge-header.room-type-projet {
+        background: rgba(234, 179, 8, 0.24);
+        border-color: rgba(234, 179, 8, 0.65);
+        color: #fef3c7;
+    }
+
+    [data-theme='dark'] .room-type-badge-header.room-type-autre {
+        background: rgba(148, 163, 184, 0.24);
+        border-color: rgba(148, 163, 184, 0.6);
+        color: #e5e7eb;
+    }
+}

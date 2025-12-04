@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { Teacher } from '../../models/Teacher'
 import TeacherCardsGrid from './TeacherCardsGrid'
+import SectionHeader from '../common/SectionHeader'
 
 interface TeacherSectionProps {
     title: string
@@ -20,21 +21,14 @@ export default function TeacherSection({ title, teachers, onSelectTeacher }: Tea
 
     return (
         <section className="teacher-section">
-            <button
-                type="button"
-                // className="teacher-section-header"
-                className={`teacher-section-header ${isOpen ? 'is-open' : ''}`}
-                onClick={handleToggle}
-            >
-                <span className="teacher-section-title">{title}</span>
-
-                <span
-                    className={`teacher-section-chevron ${isOpen ? 'is-open' : ''}`}
-                    aria-hidden="true"
-                >
-          ▾
-        </span>
-            </button>
+            <SectionHeader
+                title={title}
+                isOpen={isOpen}
+                onToggle={handleToggle}
+                wrapperClassName="teacher-section-header"
+                titleClassName="teacher-section-title"
+                chevronClassName="teacher-section-chevron"
+            />
 
             {isOpen && (
                 <div className="teacher-section-body">
