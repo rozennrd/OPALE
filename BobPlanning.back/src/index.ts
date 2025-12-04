@@ -2231,6 +2231,96 @@ app.delete(
   },
 );
 
+// Update event
+app.put('/updateEvent', authJwt.verifyToken, (req: Request, res: Response): void => {
+  const {
+    id,
+    type,
+    nom,
+    num_semaine,
+    datetime_start,
+    datetime_end,
+    show_macro,
+    show_micro,
+    is_blocking,
+    is_exceptional,
+    is_external,
+  } = req.body;
+
+  // Field verification
+  if (!id || !type || !nom || !datetime_start || !datetime_end) {
+    res.status(400).json({
+      message:
+          'Les champs id, type, nom, datetime_start et datetime_end sont obligatoires.',
+    });
+    return;
+  }
+
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+
+    const sql = `
+      UPDATE event
+      SET type = $2,
+          nom = $3,
+          num_semaine = $4,
+          datetime_start = $5,
+          datetime_end = $6,
+          show_macro = $7,
+          show_micro = $8,
+          is_blocking = $9,
+          is_exceptional = $10,
+          is_external = $11
+      WHERE id = $1
+    `;
+
+    connection.query(
+        sql,
+        [
+          id,
+          type,
+          nom,
+          num_semaine,
+          datetime_start,
+          datetime_end,
+          show_macro,
+          show_micro,
+          is_blocking,
+          is_exceptional,
+          is_external,
+        ],
+        (error: any, result: any) => {
+          if (error) {
+            // Date constraint
+            if (error.constraint === 'ck_event_dates') {
+              res.status(400).json({
+                error: 'La date de début doit être antérieure à la date de fin.',
+              });
+              return;
+            }
+            res.status(500).json({ error: error.message });
+            return;
+          }
+
+          const affectedRows = result.rowCount;
+
+          if (affectedRows === 0) {
+            res
+                .status(404)
+                .json({ message: `Événement avec l'ID ${id} non trouvé` });
+            return;
+          }
+
+          res.json({ message: 'Événement mis à jour avec succès' });
+        },
+    );
+    connection.release(); // Libérer la connexion
+  });
+});
+
 // Start the server
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
