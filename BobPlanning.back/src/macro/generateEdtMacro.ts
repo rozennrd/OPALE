@@ -22,8 +22,9 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
   //
   // Trouver la première promo de type Initial (référence CyPré)
   const initialPromo = data.Promos.find(p =>
-    p.type.toLowerCase() === "initial"
+    (p.type ?? "").toLowerCase() === "initial"
   );
+
   // Point de départ CyPré : date_start alignée au premier lundi
   let cyPreStart: Date | null = null;
   if (initialPromo) {
@@ -211,6 +212,7 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
         if (t.includes("rattrapage")) {
           // "Rattrapage semestre 1 ou 3", etc.
           rowData[promo.nom] = active.type;
+          return;
         } else if (t.includes("stage")) {
           // "Stage Exécutant 1 mois" / "Stage International Break 2 mois"
           rowData[promo.nom] = active.type;

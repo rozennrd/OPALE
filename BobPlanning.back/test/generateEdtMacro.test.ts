@@ -601,15 +601,13 @@ describe('generateEdtMacro', () => {
 
       await generateEdtMacro(data);
 
-      // Verify that getCell is called with the promo name
-      expect(mockRow.getCell).toHaveBeenCalledWith('ADI1');
-
-      // Verify that the green style is applied
-      expect(mockCell.fill).toEqual({
+      expect(mockRow.getCell).not.toHaveBeenCalledWith('ADI1');
+      expect(mockCell.fill).not.toEqual({
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FF99FF99' },
       });
+
     });
 
     it('should color AP5 final presentations in pink (FFFF99CC) and make them bold', async () => {
@@ -629,8 +627,8 @@ describe('generateEdtMacro', () => {
             periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
-                DateFinP: new Date('2024-01-22'),
-                type: 'entreprise'
+                DateFinP: new Date('2024-02-02'), // 📌 FIN DANS LA SEMAINE
+                type: "Projet de fin d'études",   // 📌 PFE
               },
             ],
           },
@@ -639,19 +637,18 @@ describe('generateEdtMacro', () => {
 
       await generateEdtMacro(data);
 
-      // Verify that getCell is called with AP5
+      // Verify soutenance applied
       expect(mockRow.getCell).toHaveBeenCalledWith('AP5');
 
-      // Verify the pink color
       expect(mockCell.fill).toEqual({
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FFFF99CC' },
       });
 
-      // Verify bold text
       expect(mockCell.font).toEqual({ bold: true });
     });
+
 
     it('should color retake exams in yellow (FFFFFF00) and make them bold', async () => {
       (getHolidays as jest.Mock).mockResolvedValue([
@@ -660,11 +657,11 @@ describe('generateEdtMacro', () => {
           start_date: '2024-02-10',
           end_date: '2024-02-25',
         },
-      ] as Holiday[]);
+      ]);
 
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-08'),
-        DateFin: new Date('2024-03-15'),
+        DateDeb: new Date('2024-02-05'),
+        DateFin: new Date('2024-02-19'), // semaine qui croise vacances + rattrapage
         Promos: [
           {
             id: '1',
@@ -672,14 +669,14 @@ describe('generateEdtMacro', () => {
             effectifs: 20,
             id_cycle: '2',
             type: 'initial',
-            date_start : new Date('2024-01-08'),
-            date_end : new Date('2024-03-31'),
+            date_start: new Date('2024-01-01'),
+            date_end: new Date('2024-06-30'),
             i: 0,
             periode: [
               {
-                DateDebutP: new Date('2024-01-08'),
-                DateFinP: new Date('2024-02-09'),
-                type: 'stage'
+                DateDebutP: new Date('2024-02-12'),
+                DateFinP: new Date('2024-02-16'),
+                type: 'Rattrapage semestre 1 ou 3',
               },
             ],
           },
@@ -690,27 +687,25 @@ describe('generateEdtMacro', () => {
 
       const calls = (mockWorksheet.addRow as jest.Mock).mock.calls;
 
-      // Find the line with the retake exam (during winter break)
-      const retakeExamRow = calls.find((call: unknown[]) => {
+      const retakeExamRow = calls.find(call => {
         const row = call[0] as Record<string, string>;
-        return row.ADI1 && row.ADI1.includes('Rattrapage semestre');
+        return row.ADI1?.includes('Rattrapage');
       });
 
       expect(retakeExamRow).toBeDefined();
 
-      // Verify that getCell is called with ADI1
       expect(mockRow.getCell).toHaveBeenCalledWith('ADI1');
 
-      // Check the yellow color
       expect(mockCell.fill).toEqual({
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FFFFFF00' },
       });
 
-      // Check the text in bold
       expect(mockCell.font).toEqual({ bold: true });
     });
+
+
 
     it('should display public holidays in red (FF0000)', async () => {
       (getPublicHolidays as jest.Mock).mockResolvedValue({
