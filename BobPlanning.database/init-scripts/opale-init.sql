@@ -10,7 +10,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TYPE type_professeur AS ENUM ('permanent', 'intervenant', 'invite');
 CREATE TYPE type_salle      AS ENUM ('projet', 'td', 'tp', 'reunion', 'autre');
-CREATE TYPE type_event      AS ENUM ('cours', 'examen', 'reunion', 'fermeture', 'soutenance', 'portes ouvertes', 'stage', 'mobilite', 'PFE', 'autre');
+CREATE TYPE type_event      AS ENUM ('cours', 'examen', 'reunion', 'fermeture', 'soutenance', 'portes ouvertes', 'stage', 'mobilite', 'PFE', 'rattrape', 'autre');
 CREATE TYPE type_cours      AS ENUM ('TD', 'TP', 'PROJET', 'AUTRE');
 CREATE TYPE type_cycle      AS ENUM ('Initial', 'Apprentissage');
 

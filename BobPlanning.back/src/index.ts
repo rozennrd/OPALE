@@ -292,7 +292,9 @@ app.get(
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      const sql = 'SELECT * FROM promotion';
+      const sql = 'SELECT p.id, p.nom, p.effectifs, p.id_cycle, p.date_start, p.date_end, c.type ' +
+        'FROM promotion p, cycle c ' +
+        'WHERE p.id_cycle = c.id';
       connection.query(sql, (error: any, results: any) => {
         connection.release(); // always release the client
         if (error) {
@@ -909,7 +911,7 @@ app.get('/getEventsMacro', authJwt.verifyToken, (req, res) => {
       "SELECT p.id as id_promotion, e.datetime_start, e.datetime_end, e.type, e.nom \n" +
       "FROM event e, promotion p, concerner c\n" +
       "WHERE e.show_macro = True\n  " +
-      "AND e.type in ('stage', 'mobilite', 'PFE')\n    " +
+      "AND e.type in ('stage', 'mobilite', 'PFE', 'rattrapage')\n    " +
       "AND e.id = c.id_event\n" +
       "AND p.id = c.id_promo\n" +
       "ORDER BY nom ASC";
