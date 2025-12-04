@@ -103,6 +103,7 @@ export const generateEdtMicro = async (connection: any) : Promise<any> => {
       id_cycle: promo.id_cycle,       // number
       date_start: promo.date_start,   // string (ou Date convertie en string)
       date_end: promo.date_end,       // string
+      type: promo.type,               // string
       i: 0,                            // si tu en as encore besoin dans le script Micro
       periode: promo.periode
     }))
