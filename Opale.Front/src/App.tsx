@@ -70,6 +70,7 @@ export default function App() {
                 <Route path="/enseignants" element={<Teachers/>} />
 
                 <Route path="/salles" element={<Rooms />} />
+                
                 <Route path="/parametres" element={<Placeholder title="Paramètres" />} />
                 <Route path="*" element={<Placeholder title="Page introuvable" notFound />} />
             </Route>
