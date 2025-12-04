@@ -2219,6 +2219,85 @@ app.delete(
     },
 );
 
+// Add event
+app.post(
+    '/addEvent',
+    authJwt.verifyToken,
+    (req: Request, res: Response): void => {
+      const {
+        type,
+        nom,
+        num_semaine,
+        datetime_start,
+        datetime_end,
+        show_macro,
+        show_micro,
+        is_blocking,
+        is_exceptional,
+        is_external
+      } = req.body;
+
+      // Check required fields
+      if (!type || !nom || !datetime_start || !datetime_end) {
+        res.status(400).json({
+          message: "Les champs type, nom, datetime_start et datetime_end sont obligatoires."
+        });
+        return;
+      }
+
+      pool.connect((err: any, connection: any) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        const sql = `
+            INSERT INTO event (type, nom, num_semaine, datetime_start, datetime_end, show_macro, show_micro,
+                               is_blocking,
+                               is_exceptional, is_external)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+        `;
+
+        connection.query(
+            sql,
+            [
+              type,
+              nom,
+              num_semaine,
+              datetime_start,
+              datetime_end,
+              show_macro,
+              show_micro,
+              is_blocking,
+              is_exceptional,
+              is_external,
+            ],
+            (error: any, result: any) => {
+              connection.release();
+
+              if (error) {
+                // Check date constraint
+                if (error.constraint === 'ck_event_dates') {
+                  res.status(400).json({
+                    error: 'La date de début doit être antérieure à la date de fin.',
+                  });
+                  return;
+                }
+                res.status(500).json({ error: error.message });
+                return;
+              }
+
+
+              const insertedId = result?.rows?.[0]?.id ?? null;
+              return res.status(201).json({
+                message: "Évènement ajouté avec succès",
+                insertedId
+              });
+            }
+        );
+      });
+    }
+);
+
 // Start the server
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
