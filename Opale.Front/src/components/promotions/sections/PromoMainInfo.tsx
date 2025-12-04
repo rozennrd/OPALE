@@ -3,7 +3,7 @@ import { EditingPromotion } from '../../../hooks/promotions/usePromotionEditing'
 
 interface PromoMainInfoProps {
     editingPromo: EditingPromotion
-    onFieldChange: (field: string, value: any) => void
+    onFieldChange: (field: string, value: string | number) => void
     onStudentsBlur?: () => void
 }
 
@@ -30,7 +30,7 @@ const PromoMainInfo: React.FC<PromoMainInfoProps> = ({
                 </label>
 
                 <label className="promo-edit-field">
-                    <span className="promo-edit-label">Nombre d'étudiants</span>
+                    <span className="promo-edit-label">Nombre d&apos;étudiants</span>
                     <input
                         type="number"
                         min="0"
@@ -41,7 +41,7 @@ const PromoMainInfo: React.FC<PromoMainInfoProps> = ({
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                                 e.preventDefault()
-                                onStudentsBlur()
+                                onStudentsBlur?.()
                             }
                         }}
                     />

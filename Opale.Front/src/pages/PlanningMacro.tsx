@@ -11,7 +11,7 @@ interface ChecklistItem {
     warning?: boolean
 }
 
-export default function PlanningMacro(): React.ReactElement<any> {
+export default function PlanningMacro(): React.ReactElement {
     const [hasPromosMismatch, setHasPromosMismatch] = useState<boolean>(() => {
         if (typeof window === 'undefined') return false
         return window.localStorage.getItem('opale:promosMismatch') === '1'
@@ -57,7 +57,7 @@ export default function PlanningMacro(): React.ReactElement<any> {
     return (
         <>
             <h2 className="page-title">Génération planning macro</h2>
-            <p className="page-sub">Sélectionnez chacun de ces points s'il a été renseigné.</p>
+            <p className="page-sub">Sélectionnez chacun de ces points s&apos;il a été renseigné.</p>
 
             <Checklist items={items} onToggle={toggleItem} />
 

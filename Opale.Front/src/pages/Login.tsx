@@ -7,7 +7,7 @@ import ThemeToggle from '../components/ThemeToggle';
 import { LoginCredentials } from '../services/base/types';
 import { authService } from '../services/base/AuthService';
 
-export default function Login(): React.ReactElement<any> {
+export default function Login(): React.ReactElement {
 
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -52,7 +52,7 @@ export default function Login(): React.ReactElement<any> {
 
             <form onSubmit={handleSubmit} className="login-form">
                 <div className="input-group">
-                    <label htmlFor="username">Nom d'utilisateur</label>
+                    <label htmlFor="username">Nom d&apos;utilisateur</label>
                     <input
                         type="text"
                         id="username"

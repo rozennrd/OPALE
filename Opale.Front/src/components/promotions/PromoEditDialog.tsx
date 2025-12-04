@@ -1,5 +1,5 @@
 // src/components/promotions/PromoEditDialog.tsx
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Constraints } from '../../models'
 import { EditingPromotion } from '../../hooks/promotions/usePromotionEditing'
 import { computePromoTotals } from '../../utils/promoUtils'
@@ -17,19 +17,19 @@ interface PromoEditDialogProps {
     hasChanges: boolean
     onSubmit: () => void
     onClose: () => void
-    onFieldChange: (field: string, value: any) => void
+    onFieldChange: (field: string, value: string | number) => void
     onStudentsBlur?: () => void
-    onGroupChange: (index: number, field: string, value: any) => void
+    onGroupChange: (index: number, field: string, value: string | number) => void
     onAddGroup: () => void
     onRemoveGroup: (index: number) => void
-    onSpecialtyChange: (index: number, field: string, value: any) => void
+    onSpecialtyChange: (index: number, field: string, value: string | number) => void
     onAddSpecialty: () => void
     onRemoveSpecialty: (index: number) => void
     constraints: Constraints
-    onAddConstraint: (type: keyof Constraints) => void
-    onRemoveConstraint: (type: keyof Constraints, id: string) => void
+    onAddConstraint: (type: string) => void
+    onRemoveConstraint: (type: string, id: string) => void
     onUpdateConstraintRange: (
-        type: keyof Constraints,
+        type: string,
         id: string,
         field: string,
         value: string
@@ -37,46 +37,18 @@ interface PromoEditDialogProps {
 }
 
 const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
-    const { editingPromo } = props
+    const { editingPromo, hasChanges, onClose } = props
 
     const [openCloseConfirm, setOpenCloseConfirm] = useState(false)
 
-    if (!editingPromo) return null
-
-    const totals = computePromoTotals({
-        students: editingPromo.students,
-        groups: editingPromo.groups,
-        specialties: editingPromo.specialties,
-    } as any)
-
-    const handleSave = () => {
-        console.log('→ mettre à jour la BDD côté back')
-        props.onSubmit()
-    }
-
     // Fermeture demandée par la croix / ESC (au niveau de la card)
-    const handleRequestClose = () => {
-        if (!props.hasChanges) {
-            props.onClose()
+    const handleRequestClose = useCallback(() => {
+        if (!hasChanges) {
+            onClose()
             return
         }
         setOpenCloseConfirm(true)
-    }
-
-    const handleConfirmSaveAndClose = () => {
-        setOpenCloseConfirm(false)
-        handleSave()
-        props.onClose()
-    }
-
-    const handleDiscardAndClose = () => {
-        setOpenCloseConfirm(false)
-        props.onClose()
-    }
-
-    const handleCloseConfirmPopupOnly = () => {
-        setOpenCloseConfirm(false)
-    }
+    }, [hasChanges, onClose])
 
     // ESC au niveau de la card : ne ferme la card QUE si aucun popup de confirmation n’est ouvert
     useEffect(() => {
@@ -95,7 +67,40 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
 
         window.addEventListener('keydown', onKeyDown)
         return () => window.removeEventListener('keydown', onKeyDown)
-    }, [editingPromo, props.hasChanges]) // handleRequestClose est stable dans ce contexte
+    }, [editingPromo, hasChanges, handleRequestClose])
+
+    if (!editingPromo) return null
+
+    const totals = computePromoTotals({
+        id: '',
+        label: '',
+        students: editingPromo.students,
+        startDate: '',
+        endDate: '',
+        groups: editingPromo.groups,
+        specialties: editingPromo.specialties,
+        constraints: editingPromo.constraints,
+    })
+
+    const handleSave = () => {
+        console.log('→ mettre à jour la BDD côté back')
+        props.onSubmit()
+    }
+
+    const handleConfirmSaveAndClose = () => {
+        setOpenCloseConfirm(false)
+        handleSave()
+        props.onClose()
+    }
+
+    const handleDiscardAndClose = () => {
+        setOpenCloseConfirm(false)
+        props.onClose()
+    }
+
+    const handleCloseConfirmPopupOnly = () => {
+        setOpenCloseConfirm(false)
+    }
 
     return (
         <div className="promo-edit-overlay">
