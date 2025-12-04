@@ -1,0 +1,58 @@
+/* src/styles/components/_confirm-dialog.css */
+
+/* Pop-up confirmation modification */
+@layer components {
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 23, 42, 0.45);
+    }
+
+    .confirm-dialog-card {
+        position: relative;
+        width: auto;
+        padding: 18px 20px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .confirm-dialog-close {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        border: none;
+        background: transparent;
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+        color: var(--muted);
+    }
+
+    .confirm-dialog-close:hover {
+        color: var(--text);
+    }
+
+    .confirm-dialog-title {
+        margin: 0 0 4px;
+        font-family: 'Nunito', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .confirm-dialog-body {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .confirm-dialog-actions {
+        margin-top: 12px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+}

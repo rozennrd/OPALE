@@ -1,0 +1,69 @@
+/* src/styles/components/_buttons.css */
+
+@layer components {
+        /* Bouton principal : flat */
+        .btn-primary {
+                background: var(--primary);
+                border: 1px solid transparent;         /* pour une géométrie stable */
+                color: #0b3b24;
+                padding: 8px 16px;
+                border-radius: var(--radius-sm);
+                cursor: pointer;
+                font-family: 'Nunito', sans-serif;
+                font-size: clamp(16px, 2vw, 18px);
+                font-weight: 600;
+                box-shadow: none;                       /* ✅ pas d'ombre */
+                transition: background .2s;
+                white-space: nowrap;
+        }
+        .btn-primary:hover { background: var(--primary-hover); }
+
+        /* Bouton tertiaire : flat */
+        .btn-tertiary {
+                display: inline-flex; align-items: center; gap: 8px;
+                padding: 8px 12px;
+                border-radius: var(--radius-sm);
+                cursor: pointer;
+                font-family: 'Nunito', sans-serif;
+                font-size: clamp(14px, 1.6vw, 18px);
+                line-height: 1; white-space: nowrap;
+                border: 1px solid #e3e7ee;
+                background: #eef2f7;
+                color: #0f172a;
+                box-shadow: none;                       /* ✅ pas d'ombre */
+                transition: background .2s, border-color .2s;
+        }
+        .btn-tertiary:hover { background: #e7edf7; }
+
+        /* Bouton danger : flat */
+        .btn-danger {
+                display: inline-flex; align-items: center; gap: 8px;
+                padding: 8px 12px;
+                border-radius: var(--radius-sm);
+                cursor: pointer;
+                font-family: 'Nunito', sans-serif;
+                font-size: clamp(14px, 1.6vw, 18px);
+                line-height: 1; white-space: nowrap;
+                border: 1px solid var(--danger-200);
+                background: var(--danger-100);
+                color: var(--danger-800);
+                box-shadow: none;                       /* ✅ pas d'ombre */
+                transition: background .2s, border-color .2s;
+        }
+        .btn-danger:hover { background: #ffcaca; }
+
+        /* version icône-only en mobile */
+        .btn-icon-responsive img { display: none; width: 26px; height: 26px; }
+        .btn-icon-responsive .btn-label { display: inline; }
+
+        @media (max-width: 620px) {
+                .btn-icon-responsive {
+                        padding: 8px;
+                        min-width: 44px;
+                        min-height: 44px;
+                        justify-content: center;
+                }
+                .btn-icon-responsive .btn-label { display: none; }
+                .btn-icon-responsive img { display: block; width: 28px; height: 28px; }
+        }
+}
