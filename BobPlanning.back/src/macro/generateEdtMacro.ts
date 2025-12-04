@@ -59,9 +59,6 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
           new Date(b.DateDebutP).getTime()
       );
 
-      if (promo.nom === "ADI1") {
-        endperiodeInitial = new Date(promo.periode[0].DateFinP);
-      }
     }
   });
 
@@ -162,13 +159,26 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
 
       // ---- Si aucune période ----
       if (periods.length === 0) {
-        if (holidayDescription.includes("Vacances")) {
-          rowData[promo.nom] = "VACANCES";
-        } else {
-          rowData[promo.nom] = "";
-          promosEnCours.push(promo.nom);
+        // Sans période → comportement dépend du type du cycle
+        if (!promo.periode || promo.periode.length === 0) {
+
+          if (promo.type === "Initial") {
+            // Promotions Initiales : respectent les vacances scolaires
+            if (holidayDescription.includes("Vacances")) {
+              rowData[promo.nom] = "VACANCES";
+            } else {
+              rowData[promo.nom] = "";
+              promosEnCours.push(promo.nom);
+            }
+          } else {
+            // Formations continues : jamais "VACANCES"
+            rowData[promo.nom] = "";
+            promosEnCours.push(promo.nom);
+          }
+
+          return;
         }
-        return;
+
       }
 
       // ---- 1. Chercher une période active ----

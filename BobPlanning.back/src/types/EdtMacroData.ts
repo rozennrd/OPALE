@@ -11,6 +11,7 @@ export interface Promos {
   id_cycle: string;
   date_start: Date;
   date_end: Date;
+  type: string;
   i: number;
   periode: Periode[];
 }
