@@ -20,9 +20,22 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
   // PARAMÈTRES CYPRE
   // ──────────────────────────────────────────────────────────────
   //
-  let weekCount = 1;
-  let adiStarted = false;
-  let adiStartWeek = 1;
+  // Trouver la première promo de type Initial (référence CyPré)
+  const initialPromo = data.Promos.find(p =>
+    p.type.toLowerCase() === "initial"
+  );
+  // Point de départ CyPré : date_start alignée au premier lundi
+  let cyPreStart: Date | null = null;
+  if (initialPromo) {
+    cyPreStart = new Date(initialPromo.date_start);
+    // Aligner la date au lundi
+    const day = cyPreStart.getDay();
+    if (day !== 1) {
+      cyPreStart.setDate(cyPreStart.getDate() - (day - 1));
+    }
+  }
+  // Compteur global des semaines CyPré
+  let cyPreWeekCount = 0;
 
   //
   // ──────────────────────────────────────────────────────────────
@@ -243,13 +256,25 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
 
 
     //
-    // ────────── CYPRE : semaine numérotée si cours ADI1 en cours ──────────
-    //
-    if (adiStarted) {
+// ────────── CYPRE : semaine numérotée pour les cycles Initiaux ──────────
+//
+    if (cyPreStart && currentDate >= cyPreStart) {
+
+      // 1) Semaine active = pas vacances
       if (!holidayDescription.includes("Vacances")) {
-        rowData.cypreWeek = `Se${((weekCount - adiStartWeek) % 16) + 1}`;
-        weekCount++;
+
+        // On avance de 1
+        cyPreWeekCount++;
+
+        // Numéro entre 1 et 16
+        const displayWeek = ((cyPreWeekCount - 1) % 16) + 1;
+
+        rowData.cypreWeek = `Se${displayWeek}`;
+      } else {
+        rowData.cypreWeek = "";
       }
+    } else {
+      rowData.cypreWeek = "";
     }
 
     //
