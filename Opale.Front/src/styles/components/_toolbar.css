@@ -1,0 +1,191 @@
+/* src/styles/components/_toolbar.css */
+
+@layer components {
+    /* Conteneur général de toolbar (fond + bordure) */
+    .page-toolbar {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        border-radius: 1rem;
+        background: var(--panel, #ffffff);
+        border: 1px solid var(--border-subtle, var(--border));
+    }
+
+    .page-toolbar-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .page-toolbar-row--filters {
+        justify-content: space-between;
+    }
+
+    /* ============================
+       Search commune (Events + Teachers)
+       ============================ */
+
+    .toolbar-search {
+        flex: 1;
+        min-width: 220px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: 999px;
+        background: var(--input-bg);
+        border: 1px solid var(--border);
+    }
+
+    .toolbar-search-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        opacity: 0.7;
+    }
+
+    .toolbar-search-input {
+        flex: 1;
+        min-width: 0;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: var(--text);
+        font-size: 0.95rem;
+    }
+
+    .toolbar-search-input::placeholder {
+        color: var(--muted);
+    }
+
+    /* ============================
+       Filtres (labels + inputs)
+       ============================ */
+
+    .toolbar-filter {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        min-width: 180px;
+    }
+
+    .toolbar-filter-label {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--muted-strong, var(--muted));
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .toolbar-filter-date {
+        padding: 0.3rem 0.5rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border);
+        background: var(--input-bg);
+        color: var(--text);
+        font-size: 0.85rem;
+    }
+
+    .toolbar-filter-select {
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border);
+        background: var(--input-bg);
+        color: var(--text);
+        font-size: 0.85rem;
+    }
+
+    /* ============================
+       Groupe de chips (target events)
+       ============================ */
+
+    .toolbar-toggle-chips {
+        display: inline-flex;
+        border-radius: 999px;
+        background: var(--panel-soft);
+        padding: 0.12rem;
+        border: 1px solid var(--border-subtle, var(--border));
+        gap: 0.12rem;
+        width: fit-content;
+    }
+
+    .toolbar-toggle-chip {
+        border: none;
+        background: transparent;
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        color: var(--muted);
+        white-space: nowrap;
+    }
+
+    .toolbar-toggle-chip--active {
+        background: var(--primary-soft, rgba(46, 133, 255, 0.12));
+        color: var(--primary, var(--brand));
+        font-weight: 600;
+    }
+
+    /* ============================
+       Boutons filtres (Teachers)
+       ============================ */
+
+    .toolbar-filter-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        background: var(--panel-soft);
+        border: 1px solid var(--border);
+        font-size: 0.9rem;
+        color: var(--text);
+        cursor: pointer;
+        transition:
+                background-color 150ms ease,
+                border-color 150ms ease,
+                transform 80ms ease;
+    }
+
+    .toolbar-filter-button:hover {
+        background: var(--surface-hover, var(--panel-soft));
+        border-color: var(--border);
+    }
+
+    .toolbar-filter-button:active {
+        transform: translateY(1px);
+    }
+
+    .toolbar-filter-button-chevron {
+        font-size: 0.75rem;
+        opacity: 0.7;
+    }
+
+    /* ============================
+       Responsive
+       ============================ */
+
+    @media (max-width: 900px) {
+        .page-toolbar-row--filters {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .toolbar-filter {
+            width: 100%;
+        }
+
+        .toolbar-toggle-chips {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .toolbar-toggle-chip {
+            flex: 1;
+            text-align: center;
+        }
+    }
+}
