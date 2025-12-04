@@ -5,11 +5,12 @@ import { TeachingMode } from '../../models/Teacher'
 import icDistanciel from '../../assets/ic-mode-distanciel.png'
 import icPresentiel from '../../assets/ic-mode-presentiel.png'
 import icHybride from '../../assets/ic-mode-hybride.png'
+import EntityBadge, { BadgeVariant } from '../common/EntityBadge'
 
 interface TeacherModeBadgeProps {
     mode: TeachingMode
     className?: string
-    variant?: 'card' | 'header'
+    variant?: BadgeVariant // 'card' | 'header'
     title?: string
     subtitle?: string
 }
@@ -21,69 +22,46 @@ export default function TeacherModeBadge({
                                              title,
                                              subtitle,
                                          }: TeacherModeBadgeProps) {
-    let label = ''
+    let label: string
     let iconSrc: string
+    let modeClass: string
 
     switch (mode) {
         case 'DISTANCIEL':
             label = 'Distanciel'
             iconSrc = icDistanciel
+            modeClass = 'distanciel'
             break
         case 'HYBRIDE':
             label = 'Hybride'
             iconSrc = icHybride
+            modeClass = 'hybride'
             break
         case 'PRESENTIEL':
         default:
             label = 'Présentiel'
             iconSrc = icPresentiel
+            modeClass = 'presentiel'
             break
     }
 
-    const modeClass = mode.toLowerCase() // distanciel / hybride / presentiel
+    const rootClassName = [
+        'teacher-mode-badge',
+        variant === 'header' && 'teacher-mode-badge-header',
+        `teacher-mode-${modeClass}`,
+        className,
+    ]
+        .filter(Boolean)
+        .join(' ')
 
-    // Variante header : grosse pill avec titre + sous-titre à gauche
-    // et icône + label du mode à droite
-    if (variant === 'header') {
-        const rootClassName = [
-            'teacher-mode-badge',
-            'teacher-mode-badge-header',
-            `teacher-mode-${modeClass}`,
-            className ?? '',
-        ]
-            .filter(Boolean)
-            .join(' ')
-
-        return (
-            <div className={rootClassName}>
-                <div className="teacher-mode-header-left">
-                    <div className="teacher-mode-header-title">
-                        {title ?? 'Détail enseignant'}
-                    </div>
-                    {subtitle && (
-                        <div className="teacher-mode-header-subtitle">
-                            {subtitle}
-                        </div>
-                    )}
-                </div>
-
-                <div className="teacher-mode-header-right">
-                    <div className="teacher-mode-icon" aria-hidden="true">
-                        <img src={iconSrc} alt="" />
-                    </div>
-                    <span className="teacher-mode-label">{label}</span>
-                </div>
-            </div>
-        )
-    }
-
-    // Variante "card" (pour les cards liste)
     return (
-        <div className={`teacher-mode-badge teacher-mode-${modeClass} ${className ?? ''}`}>
-            <div className="teacher-mode-icon" aria-hidden="true">
-                <img src={iconSrc} alt="" />
-            </div>
-            <span className="teacher-mode-label">{label}</span>
-        </div>
+        <EntityBadge
+            iconSrc={iconSrc}
+            label={label}
+            className={rootClassName}
+            variant={variant}
+            title={title}
+            subtitle={subtitle}
+        />
     )
 }
