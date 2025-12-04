@@ -22,8 +22,14 @@ const TYPE_META = {
     AUTRE: { label: 'Autre', icon: icEventOther },
 }
 
+// ... imports & TYPE_META identiques
+
+export function getEventTypeMeta(type: EventType) {
+    return TYPE_META[type] ?? TYPE_META.AUTRE
+}
+
 export default function EventTypeBadge({ type, source }: EventTypeBadgeProps) {
-    const meta = TYPE_META[type] ?? TYPE_META.AUTRE
+    const meta = getEventTypeMeta(type)
 
     return (
         <span
@@ -32,7 +38,9 @@ export default function EventTypeBadge({ type, source }: EventTypeBadgeProps) {
                 (source === 'JUNIA' ? 'junia' : 'external')
             }
         >
-            <img src={meta.icon} alt="" className="event-badge-icon" />
+            <span className="event-badge-icon">
+                <img src={meta.icon} alt="" aria-hidden="true" />
+            </span>
             <span className="event-badge-label">{meta.label}</span>
         </span>
     )
