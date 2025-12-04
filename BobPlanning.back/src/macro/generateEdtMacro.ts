@@ -204,7 +204,13 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
         } else if (t.includes("mobilité")) {
           rowData[promo.nom] = active.type; // "Mobilité internationale"
         } else if (t.includes("projet de fin") || t.includes("pfe")) {
-          rowData[promo.nom] = active.type; // "Projet de fin d'études"
+          const end = new Date(active.DateFinP);
+
+          if (end >= weekStart && end <= weekEnd) {
+            rowData[promo.nom] = "Soutenance";
+          } else {
+            rowData[promo.nom] = active.type; // "Projet de fin d'études"
+          }
         } else if (t.includes("entreprise")) {
           rowData[promo.nom] = active.type; // "Entreprise"
         } else {
