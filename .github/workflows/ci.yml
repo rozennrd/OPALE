@@ -32,6 +32,12 @@ jobs:
       run: cd BobPlanning.front && npm run lint
       continue-on-error: true
 
+    - name: Install dependencies for Opale frontend
+      run: cd Opale.Front && npm ci
+
+    - name: Lint Opale frontend
+      run: cd Opale.Front && npm run lint
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
