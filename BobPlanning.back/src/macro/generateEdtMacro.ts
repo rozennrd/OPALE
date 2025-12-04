@@ -23,7 +23,6 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
   let weekCount = 1;
   let adiStarted = false;
   let adiStartWeek = 1;
-  let endperiodeInitial = new Date();
 
   //
   // ──────────────────────────────────────────────────────────────
@@ -87,7 +86,7 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
     description: string;
   };
 
-// Tri vacances par date
+  // Tri vacances par date
   let isPublicHolliday: boolean = false;
 
   const sortedHolidays: Holiday[] = holidays.sort(
@@ -153,72 +152,88 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
     //
     // ────────── LOGIQUE PAR PROMO ──────────
     //
-    data.Promos.forEach((promo: Promos) => {
+    data.Promos.forEach(promo => {
+      const periodes = promo.periode ?? [];
 
-      const periods = promo.periode ?? [];
+      // Bornes de la semaine (lundi → dimanche)
+      const weekStart = new Date(currentDate);
+      const weekEnd = new Date(currentDate);
+      weekEnd.setDate(weekEnd.getDate() + 6);
 
-      // ---- Si aucune période ----
-      if (periods.length === 0) {
-        // Sans période → comportement dépend du type du cycle
-        if (!promo.periode || promo.periode.length === 0) {
-
-          if (promo.type === "Initial") {
-            // Promotions Initiales : respectent les vacances scolaires
-            if (holidayDescription.includes("Vacances")) {
-              rowData[promo.nom] = "VACANCES";
-            } else {
-              rowData[promo.nom] = "";
-              promosEnCours.push(promo.nom);
-            }
+      //
+      // 1) Aucune période définie pour cette promo
+      //
+      if (periodes.length === 0) {
+        if (promo.type === "Initial") {
+          // Initial : vacances visibles
+          if (holidayDescription.includes("Vacances")) {
+            rowData[promo.nom] = "VACANCES";
           } else {
-            // Formations continues : jamais "VACANCES"
             rowData[promo.nom] = "";
-            promosEnCours.push(promo.nom);
+            promosEnCours.push(promo.nom); // cours
           }
-
-          return;
+        } else {
+          // Apprentissage : jamais de vacances, cours par défaut
+          rowData[promo.nom] = "";
+          promosEnCours.push(promo.nom);
         }
-
+        return;
       }
 
-      // ---- 1. Chercher une période active ----
-      const day = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
-
-      const activePeriod = periods.find(p => {
-        const start = day(new Date(p.DateDebutP));
-        const end = day(new Date(p.DateFinP));
-        const cur = day(currentDate);
-        return cur >= start && cur <= end;
+      //
+      // 2) On cherche une période active qui recouvre AU MOINS une partie de la semaine
+      //
+      const active = periodes.find(p => {
+        const start = new Date(p.DateDebutP);
+        const end = new Date(p.DateFinP);
+        return end >= weekStart && start <= weekEnd;
       });
 
+      //
+      // 3) Cas : il y a un évènement actif cette semaine
+      //
+      if (active) {
+        const t = active.type.toLowerCase();
 
-      // ---- 1.a. Si période active → PRIORITÉ ABSOLUE ----
-      if (activePeriod) {
-        const typeLower = activePeriod.type.toLowerCase();
-        rowData[promo.nom] = activePeriod.type;   // ← affichage direct
-
-        // Cours normaux (vert)
-        if (!typeLower.includes("stage") && !typeLower.includes("rattrapage")) {
+        if (t.includes("rattrapage")) {
+          // "Rattrapage semestre 1 ou 3", etc.
+          rowData[promo.nom] = active.type;
+        } else if (t.includes("stage")) {
+          // "Stage Exécutant 1 mois" / "Stage International Break 2 mois"
+          rowData[promo.nom] = active.type;
+        } else if (t.includes("mobilité")) {
+          rowData[promo.nom] = active.type; // "Mobilité internationale"
+        } else if (t.includes("projet de fin") || t.includes("pfe")) {
+          rowData[promo.nom] = active.type; // "Projet de fin d'études"
+        } else if (t.includes("entreprise")) {
+          rowData[promo.nom] = active.type; // "Entreprise"
+        } else {
+          // Évènement inconnu → on considère que c'est une semaine de cours
+          rowData[promo.nom] = "";
           promosEnCours.push(promo.nom);
         }
 
-        // Démarrage CyPré (ADI1)
-        if (promo.nom === "ADI1" && !adiStarted) {
-          adiStarted = true;
-          adiStartWeek = weekCount;
-        }
-
-        return; // ← TRÈS IMPORTANT : empêche “VACANCES” d'écraser ton rattrapage
+        return;
       }
 
-      // ---- 2. Sinon → vacances ou cours normal ----
-      if (holidayDescription.includes("Vacances")) {
-        rowData[promo.nom] = "VACANCES";
+      //
+      // 4) Cas : aucun évènement actif cette semaine
+      //
+      if (promo.type === "Initial") {
+        if (holidayDescription.includes("Vacances")) {
+          rowData[promo.nom] = "VACANCES";
+        } else {
+          rowData[promo.nom] = "";
+          promosEnCours.push(promo.nom); // cours
+        }
       } else {
+        // Apprentissage : pas de vacances → cours
         rowData[promo.nom] = "";
         promosEnCours.push(promo.nom);
       }
     });
+
+
 
 
     //

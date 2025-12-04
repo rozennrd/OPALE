@@ -849,7 +849,7 @@ app.get('/getEventsMacro', authJwt.verifyToken, (req, res) => {
       "SELECT p.id as id_promotion, e.datetime_start, e.datetime_end, e.type, e.nom \n" +
       "FROM event e, promotion p, concerner c\n" +
       "WHERE e.show_macro = True\n  " +
-      "AND e.type in ('stage', 'mobilite', 'PFE', 'rattrapage')\n    " +
+      "AND e.type in ('stage', 'mobilite', 'PFE', 'rattrapage', 'entreprise')\n    " +
       "AND e.id = c.id_event\n" +
       "AND p.id = c.id_promo\n" +
       "ORDER BY nom ASC";
