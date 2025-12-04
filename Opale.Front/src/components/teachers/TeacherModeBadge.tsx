@@ -2,9 +2,9 @@
 import React from 'react'
 import { TeachingMode } from '../../models/Teacher'
 
-import icDistanciel from '../../assets/ic-mode-distanciel.png'
-import icPresentiel from '../../assets/ic-mode-presentiel.png'
-import icHybride from '../../assets/ic-mode-hybride.png'
+import icDistanciel from '../../assets/mode/ic-mode-distanciel.png'
+import icPresentiel from '../../assets/mode/ic-mode-presentiel.png'
+import icHybride from '../../assets/mode/ic-mode-hybride.png'
 import EntityBadge, { BadgeVariant } from '../common/EntityBadge'
 
 interface TeacherModeBadgeProps {

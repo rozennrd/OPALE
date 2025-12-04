@@ -1,11 +1,11 @@
 import React from 'react'
 import { RoomType } from '../../models/Room'
 
-import icTd from '../../assets/ic-room-td.png'
-import icTpe from '../../assets/ic-room-tp-electronique.png'
-import icTpn from '../../assets/ic-room-tp-numerique.png'
-import icProjet from '../../assets/ic-room-projet.png'
-import icAutre from '../../assets/ic-room-autre.png'
+import icTd from '../../assets/rooms/ic-room-td.png'
+import icTpe from '../../assets/rooms/ic-room-tp-electronique.png'
+import icTpn from '../../assets/rooms/ic-room-tp-numerique.png'
+import icProjet from '../../assets/rooms/ic-room-projet.png'
+import icAutre from '../../assets/rooms/ic-room-autre.png'
 import EntityBadge, { BadgeVariant } from '../common/EntityBadge'
 
 interface RoomTypeBadgeProps {
