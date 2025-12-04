@@ -27,18 +27,23 @@ const dbConfig = getDBConfig();
 
 const app = express();
 const PORT = 3000;
-app.use(express.json({ limit: "50mb" }));
-app.use(cors({
-  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: string | boolean) => void) {
-    // Allow requests with no origin (mobile apps, curl, etc.)
-    if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
-      return callback(null, origin || true);
-    } else {
-      return callback(null, false);
-    }
-  },
-  credentials: true,
-}));
+app.use(express.json({ limit: '50mb' }));
+app.use(
+  cors({
+    origin: function (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: string | boolean) => void,
+    ) {
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
+        return callback(null, origin || true);
+      } else {
+        return callback(null, false);
+      }
+    },
+    credentials: true,
+  }),
+);
 
 pool.connect((err: any, connection: any) => {
   if (err) {
@@ -83,7 +88,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *       401:
  *         description: Non authentifié
  */
-app.get("/verify-auth", authJwt.verifyToken, (req: Request, res: Response) => {
+app.get('/verify-auth', authJwt.verifyToken, (req: Request, res: Response) => {
   res.json({ authenticated: true, userId: (req as any).userId });
 });
 
@@ -287,7 +292,6 @@ app.get(
           return res.status(500).json({ error: error.message });
         }
 
-
         // Normalize results: support drivers that return an array or an object with `rows`
         const promotions = Array.isArray(results)
           ? results
@@ -461,11 +465,9 @@ app.post('/setPromosData', authJwt.verifyToken, (req, res) => {
 app.put('/updatePromotion', authJwt.verifyToken, (req, res): void => {
   const { id, nom, effectifs, date_start, date_end } = req.body;
   if (!id || !nom || !effectifs || !date_start || !date_end) {
-    res
-      .status(400)
-      .json({
-        message: "Tous les champs sont requis, à l'exception d'id_cycle.",
-      });
+    res.status(400).json({
+      message: "Tous les champs sont requis, à l'exception d'id_cycle.",
+    });
     return;
   }
 
@@ -538,7 +540,6 @@ app.delete(
   },
 );
 
-
 // TODO : Utiliser ce endpoint pour le nouveau front
 
 // Set promotion
@@ -574,7 +575,6 @@ app.post('/addPromotion', authJwt.verifyToken, (req, res) => {
     );
   });
 });
-
 
 /**
  * @swagger
@@ -1721,11 +1721,11 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
               //               Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
 
               const sql = `INSERT INTO matiere (id_promo, nom, semestre, volume_horaire)
-                                     VALUES (?, ?, ?, ?) ON CONFLICT (id_promo, nom) 
+                                         VALUES (?, ?, ?, ?) ON CONFLICT (id_promo, nom) 
                             DO
-                        UPDATE SET
-                            semestre = EXCLUDED.semestre,
-                            volume_horaire = EXCLUDED.volume_horaire`;
+                            UPDATE SET
+                                semestre = EXCLUDED.semestre,
+                                volume_horaire = EXCLUDED.volume_horaire`;
               connection.query(
                 sql,
                 [
@@ -1800,8 +1800,8 @@ app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
       }) => {
         return new Promise<void>((resolve, reject) => {
           const sql = `UPDATE Cours
-                             SET id_prof = ?
-                             WHERE id_event = ?`;
+                                 SET id_prof = ?
+                                 WHERE id_event = ?`;
 
           connection.query(sql, [cours.Prof, cours.name], (error: any) => {
             if (error) {
@@ -2045,10 +2045,11 @@ app.delete(
   },
 );
 
-
-app.get('/getGroups', authJwt.verifyToken, (req: Request, res: Response): void => {
-
-  pool.connect((err: any, connection: any) => {
+app.get(
+  '/getGroups',
+  authJwt.verifyToken,
+  (req: Request, res: Response): void => {
+    pool.connect((err: any, connection: any) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
@@ -2066,9 +2067,8 @@ app.get('/getGroups', authJwt.verifyToken, (req: Request, res: Response): void =
   },
 );
 
-
 app.post(
-  '/setGroup',
+  '/addGroup',
   authJwt.verifyToken,
   (req: Request, res: Response): void => {
     const { id_promo, nom, effectifs } = req.body;
@@ -2130,7 +2130,6 @@ app.put('/updateGroup', authJwt.verifyToken, (req, res): void => {
       [id, id_promo, nom, effectifs],
       (error: any, result: any) => {
         if (error) {
-
           // Unicity constraint name/promo
           if (error.constraint === 'uq_groupe_nom_promo') {
             res.status(409).json({
@@ -2139,84 +2138,97 @@ app.put('/updateGroup', authJwt.verifyToken, (req, res): void => {
             });
             return;
           }
-
           res.status(500).json({ error: error.message });
           return;
         }
-        return res.status(200).json(result.rows);
+
+        const affectedRows = result.rowCount;
+
+        if (affectedRows === 0) {
+          res
+            .status(404)
+            .json({ message: `Groupe avec l'ID ${id} non trouvé` });
+          return;
+        }
+        res.json({ message: 'Groupe mis à jour avec succès' });
+      },
+    );
+    connection.release(); // Libérer la connexion
+  });
+});
+
+// Get group by Id
+app.get(
+  '/getGroupById',
+  authJwt.verifyToken,
+  (req: Request, res: Response): void => {
+    const { id } = req.query;
+
+    if (!id) {
+      res.status(400).json({ error: 'Veuillez passer un id en paramètre.' });
+      return;
+    }
+
+    pool.connect((err: any, connection: any) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      const sql = 'SELECT * FROM groupe WHERE id = $1;';
+
+      connection.query(sql, [id], (error: any, result: any) => {
+        connection.release();
+
+        if (error) {
+          return res.status(500).json({ error: error.message });
+        }
+
+        if (result.rows.length === 0) {
+          return res.status(404).json({ error: 'Groupe non trouvé.' });
+        }
+
+        return res.status(200).json(result.rows[0]);
       });
     });
   },
 );
 
-// Get group by Id
-app.get('/getGroupById', authJwt.verifyToken, (req: Request, res: Response): void => {
-  const { id } = req.query;
-
-  if (!id) {
-    res.status(400).json({ error: "Veuillez passer un id en paramètre." });
-    return;
-  }
-
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    const sql = 'SELECT * FROM groupe WHERE id = $1;';
-
-    connection.query(sql, [id], (error: any, result: any) => {
-      connection.release();
-
-      if (error) {
-        return res.status(500).json({ error: error.message });
-      }
-
-      if (result.rows.length === 0) {
-        return res.status(404).json({ error: "Groupe non trouvé." });
-      }
-
-      return res.status(200).json(result.rows[0]);
-    });
-  });
-});
-
 // Delete a group
 app.delete(
-    '/deleteGroup',
-    authJwt.verifyToken,
-    (req: Request, res: Response): void => {
-      const { id } = req.query;
+  '/deleteGroup',
+  authJwt.verifyToken,
+  (req: Request, res: Response): void => {
+    const { id } = req.query;
 
-      if (!id) {
-        res.status(400).json({ message: "Veuillez passer un id en paramètre." });
-        return;
+    if (!id) {
+      res.status(400).json({ message: 'Veuillez passer un id en paramètre.' });
+      return;
+    }
+
+    pool.connect((err: any, connection: any) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
       }
 
-      pool.connect((err: any, connection: any) => {
-        if (err) {
-          return res.status(500).json({ error: err.message });
+      const sql = 'DELETE FROM groupe WHERE id = $1';
+
+      connection.query(sql, [id], (error: any, result: any) => {
+        connection.release(); // Libérer la connexion
+
+        if (error) {
+          return res.status(500).json({ error: error.message });
         }
 
-        const sql = 'DELETE FROM groupe WHERE id = $1';
+        const affectedRows = result.rowCount;
 
-        connection.query(sql, [id], (error: any, result: any) => {
-          connection.release(); // Libérer la connexion
+        if (affectedRows === 0) {
+          return res.status(404).json({ message: 'Groupe non trouvé' });
+        }
 
-          if (error) {
-            return res.status(500).json({ error: error.message });
-          }
-
-          const affectedRows = result.rowCount;
-
-          if (affectedRows === 0) {
-            return res.status(404).json({ message: 'Groupe non trouvé' });
-          }
-
-          return res.json({ message: 'Groupe supprimé avec succès' });
-        });
+        return res.json({ message: 'Groupe supprimé avec succès' });
       });
-    },
+    });
+  },
 );
 
 // Start the server
