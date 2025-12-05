@@ -578,6 +578,62 @@ app.post('/addPromotion', authJwt.verifyToken, (req, res) => {
   });
 });
 
+// Get event by promo and list of types
+app.get(
+    '/getEventPromo',
+    authJwt.verifyToken,
+    (req: Request, res: Response): void => {
+      const { promo, types } = req.body;
+
+      if (!promo || !Array.isArray(types) || types.length === 0) {
+          res.status(400).json({ message: "Les champs 'promo' et 'types[]' sont obligatoires." });
+        return;
+      }
+
+      pool.connect((err: any, connection: any) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        const sql = `
+          SELECT e.*
+          FROM event e
+                 JOIN concerner c ON c.id_event = e.id
+                 JOIN promotion p ON p.id = c.id_promo
+          WHERE p.nom = $1
+            AND e.type = ANY($2)
+          ORDER BY e.datetime_start ASC
+        `;
+
+        connection.query(sql, [promo, types], (error: any, result: any) => {
+          connection.release();
+
+          if (error) {
+            return res.status(500).json({ error: error.message });
+          }
+
+          const rows = result.rows;
+
+          // Order by type
+          const response: Record<string, any[]> = {};
+          types.forEach((t) => {
+            response[t] = rows.filter((ev: Event) => ev.type === t);
+          });
+
+          const nothingFound = Object.values(response).every(
+              (list) => list.length === 0
+          );
+
+          if (nothingFound) {
+            return res.status(404).json({ message:`Aucun évènement trouvé pour la promo ${promo}.` });
+          }
+
+          return res.json(response);
+        });
+      });
+    }
+);
+
 /*========== PROFESSEURS ==========*/
 
 /**
