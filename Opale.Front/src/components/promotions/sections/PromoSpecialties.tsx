@@ -4,7 +4,7 @@ import { GroupSpecialtyItem } from '../../../models'
 interface PromoSpecialtiesProps {
     specialties: GroupSpecialtyItem[]
     onAddSpecialty: () => void
-    onSpecialtyChange: (index: number, field: string, value: any) => void
+    onSpecialtyChange: (index: number, field: string, value: string | number) => void
     onRemoveSpecialty: (index: number) => void
 }
 

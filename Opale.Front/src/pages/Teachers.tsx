@@ -9,15 +9,20 @@ import {
 } from '../mocks/teachers.mock'
 
 import { Teacher } from '../models/Teacher'
+import PageHeader from "../components/common/PageHeader";
 
 export default function Teachers() {
     const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null)
 
     return (
         <>
-            <h2 className="page-title">Enseignants</h2>
-            <p className="page-sub">Gestion des enseignants (internes & vacataires)</p>
+            {/* TITRE & SOUS-TITRE */}
+            <PageHeader
+                title="Enseignants"
+                subtitle="Gestion des enseignants (internes & vacataires)"
+            />
 
+            {/* CONTENU DE LA PAGE */}
             <div className="teachers-page">
                 <TeachersToolbar />
 

@@ -1,6 +1,8 @@
+// src/components/rooms/RoomCard.tsx
 import React from 'react'
 import { Room } from '../../models/Room'
 import RoomTypeBadge from './RoomTypeBadge'
+import EntityCard from '../common/EntityCard'
 
 interface RoomCardProps {
     room: Room
@@ -29,19 +31,22 @@ export default function RoomCard({ room, onSelect }: RoomCardProps) {
     }
 
     return (
-        <article className="room-card" onClick={handleClick}>
-            <div className="room-card-main">
-                <div className="room-card-name">{fullName}</div>
-                <div className="room-card-meta">
-                    <span className="room-card-code">{room.name}</span>
-                    <span className="room-card-separator">•</span>
-                    <span className="room-card-floor">{floorLabel(room.floor)}</span>
-                </div>
+        <EntityCard
+            onClick={handleClick}
+            className="room-card"
+            mainClassName="room-card-main"
+            asideClassName="room-card-type"
+            badge={<RoomTypeBadge type={room.mainType} />}
+            variant="default" // ou "compact" si tu veux serrer un peu
+        >
+            <div className="room-card-name">{fullName}</div>
+            <div className="room-card-meta">
+                <span className="room-card-code">{room.name}</span>
+                <span className="room-card-separator">•</span>
+                <span className="room-card-floor">
+                    {floorLabel(room.floor)}
+                </span>
             </div>
-
-            <div className="room-card-type">
-                <RoomTypeBadge type={room.mainType} />
-            </div>
-        </article>
+        </EntityCard>
     )
 }

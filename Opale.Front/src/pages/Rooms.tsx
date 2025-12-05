@@ -4,6 +4,7 @@ import { Room } from '../models/Room'
 import { ROOMS_MOCK } from '../mocks/rooms.mock'
 import RoomsSection from '../components/rooms/RoomsSection'
 import RoomDetailCard from '../components/rooms/RoomDetailCard'
+import PageHeader from '../components/common/PageHeader'
 
 export default function Rooms() {
     const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
@@ -21,12 +22,13 @@ export default function Rooms() {
 
     return (
         <>
-            <h1 className="page-title">Salles</h1>
-            <p className="page-sub">
-                Liste des salles par étage avec types et commentaires (mock
-                front uniquement).
-            </p>
+            {/* TITRE & SOUS-TITRE */}
+            <PageHeader
+                title="Salles"
+                subtitle="Liste des salles par étage avec types et commentaires (mock front uniquement)."
+            />
 
+            {/* CONTENU DE LA PAGE */}
             <div className="rooms-page">
                 <div className="rooms-sections">
                     {[0, 1, 2].map((floor) => (

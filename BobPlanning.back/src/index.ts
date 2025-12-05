@@ -175,6 +175,8 @@ app.post('/login', async (req: Request, res: Response) => {
   }
 });
 
+/*========== PROMOTIONS ==========*/
+
 // TODO : A supprimer une fois que l'ancien back n'est plus utilisé. Pour le nouveau front, utiliser : /getPromotions
 /**
  * @swagger
@@ -576,6 +578,64 @@ app.post('/addPromotion', authJwt.verifyToken, (req, res) => {
   });
 });
 
+// Get event by promo and list of types
+app.get(
+    '/getEventPromo',
+    authJwt.verifyToken,
+    (req: Request, res: Response): void => {
+      const { promo, types } = req.body;
+
+      if (!promo || !Array.isArray(types) || types.length === 0) {
+          res.status(400).json({ message: "Les champs 'promo' et 'types[]' sont obligatoires." });
+        return;
+      }
+
+      pool.connect((err: any, connection: any) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        const sql = `
+          SELECT e.*
+          FROM event e
+                 JOIN concerner c ON c.id_event = e.id
+                 JOIN promotion p ON p.id = c.id_promo
+          WHERE p.nom = $1
+            AND e.type = ANY($2)
+          ORDER BY e.datetime_start ASC
+        `;
+
+        connection.query(sql, [promo, types], (error: any, result: any) => {
+          connection.release();
+
+          if (error) {
+            return res.status(500).json({ error: error.message });
+          }
+
+          const rows = result.rows;
+
+          // Order by type
+          const response: Record<string, any[]> = {};
+          types.forEach((t) => {
+            response[t] = rows.filter((ev: Event) => ev.type === t);
+          });
+
+          const nothingFound = Object.values(response).every(
+              (list) => list.length === 0
+          );
+
+          if (nothingFound) {
+            return res.status(404).json({ message:`Aucun évènement trouvé pour la promo ${promo}.` });
+          }
+
+          return res.json(response);
+        });
+      });
+    }
+);
+
+/*========== PROFESSEURS ==========*/
+
 /**
  * @swagger
  * /getProfsData:
@@ -834,6 +894,8 @@ app.delete(
   },
 );
 
+/*========== GENERATION MACRO ==========*/
+
 /**
  * @swagger
  * /generateEdtMacro:
@@ -944,6 +1006,8 @@ app.get('/download/EdtMacro', authJwt.verifyToken, (req, res) => {
     }
   });
 });
+
+/*========== GENERATION MICRO ==========*/
 
 /**
  * @swagger
@@ -1398,6 +1462,8 @@ app.post(
   },
 );
 
+/*========== SALLES ==========*/
+
 /**
  * @swagger
  * /getSallesData:
@@ -1665,6 +1731,8 @@ app.delete('/deleteSalle', authJwt.verifyToken, (req, res) => {
   });
 });
 
+/*========== COURS ==========*/
+
 app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
   pool.connect((err: any, connection: any) => {
     if (err) {
@@ -1849,6 +1917,8 @@ app.get('/getCours', authJwt.verifyToken, (req, res) => {
     connection.release(); // Libérer la connexion après l'exécution
   });
 });
+
+/*========== CYCLE ==========*/
 
 // Update cycle
 app.put('/updateCycle', authJwt.verifyToken, (req, res): void => {
@@ -2045,6 +2115,8 @@ app.delete(
   },
 );
 
+/*========== GROUPE ==========*/
+
 app.get(
   '/getGroups',
   authJwt.verifyToken,
@@ -2231,6 +2303,45 @@ app.delete(
   },
 );
 
+// Delete an event
+app.delete(
+  '/deleteEvent',
+  authJwt.verifyToken,
+  (req: Request, res: Response): void => {
+    const { id } = req.query;
+
+    if (!id) {
+      res.status(400).json({ message: "Le paramètre 'id' est obligatoire." });
+      return;
+    }
+
+    pool.connect((err: any, connection: any) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      const sql = 'DELETE FROM event WHERE id = $1';
+
+      connection.query(sql, [id], (error: any, result: any) => {
+        connection.release(); // Libérer la connexion
+
+        if (error) {
+          return res.status(500).json({ error: error.message });
+        }
+
+        const affectedRows = result.rowCount;
+
+        if (affectedRows === 0) {
+          return res
+            .status(404)
+            .json({ message: `Événement avec l'ID ${id} non trouvé` });
+        }
+
+        return res.json({ message: "Événement supprimé avec succès" });
+      });
+    });
+  },
+);
 // Update event
 app.put('/updateEvent', authJwt.verifyToken, (req: Request, res: Response): void => {
   const {
@@ -2347,6 +2458,86 @@ app.get('/getExceptionalEvents', authJwt.verifyToken, (req: Request, res: Respon
     });
   });
 });
+
+
+// Add event
+app.post(
+    '/addEvent',
+    authJwt.verifyToken,
+    (req: Request, res: Response): void => {
+      const {
+        type,
+        nom,
+        num_semaine,
+        datetime_start,
+        datetime_end,
+        show_macro,
+        show_micro,
+        is_blocking,
+        is_exceptional,
+        is_external
+      } = req.body;
+
+      // Check required fields
+      if (!type || !nom || !datetime_start || !datetime_end) {
+        res.status(400).json({
+          message: "Les champs type, nom, datetime_start et datetime_end sont obligatoires."
+        });
+        return;
+      }
+
+      pool.connect((err: any, connection: any) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        const sql = `
+            INSERT INTO event (type, nom, num_semaine, datetime_start, datetime_end, show_macro, show_micro,
+                               is_blocking,
+                               is_exceptional, is_external)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+        `;
+
+        connection.query(
+            sql,
+            [
+              type,
+              nom,
+              num_semaine,
+              datetime_start,
+              datetime_end,
+              show_macro,
+              show_micro,
+              is_blocking,
+              is_exceptional,
+              is_external,
+            ],
+            (error: any, result: any) => {
+              connection.release();
+
+              if (error) {
+                // Check date constraint
+                if (error.constraint === 'ck_event_dates') {
+                  res.status(400).json({
+                    error: 'La date de début doit être antérieure à la date de fin.',
+                  });
+                  return;
+                }
+                res.status(500).json({ error: error.message });
+                return;
+              }
+
+
+              const insertedId = result?.rows?.[0]?.id ?? null;
+              return res.status(201).json({
+                message: "Évènement ajouté avec succès",
+                insertedId
+              });
+            }
+        );
+      });
+    }
+);
 
 // Start the server
 const server = app.listen(PORT, () => {
