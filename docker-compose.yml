@@ -63,7 +63,7 @@ services:
     networks:
       - api-network
     ports:
-      - "5000:5000"
+      - "5001:5001"
 
   opale-new-frontend:
     build:
