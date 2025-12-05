@@ -1,5 +1,5 @@
 // src/components/teachers/TeacherDetailCard.tsx
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Teacher } from '../../models/Teacher'
 import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import TeacherInfoColumn from './section/TeacherInfoColumn'
@@ -34,13 +34,13 @@ export default function TeacherDetailCard({ teacher, onClose }: TeacherDetailCar
 
     const [openCloseConfirm, setOpenCloseConfirm] = useState(false)
 
-    const handleRequestClose = () => {
+    const handleRequestClose = useCallback(() => {
         if (!hasChanges) {
             onClose()
             return
         }
         setOpenCloseConfirm(true)
-    }
+    }, [hasChanges, onClose])
 
     const handleConfirmSaveAndClose = () => {
         setOpenCloseConfirm(false)
@@ -72,7 +72,7 @@ export default function TeacherDetailCard({ teacher, onClose }: TeacherDetailCar
 
         window.addEventListener('keydown', onKeyDown)
         return () => window.removeEventListener('keydown', onKeyDown)
-    }, [hasChanges]) // handleRequestClose est stable dans ce contexte
+    }, [hasChanges, handleRequestClose])
 
     return (
         <div className="teacher-detail-overlay">
