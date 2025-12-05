@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Cycle } from '../../models'
-import { buildMockCycles } from '../../mocks/promotionCycles.mock'
+
 import {
     hasPromoMismatch,
 } from '../../utils/promoUtils'
@@ -124,7 +124,7 @@ export function usePromotionCycles() {
             setLoading(false)
         }
     }
-    const [cycles, setCycles] = useState<Cycle[]>(() => buildMockCycles())
+    
 
     const removeCycle = async (cycleId: string): Promise<void> => {
 
