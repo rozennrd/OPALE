@@ -998,106 +998,152 @@ app.post(
   "/generateEdtMacro",
   authJwt.verifyToken,
   async (req: Request, res: Response) => {
+    // Type definitions
+    type RawMacroEvent = {
+      id_promotion: string;
+      datetime_start: string;
+      datetime_end: string;
+      type: string;
+      nom: string;
+    };
+
     try {
+      // ========================================
+      // 1. Fetch Promotions
+      // ========================================
+      const promotions = await new Promise<Promos[]>((resolve, reject) => {
+        pool.connect((err: any, connection: any) => {
+          if (err) {
+            return reject(err);
+          }
 
-      const BACKEND_URL = process.env.BACKEND_URL;
-      const token = req.headers["x-access-token"] as string;
+          const sql = `
+            SELECT p.id, p.nom, p.effectifs, p.id_cycle, p.date_start, p.date_end, c.type
+            FROM promotion p
+            INNER JOIN cycle c ON p.id_cycle = c.id
+          `;
 
-      // Récupération des promotions
-      const promotionsResponse = await fetch(`${BACKEND_URL}/getPromotions`, {
-        method: "GET",
-        headers: {
-          "x-access-token": token,
-        },
+          connection.query(sql, (error: any, results: any) => {
+            connection.release();
+
+            if (error) {
+              return reject(error);
+            }
+
+            // Normalize results for different drivers
+            const normalized = Array.isArray(results)
+              ? results
+              : results?.rows || [];
+
+            resolve(normalized);
+          });
+        });
       });
 
-      if (!promotionsResponse.ok) {
-        throw new Error("Erreur lors de la récupération des promotions");
-      }
-
-      const promotions: Promos[] = await promotionsResponse.json();
       console.log("Promotions récupérées :", promotions);
 
-      // Récupération des événements macro
-      const eventsResponse = await fetch(`${BACKEND_URL}/getEventsMacro`, {
-        method: "GET",
-        headers: {
-          "x-access-token": token,
-        },
+      // ========================================
+      // 2. Fetch Macro Events
+      // ========================================
+      const eventsMacro = await new Promise<RawMacroEvent[]>((resolve, reject) => {
+        pool.connect((err: any, connection: any) => {
+          if (err) {
+            return reject(err);
+          }
+
+          const sql = `
+            SELECT 
+              p.id as id_promotion, 
+              e.datetime_start, 
+              e.datetime_end, 
+              e.type, 
+              e.nom
+            FROM event e
+            INNER JOIN concerner c ON e.id = c.id_event
+            INNER JOIN promotion p ON p.id = c.id_promo
+            WHERE e.show_macro = TRUE
+              AND e.type IN ('stage', 'mobilite', 'PFE', 'rattrapage', 'entreprise')
+            ORDER BY e.nom ASC
+          `;
+
+          connection.query(sql, (error: any, results: any) => {
+            connection.release();
+
+            if (error) {
+              return reject(error);
+            }
+
+            // Normalize results for different drivers
+            const normalized = Array.isArray(results)
+              ? results
+              : results?.rows || [];
+
+            resolve(normalized);
+          });
+        });
       });
 
-      if (!eventsResponse.ok) {
-        throw new Error("Erreur lors de la récupération des événements");
-      }
+      console.log("Événements récupérés :", eventsMacro);
 
-      const events = await eventsResponse.json();
-      console.log("Événements récupérés :", events);
-
-      // Typage local des événements SQL
-      type RawMacroEvent = {
-        id_promotion: string;
-        datetime_start: string;
-        datetime_end: string;
-        type: string;
-        nom: string;
-      };
-
-      // Injection des périodes dans CHAQUE promotion
+      // ========================================
+      // 3. Build Promotions with Periods
+      // ========================================
       const promotionsWithPeriods: Promos[] = promotions.map((promo) => {
-        const promoPeriods: Periode[] = events
-          .filter(
-            (ev: RawMacroEvent) => ev.id_promotion === promo.id
-          )
-          .map(
-            (ev: RawMacroEvent): Periode => ({
-              DateDebutP: new Date(ev.datetime_start),
-              DateFinP: new Date(ev.datetime_end),
-              type: ev.nom,
-            })
-          )
-          .sort(
-            (a: Periode, b: Periode) =>
-              a.DateDebutP.getTime() - b.DateDebutP.getTime()
-          );
+        // Filter events for this promotion
+        const promoEvents = eventsMacro.filter(
+          (ev) => ev.id_promotion === promo.id
+        );
+
+        // Transform to Periode objects and sort
+        const promoPeriods: Periode[] = promoEvents
+          .map((ev): Periode => ({
+            DateDebutP: new Date(ev.datetime_start),
+            DateFinP: new Date(ev.datetime_end),
+            type: ev.nom,
+          }))
+          .sort((a, b) => a.DateDebutP.getTime() - b.DateDebutP.getTime());
 
         return {
           ...promo,
           periode: promoPeriods,
-          i: 0, // toujours initialisé pour ton algo
+          i: 0,
         };
       });
 
       console.log("Promotions enrichies :", promotionsWithPeriods);
 
-      //
-      // 5️⃣ Définition des dates fixes
-      //
+      // ========================================
+      // 4. Define Date Range
+      // ========================================
       const start = new Date("2025-09-01");
       const end = new Date("2026-08-31");
 
-      //
-      // 6️⃣ Appel du générateur Excel
-      //
+      // ========================================
+      // 5. Generate Excel
+      // ========================================
       await generateEdtMacro({
         DateDeb: start,
         DateFin: end,
         Promos: promotionsWithPeriods,
       });
 
-      //
-      // 7️⃣ Réponse finale
-      //
+      // ========================================
+      // 6. Send Success Response
+      // ========================================
       res.status(200).json({
         message: "Excel généré avec succès",
         fileUrl: "/download/EdtMacro",
       });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Internal server error: " + error);
+
+    } catch (error: any) {
+      console.error("Error in generateEdtMacro:", error);
+      res.status(500).json({
+        error: "Internal server error",
+        message: error.message || "Unknown error occurred",
+      });
     }
   }
 );
-
 
 
 /**
