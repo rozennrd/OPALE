@@ -175,6 +175,8 @@ app.post('/login', async (req: Request, res: Response) => {
   }
 });
 
+/*========== PROMOTIONS ==========*/
+
 // TODO : A supprimer une fois que l'ancien back n'est plus utilisé. Pour le nouveau front, utiliser : /getPromotions
 /**
  * @swagger
@@ -576,6 +578,64 @@ app.post('/addPromotion', authJwt.verifyToken, (req, res) => {
   });
 });
 
+// Get event by promo and list of types
+app.get(
+    '/getEventPromo',
+    authJwt.verifyToken,
+    (req: Request, res: Response): void => {
+      const { promo, types } = req.body;
+
+      if (!promo || !Array.isArray(types) || types.length === 0) {
+          res.status(400).json({ message: "Les champs 'promo' et 'types[]' sont obligatoires." });
+        return;
+      }
+
+      pool.connect((err: any, connection: any) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        const sql = `
+          SELECT e.*
+          FROM event e
+                 JOIN concerner c ON c.id_event = e.id
+                 JOIN promotion p ON p.id = c.id_promo
+          WHERE p.nom = $1
+            AND e.type = ANY($2)
+          ORDER BY e.datetime_start ASC
+        `;
+
+        connection.query(sql, [promo, types], (error: any, result: any) => {
+          connection.release();
+
+          if (error) {
+            return res.status(500).json({ error: error.message });
+          }
+
+          const rows = result.rows;
+
+          // Order by type
+          const response: Record<string, any[]> = {};
+          types.forEach((t) => {
+            response[t] = rows.filter((ev: Event) => ev.type === t);
+          });
+
+          const nothingFound = Object.values(response).every(
+              (list) => list.length === 0
+          );
+
+          if (nothingFound) {
+            return res.status(404).json({ message:`Aucun évènement trouvé pour la promo ${promo}.` });
+          }
+
+          return res.json(response);
+        });
+      });
+    }
+);
+
+/*========== PROFESSEURS ==========*/
+
 /**
  * @swagger
  * /getProfsData:
@@ -834,6 +894,8 @@ app.delete(
   },
 );
 
+/*========== GENERATION MACRO ==========*/
+
 /**
  * @swagger
  * /generateEdtMacro:
@@ -944,6 +1006,8 @@ app.get('/download/EdtMacro', authJwt.verifyToken, (req, res) => {
     }
   });
 });
+
+/*========== GENERATION MICRO ==========*/
 
 /**
  * @swagger
@@ -1398,6 +1462,8 @@ app.post(
   },
 );
 
+/*========== SALLES ==========*/
+
 /**
  * @swagger
  * /getSallesData:
@@ -1665,6 +1731,8 @@ app.delete('/deleteSalle', authJwt.verifyToken, (req, res) => {
   });
 });
 
+/*========== COURS ==========*/
+
 app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
   pool.connect((err: any, connection: any) => {
     if (err) {
@@ -1849,6 +1917,8 @@ app.get('/getCours', authJwt.verifyToken, (req, res) => {
     connection.release(); // Libérer la connexion après l'exécution
   });
 });
+
+/*========== CYCLE ==========*/
 
 // Update cycle
 app.put('/updateCycle', authJwt.verifyToken, (req, res): void => {
@@ -2044,6 +2114,8 @@ app.delete(
     });
   },
 );
+
+/*========== GROUPE ==========*/
 
 app.get(
   '/getGroups',
