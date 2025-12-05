@@ -14,6 +14,7 @@ import authJwt from './middleware/authJwt';
 import { pool } from './database/pool';
 
 import { Periode, Promos } from "./types/EdtMacroData";
+import salleRoutes from './api/routes/salleRoutes';
 
 require('dotenv').config();
 
@@ -58,6 +59,8 @@ pool.connect((err: any, connection: any) => {
     connection.release(); // Libérer la connexion après vérification
   }
 });
+
+app.use('/', salleRoutes);
 
 // Swagger options
 const swaggerOptions = {
@@ -1651,31 +1654,31 @@ app.post(
  *       500:
  *         description: Une erreur est survenue
  */
-// TypeScript
-app.get('/getSallesData', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    const sql = 'SELECT * FROM salle ORDER BY nom ASC';
-    connection.query(sql, (error: any, results: any) => {
-      if (error) {
-        connection.release();
-        return res.status(500).json({ error: error.message });
-      }
-
-      // Normalize results: support drivers that return an array or an object with `rows`
-      const salles = Array.isArray(results)
-        ? results
-        : results && Array.isArray((results as any).rows)
-          ? (results as any).rows
-          : [];
-
-      res.json(salles);
-      connection.release(); // Libérer la connexion après vérification
-    });
-  });
-});
+// // TypeScript
+// app.get('/getSallesData', authJwt.verifyToken, (req, res) => {
+//   pool.connect((err: any, connection: any) => {
+//     if (err) {
+//       return res.status(500).json({ error: err.message });
+//     }
+//     const sql = 'SELECT * FROM salle ORDER BY nom ASC';
+//     connection.query(sql, (error: any, results: any) => {
+//       if (error) {
+//         connection.release();
+//         return res.status(500).json({ error: error.message });
+//       }
+//
+//       // Normalize results: support drivers that return an array or an object with `rows`
+//       const salles = Array.isArray(results)
+//         ? results
+//         : results && Array.isArray((results as any).rows)
+//           ? (results as any).rows
+//           : [];
+//
+//       res.json(salles);
+//       connection.release(); // Libérer la connexion après vérification
+//     });
+//   });
+// });
 
 /**
  * @swagger
@@ -1715,37 +1718,37 @@ app.get('/getSallesData', authJwt.verifyToken, (req, res) => {
  *         description: Erreur interne du serveur.
  */
 // File: `BobPlanning.back/src/index.ts`
-app.post('/setSallesData', authJwt.verifyToken, (req, res) => {
-  const { nom, type, capacite, etage } = req.body;
-
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    const sql =
-      'INSERT INTO salle (nom, type, capacite, etage) VALUES ($1, $2, $3, $4) RETURNING id';
-    const capaciteNum =
-      typeof capacite === 'number' ? capacite : Number(capacite) || null;
-
-    connection.query(
-      sql,
-      [nom, type, capaciteNum, etage],
-      (error: any, result: any) => {
-        connection.release(); // always release the client
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        const insertedId = result?.rows?.[0]?.id ?? null;
-        return res
-          .status(201)
-          .json({ message: 'Salle ajoutée avec succès', insertedId });
-      },
-    );
-  });
-});
+// app.post('/setSallesData', authJwt.verifyToken, (req, res) => {
+//   const { nom, type, capacite, etage } = req.body;
+//
+//   pool.connect((err: any, connection: any) => {
+//     if (err) {
+//       return res.status(500).json({ error: err.message });
+//     }
+//
+//     const sql =
+//       'INSERT INTO salle (nom, type, capacite, etage) VALUES ($1, $2, $3, $4) RETURNING id';
+//     const capaciteNum =
+//       typeof capacite === 'number' ? capacite : Number(capacite) || null;
+//
+//     connection.query(
+//       sql,
+//       [nom, type, capaciteNum, etage],
+//       (error: any, result: any) => {
+//         connection.release(); // always release the client
+//
+//         if (error) {
+//           return res.status(500).json({ error: error.message });
+//         }
+//
+//         const insertedId = result?.rows?.[0]?.id ?? null;
+//         return res
+//           .status(201)
+//           .json({ message: 'Salle ajoutée avec succès', insertedId });
+//       },
+//     );
+//   });
+// });
 
 /**
  * @swagger
