@@ -1,5 +1,6 @@
 // src/components/teachers/TeacherDetailCard.tsx
-import React, { useEffect, useState } from 'react'
+
+import React, { useState } from 'react'
 import { Teacher } from '../../models/Teacher'
 import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import TeacherInfoColumn from './section/TeacherInfoColumn'
@@ -8,13 +9,19 @@ import TeacherAvailabilityColumn from './section/TeacherAvailabilityColumn'
 import { useTeacherDetail } from '../../hooks/teachers/useTeacherDetail'
 import TeacherModeBadge from './TeacherModeBadge'
 import ConfirmDialog from '../common/ConfirmDialog'
+import DetailCardHeader from '../common/DetailCardHeader'
+import DetailCardBody from '../common/DetailCardBody'
+import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 
 interface TeacherDetailCardProps {
     teacher: Teacher
     onClose: () => void
 }
 
-export default function TeacherDetailCard({ teacher, onClose }: TeacherDetailCardProps) {
+export default function TeacherDetailCard({
+                                              teacher,
+                                              onClose,
+                                          }: TeacherDetailCardProps) {
     const {
         teacherDraft,
         periods,
@@ -32,69 +39,39 @@ export default function TeacherDetailCard({ teacher, onClose }: TeacherDetailCar
         hasChanges,
     } = useTeacherDetail(teacher)
 
-    const [openCloseConfirm, setOpenCloseConfirm] = useState(false)
-
-    const handleRequestClose = () => {
-        if (!hasChanges) {
+    const {
+        handleRequestClose,
+        isConfirmOpen,
+        handleConfirmSaveAndClose,
+        handleDiscardAndClose,
+        handleConfirmDialogRequestClose,
+    } = useDetailDirtyClose({
+        hasChanges,
+        onClose,
+        onSaveAndClose: () => {
+            handleSave()
             onClose()
-            return
-        }
-        setOpenCloseConfirm(true)
-    }
-
-    const handleConfirmSaveAndClose = () => {
-        setOpenCloseConfirm(false)
-        handleSave()
-        onClose()
-    }
-
-    const handleDiscardAndClose = () => {
-        setOpenCloseConfirm(false)
-        onClose()
-    }
-
-    const handleCloseConfirmPopupOnly = () => {
-        setOpenCloseConfirm(false)
-    }
-
-    // ESC au niveau de la card : ne ferme la card QUE si aucun popup ConfirmDialog n’est ouvert
-    useEffect(() => {
-        const onKeyDown = (e: KeyboardEvent) => {
-            if (e.key !== 'Escape') return
-
-            const hasModal = document.querySelector('.modal-overlay')
-            if (hasModal) {
-                return
-            }
-
-            handleRequestClose()
-        }
-
-        window.addEventListener('keydown', onKeyDown)
-        return () => window.removeEventListener('keydown', onKeyDown)
-    }, [hasChanges]) // handleRequestClose est stable dans ce contexte
+        },
+        ignoreWhenSelectorExists: '.modal-overlay',
+    })
 
     return (
-        <div className="teacher-detail-overlay">
-            <div className="teacher-detail-card">
-                {/* Croix en haut à droite */}
-                <button
-                    className="teacher-detail-close"
-                    onClick={handleRequestClose}
-                    aria-label="Fermer la fiche enseignant"
-                    type="button"
+        <div className="teacher-detail-overlay" role="dialog" aria-modal="true">
+            <DetailCardBody className="teacher-detail-card">
+                <DetailCardHeader
+                    onClose={handleRequestClose}
+                    closeAriaLabel="Fermer la fiche enseignant"
+                    closeButtonClassName="teacher-detail-close"
+                    headerClassName="teacher-detail-header-badge"
                 >
-                    ✕
-                </button>
-
-                {/* Header pill : titre + nom/prénom + type + icône à droite */}
-                <TeacherModeBadge
-                    mode={teacherDraft.mode}
-                    variant="header"
-                    title="Détail enseignant"
-                    subtitle={`${teacherDraft.lastName.toUpperCase()} ${teacherDraft.firstName}`}
-                    className="teacher-detail-header-badge"
-                />
+                    <TeacherModeBadge
+                        mode={teacherDraft.mode}
+                        variant="header"
+                        title="Détail enseignant"
+                        subtitle={`${teacherDraft.lastName.toUpperCase()} ${teacherDraft.firstName}`}
+                        className="teacher-detail-header-badge"
+                    />
+                </DetailCardHeader>
 
                 <div className="teacher-detail-columns">
                     <TeacherInfoColumn
@@ -127,9 +104,11 @@ export default function TeacherDetailCard({ teacher, onClose }: TeacherDetailCar
                         hasChanges={hasChanges}
                         confirmMessage={
                             <>
-                                Vous êtes sur le point d’enregistrer les modifications pour{' '}
+                                Vous êtes sur le point d’enregistrer les
+                                modifications pour{' '}
                                 <strong>
-                                    {teacherDraft.firstName} {teacherDraft.lastName}
+                                    {teacherDraft.firstName}{' '}
+                                    {teacherDraft.lastName}
                                 </strong>
                                 .
                                 <br />
@@ -140,16 +119,19 @@ export default function TeacherDetailCard({ teacher, onClose }: TeacherDetailCar
                         cancelLabel="Annuler"
                     />
                 </div>
-            </div>
+            </DetailCardBody>
 
-            {/* Popup spécifique pour la croix / ESC card */}
+            {/* Popup spécifique ESC / croix */}
             <ConfirmDialog
-                open={openCloseConfirm}
+                open={isConfirmOpen}
                 title="Modifications non enregistrées"
                 message={
                     <>
                         <p>Vous avez modifié cette fiche enseignant.</p>
-                        <p>Souhaitez-vous enregistrer les changements avant de fermer&nbsp;?</p>
+                        <p>
+                            Souhaitez-vous enregistrer les changements avant de
+                            fermer&nbsp;?
+                        </p>
                     </>
                 }
                 confirmLabel="Enregistrer et fermer"
@@ -158,7 +140,7 @@ export default function TeacherDetailCard({ teacher, onClose }: TeacherDetailCar
                 cancelClassName="btn-danger"
                 onConfirm={handleConfirmSaveAndClose}
                 onCancel={handleDiscardAndClose}
-                onRequestClose={handleCloseConfirmPopupOnly}
+                onRequestClose={handleConfirmDialogRequestClose}
             />
         </div>
     )

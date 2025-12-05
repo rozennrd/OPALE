@@ -1,5 +1,7 @@
+/* src/styles/pages/events/_detail-modal.css */
+
 @layer pages {
-    /* ===== Overlay & Card ===== */
+    /* ===== Overlay ===== */
 
     .event-detail-overlay {
         position: fixed;
@@ -11,117 +13,34 @@
         z-index: 2000;
     }
 
+    /* ===== Card layout (par-dessus .detail-card commun) ===== */
+
     .event-detail-card {
-        background: var(--color-surface, #fff);
-        border-radius: 1rem;
-        width: min(920px, 96vw);
-        max-height: min(640px, 96vh);
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
-        position: relative;
-        animation: eventDetailFadeInUp 180ms ease;
-        padding: 1.4rem 1.6rem 1.6rem;
         display: grid;
         grid-template-columns: 1.4fr 1.1fr;
         grid-auto-rows: auto;
         gap: 1.4rem 2rem;
-        overflow: hidden;
+
+        /* optionnel : affiner un peu par rapport au shell générique */
+        width: min(920px, 96vw);
+        max-height: min(640px, 96vh);
     }
 
-    @keyframes eventDetailFadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .event-detail-close {
-        position: absolute;
-        top: 0.6rem;
-        right: 1rem;
-        background: transparent;
-        border: none;
-        font-size: 1.3rem;
-        cursor: pointer;
-        color: var(--muted-strong, #64748b);
-    }
-
-    .event-detail-close:hover {
-        color: var(--primary);
-    }
-
-    /* ===== Header pill ===== */
-
-    .event-detail-header-badge {
+    /* Le wrapper header commun doit occuper toute la largeur de la grille */
+    .event-detail-card > .detail-card-header {
         grid-column: 1 / -1;
     }
 
-    .event-detail-header-pill {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        padding: 0.9rem 1.2rem;
-        border-radius: 999px;
-        border: 1px solid transparent;
-        box-shadow: var(--shadow-md);
-        min-height: 64px;
+    .event-detail-header-badge {
+        width: 100%;
     }
 
-    .event-header-left {
-        display: flex;
-        flex-direction: column;
-        gap: 0.15rem;
-        flex: 1;
-        min-width: 0;
+    /* Footer commun positionné sur toute la largeur */
+    .detail-card-footer {
+        grid-column: 1 / -1;
     }
 
-    .event-header-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--text);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .event-header-subtitle {
-        font-size: 0.9rem;
-        color: var(--muted);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .event-header-right {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        flex-shrink: 0;
-    }
-
-    .event-header-type-icon {
-        width: 2.1rem;
-        height: 2.1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .event-header-type-icon img {
-        max-width: 100%;
-        max-height: 100%;
-        display: block;
-    }
-
-    .event-header-type-label {
-        font-size: 0.95rem;
-        font-weight: 600;
-        white-space: nowrap;
-    }
+    /* ===== Variantes de couleur pour la pill événement (header) ===== */
 
     .event-detail-header-pill--junia {
         background: rgba(139, 92, 246, 0.18);
@@ -154,7 +73,6 @@
 
     .event-detail-section-right {
         grid-column: 2 / 3;
-        /* grid-row: 2 / span 10; */
     }
 
     .event-detail-description {
@@ -164,7 +82,7 @@
         white-space: pre-wrap;
     }
 
-    /* ===== Infos en mode pills / lignes ===== */
+    /* ===== Infos / lignes ===== */
 
     .event-detail-info-list {
         display: flex;
@@ -226,7 +144,7 @@
         color: #1d4ed8;
     }
 
-    /* ===== Inputs / selects en mode pill ===== */
+    /* ===== Inputs / selects ===== */
 
     .event-detail-input,
     .event-detail-select {
@@ -245,14 +163,6 @@
                 background-color 140ms ease;
     }
 
-    .event-detail-input:focus,
-    .event-detail-select:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 1px
-        color-mix(in srgb, var(--primary) 40%, transparent);
-        background: var(--color-surface, #fff);
-    }
-
     .event-detail-select {
         padding-right: 2rem;
     }
@@ -261,9 +171,9 @@
 
     .event-detail-textarea {
         width: 100%;
-        height: 230px;          /* 👈 hauteur calée, plus compacte */
-        min-height: 0;          /* on enlève la contrainte précédente */
-        resize: vertical;       /* tu peux toujours l’agrandir manuellement */
+        height: 230px;
+        min-height: 0;
+        resize: vertical;
         border-radius: 0.75rem;
         border: 1px solid var(--border);
         padding: 0.6rem 0.75rem;
@@ -271,13 +181,6 @@
         font-size: 0.9rem;
         background: var(--panel-soft);
         color: inherit;
-    }
-
-    .event-detail-textarea:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 1px
-        color-mix(in srgb, var(--primary) 40%, transparent);
     }
 
     /* ===== Toggle Cible Junia / Externe ===== */
@@ -323,15 +226,6 @@
         background: rgba(59, 130, 246, 1);
     }
 
-    /* ===== Footer ===== */
-
-    .event-detail-footer {
-        grid-column: 1 / -1;
-        margin-top: 1.4rem;
-        display: flex;
-        justify-content: flex-end;
-    }
-
     /* ===== Responsive ===== */
 
     @media (max-width: 768px) {
@@ -349,25 +243,7 @@
         }
     }
 
-    /* ===== Dark theme ===== */
-
-    [data-theme='dark'] .event-detail-card {
-        background: var(--panel-soft);
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
-        color: var(--text);
-    }
-
-    [data-theme='dark'] .event-detail-header-pill--junia {
-        background: rgba(139, 92, 246, 0.24);
-        border-color: rgba(139, 92, 246, 0.6);
-        color: #ddd6fe;
-    }
-
-    [data-theme='dark'] .event-detail-header-pill--external {
-        background: rgba(59, 130, 246, 0.24);
-        border-color: rgba(59, 130, 246, 0.6);
-        color: #bfdbfe;
-    }
+    /* ===== Dark theme (spécifique aux contenus) ===== */
 
     [data-theme='dark'] .event-detail-info-row dt {
         color: #9ca3af;
@@ -398,12 +274,6 @@
         color: var(--text);
     }
 
-    [data-theme='dark'] .event-detail-input:focus,
-    [data-theme='dark'] .event-detail-select:focus {
-        background: #252f42;
-        border-color: var(--primary);
-    }
-
     [data-theme='dark'] .event-detail-source-pill {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.18);
@@ -427,5 +297,18 @@
     [data-theme='dark'] .event-detail-textarea:focus {
         background: #252f42;
         border-color: var(--primary);
+    }
+
+    /* Dark theme – variantes couleurs header (déjà présentes, gardées ici pour cohérence) */
+    [data-theme='dark'] .event-detail-header-pill--junia {
+        background: rgba(139, 92, 246, 0.24);
+        border-color: rgba(139, 92, 246, 0.6);
+        color: #ddd6fe;
+    }
+
+    [data-theme='dark'] .event-detail-header-pill--external {
+        background: rgba(59, 130, 246, 0.24);
+        border-color: rgba(59, 130, 246, 0.6);
+        color: #bfdbfe;
     }
 }

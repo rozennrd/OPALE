@@ -1,68 +1,19 @@
 /* src/styles/pages/events/_cards.css */
 
 @layer pages {
-    .event-card {
-        display: flex;
-        align-items: stretch;
-        justify-content: space-between;
-
-        border-radius: 0.9rem;
-        background: var(--panel-soft);
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow-lg);
-        overflow: hidden;
-        cursor: pointer;
-
-        transition:
-                transform 120ms ease,
-                box-shadow 120ms ease,
-                border-color 120ms ease,
-                background-color 120ms ease;
-
-        min-height: 4.5rem;
-        width: 100%;
-        min-width: 0; /* permet au texte de gérer l'espace proprement */
-    }
-
-    .event-card:hover {
-        transform: translateY(-2px);
-        background: var(--panel-soft);
-        border-color: var(--border);
-        box-shadow: var(--shadow-xl);
-    }
-
     /* ============================
        COLONNE GAUCHE (texte)
        ============================ */
 
-    .event-card-main {
-        flex: 1 1 auto;
-        min-width: 0;
-        padding: 0.75rem 0.9rem 0.75rem 1rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 0.25rem;
-    }
-
     .event-card-name {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: var(--text);
-        letter-spacing: 0.01em;
-
+        /* typographie commune via .entity-card-title */
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
     }
 
     .event-card-meta {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        font-size: 0.85rem;
-        color: var(--muted);
-
+        /* typographie commune via .entity-card-meta */
         min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -82,26 +33,12 @@
     }
 
     /* ============================
-       COLONNE DROITE (badges)
+       COLONNE DROITE (badge type)
        ============================ */
-
-    /* ============================
-   COLONNE DROITE (badge type)
-   ============================ */
 
     .event-card-aside {
         flex: 0 0 115px;
         max-width: 115px;
-        border-left: 1px solid var(--border);
-        background: var(--panel-soft);
-
-        display: flex;
-        align-items: stretch;
-        justify-content: center;
-
-        /* comme room-card */
-        /* comme teacher-card-mode / room-card-type */
-        padding: 0;
     }
 
     .event-card-badges {
@@ -126,42 +63,14 @@
     }
 
     /* ============================
-   Badge type unique (icône + label)
-   ============================ */
-
-    /* --- Couleurs selon source (ancien badge JUNIA/EXTERNE) --- */
-
-    /* ============================
-   Badge type unique (icône + label)
-   ============================ */
-
-    /* --- Badge type (Salon, Forum...) : style "pastille" verticale avec icône --- */
+       Badge type (icône + label)
+       Layout de base = .entity-badge
+       ============================ */
 
     .event-badge-type {
-        /* on part de .event-badge et on spécialise */
-        width: 100%;
-        min-height: 2.4rem;
-
-        padding: 0.5rem 0.4rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 0.25rem;
-
         background: rgba(148, 163, 184, 0.12);
         color: #e5e7eb;
-
-        font-size: 0.78rem;
-        text-align: center;
-        font-weight: 500;
-
-        /* pas de border-radius ici : c'est la card qui a le radius */
-        border-radius: 0;
-        border: none;
     }
-
-    /* Couleurs selon la source (comme on avait pour Junia/Externe) */
 
     .event-badge-type--junia {
         background: rgba(139, 92, 246, 0.12);
@@ -173,86 +82,6 @@
         color: #1d4ed8;
     }
 
-    /* Icône centrée comme sur rooms/teachers */
-
-    .event-badge-icon {
-        width: 1.9rem;
-        height: 1.9rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        /* pour que l’icône gris clair ressemble aux autres tags en dark */
-        opacity: 0.85;
-    }
-
-    .event-badge-icon img,
-    .event-badge-icon {
-        max-width: 100%;
-        max-height: 100%;
-        display: block;
-    }
-
-    .event-badge-label {
-        font-size: 0.75rem;
-        font-weight: 600;
-        line-height: 1.1;
-    }
-
-    /* --- Badge source (EXTERNE / JUNIA) : style "pill" horizontal --- */
-
-    /*.event-badge-source {*/
-    /*    text-transform: uppercase;*/
-    /*    letter-spacing: 0.03em;*/
-    /*}*/
-
-    /*.event-badge-source-junia {*/
-    /*    background: rgba(16, 185, 129, 0.10);*/
-    /*    color: #047857;*/
-    /*    border-color: rgba(16, 185, 129, 0.45);*/
-    /*}*/
-
-    /*.event-badge-source-external {*/
-    /*    background: rgba(59, 130, 246, 0.10);*/
-    /*    color: #1d4ed8;*/
-    /*    border-color: rgba(59, 130, 246, 0.45);*/
-    /*}*/
-
-    /* ============================
-       Thème sombre
-       ============================ */
-
-    /*[data-theme='dark'] .event-card {*/
-    /*    background: #2a3442;*/
-    /*    border-color: rgba(148, 163, 184, 0.35);*/
-    /*    box-shadow: 0 18px 35px rgba(15, 23, 42, 0.65);*/
-    /*}*/
-
-    /*[data-theme='dark'] .event-card:hover {*/
-    /*    border-color: var(--primary-soft);*/
-    /*    box-shadow: 0 22px 45px rgba(15, 23, 42, 0.8);*/
-    /*}*/
-
-    /*[data-theme='dark'] .event-badge-source-junia {*/
-    /*    background: rgba(16, 185, 129, 0.18);*/
-    /*    color: #a7f3d0;*/
-    /*    border-color: rgba(16, 185, 129, 0.6);*/
-    /*}*/
-
-    /*[data-theme='dark'] .event-badge-source-external {*/
-    /*    background: rgba(59, 130, 246, 0.18);*/
-    /*    color: #bfdbfe;*/
-    /*    border-color: rgba(59, 130, 246, 0.6);*/
-    /*}*/
-
-    /*[data-theme='dark'] .event-badge-type {*/
-    /*    background: #3b4453;              !* pastille foncée comme sur tes captures *!*/
-    /*    color: #f9fafb;*/
-    /*    border-color: #64748b;*/
-    /*}*/
-
-    /* Thème sombre : plus rempli, comme sur tes captures */
-
     [data-theme='dark'] .event-badge-type--junia {
         background: rgba(139, 92, 246, 0.18);
         color: #ddd6fe;
@@ -262,5 +91,4 @@
         background: rgba(59, 130, 246, 0.18);
         color: #bfdbfe;
     }
-
 }

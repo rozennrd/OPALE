@@ -1,0 +1,15 @@
+/* src/styles/components/_detail-card-footer.css */
+
+@layer components {
+    .detail-card-footer {
+        margin-top: 1.4rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    @media (max-width: 640px) {
+        .detail-card-footer {
+            margin-top: 1.2rem;
+        }
+    }
+}

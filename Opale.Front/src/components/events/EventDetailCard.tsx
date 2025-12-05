@@ -1,12 +1,19 @@
-import React, { useEffect }  from 'react'
+// src/components/events/EventDetailCard.tsx
+
+import React from 'react'
 import { CampusEvent, EventType } from '../../models/CampusEvent'
-import { getEventTypeMeta } from './EventTypeBadge'
-import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import { useEventDetail } from '../../hooks/events/useEventDetail'
+import DetailCardHeader from '../common/DetailCardHeader'
+import DetailCardFooter from '../common/DetailCardFooter'
+import DetailCardBody from '../common/DetailCardBody'
+import EventTypeBadge from './EventTypeBadge'
+import ConfirmDialog from '../common/ConfirmDialog'
+import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 
 interface EventDetailCardProps {
     event: CampusEvent
     onClose: () => void
+    mode?: 'edit' | 'create'
 }
 
 function formatDate(date: string | undefined): string {
@@ -20,21 +27,21 @@ function formatDate(date: string | undefined): string {
     })
 }
 
-export default function EventDetailCard({ event, onClose }: EventDetailCardProps) {
+export default function EventDetailCard({
+                                            event,
+                                            onClose,
+                                            mode = 'edit',
+                                        }: EventDetailCardProps) {
+    const isCreate = mode === 'create' || event.id === 'new-event'
     const { draft, hasChanges, updateField, handleSave } = useEventDetail(event)
-    const typeMeta = getEventTypeMeta(draft.type)
 
-    // 🔥 ESC ferme la fiche événement
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                onClose()
-            }
-        }
-
-        window.addEventListener('keydown', handleKeyDown)
-        return () => window.removeEventListener('keydown', handleKeyDown)
-    }, [onClose])
+    const isValid =
+        draft.name.trim().length > 0 &&
+        draft.startDate.trim().length > 0 &&
+        draft.endDate.trim().length > 0 &&
+        draft.location.trim().length > 0 &&
+        !!draft.type &&
+        !!draft.source
 
     const handleDescriptionBlur = () => {
         console.log('[EVENTS] Update description (mock onBlur)', {
@@ -43,59 +50,60 @@ export default function EventDetailCard({ event, onClose }: EventDetailCardProps
         })
     }
 
+    const headerTitle =
+        draft.name || (isCreate ? 'Nouvel événement' : 'Événement sans titre')
+
+    const headerSubtitle = (() => {
+        const start = formatDate(draft.startDate)
+        const end =
+            draft.startDate &&
+            draft.endDate &&
+            draft.startDate !== draft.endDate
+                ? ` → ${formatDate(draft.endDate)}`
+                : ''
+        const location = draft.location ? ` · ${draft.location}` : ''
+        return `${start}${end}${location}`
+    })()
+
+    const {
+        handleRequestClose,
+        isConfirmOpen,
+        handleConfirmSaveAndClose,
+        handleDiscardAndClose,
+        handleConfirmDialogRequestClose,
+    } = useDetailDirtyClose({
+        hasChanges,
+        onClose,
+        onSaveAndClose: () => {
+            if (isCreate && !isValid) {
+                window.alert(
+                    'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de créer l’événement.',
+                )
+                return
+            }
+            handleSave()
+            onClose()
+        },
+        ignoreWhenSelectorExists: '.modal-overlay',
+    })
+
     return (
         <div className="event-detail-overlay" role="dialog" aria-modal="true">
-            <div className="event-detail-card">
-                <button
-                    type="button"
-                    className="event-detail-close"
-                    onClick={onClose}
-                    aria-label="Fermer la fiche événement"
+            <DetailCardBody className="event-detail-card">
+                <DetailCardHeader
+                    onClose={handleRequestClose}
+                    closeAriaLabel="Fermer la fiche événement"
+                    closeButtonClassName="event-detail-close"
+                    headerClassName="event-detail-header-badge"
                 >
-                    ✕
-                </button>
-
-                {/* Header pill */}
-                <div className="event-detail-header-badge">
-                    <div
-                        className={
-                            'event-detail-header-pill ' +
-                            (draft.source === 'JUNIA'
-                                ? 'event-detail-header-pill--junia'
-                                : 'event-detail-header-pill--external')
-                        }
-                    >
-                        <div className="event-header-left">
-                            <div className="event-header-title">
-                                {draft.name}
-                            </div>
-                            <div className="event-header-subtitle">
-                                {formatDate(draft.startDate)}
-                                {draft.startDate !== draft.endDate && (
-                                    <>
-                                        {' → '}
-                                        {formatDate(draft.endDate)}
-                                    </>
-                                )}
-                                {' · '}
-                                {draft.location}
-                            </div>
-                        </div>
-
-                        <div className="event-header-right">
-                            <div className="event-header-type-icon">
-                                <img
-                                    src={typeMeta.icon}
-                                    alt=""
-                                    aria-hidden="true"
-                                />
-                            </div>
-                            <div className="event-header-type-label">
-                                {typeMeta.label}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    <EventTypeBadge
+                        type={draft.type}
+                        source={draft.source}
+                        variant="header"
+                        title={headerTitle}
+                        subtitle={headerSubtitle}
+                    />
+                </DetailCardHeader>
 
                 {/* Colonne gauche : infos éditables */}
                 <section className="event-detail-section event-detail-section-left">
@@ -126,7 +134,10 @@ export default function EventDetailCard({ event, onClose }: EventDetailCardProps
                                     className="event-detail-input"
                                     value={draft.startDate}
                                     onChange={(e) =>
-                                        updateField('startDate', e.target.value)
+                                        updateField(
+                                            'startDate',
+                                            e.target.value,
+                                        )
                                     }
                                 />
                             </dd>
@@ -154,7 +165,10 @@ export default function EventDetailCard({ event, onClose }: EventDetailCardProps
                                     className="event-detail-input"
                                     value={draft.location}
                                     onChange={(e) =>
-                                        updateField('location', e.target.value)
+                                        updateField(
+                                            'location',
+                                            e.target.value,
+                                        )
                                     }
                                 />
                             </dd>
@@ -242,26 +256,91 @@ export default function EventDetailCard({ event, onClose }: EventDetailCardProps
                     />
                 </section>
 
-                {/* Footer : boutons communs Annuler / Enregistrer */}
-                <div className="event-detail-footer">
-                    <ActionButtonsWithConfirm
-                        onCancel={onClose}
-                        onSave={handleSave}
-                        hasChanges={hasChanges}
-                        confirmMessage={
+                {/* Footer : boutons communs Annuler / Enregistrer ou Créer */}
+                <DetailCardFooter
+                    onCancel={onClose}
+                    onSave={handleSave}
+                    onAfterSaveConfirm={isCreate ? onClose : undefined}
+                    hasChanges={hasChanges}
+                    saveLabel={isCreate ? 'Créer' : 'Enregistrer'}
+                    confirmTitle={
+                        isCreate
+                            ? 'Créer cet événement'
+                            : 'Confirmer les modifications'
+                    }
+                    confirmMessage={
+                        isCreate ? (
+                            <>
+                                Vous êtes sur le point de créer
+                                l&apos;événement{' '}
+                                <strong>
+                                    {draft.name || 'sans titre'}
+                                </strong>
+                                .
+                                <br />
+                                Confirmer&nbsp;?
+                            </>
+                        ) : (
                             <>
                                 Vous êtes sur le point d’enregistrer les
                                 modifications pour{' '}
                                 <strong>{draft.name}</strong>.
                                 <br />
-                                Confirmer ?
+                                Confirmer&nbsp;?
                             </>
+                        )
+                    }
+                    confirmLabel={isCreate ? 'Créer' : 'Enregistrer'}
+                    cancelLabel="Annuler"
+                    cancelDirtyTitle="Modifications non enregistrées"
+                    cancelDirtyMessage={
+                        <>
+                            <p>Vous avez modifié cette fiche événement.</p>
+                            <p>
+                                Souhaitez-vous enregistrer les changements
+                                avant de fermer&nbsp;?
+                            </p>
+                        </>
+                    }
+                    cancelDirtyConfirmLabel={
+                        isCreate ? 'Créer et fermer' : 'Enregistrer et fermer'
+                    }
+                    cancelDirtyDiscardLabel="Fermer sans enregistrer"
+                    onBeforeSaveClick={() => {
+                        if (isCreate && !isValid) {
+                            window.alert(
+                                'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de créer l’événement.',
+                            )
+                            return false
                         }
-                        confirmLabel="Enregistrer"
-                        cancelLabel="Annuler"
-                    />
-                </div>
-            </div>
+                        return true
+                    }}
+                />
+            </DetailCardBody>
+
+            {/* Popup spécifique ESC / croix */}
+            <ConfirmDialog
+                open={isConfirmOpen}
+                title="Modifications non enregistrées"
+                message={
+                    <>
+                        <p>Vous avez modifié cette fiche événement.</p>
+                        <p>
+                            Souhaitez-vous enregistrer les changements avant de
+                            fermer&nbsp;?
+                        </p>
+                    </>
+                }
+                confirmLabel={
+                    isCreate ? 'Créer et fermer' : 'Enregistrer et fermer'
+                }
+                cancelLabel="Fermer sans enregistrer"
+                confirmClassName="btn-primary"
+                cancelClassName="btn-danger"
+                onConfirm={handleConfirmSaveAndClose}
+                onCancel={handleDiscardAndClose}
+                onRequestClose={handleConfirmDialogRequestClose}
+            />
         </div>
     )
 }

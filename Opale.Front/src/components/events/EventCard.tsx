@@ -2,6 +2,7 @@
 import React from 'react'
 import { CampusEvent } from '../../models/CampusEvent'
 import EventTypeBadge from './EventTypeBadge'
+import EntityCard from '../common/EntityCard'
 
 interface EventCardProps {
     event: CampusEvent
@@ -25,28 +26,28 @@ export default function EventCard({ event, onSelect }: EventCardProps) {
     }
 
     return (
-        <article className="event-card" onClick={handleClick}>
-            {/* Colonne gauche */}
-            <div className="event-card-main">
-                <div className="event-card-name">{event.name}</div>
-                <div className="event-card-meta">
-                    <span className="event-card-date">
-                        {formatEventDate(event.date)}
-                    </span>
-                    <span className="event-card-separator">•</span>
-                    <span className="event-card-location">
-                        {event.location}
-                    </span>
-                </div>
-            </div>
-
-            {/* Colonne droite – même esprit que room-card-type */}
-            <div className="event-card-aside">
+        <EntityCard
+            onClick={handleClick}
+            className="event-card"
+            mainClassName="event-card-main"
+            asideClassName="event-card-aside"
+            badge={
                 <EventTypeBadge
                     type={event.type}
                     source={event.source}
                 />
+            }
+        >
+            <div className="event-card-name">{event.name}</div>
+            <div className="event-card-meta">
+                <span className="event-card-date">
+                    {formatEventDate(event.date)}
+                </span>
+                <span className="event-card-separator">•</span>
+                <span className="event-card-location">
+                    {event.location}
+                </span>
             </div>
-        </article>
+        </EntityCard>
     )
 }

@@ -1,0 +1,63 @@
+/* src/styles/components/_detail-card-shell.css */
+
+@layer components {
+    .detail-card {
+        position: relative;
+        background: var(--color-surface, #fff);
+        border-radius: 1rem;
+        width: min(1000px, 96vw);
+        max-height: min(720px, 96vh);
+        padding: 1.6rem 1.8rem 1.4rem;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        animation: detailCardFadeInUp 180ms ease;
+        overflow: hidden;
+
+        display: flex;
+        flex-direction: column;
+    }
+
+    @keyframes detailCardFadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Variante dark générique pour toutes les cards détail */
+    [data-theme='dark'] .detail-card {
+        background: var(--panel-soft);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+        color: var(--text);
+    }
+
+    /* 💡 Focus commun pour tous les champs modifiables dans une card détail */
+    .detail-card input,
+    .detail-card select,
+    .detail-card textarea {
+        transition:
+                border-color 140ms ease,
+                box-shadow 140ms ease,
+                background-color 140ms ease;
+    }
+
+    .detail-card input:focus,
+    .detail-card select:focus,
+    .detail-card textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 1px
+        color-mix(in srgb, var(--primary), transparent);
+        background: var(--color-surface, #fff);
+    }
+
+    /* Variante dark pour tous les champs des cards détail */
+    [data-theme='dark'] .detail-card input:focus,
+    [data-theme='dark'] .detail-card select:focus,
+    [data-theme='dark'] .detail-card textarea:focus {
+        background: #252f42;
+    }
+}

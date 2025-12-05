@@ -13,3 +13,6 @@
 @import './components/_entity-card.css';
 @import './components/_page-header.css';
 @import './components/_toolbar.css';
+@import './components/_detail-card-shell.css';
+@import './components/_detail-card-header.css';
+@import './components/_detail-card-footer.css';

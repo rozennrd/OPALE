@@ -73,6 +73,13 @@
 }
 
 @layer pages {
+    .events-month-group-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem; /* même spacing que la liste principale */
+        margin-top: 0.5rem;
+    }
+
     .event-month-separator {
         margin: 1rem 0 0.5rem;
         padding: 0.25rem 0;
