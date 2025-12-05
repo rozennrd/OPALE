@@ -13,7 +13,11 @@ type EventDraft = {
 }
 
 const buildInitialDraft = (event: CampusEvent): EventDraft => {
-    const anyEvent = event as any
+    const anyEvent = event as Partial<{
+        startDate: string
+        endDate: string
+        description: string
+    }>
 
     return {
         id: event.id,
