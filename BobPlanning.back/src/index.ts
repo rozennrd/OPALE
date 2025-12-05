@@ -2321,6 +2321,33 @@ app.put('/updateEvent', authJwt.verifyToken, (req: Request, res: Response): void
   });
 });
 
+app.get('/getExceptionalEvents', authJwt.verifyToken, (req: Request, res: Response): void => {
+  pool.connect((err: any, connection: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    const sql = 'SELECT * FROM event where is_exceptional is true';
+
+    connection.query(sql, (error: any, results: any) => {
+      connection.release(); // always release the client
+
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
+
+      // Normalize results: support drivers that return an array or an object with `rows`
+      const exceptionalEvents = Array.isArray(results)
+        ? results
+        : results && Array.isArray((results as any).rows)
+          ? (results as any).rows
+          : [];
+
+      return res.json(exceptionalEvents);
+    });
+  });
+});
+
 // Start the server
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
