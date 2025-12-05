@@ -84,7 +84,7 @@ export function usePromotionEditing(
         setHasChanges(current !== base)
     }, [editingPromo, savedSnapshot])
 
-    const handleEditFieldChange = (field: string, value: any): void => {
+    const handleEditFieldChange = (field: string, value: string | number): void => {
         setEditingPromo(prev => (prev ? { ...prev, [field]: value } : prev))
     }
 
@@ -153,7 +153,7 @@ export function usePromotionEditing(
         })
     }
 
-    const handleGroupChange = (index: number, field: string, value: any): void => {
+    const handleGroupChange = (index: number, field: string, value: string | number): void => {
         setEditingPromo(prev => {
             if (!prev) return prev
             const groups = prev.groups.map((g, i) =>
@@ -194,7 +194,7 @@ export function usePromotionEditing(
         })
     }
 
-    const handleSpecialtyChange = (index: number, field: string, value: any): void => {
+    const handleSpecialtyChange = (index: number, field: string, value: string | number): void => {
         setEditingPromo(prev => {
             if (!prev) return prev
             const specialties = prev.specialties.map((s, i) =>
