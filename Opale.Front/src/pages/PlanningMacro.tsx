@@ -2,6 +2,7 @@
 // @ts-ignore
 import React, { useState, useEffect } from 'react'
 import Checklist from '../components/Checklist'
+import PageHeader from "../components/common/PageHeader";
 
 interface ChecklistItem {
     id: string
@@ -11,7 +12,7 @@ interface ChecklistItem {
     warning?: boolean
 }
 
-export default function PlanningMacro(): React.ReactElement<any> {
+export default function PlanningMacro(): Element {
     const [hasPromosMismatch, setHasPromosMismatch] = useState<boolean>(() => {
         if (typeof window === 'undefined') return false
         return window.localStorage.getItem('opale:promosMismatch') === '1'
@@ -56,9 +57,13 @@ export default function PlanningMacro(): React.ReactElement<any> {
 
     return (
         <>
-            <h2 className="page-title">Génération planning macro</h2>
-            <p className="page-sub">Sélectionnez chacun de ces points s'il a été renseigné.</p>
+            {/* TITRE & SOUS-TITRE */}
+            <PageHeader
+                title="Génération planning macro"
+                subtitle="Sélectionnez chacun de ces points s'il a été renseigné."
+            />
 
+            {/* CONTENU DE LA PAGE */}
             <Checklist items={items} onToggle={toggleItem} />
 
             <button className="btn-primary btn-generate" onClick={handleGenerate}>

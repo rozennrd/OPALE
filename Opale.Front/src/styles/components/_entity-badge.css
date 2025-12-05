@@ -1,0 +1,94 @@
+/* src/styles/components/_entity-badge.css */
+
+@layer components {
+    .entity-badge {
+        width: 100%;
+        min-height: 2.4rem;
+
+        padding: 0.5rem 0.4rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+
+        font-size: 0.78rem;
+        text-align: center;
+        font-weight: 500;
+
+        border-radius: 0; /* c'est la card qui a le radius */
+        border: none;
+    }
+
+    .entity-badge__icon {
+        width: 1.9rem;
+        height: 1.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .entity-badge__icon img {
+        max-width: 100%;
+        max-height: 100%;
+        display: block;
+    }
+
+    /* ============================
+       TYPO COMMUNE – LABEL DE BADGE
+       ============================ */
+
+    .entity-badge__label,
+    .event-badge-label,
+    .room-type-label,
+    .teacher-mode-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1.1;
+        text-align: center;
+    }
+
+    /* ============================
+       Variante header (badge bandeau)
+       ============================ */
+
+    .entity-badge--header {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+
+        padding: 0.75rem 1.1rem;
+        border-radius: 0.9rem;
+        background: var(--panel-soft);
+        border: 1px solid var(--border-soft);
+        box-shadow: var(--shadow-md);
+    }
+
+    .entity-badge__header-left {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .entity-badge__title {
+        font-size: 1.05rem;
+        font-weight: 700;
+    }
+
+    .entity-badge__subtitle {
+        font-size: 0.9rem;
+        color: var(--muted);
+    }
+
+    .entity-badge__header-right {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-shrink: 0;
+    }
+}

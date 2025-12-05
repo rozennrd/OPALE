@@ -1,6 +1,10 @@
+export interface JsonValue {
+  [key: string]: string | number | boolean | null | JsonValue | JsonValue[]
+}
+
 // Base service types for API client
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean
   data?: T
   error?: ApiError
@@ -10,7 +14,7 @@ export interface ApiResponse<T = any> {
 export interface ApiError {
   code: string | number
   message: string
-  details?: any
+  details?: unknown
 }
 
 export interface RequestConfig {

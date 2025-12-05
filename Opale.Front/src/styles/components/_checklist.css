@@ -1,0 +1,63 @@
+/* src/styles/components/_checklist.css */
+
+@layer components {
+    .checklist {
+        display: grid;
+        gap: 14px;
+        margin-top: 12px;
+    }
+
+    .cl-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: 100%;
+        background: var(--panel-soft);
+        border-radius: 12px;
+        padding: 12px 16px;
+        border: none;
+        cursor: pointer;
+        text-align: left;
+    }
+
+    .cl-label-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .badge {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+    }
+
+    .badge.ok    { background: var(--brand); color: #fff; }
+    .badge.alert { background: var(--amber); color: #111; }
+    .badge.checked {
+        box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .06);
+    }
+
+    .cl-label {
+        flex: 1;
+        font-family: 'Roboto', sans-serif;
+        font-size: clamp(14px, 1.6vw, 22px);
+        font-weight: 500;
+    }
+
+    .cl-warning {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Bouton Générer : bas-droite (Planning macro) */
+    .btn-generate {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+    }
+}

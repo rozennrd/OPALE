@@ -2303,8 +2303,45 @@ app.delete(
   },
 );
 
-/*========== EVENEMENT ==========*/
+// Delete an event
+app.delete(
+  '/deleteEvent',
+  authJwt.verifyToken,
+  (req: Request, res: Response): void => {
+    const { id } = req.query;
 
+    if (!id) {
+      res.status(400).json({ message: "Le paramètre 'id' est obligatoire." });
+      return;
+    }
+
+    pool.connect((err: any, connection: any) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      const sql = 'DELETE FROM event WHERE id = $1';
+
+      connection.query(sql, [id], (error: any, result: any) => {
+        connection.release(); // Libérer la connexion
+
+        if (error) {
+          return res.status(500).json({ error: error.message });
+        }
+
+        const affectedRows = result.rowCount;
+
+        if (affectedRows === 0) {
+          return res
+            .status(404)
+            .json({ message: `Événement avec l'ID ${id} non trouvé` });
+        }
+
+        return res.json({ message: "Événement supprimé avec succès" });
+      });
+    });
+  },
+);
 // Update event
 app.put('/updateEvent', authJwt.verifyToken, (req: Request, res: Response): void => {
   const {
@@ -2394,6 +2431,85 @@ app.put('/updateEvent', authJwt.verifyToken, (req: Request, res: Response): void
     connection.release(); // Libérer la connexion
   });
 });
+
+// Add event
+app.post(
+    '/addEvent',
+    authJwt.verifyToken,
+    (req: Request, res: Response): void => {
+      const {
+        type,
+        nom,
+        num_semaine,
+        datetime_start,
+        datetime_end,
+        show_macro,
+        show_micro,
+        is_blocking,
+        is_exceptional,
+        is_external
+      } = req.body;
+
+      // Check required fields
+      if (!type || !nom || !datetime_start || !datetime_end) {
+        res.status(400).json({
+          message: "Les champs type, nom, datetime_start et datetime_end sont obligatoires."
+        });
+        return;
+      }
+
+      pool.connect((err: any, connection: any) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        const sql = `
+            INSERT INTO event (type, nom, num_semaine, datetime_start, datetime_end, show_macro, show_micro,
+                               is_blocking,
+                               is_exceptional, is_external)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+        `;
+
+        connection.query(
+            sql,
+            [
+              type,
+              nom,
+              num_semaine,
+              datetime_start,
+              datetime_end,
+              show_macro,
+              show_micro,
+              is_blocking,
+              is_exceptional,
+              is_external,
+            ],
+            (error: any, result: any) => {
+              connection.release();
+
+              if (error) {
+                // Check date constraint
+                if (error.constraint === 'ck_event_dates') {
+                  res.status(400).json({
+                    error: 'La date de début doit être antérieure à la date de fin.',
+                  });
+                  return;
+                }
+                res.status(500).json({ error: error.message });
+                return;
+              }
+
+
+              const insertedId = result?.rows?.[0]?.id ?? null;
+              return res.status(201).json({
+                message: "Évènement ajouté avec succès",
+                insertedId
+              });
+            }
+        );
+      });
+    }
+);
 
 // Start the server
 const server = app.listen(PORT, () => {
