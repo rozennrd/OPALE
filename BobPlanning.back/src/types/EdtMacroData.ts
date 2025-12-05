@@ -1,13 +1,19 @@
 export interface Periode {
   DateDebutP: Date;
   DateFinP: Date;
+  type: string;
 }
 
 export interface Promos {
-  Name: string;
-  i : number;
-  Nombre: number;
-  Periode: Periode[];
+  id: string;
+  nom: string;
+  effectifs: number;
+  id_cycle: string;
+  date_start: Date;
+  date_end: Date;
+  type: string;
+  i: number;
+  periode: Periode[];
 }
 
 export interface EdtMacroData {

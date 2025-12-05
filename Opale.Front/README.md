@@ -243,11 +243,7 @@ Toujours même structure :
 
 ```
 src/
-├── App.tsx
-├── main.tsx
-├── vite-env.d.ts
-│
-├── assets/
+├─ assets/
 │   ├── icons/
 │   │   ├── ic-add.svg
 │   │   ├── ic-arrow-down.svg
@@ -279,130 +275,208 @@ src/
 │   │   └── ic-event-workshop.png
 │   │
 │   └── teachers/
-│       ├── ic-teacher-distanciel.png
-│       ├── ic-teacher-hybride.png
-│       ├── ic-teacher-presentiel.png
-│       └── icon-avatar.png
+│   │   ├── ic-teacher-distanciel.png
+│   │   ├── ic-teacher-hybride.png
+│   │   ├── ic-teacher-presentiel.png
+│   │   └── icon-avatar.png
+│   │ 
+│   ├── ic-modif.png
+│   ├── ic-moins.png
+│   ├── ic-plus.png
+│   ├── ic-search.png
+│   ├── ic-tel.png
+│   ├── ic-user.png
+│   └── ic-warning.png
 │
-├── components/
-│   ├── common/
+├─ components/
+│   ├─ common/
 │   │   ├── ActionButtonsWithConfirm.tsx
 │   │   ├── ConfirmDialog.tsx
-│   │   ├── DateRangePill.tsx
+│   │   ├── DetailCardBody.tsx
+│   │   ├── DetailCardBody.tsx
+│   │   ├── DetailCardFooter.tsx
+│   │   ├── DateRangeHeader.tsx
+│   │   ├── EntityBadge.tsx
+│   │   ├── EntityCard.tsx
 │   │   ├── PageHeader.tsx
 │   │   ├── SectionHeader.tsx
-│   │   └── Tooltip.tsx
+│   │   ├── Toolbar.tsx
+│   │   └── ToolbarSearch.tsx
 │   │
-│   ├── promotions/
-│   │   ├── PromoAdjustDialog.jsx
-│   │   ├── PromoEditDialog.jsx
-│   │   ├── PromotionCycleCard.jsx
-│   │   ├── PromotionCycleList.jsx
-│   │   ├── PromotionsView.jsx
-│   │   ├── constraints/
-│   │   │   ├── ConstraintCard.jsx
-│   │   │   ├── ConstraintPill.jsx
-│   │   │   └── ConstraintsSection.jsx
-│   │   └── lists/
-│   │       ├── CyclesList.jsx
-│   │       └── PromotionsList.jsx
+│   ├─ events/
+│   │   ├── EventCard.tsx
+│   │   ├── EventDetailCard.tsx
+│   │   ├── EventSection.tsx
+│   │   ├── EventTypeBadge.tsx
+│   │   └── EventsToolbar.tsx
 │   │
-│   ├── teachers/
-│   │   ├── TeacherCard.jsx
-│   │   ├── TeacherDetailCard.jsx
-│   │   ├── TeacherModeBadge.jsx
-│   │   └── sections/
-│   │       ├── TeacherAvailabilityColumn.jsx
-│   │       ├── TeacherInfoColumn.jsx
-│   │       └── TeacherSubjectsColumn.jsx
+│   ├─ promotions/
+│   │   ├─ constraints/
+│   │   │   ├── ConstraintCard.tsx
+│   │   │   ├── ConstraintPill.tsx
+│   │   │   └── ConstraintsSection.tsx
+│   │   │
+│   │   ├─ cycles/
+│   │   │   ├── CycleCard.tsx
+│   │   │   ├── CycleImportDropzone.tsx
+│   │   │   └── ConstraintsSection.tsx
+│   │   │
+│   │   ├─ sections/
+│   │   │   ├── PromoGroups.tsx
+│   │   │   ├── PromoMainInfo.tsx
+│   │   │   └── PromoSpecialities.tsx
+│   │   │
+│   │   ├── PromoAdjustDialog.tsx
+│   │   └── PromoEditDialog.tsx
 │   │
-│   ├── rooms/
-│   │   ├── RoomCard.jsx
-│   │   ├── RoomDetailCard.jsx
-│   │   └── RoomTypeBadge.jsx
-│   │
-│   └── events/
-│       ├── EventCard.jsx
-│       ├── EventDetailCard.jsx
-│       ├── EventTypeBadge.jsx
-│       └── EventsToolbar.jsx
-│
-├── hooks/
-│   ├── promotions/
-│   │   ├── usePromotionAdjustPopup.js
-│   │   ├── usePromotionConstraints.js
-│   │   ├── usePromotionCycles.js
-│   │   ├── usePromotionEditing.js
-│   │   └── usePromotionList.js
+│   ├─ rooms/
+│   │    ├── RoomCard.tsx
+│   │    ├── RoomTypeBadge.tsx
+│   │    ├── RoomSection.tsx
+│   │    └── RoomTypeBadge.tsx
 │   │
 │   ├── teachers/
-│   │   └── useTeacherDetail.js
+│   │    ├── sections/
+│   │    │   ├── TeacherAvailabilityColumn.tsx
+│   │    │   ├── TeacherInfoColumn.tsx
+│   │    │   └──TeacherSubjectsColumn.tsx
+│   │    ├── TeacherCard.tsx
+│   │    ├── TeacherCardsGrid.tsx
+│   │    ├── TeacherDetailCard.tsx
+│   │    ├── TeacherModeBadge.tsx
+│   │    ├── TeacherSection.tsx
+│   │    └── TeacherToolbar.tsx
 │   │
-│   ├── rooms/
-│   │   └── useRoomDetail.js
+│   ├── Checklist.tsx
+│   ├── Sidebar.tsx
+│   └── ThemeToogle.tsx
+│   
+├─ hooks/
+│   ├─ common/
+│   │    ├── useDetailDirtyClose.ts
+│   │    └── useDetailEscapeClose.ts
 │   │
-│   └── events/
-│       └── useEventDetail.js
+│   ├─ events/
+│   │    └── useEventDetail.ts
+│   │
+│   ├─ promotions/
+│   │    ├── index.ts
+│   │    ├── usePromotionAdjustPopup.js
+│   │    ├── usePromotionConstraints.js
+│   │    ├── usePromotionCycles.js
+│   │    └── usePromotionEditing.js
+│   │
+│   └─ teachers/
+│   │    └── useTeacherDetail.js
+│   │
+│   └── useTheme.js
 │
-├── mocks/
+├─ mocks/
 │   ├── events.mock.ts
 │   ├── promotions.mock.ts
 │   ├── rooms.mock.ts
 │   └── teachers.mock.ts
 │
-├── models/
+├─ models/
 │   ├── CampusEvent.ts
+│   ├── Constraints.ts
+│   ├── Cycle.ts
+│   ├── DateRange.ts
+│   ├── GroupSpecialtyItem.ts
+│   ├── index.ts
 │   ├── Promotion.ts
 │   ├── Room.ts
-│   └── Teacher.ts
+│   ├── Teacher.ts
+│   └── Theme.ts
 │
-├── pages/
-│   ├── Events.jsx
-│   ├── PlanningMacro.jsx
-│   ├── Promotions.jsx
-│   ├── Rooms.jsx
-│   ├── Teachers.jsx
-│   └── Placeholder.jsx
+├─ pages/
+│   Events.tsx
+│   Placeholder.tsx
+│   PlanningMacro.tsx
+│   Promotions.tsx
+│   Rooms.tsx
+│   Teachers.tsx
 │
-├── router/
-│   └── index.tsx
-│
-├── styles/
-│   ├── base.css
-│   ├── components.css
-│   ├── token.css
+├─ services/
+│   ├── api/
+│   │    ├── coursesApi.ts
+│   │    ├── edtApi.ts
+│   │    ├── maquetteApi.ts
+│   │    ├── professorsApi.ts
+│   │    ├── promotionsApi.ts
+│   │    └── roomsApi.ts
 │   │
-│   ├── pages/
-│   │   ├── events/
-│   │   │   ├── _cards.css
-│   │   │   ├── _detail-modal.css
-│   │   │   ├── _layout.css
-│   │   │   ├── _toolbar.css
-│   │   │   └── index.css
-│   │   ├── promotions/
-│   │   │   ├── _adjust-popup.css
-│   │   │   ├── _edit-modal.css
-│   │   │   ├── _layout.css
-│   │   │   ├── _lists.css
-│   │   │   ├── _promo-row.css
-│   │   │   └── index.css
-│   │   ├── rooms/
-│   │   │   ├── _detail-modal.css
-│   │   │   ├── _layout.css
-│   │   │   ├── _lists.css
-│   │   │   └── index.css
+│   ├── base/
+│   │    ├── ApiClient.ts
+│   │    ├── AuthService.ts
+│   │    └── type.ts
+│   └── index.ts
+│
+├─ styles/
+│   ├─ common/
+│   │    ├── _action-buttons.css
+│   │    ├── _buttons.css
+│   │    ├── _checklist.css
+│   │    ├── _confirm-dialog.css
+│   │    ├── _date-range-pill.css
+│   │    ├── _detail-card-footer.css
+│   │    ├── _detail-card-header.css
+│   │    ├── _detail-card-footer.css
+│   │    ├── _entity-badge.css
+│   │    ├── _entity-card.css
+│   │    ├── _nav-links.css
+│   │    ├── _page-header.css
+│   │    ├── _section-header.css
+│   │    ├── _theme-toogle.css
+│   │    └── toolbar.css
+│   │
+│   ├─ pages/
+│   │   ├─ events/
+│   │   │    ├── _cards.css
+│   │   │    ├── _detail-modal.css
+│   │   │    ├── _layout.css
+│   │   │    ├── _toolbar.css
+│   │   │    └── index.css
+│   │   │
+│   │   ├─ login/
+│   │   │    └── _login-page.css
+│   │   │
+│   │   ├─ promotions/
+│   │   │    ├── _adjust-popup.css
+│   │   │    ├── _edit-modal.css
+│   │   │    ├── _layout.css
+│   │   │    ├── _lists.css
+│   │   │    ├── _promo-row.css
+│   │   │    └── index.css
+│   │   │
+│   │   ├─ rooms/
+│   │   │    ├── _cards.css
+│   │   │    ├── _detail-modal.css
+│   │   │    ├── _layout.css
+│   │   │    ├── _sections.css
+│   │   │    └── index.css
+│   │   │
 │   │   └── teachers/
-│   │       ├── _card.css
-│   │       ├── _detail-modal.css
-│   │       ├── _layout.css
-│   │       ├── _toolbar.css
-│   │       └── index.css
+│   │        ├── _availability.css
+│   │        ├── _cards.css
+│   │        ├── _detail-modal.css
+│   │        ├── _layout.css
+│   │        ├── _sections.css
+│   │        ├── _toolbar.css
+│   │        └── index.css
 │   │
-│   └── themes/
-│       └── dark.css
+│   └─ themes/
+│   │    └── dark.css
+│   ├── token.css
+│   ├── base.css
+│   └── components.css
 │
-└── utils/
-    └── promoUtils.ts
+└─ utils/
+│   └── promoUtils.ts
+│
+├──  App.tsx
+├──  main.tsx
+└──  vite-env.d.ts
 ```
 
 ---

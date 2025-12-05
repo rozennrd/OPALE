@@ -1,5 +1,4 @@
 // src/components/teachers/TeacherDetailCard.tsx
-
 import React, { useState } from 'react'
 import { Teacher } from '../../models/Teacher'
 import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'

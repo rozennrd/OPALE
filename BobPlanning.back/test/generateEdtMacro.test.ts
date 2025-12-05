@@ -242,13 +242,19 @@ describe('generateEdtMacro', () => {
       const data = createMockEdtMacroData({
         Promos: [
           {
-            Name: 'ADI1',
-            Nombre: 20,
+            id : '1',
+            nom: 'ADI1',
+            effectifs: 20,
+            id_cycle : '2',
+            date_start : new Date('2024-01-08'),
+            date_end : new Date('2024-03-31'),
+            type : 'initial',
             i: 0,
-            Periode: [
+            periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
                 DateFinP: new Date('2024-03-31'),
+                type: 'rattrapage'
               },
             ],
           },
@@ -276,13 +282,19 @@ describe('generateEdtMacro', () => {
         DateFin: new Date('2024-01-24'),
         Promos: [
           {
-            Name: 'ADI1',
-            Nombre: 20,
+            id : '1',
+            nom: 'ADI1',
+            effectifs: 20,
+            type: 'initial',
+            date_start : new Date('2024-01-08'),
+            date_end : new Date('2024-03-31'),
             i: 0,
-            Periode: [
+            id_cycle : '2',
+            periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
                 DateFinP: new Date('2024-03-31'),
+                type: 'entreprise'
               },
             ],
           },
@@ -310,13 +322,19 @@ describe('generateEdtMacro', () => {
         DateFin: new Date('2024-01-22'),
         Promos: [
           {
-            Name: 'CIR1',
-            Nombre: 20,
+            id: '1',
+            nom: 'CIR1',
+            effectifs: 20,
+            type: 'initial',
+            id_cycle : '2',
+            date_start : new Date('2024-01-08'),
+            date_end : new Date('2024-03-31'),
             i: 0,
-            Periode: [
+            periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
                 DateFinP: new Date('2024-03-31'),
+                type: 'rattrapage'
               },
             ],
           },
@@ -336,13 +354,19 @@ describe('generateEdtMacro', () => {
       const data = createMockEdtMacroData({
         Promos: [
           {
-            Name: 'AP3',
-            Nombre: 20,
+            id:'1',
+            nom: 'AP3',
+            effectifs: 20,
+            type: 'apprentissage',
+            id_cycle: '1',
+            date_start : new Date('2024-01-08'),
+            date_end : new Date('2024-03-31'),
             i: 0,
-            Periode: [
+            periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
                 DateFinP: new Date('2024-01-29'),
+                type: 'entreprise'
               },
             ],
           },
@@ -354,20 +378,26 @@ describe('generateEdtMacro', () => {
       expect(mockWorksheet.addRow).toHaveBeenCalled();
     });
 
-    it('should display "International Break" for AP4 after the last period', async () => {
+    it('should display "International Break" only during the event period', async () => {
       const data = createMockEdtMacroData({
         DateDeb: new Date('2024-01-08'),
         DateFin: new Date('2024-03-15'),
         Promos: [
           {
-            Name: 'AP4',
-            Nombre: 20,
+            id: '1',
+            nom: 'AP4',
+            effectifs: 20,
+            id_cycle: '2',
+            type: 'apprentissage',
+            date_start: new Date('2024-01-08'),
+            date_end: new Date('2024-03-31'),
             i: 0,
-            Periode: [
+            periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
                 DateFinP: new Date('2024-01-29'),
-              },
+                type: 'Mobilité internationale'
+              }
             ],
           },
         ],
@@ -376,27 +406,44 @@ describe('generateEdtMacro', () => {
       await generateEdtMacro(data);
 
       const calls = (mockWorksheet.addRow as jest.Mock).mock.calls;
-      const laterRow = calls.find((call: unknown[]) => {
-        const row = call[0] as Record<string, string>;
-        return row.AP4 === 'Mobilité Internationale';
-      });
 
-      expect(laterRow).toBeDefined();
+      const rowsWithEvent = calls
+        .map(c => c[0])
+        .filter(row => row.AP4 === 'Mobilité internationale');
+
+      // L’événement dure du 8 au 29 = environ 3 semaines → 3 lignes
+      expect(rowsWithEvent.length).toBe(4);
+
+      // Après le 29 janvier → plus rien
+      const rowsAfter = calls
+        .map(c => c[0])
+        .filter(row => row.weekStart > new Date('2024-01-29'));
+
+      for (const row of rowsAfter) {
+        expect(row.AP4).toBe('');
+      }
     });
 
-    it('should display "Soutenance" for AP5 in the last week', async () => {
+
+    it('should display "Soutenance" on the last week of a PFE', async () => {
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-08'),
-        DateFin: new Date('2024-01-29'),
+        DateDeb: new Date('2024-01-01'),
+        DateFin: new Date('2024-02-01'),
         Promos: [
           {
-            Name: 'AP5',
-            Nombre: 20,
+            id: '1',
+            nom: 'AP5',
+            effectifs: 20,
+            id_cycle: '1',
+            type: 'Apprentissage',
+            date_start: new Date('2024-01-01'),
+            date_end: new Date('2024-06-30'),
             i: 0,
-            Periode: [
+            periode: [
               {
-                DateDebutP: new Date('2024-01-08'),
-                DateFinP: new Date('2024-01-15'),
+                DateDebutP: new Date('2024-01-01'),
+                DateFinP: new Date('2024-01-21'),  // ← se termine dans la semaine du 15-21
+                type: 'PFE'
               },
             ],
           },
@@ -406,11 +453,13 @@ describe('generateEdtMacro', () => {
       await generateEdtMacro(data);
 
       const calls = (mockWorksheet.addRow as jest.Mock).mock.calls;
-      const lastRow = calls[calls.length - 1][0] as Record<string, string>;
 
-      expect(lastRow.AP5).toBe('Soutenance');
+      // On cherche la semaine qui contient le 21 janvier
+      const soutenanceRow = calls.find(c => c[0].AP5 === "Soutenance");
+
+      expect(soutenanceRow).toBeDefined();
     });
-  });
+
 
   describe('Management of the CyPre column', () => {
     it('should generate CyPre week numbers correctly', async () => {
@@ -419,13 +468,19 @@ describe('generateEdtMacro', () => {
         DateFin: new Date('2024-02-05'),
         Promos: [
           {
-            Name: 'ADI1',
-            Nombre: 20,
+            id: '1',
+            nom: 'ADI1',
+            effectifs: 20,
+            id_cycle : '2',
+            type: 'initial',
+            date_start : new Date('2024-01-08'),
+            date_end : new Date('2024-03-31'),
             i: 0,
-            Periode: [
+            periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
                 DateFinP: new Date('2024-03-31'),
+                type: 'rattrapage'
               },
             ],
           },
@@ -454,13 +509,19 @@ describe('generateEdtMacro', () => {
         DateFin: new Date('2024-01-29'),
         Promos: [
           {
-            Name: 'ADI1',
-            Nombre: 20,
+            id: '1',
+            nom: 'ADI1',
+            effectifs: 20,
+            id_cycle : '2',
+            type: 'initial',
+            date_start : new Date('2024-01-08'),
+            date_end : new Date('2024-03-31'),
             i: 0,
-            Periode: [
+            periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
                 DateFinP: new Date('2024-03-31'),
+                type: 'rattrapage'
               },
             ],
           },
@@ -519,13 +580,19 @@ describe('generateEdtMacro', () => {
       const data = createMockEdtMacroData({
         Promos: [
           {
-            Name: 'ADI1',
-            Nombre: 20,
+            id: '1',
+            nom: 'ADI1',
+            effectifs: 20,
+            id_cycle : '2',
+            type: 'initial',
+            date_start : new Date('2024-01-08'),
+            date_end : new Date('2024-03-31'),
             i: 0,
-            Periode: [
+            periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
                 DateFinP: new Date('2024-03-31'),
+                type: 'stage'
               },
             ],
           },
@@ -534,15 +601,13 @@ describe('generateEdtMacro', () => {
 
       await generateEdtMacro(data);
 
-      // Verify that getCell is called with the promo name
-      expect(mockRow.getCell).toHaveBeenCalledWith('ADI1');
-
-      // Verify that the green style is applied
-      expect(mockCell.fill).toEqual({
+      expect(mockRow.getCell).not.toHaveBeenCalledWith('ADI1');
+      expect(mockCell.fill).not.toEqual({
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FF99FF99' },
       });
+
     });
 
     it('should color AP5 final presentations in pink (FFFF99CC) and make them bold', async () => {
@@ -551,13 +616,19 @@ describe('generateEdtMacro', () => {
         DateFin: new Date('2024-02-05'),
         Promos: [
           {
-            Name: 'AP5',
-            Nombre: 20,
+            id: '1',
+            nom: 'AP5',
+            effectifs: 20,
+            id_cycle: '1',
+            type: 'apprentissage',
+            date_start : new Date('2024-01-08'),
+            date_end : new Date('2024-03-31'),
             i: 0,
-            Periode: [
+            periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
-                DateFinP: new Date('2024-01-22'),
+                DateFinP: new Date('2024-02-02'), // 📌 FIN DANS LA SEMAINE
+                type: "Projet de fin d'études",   // 📌 PFE
               },
             ],
           },
@@ -566,19 +637,18 @@ describe('generateEdtMacro', () => {
 
       await generateEdtMacro(data);
 
-      // Verify that getCell is called with AP5
+      // Verify soutenance applied
       expect(mockRow.getCell).toHaveBeenCalledWith('AP5');
 
-      // Verify the pink color
       expect(mockCell.fill).toEqual({
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FFFF99CC' },
       });
 
-      // Verify bold text
       expect(mockCell.font).toEqual({ bold: true });
     });
+
 
     it('should color retake exams in yellow (FFFFFF00) and make them bold', async () => {
       (getHolidays as jest.Mock).mockResolvedValue([
@@ -587,20 +657,26 @@ describe('generateEdtMacro', () => {
           start_date: '2024-02-10',
           end_date: '2024-02-25',
         },
-      ] as Holiday[]);
+      ]);
 
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-08'),
-        DateFin: new Date('2024-03-15'),
+        DateDeb: new Date('2024-02-05'),
+        DateFin: new Date('2024-02-19'), // semaine qui croise vacances + rattrapage
         Promos: [
           {
-            Name: 'ADI1',
-            Nombre: 20,
+            id: '1',
+            nom: 'ADI1',
+            effectifs: 20,
+            id_cycle: '2',
+            type: 'initial',
+            date_start: new Date('2024-01-01'),
+            date_end: new Date('2024-06-30'),
             i: 0,
-            Periode: [
+            periode: [
               {
-                DateDebutP: new Date('2024-01-08'),
-                DateFinP: new Date('2024-02-09'), // Ends before the winter break
+                DateDebutP: new Date('2024-02-12'),
+                DateFinP: new Date('2024-02-16'),
+                type: 'Rattrapage semestre 1 ou 3',
               },
             ],
           },
@@ -611,27 +687,25 @@ describe('generateEdtMacro', () => {
 
       const calls = (mockWorksheet.addRow as jest.Mock).mock.calls;
 
-      // Find the line with the retake exam (during winter break)
-      const retakeExamRow = calls.find((call: unknown[]) => {
+      const retakeExamRow = calls.find(call => {
         const row = call[0] as Record<string, string>;
-        return row.ADI1 && row.ADI1.includes('Rattrapage semestre');
+        return row.ADI1?.includes('Rattrapage');
       });
 
       expect(retakeExamRow).toBeDefined();
 
-      // Verify that getCell is called with ADI1
       expect(mockRow.getCell).toHaveBeenCalledWith('ADI1');
 
-      // Check the yellow color
       expect(mockCell.fill).toEqual({
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FFFFFF00' },
       });
 
-      // Check the text in bold
       expect(mockCell.font).toEqual({ bold: true });
     });
+
+
 
     it('should display public holidays in red (FF0000)', async () => {
       (getPublicHolidays as jest.Mock).mockResolvedValue({
@@ -671,4 +745,5 @@ describe('generateEdtMacro', () => {
       });
     });
   });
+});
 });

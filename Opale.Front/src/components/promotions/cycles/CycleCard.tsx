@@ -6,7 +6,8 @@ import icModif from '../../../assets/ic-modif.png'
 
 import { hasPromoMismatch } from '../../../utils/promoUtils'
 import { Cycle } from '../../models'
-import CycleImportDropzone from './CycleImportDropzone'
+import CycleImportDropzone from './CycleImportDropZone'
+
 
 interface CycleCardProps {
     cycle: Cycle
