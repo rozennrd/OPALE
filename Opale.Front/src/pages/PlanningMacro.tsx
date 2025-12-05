@@ -1,6 +1,6 @@
 // src/pages/PlanningMacro.tsx
 // @ts-ignore
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, JSX } from 'react'
 import Checklist from '../components/Checklist'
 import PageHeader from "../components/common/PageHeader";
 
@@ -14,7 +14,7 @@ interface ChecklistItem {
     warning?: boolean;
 }
 
-export default function PlanningMacro(): React.ReactElement<any> {
+export default function PlanningMacro(): React.ReactElement {
 
     const [hasPromosMismatch, setHasPromosMismatch] = useState<boolean>(() => {
         if (typeof window === 'undefined') return false

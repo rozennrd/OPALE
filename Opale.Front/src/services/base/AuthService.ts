@@ -1,5 +1,5 @@
 import { apiClient } from './ApiClient'
-import { LoginCredentials, LoginResponse, User, VerifyResponse } from './types'
+import { LoginCredentials, LoginResponse, User } from './types'
 import * as CryptoJS from 'crypto-js'
 import {
     setTokenInLocalStorage,
@@ -15,9 +15,9 @@ class AuthService {
         return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
     };
 
-    async login(credentials: LoginCredentials): Promise<{ success: boolean, response?: import('./types').ApiResponse<any> }>{
+    async login(credentials: LoginCredentials): Promise<{ success: boolean, response?: import('./types').ApiResponse<LoginResponse> }>{
         credentials.password = this.hashPassword(credentials.password);
-        const response = await apiClient.post('/login', credentials)
+        const response = await apiClient.post<LoginResponse>('/login', credentials)
         if (response.success && response.data && response.data.token) {
             // Store JWT token in localStorage like BobPlanning.front
             setTokenInLocalStorage(response.data.token)
