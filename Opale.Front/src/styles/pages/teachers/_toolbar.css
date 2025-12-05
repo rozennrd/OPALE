@@ -1,112 +1,46 @@
 /* src/styles/pages/teachers/_toolbar.css */
 
+/*1 ligne*/
 @layer pages {
-    .teachers-toolbar {
-        display: flex;
+    /* Ligne principale : search + filtres */
+    .teachers-toolbar-row {
         align-items: center;
-        justify-content: space-between;
-        gap: 1.25rem;
-        margin-bottom: 0.5rem;
     }
 
-    .teachers-toolbar-left {
-        flex: 1;
-        min-width: 0;
+    /* Search réduite mais qui prend l’espace dispo */
+    .teachers-toolbar-search {
+        flex: 1 1 260px;
+        min-width: 200px;
     }
 
-    .teachers-toolbar-right {
+    /* Bloc filtres à droite */
+    .teachers-toolbar-filters {
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        flex-wrap: nowrap;
+        flex-shrink: 0;
     }
 
-    /* Search */
-
-    .teachers-search {
-        position: relative;
-        width: 100%;
-    }
-
-    .teachers-search-icon {
-        position: absolute;
-        left: 0.85rem;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 1.1rem;
-        height: 1.1rem;
-        opacity: 0.9;
-        pointer-events: none;
-    }
-
-    .teachers-search-input {
-        width: 100%;
-        height: 2.5rem;
-        padding: 0 0.9rem 0 2.4rem;
-        border-radius: 999px;
-        border: 1px solid var(--border);
-        background: var(--panel-soft);
-        font-size: 0.95rem;
-        color: var(--text);
-        outline: none;
-        transition:
-                border-color 150ms ease,
-                box-shadow 150ms ease,
-                background-color 150ms ease;
-    }
-
-    .teachers-search-input::placeholder {
-        color: var(--muted);
-    }
-
-    .teachers-search-input:focus {
-        border-color: var(--brand);
-        background: var(--panel-soft);
-        box-shadow: 0 0 0 1px rgba(50, 224, 230, 0.25);
-    }
-
-    /* Filtres */
-
-    .teachers-filter-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.45rem 0.9rem;
-        border-radius: 999px;
-        background: var(--panel-soft);
-        border: 1px solid var(--border);
-        font-size: 0.9rem;
-        color: var(--text);
-        cursor: pointer;
-        transition:
-                background-color 150ms ease,
-                border-color 150ms ease,
-                transform 80ms ease;
-    }
-
-    .teachers-filter-btn:hover {
-        background: var(--surface-hover);
-        border-color: var(--border);
-    }
-
-    .teachers-filter-btn:active {
-        transform: translateY(1px);
-    }
-
-    .teachers-filter-chevron {
-        font-size: 0.75rem;
-        opacity: 0.7;
-    }
-
-    /* responsive toolbar */
-
+    /* Sur mobile : on repasse en colonne */
     @media (max-width: 900px) {
-        .teachers-toolbar {
+        .teachers-toolbar-row {
             flex-direction: column;
             align-items: stretch;
         }
 
-        .teachers-toolbar-right {
-            align-self: flex-start;
+        .teachers-toolbar-search {
+            width: 100%;
+            flex: 1 1 auto;
+        }
+
+        .teachers-toolbar-filters {
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .teachers-toolbar-filters .toolbar-filter {
+            width: 100%;
         }
     }
 }

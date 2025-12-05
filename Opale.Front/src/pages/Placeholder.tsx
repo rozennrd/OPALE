@@ -1,7 +1,11 @@
-// src/pages/Placeholder.jsx
-import React from 'react'
+import React from 'react';
 
-export default function Placeholder({ title = 'Page', notFound = false }) {
+interface PlaceholderProps {
+    title?: string;
+    notFound?: boolean;
+}
+
+export default function Placeholder({ title = 'Page', notFound = false }: PlaceholderProps) {
     return (
         <>
             <h2 className="page-title">{title}</h2>

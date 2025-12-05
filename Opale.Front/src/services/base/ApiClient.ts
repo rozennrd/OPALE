@@ -16,7 +16,7 @@ class ApiClient {
   private async makeRequest<T>(
     method: string,
     endpoint: string,
-    data?: any,
+    data?: unknown,
     config: RequestConfig = {}
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`
@@ -131,15 +131,15 @@ class ApiClient {
     return this.makeRequest<T>('GET', endpoint, undefined, config)
   }
 
-  async post<T>(endpoint: string, data?: any, config?: RequestConfig): Promise<ApiResponse<T>> {
+  async post<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<ApiResponse<T>> {
     return this.makeRequest<T>('POST', endpoint, data, config)
   }
 
-  async put<T>(endpoint: string, data?: any, config?: RequestConfig): Promise<ApiResponse<T>> {
+  async put<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<ApiResponse<T>> {
     return this.makeRequest<T>('PUT', endpoint, data, config)
   }
 
-  async patch<T>(endpoint: string, data?: any, config?: RequestConfig): Promise<ApiResponse<T>> {
+  async patch<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<ApiResponse<T>> {
     return this.makeRequest<T>('PATCH', endpoint, data, config)
   }
 
@@ -151,7 +151,7 @@ class ApiClient {
   async uploadFile<T>(
     endpoint: string,
     file: File,
-    additionalData?: Record<string, any>,
+    additionalData?: Record<string, unknown>,
     config?: RequestConfig
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`

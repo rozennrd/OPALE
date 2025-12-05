@@ -1,13 +1,26 @@
-// src/components/promotions/PromoAdjustDialog.jsx
-import React from 'react'
+// src/components/promotions/PromoAdjustDialog.tsx
+import React from 'react';
+
+interface AdjustPopup {
+    open: boolean;
+    groups: boolean;
+    specialties: boolean;
+}
+
+interface PromoAdjustDialogProps {
+    adjustPopup: AdjustPopup;
+    onToggleGroups: () => void;
+    onToggleSpecialties: () => void;
+    onValidate: () => void;
+}
 
 export default function PromoAdjustDialog({
-                                              adjustPopup,
-                                              onToggleGroups,
-                                              onToggleSpecialties,
-                                              onValidate,
-                                          }) {
-    if (!adjustPopup.open) return null
+    adjustPopup,
+    onToggleGroups,
+    onToggleSpecialties,
+    onValidate,
+}: PromoAdjustDialogProps) {
+    if (!adjustPopup.open) return null;
 
     return (
         <div className="promo-adjust-overlay">
@@ -61,5 +74,5 @@ export default function PromoAdjustDialog({
                 </div>
             </div>
         </div>
-    )
+    );
 }
