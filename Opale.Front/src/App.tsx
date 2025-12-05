@@ -6,6 +6,7 @@ import PlanningMacro from './pages/PlanningMacro.jsx'
 import Placeholder from './pages/Placeholder.jsx'
 import Login from './pages/Login'
 import Rooms from './pages/Rooms'
+import Events from './pages/Events'
 import { authService } from './services/base/AuthService'
 
 
@@ -15,7 +16,6 @@ import { useTheme } from './hooks/useTheme'
 
 
 function AppLayout() {
-
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -66,15 +66,12 @@ export default function App() {
                 <Route path="/" element={<Navigate to="/planning" replace />} />
                 <Route path="/planning" element={<PlanningMacro />} />
                 <Route path="/promotions" element={<Promotions />} />
-                <Route path="/evenements" element={<Placeholder title="Événements" />} />
-                <Route path="/enseignants" element={<Teachers/>} />
-
+                <Route path="/evenements" element={<Events />} />
+                <Route path="/teachers" element={<Teachers />} />
                 <Route path="/salles" element={<Rooms />} />
-                
                 <Route path="/parametres" element={<Placeholder title="Paramètres" />} />
                 <Route path="*" element={<Placeholder title="Page introuvable" notFound />} />
             </Route>
-
             <Route path="/login" element={<Login/>} />
         </Routes>
     )

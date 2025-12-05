@@ -1,0 +1,172 @@
+/* src/styles/components/_detail-card-header.css */
+
+@layer components {
+    /* ========= Wrapper commun du header (pill + croix) ========= */
+
+    .detail-card-header {
+        /*position: relative;*/
+        margin-bottom: 1.4rem;
+    }
+
+    /* ========= Croix de fermeture commune ========= */
+
+    .detail-card-header .event-detail-close,
+    .detail-card-header .room-detail-close,
+    .detail-card-header .teacher-detail-close {
+        position: absolute;
+        top: 0.5rem;
+        right: 1rem;
+        background: transparent;
+        border: none;
+        font-size: 1.3rem;
+        line-height: 1;
+        cursor: pointer;
+        color: var(--muted-strong, #64748b);
+        padding: 0;
+    }
+
+    .detail-card-header .event-detail-close:hover,
+    .detail-card-header .room-detail-close:hover,
+    .detail-card-header .teacher-detail-close:hover {
+        color: var(--primary);
+    }
+
+    /* ========= Conteneur de la pill (badge) ========= */
+
+    .detail-card-header .event-detail-header-badge,
+    .detail-card-header .room-detail-header-badge,
+    .detail-card-header .teacher-detail-header-badge {
+        width: 100%;
+        margin-bottom: 0.1rem; /* petit espace interne avant le contenu */
+    }
+
+    /* ========= Forme générale de la pill ========= */
+
+    .detail-card-header .event-detail-header-pill,
+    .detail-card-header .room-type-badge.room-type-badge-header,
+    .detail-card-header .teacher-mode-badge.teacher-mode-badge-header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 1rem;
+        padding: 0.9rem 1.2rem;
+        min-height: 64px;
+
+        border-radius: 999px;
+        border: 1px solid transparent;
+        box-shadow: var(--shadow-md);
+
+        background: var(--panel-soft);
+        text-align: left;
+    }
+
+    /* ========= Colonne gauche : titre + sous-titre ========= */
+
+    .detail-card-header .event-header-left,
+    .detail-card-header .room-header-left,
+    .detail-card-header .teacher-mode-header-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .detail-card-header .event-header-title,
+    .detail-card-header .room-header-title,
+    .detail-card-header .teacher-mode-header-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .detail-card-header .event-header-subtitle,
+    .detail-card-header .room-header-subtitle,
+    .detail-card-header .teacher-mode-header-subtitle {
+        font-size: 0.9rem;
+        color: var(--muted);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    /* ========= Colonne droite : icône + label ========= */
+
+    .detail-card-header .event-header-right,
+    .detail-card-header .room-header-right,
+    .detail-card-header .teacher-mode-header-right {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-shrink: 0;
+    }
+
+    .detail-card-header .event-header-type-icon,
+    .detail-card-header .room-header-right .room-type-icon,
+    .detail-card-header .teacher-mode-header-right .teacher-mode-icon {
+        width: 2.1rem;
+        height: 2.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .detail-card-header .event-header-type-icon img {
+        max-width: 100%;
+        max-height: 100%;
+        display: block;
+    }
+
+    .detail-card-header .event-header-type-label,
+    .detail-card-header .room-header-right .room-type-label,
+    .detail-card-header .teacher-mode-header-right .teacher-mode-label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    /* ========= Responsive : pill qui s’empile sur mobile ========= */
+
+    @media (max-width: 640px) {
+        .detail-card-header .event-detail-header-pill,
+        .detail-card-header .room-type-badge.room-type-badge-header,
+        .detail-card-header .teacher-mode-badge.teacher-mode-badge-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.9rem 1rem;
+        }
+
+        .detail-card-header .event-header-right,
+        .detail-card-header .room-header-right,
+        .detail-card-header .teacher-mode-header-right {
+            align-self: stretch;
+            justify-content: space-between;
+            width: 100%;
+        }
+    }
+
+    /* ========= Thème sombre — base générique ========= */
+
+    [data-theme='dark'] .detail-card-header .event-detail-header-pill,
+    [data-theme='dark'] .detail-card-header .room-type-badge.room-type-badge-header,
+    [data-theme='dark'] .detail-card-header .teacher-mode-badge.teacher-mode-badge-header {
+        background: #1f2735;
+        border-color: rgba(255, 255, 255, 0.18);
+        color: var(--text);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+    }
+
+    [data-theme='dark'] .detail-card-header .event-header-subtitle,
+    [data-theme='dark'] .detail-card-header .room-header-subtitle,
+    [data-theme='dark'] .detail-card-header .teacher-mode-header-subtitle {
+        color: var(--muted);
+    }
+}
