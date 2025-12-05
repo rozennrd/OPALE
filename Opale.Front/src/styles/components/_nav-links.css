@@ -1,0 +1,18 @@
+/* src/styles/components/_nav-links.css */
+
+@layer components {
+    /* NavLink: enlever l'aspect lien (soulignement/couleur par défaut) */
+    .nav .nav-btn,
+    .nav .nav-btn:visited,
+    .nav .nav-btn:hover,
+    .nav .nav-btn:focus,
+    .nav .nav-btn:active,
+    .nav-btn-footer,
+    .nav-btn-footer:visited,
+    .nav-btn-footer:hover,
+    .nav-btn-footer:focus,
+    .nav-btn-footer:active {
+        text-decoration: none;
+        color: inherit;
+    }
+}
