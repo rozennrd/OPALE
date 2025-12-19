@@ -57,6 +57,21 @@ services:
     networks:
       - app-network
 
+  micro-planning:
+    build: ./Opale.micro-planning
+    container_name: opale-micro-planning
+    depends_on:
+      - db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - app-network
+      - api-network
+    ports:
+      - "8080:8080"
+
   opale-new-frontend:
     build:
       context: ./Opale.Front
