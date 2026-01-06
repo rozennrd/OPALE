@@ -54,4 +54,13 @@ export const salleRepository = {
 
     return (result.rowCount ?? 0) > 0; // true si une ligne a été modifiée
   },
+
+  // Supprime une salle par son ID
+  async deleteById(id: string): Promise<boolean> {
+    const sql = `DELETE FROM salle WHERE id = $1`;
+
+    const result = await pool.query(sql, [id]);
+
+    return (result.rowCount ?? 0) > 0;
+  },
 };

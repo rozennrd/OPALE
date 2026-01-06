@@ -1622,68 +1622,6 @@ app.post(
   },
 );
 
-/*========== SALLES ==========*/
-
-
-
-/**
- * @swagger
- * /deleteSalle:
- *   delete:
- *     summary: Supprimer une salle
- *     tags:
- *       - Salles
- *     description: Supprime une salle spécifique de la base de données.
- *     parameters:
- *       - in: query
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: L'ID de la salle à supprimer.
- *     responses:
- *       200:
- *         description: Salle supprimée avec succès.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Salle supprimée avec succès"
- *       404:
- *         description: Salle non trouvée.
- *       500:
- *         description: Erreur interne du serveur.
- */
-app.delete('/deleteSalle', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    const { id } = req.query;
-    const sql = 'DELETE FROM salle WHERE id = $1';
-
-    connection.query(sql, [id], (error: any, result: any) => {
-      if (error) {
-        return res.status(500).json({ error: error.message });
-      }
-
-      const affectedRows = Array.isArray(result)
-        ? result[0].affectedRows
-        : result.affectedRows;
-
-      if (affectedRows === 0) {
-        return res.status(404).json({ message: 'Salle non trouvée' });
-      }
-
-      res.json({ message: 'Salle supprimée avec succès' });
-    });
-    connection.release(); // Libérer la connexion après vérification
-  });
-});
-
 /*========== COURS ==========*/
 
 app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {

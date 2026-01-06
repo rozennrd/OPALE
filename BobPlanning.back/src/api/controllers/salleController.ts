@@ -101,7 +101,6 @@ export const salleController = {
     }
   },
 
-
   /**
    * @swagger
    * /updateSalle:
@@ -167,6 +166,60 @@ export const salleController = {
 
     } catch (err: any) {
       console.error("Error updateSalle:", err);
+
+      const status = err.statusCode === 404 ? 404 : 500;
+      res.status(status).json({ error: err.message });
+      return;
+    }
+  },
+
+  /**
+   * @swagger
+   * /deleteSalle:
+   *   delete:
+   *     summary: Supprimer une salle
+   *     tags:
+   *       - Salles
+   *     description: Supprime une salle spécifique de la base de données.
+   *     parameters:
+   *       - in: query
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *         description: L'ID de la salle à supprimer.
+   *     responses:
+   *       200:
+   *         description: Salle supprimée avec succès.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Salle supprimée avec succès"
+   *       404:
+   *         description: Salle non trouvée.
+   *       500:
+   *         description: Erreur interne du serveur.
+   */
+  async deleteSalle(req: Request, res: Response): Promise<void> {
+    try {
+      const id = req.body?.id;
+
+      if (!id) {
+        res.status(400).json({ message: "L'id est requis." });
+        return;
+      }
+
+      await salleService.deleteSalle(id);
+
+      res.status(200).json({ message: "Salle supprimée avec succès" });
+      return;
+
+    } catch (err: any) {
+      console.error("Error deleteSalle:", err);
 
       const status = err.statusCode === 404 ? 404 : 500;
       res.status(status).json({ error: err.message });

@@ -37,4 +37,14 @@ export const salleService = {
       throw err;
     }
   },
+
+  async deleteSalle(id: string): Promise<void> {
+    const deleted = await salleRepository.deleteById(id);
+
+    if (!deleted) {
+      const err: any = new Error(`Salle avec l'ID ${id} non trouvée`);
+      err.statusCode = 404;
+      throw err;
+    }
+  },
 };
