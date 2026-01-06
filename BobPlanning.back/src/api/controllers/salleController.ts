@@ -3,6 +3,36 @@ import { Request, Response } from "express";
 import { salleService } from "../../domain/services/salleService";
 
 export const salleController = {
+  /**
+   * @swagger
+   * /getSallesData:
+   *   get:
+   *     summary: Récupérer les données des salles
+   *     tags:
+   *       - Salles
+   *     description: Retourne toutes les données des salles disponibles.
+   *     responses:
+   *       200:
+   *         description: Une liste d'objets contenant les informations des salles
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 type: object
+   *                 properties:
+   *                   id:
+   *                     type: integer
+   *                     example: 1
+   *                   name:
+   *                     type: string
+   *                     example: "Salle 101"
+   *                   capacity:
+   *                     type: integer
+   *                     example: 30
+   *       500:
+   *         description: Une erreur est survenue
+   */
   async getSallesData(req: Request, res: Response) {
     try {
       const salles = await salleService.getSalles();
@@ -13,6 +43,43 @@ export const salleController = {
     }
   },
 
+  /**
+   * @swagger
+   * /setSallesData:
+   *   post:
+   *     summary: Ajouter une nouvelle salle
+   *     tags:
+   *       - Salles
+   *     description: Ajoute une nouvelle salle à la base de données.
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name:
+   *                 type: string
+   *                 description: Le nom de la salle.
+   *                 example: "Salle 102"
+   *               capacity:
+   *                 type: integer
+   *                 description: La capacité maximale de la salle.
+   *                 example: 25
+   *     responses:
+   *       201:
+   *         description: Salle ajoutée avec succès.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Salle ajoutée avec succès"
+   *       500:
+   *         description: Erreur interne du serveur.
+   */
   async createSalle(req: Request, res: Response) {
     try {
       const dto = {
@@ -34,6 +101,50 @@ export const salleController = {
     }
   },
 
+
+  /**
+   * @swagger
+   * /updateSalle:
+   *   put:
+   *     summary: Mettre à jour une salle existante
+   *     tags:
+   *       - Salles
+   *     description: Met à jour les informations d'une salle spécifique.
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               id:
+   *                 type: integer
+   *                 description: L'ID de la salle à mettre à jour.
+   *                 example: 1
+   *               name:
+   *                 type: string
+   *                 description: Le nouveau nom de la salle.
+   *                 example: "Salle Informatique"
+   *               capacity:
+   *                 type: integer
+   *                 description: La nouvelle capacité de la salle.
+   *                 example: 40
+   *     responses:
+   *       200:
+   *         description: Salle mise à jour avec succès.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Salle mise à jour avec succès"
+   *       404:
+   *         description: Salle non trouvée.
+   *       500:
+   *         description: Erreur interne du serveur.
+   */
   async updateSalle(req: Request, res: Response): Promise<void> {
     try {
       const dto = {
