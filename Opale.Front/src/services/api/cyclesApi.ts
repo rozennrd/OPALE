@@ -5,7 +5,7 @@ import { ApiResponse } from '../base/types'
 
 // Backend cycle data types (from BobPlanning back)
 export interface BackendCycle {
-  id: number
+  id: string
   nom: string
   type: string
 }
@@ -20,7 +20,7 @@ export interface CycleCreateRequest {
 }
 
 export interface CycleUpdateRequest {
-  id: number
+  id: string
   nom: string
   type: string
 }
@@ -51,8 +51,8 @@ class CyclesApi {
   /**
    * Add a new cycle
    */
-  async addCycle(cycle: CycleCreateRequest): Promise<ApiResponse<{ message: string; insertedId: number }>> {
-    return apiClient.post<{ message: string; insertedId: number }>('/addCycle', cycle)
+  async addCycle(cycle: CycleCreateRequest): Promise<ApiResponse<{ message: string; insertedId: string }>> {
+    return apiClient.post<{ message: string; insertedId: string }>('/addCycle', cycle)
   }
 
   /**
@@ -65,8 +65,8 @@ class CyclesApi {
   /**
    * Delete a cycle
    */
-  async deleteCycle(id: number): Promise<ApiResponse<{ message: string }>> {
-    const queryParams = new URLSearchParams({ id: id.toString() })
+  async deleteCycle(id: string): Promise<ApiResponse<{ message: string }>> {
+    const queryParams = new URLSearchParams({ id: id })
     return apiClient.delete<{ message: string }>(`/deleteCycle?${queryParams}`)
   }
 }

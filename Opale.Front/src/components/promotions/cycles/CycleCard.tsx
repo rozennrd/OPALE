@@ -1,5 +1,5 @@
 // src/components/promotions/cycles/CycleCard.tsx
-import React from 'react'
+import React, { useState } from 'react'
 import icMoins from '../../../assets/ic-moins.png'
 import icWarning from '../../../assets/ic-warning.png'
 import icModif from '../../../assets/ic-modif.png'
@@ -14,7 +14,7 @@ interface CycleCardProps {
     renameCycle: (cycleId: string, name: string) => void
     removeCycle: (cycleId: string) => void
     openEditPromotion: (cycleId: string, promoId: string) => void
-    removePromotion: (cycleId: string, promoId: string) => void
+    removePromotion: (promoId: string) => void
 }
 
 const CycleCard: React.FC<CycleCardProps> = ({
@@ -24,14 +24,16 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                                  openEditPromotion,
                                                  removePromotion,
                                              }) => {
+    const [cycleName, setCycleName] = useState(cycle.name);
     return (
         <section className="card cycle-card">
             <div className="cycle-head">
                 <input
-                    className="cycle-name"
-                    value={cycle.name}
-                    onChange={(e) => renameCycle(cycle.id, e.target.value)}
-                />
+                className="cycle-name"
+                value={cycleName}
+                onChange={(e) => setCycleName(e.target.value)}
+                onBlur={() => renameCycle(cycle.id, cycleName)}
+            />
 
                 <div className="cycle-actions">
                     <button
@@ -80,7 +82,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
 
                             <button
                                 className="btn-danger btn-icon-responsive"
-                                onClick={() => removePromotion(cycle.id, promo.id)}
+                                onClick={() => removePromotion(promo.id)}
                                 aria-label="Supprimer la promotion"
                                 title="Supprimer la promotion"
                             >

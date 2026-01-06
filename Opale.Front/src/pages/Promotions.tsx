@@ -1,5 +1,5 @@
 // src/pages/Promotions.tsx
-import React from 'react'
+import React, { useEffect } from 'react'
 import icPlus from '../assets/ic-plus.png'
 
 import PromoEditDialog from '../components/promotions/PromoEditDialog.tsx'
@@ -62,7 +62,7 @@ export default function Promotions() {
         handleRemoveConstraint,
         handleUpdateConstraintRange,
     } = usePromotionConstraints(editingPromo, setEditingPromo)
-
+    useEffect(() => {console.log(cycles)}, [cycles] )
     return (
         <div className="promos">
             <PageHeader

@@ -8,7 +8,7 @@ export interface BackendPromotion {
   id: number
   nom: string
   effectifs: number
-  id_cycle: number | null
+  id_cycle: string
   date_start: string
   date_end: string
 }
@@ -16,7 +16,7 @@ export interface BackendPromotion {
 export interface PromotionCreateRequest {
   nom: string
   effectifs: number
-  id_cycle?: number | null
+  id_cycle: string
   date_start: string
   date_end: string
 }
@@ -25,7 +25,7 @@ export interface PromotionUpdateRequest {
   id: number
   nom: string
   effectifs: number
-  id_cycle?: number | null
+  id_cycle: string
   date_start: string
   date_end: string
 }
@@ -67,8 +67,8 @@ class PromotionsApi {
   /**
    * Delete a promotion
    */
-  async deletePromotion(id: number): Promise<ApiResponse<{ message: string }>> {
-    const queryParams = new URLSearchParams({ id: id.toString() })
+  async deletePromotion(id: string): Promise<ApiResponse<{ message: string }>> {
+    const queryParams = new URLSearchParams({ id: id })
     return apiClient.delete<{ message: string }>(`/deletePromotion?${queryParams}`)
   }
 }
