@@ -25,7 +25,9 @@ const CycleCreateDialog: React.FC<CycleCreateDialogProps> = ({ isOpen, onSubmit,
             })
         }
     }, [isOpen])
-
+    
+    // we need the any here.
+    // eslint-disable-next-line
     const handleFieldChange = (field: string, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }))
     }

@@ -191,8 +191,7 @@ export function usePromotionCycles() {
     }, [cycles])
 
     // Cleanup pending timeouts on unmount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
+       useEffect(() => {
         const timeouts = renameTimeoutsRef.current
         return () => {
             timeouts.forEach(timeoutId => {

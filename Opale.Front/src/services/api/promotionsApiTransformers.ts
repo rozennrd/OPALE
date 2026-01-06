@@ -23,7 +23,6 @@ export const transformBackendPromotionToFrontend = (backend: BackendPromotion): 
   }, // Default constraints
 })
 
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 // Transform frontend promotion to backend promotion model for creation
 export const transformFrontendPromotionToBackendCreate = (
   frontend: Promotion,
