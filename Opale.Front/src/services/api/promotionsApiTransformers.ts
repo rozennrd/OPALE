@@ -1,6 +1,6 @@
 // Data transformers for promotion API
 
-import { BackendPromotion } from './promotionsApi'
+import { BackendPromotion, PromotionCreateRequest, PromotionUpdateRequest } from './promotionsApi'
 import { BackendCycle } from './cyclesApi'
 import { Promotion, Cycle } from '../../models'
 
@@ -23,11 +23,12 @@ export const transformBackendPromotionToFrontend = (backend: BackendPromotion): 
   }, // Default constraints
 })
 
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 // Transform frontend promotion to backend promotion model for creation
 export const transformFrontendPromotionToBackendCreate = (
   frontend: Promotion,
-  cycleId?: number
-): any => ({
+  cycleId?: string
+): PromotionCreateRequest => ({
   nom: frontend.label,
   effectifs: frontend.students,
   id_cycle: cycleId,
@@ -38,7 +39,7 @@ export const transformFrontendPromotionToBackendCreate = (
 // Transform frontend promotion to backend promotion model for update
 export const transformFrontendPromotionToBackendUpdate = (
   frontend: Promotion
-): any => ({
+): PromotionUpdateRequest => ({
   id: parseInt(frontend.id),
   nom: frontend.label,
   effectifs: frontend.students,

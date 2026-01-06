@@ -90,7 +90,7 @@ const CycleCreateDialog: React.FC<CycleCreateDialogProps> = ({ isOpen, onSubmit,
                                 max="10"
                             />
                             <small className="field-help">
-                                Les promotions seront nommées "{formData.name || 'Nom'} 1", "{formData.name || 'Nom'} 2", etc.
+                                Les promotions seront nommées &quot;{formData.name || 'Nom'} 1&quot;, &quot;{formData.name || 'Nom'} 2&quot;, etc.
                             </small>
                         </label>
                     </div>
@@ -102,7 +102,7 @@ const CycleCreateDialog: React.FC<CycleCreateDialogProps> = ({ isOpen, onSubmit,
                         onSave={handleSubmit}
                         confirmMessage={
                             <>
-                                Créer le cycle "<strong>{formData.name}</strong>" avec{' '}
+                                Créer le cycle &quot;<strong>{formData.name}</strong>&quot; avec{' '}
                                 <strong>{formData.promotionCount} promotion{formData.promotionCount > 1 ? 's' : ''}</strong> ?
                             </>
                         }

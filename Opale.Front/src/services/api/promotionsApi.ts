@@ -16,7 +16,7 @@ export interface BackendPromotion {
 export interface PromotionCreateRequest {
   nom: string
   effectifs: number
-  id_cycle: string
+  id_cycle?: string
   date_start: string
   date_end: string
 }
@@ -25,7 +25,7 @@ export interface PromotionUpdateRequest {
   id: number
   nom: string
   effectifs: number
-  id_cycle: string
+  id_cycle?: string
   date_start: string
   date_end: string
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Cycle } from '../../models'
+import { Cycle, Promotion } from '../../models'
 
 import {
     hasPromoMismatch,
@@ -9,6 +9,7 @@ import { promotionsApi } from '../../services/api/promotionsApi'
 import {
     transformBackendPromotionToFrontend,
     transformBackendCycleToFrontend,
+    transformFrontendPromotionToBackendCreate,
 } from '../../services/api/promotionsApiTransformers'
 import { CYCLE_TYPES } from '../../constants/cycleTypes'
 
@@ -38,7 +39,7 @@ export function usePromotionCycles() {
                 // Group promotions by cycle
                 const backendCycles = cyclesResponse.data
                 const backendPromotions = promotionsResponse.data
-                const promotionsByCycle: { [key: number]: Promotion[] } = {}
+                const promotionsByCycle: { [key: string]: Promotion[] } = {}
 
                 backendPromotions.forEach(bp => {
                     const promo = transformBackendPromotionToFrontend(bp)
@@ -100,13 +101,23 @@ export function usePromotionCycles() {
             const oneYearFromNow = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000)
 
             for (let i = 1; i <= formData.promotionCount; i++) {
-                const promotionData = {
-                    nom: `${formData.name} ${i}`,
-                    effectifs: 0, // Default empty
-                    id_cycle: newCycleId,
-                    date_start: now.toISOString(),
-                    date_end: oneYearFromNow.toISOString()
-                }
+                const promotionData = transformFrontendPromotionToBackendCreate({
+                    id: '',
+                    label: `${formData.name} ${i}`,
+                    students: 0,
+                    startDate: now.toISOString(),
+                    endDate: oneYearFromNow.toISOString(),
+                    groups: [],
+                    specialties: [],
+                    constraints: {
+                        vacances: [],
+                        entreprise: [],
+                        stages: [],
+                        international: [],
+                        partiels: [],
+                        rattrapages: [],
+                    },
+                }, newCycleId.toString())
 
                 promotionPromises.push(promotionsApi.addPromotion(promotionData))
             }
@@ -180,12 +191,14 @@ export function usePromotionCycles() {
     }, [cycles])
 
     // Cleanup pending timeouts on unmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
+        const timeouts = renameTimeoutsRef.current
         return () => {
-            renameTimeoutsRef.current.forEach(timeoutId => {
+            timeouts.forEach(timeoutId => {
                 clearTimeout(timeoutId)
             })
-            renameTimeoutsRef.current.clear()
+            timeouts.clear()
         }
     }, [])
 
