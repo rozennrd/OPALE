@@ -24,5 +24,9 @@ export const salleService = {
       id,
       nom: dto.nom
     };
+  },
+
+  async updateSalle(dto: SalleDTO): Promise<void> {
+    // Implementation for updating a salle goes here
   }
 };
