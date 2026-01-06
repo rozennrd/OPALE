@@ -34,26 +34,24 @@ export const salleRepository = {
   },
 
   // Met à jour une salle existante
-  async update(
-    nom: string,
-    type: string,
-    capacite: number,
-    etage: number
-  ): Promise<string> {
+  async update(dto: { id: string; nom: string; type: string; capacite: number; etage: number }): Promise<boolean> {
     const sql = `
-      UPDATE salle 
-      SET nom = $1, capacite = $2, type = $3, etage = $5 
+      UPDATE salle
+      SET nom = $1,
+          capacite = $2,
+          type = $3,
+          etage = $5
       WHERE id = $4
-      RETURNING id
     `;
 
     const result = await pool.query(sql, [
-      nom,
-      type,
-      capacite,
-      etage
+      dto.nom,
+      dto.capacite,
+      dto.type,
+      dto.id,
+      dto.etage,
     ]);
 
-    return result.rows[0].id;
-  }
+    return (result.rowCount ?? 0) > 0; // true si une ligne a été modifiée
+  },
 };

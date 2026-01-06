@@ -3,6 +3,7 @@ import { salleMapper } from "../../mapper/salleMapper";
 import { SalleDTO } from "../dto/salleDto";
 import { SalleCreatedDTO } from '../dto/salleCreatedDto';
 import { CreateSalleDTO } from '../dto/createSalleDto';
+import { UpdateSalleDto } from "../dto/updateSalleDto";
 
 export const salleService = {
   // Récupère toutes les salles
@@ -26,7 +27,14 @@ export const salleService = {
     };
   },
 
-  async updateSalle(dto: SalleDTO): Promise<void> {
-    // Implementation for updating a salle goes here
-  }
+  async updateSalle(dto: UpdateSalleDto): Promise<void> {
+    const updated = await salleRepository.update(dto);
+
+    if (!updated) {
+      // Ici tu peux aussi throw une NotFoundError custom si tu as un système d'erreurs
+      const err: any = new Error(`Salle avec l'ID ${dto.id} non trouvée`);
+      err.statusCode = 404;
+      throw err;
+    }
+  },
 };
