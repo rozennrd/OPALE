@@ -16,6 +16,7 @@ import { pool } from './database/pool';
 import { Periode, Promos } from "./types/EdtMacroData";
 import salleRoutes from './api/routes/salleRoutes';
 import cycleRoutes from "./api/routes/cycleRoutes";
+import groupeRoutes from './api/routes/groupeRoutes';
 
 require('dotenv').config();
 
@@ -63,6 +64,8 @@ pool.connect((err: any, connection: any) => {
 
 app.use('/', salleRoutes);
 app.use('/', cycleRoutes);
+app.use('/', groupeRoutes);
+
 
 // Swagger options
 const swaggerOptions = {
@@ -1812,194 +1815,7 @@ app.get('/getCours', authJwt.verifyToken, (req, res) => {
 });
 
 
-/*========== GROUPE ==========*/
-
-app.get(
-  '/getGroups',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      const sql = 'SELECT * FROM groupe ORDER BY id;';
-
-      connection.query(sql, (error: any, result: any) => {
-        connection.release();
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-        return res.status(200).json(result.rows);
-      });
-    });
-  },
-);
-
-app.post(
-  '/addGroup',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id_promo, nom, effectifs } = req.body;
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      const sql =
-        'INSERT INTO groupe (id_promo, nom, effectifs) VALUES ($1, $2, $3);';
-
-      connection.query(
-        sql,
-        [id_promo, nom, effectifs],
-        (error: any, result: any) => {
-          connection.release();
-
-          if (error) {
-            if (error.constraint === 'uq_groupe_nom_promo') {
-              return res.status(409).json({
-                error:
-                  'Un groupe portant ce nom existe déjà pour cette promotion.',
-              });
-            }
-            return res.status(500).json({ error: error.message });
-          }
-
-          const insertedId = result?.rows?.[0]?.id ?? null;
-          return res.status(201).json({
-            message: 'Groupe ajouté avec succès !',
-            insertedId,
-          });
-        },
-      );
-    });
-  },
-);
-
-// Update group
-app.put('/updateGroup', authJwt.verifyToken, (req, res): void => {
-  const { id, id_promo, nom, effectifs } = req.body;
-
-  // Field verification
-  if (!id || !id_promo || !nom || !effectifs) {
-    res.status(400).json({ message: 'Tous les champs sont requis.' });
-    return;
-  }
-
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-
-    const sql =
-      'UPDATE groupe SET id_promo = $2, nom = $3, effectifs = $4 WHERE id = $1';
-
-    connection.query(
-      sql,
-      [id, id_promo, nom, effectifs],
-      (error: any, result: any) => {
-        if (error) {
-          // Unicity constraint name/promo
-          if (error.constraint === 'uq_groupe_nom_promo') {
-            res.status(409).json({
-              error:
-                'Un groupe portant ce nom existe déjà pour cette promotion.',
-            });
-            return;
-          }
-          res.status(500).json({ error: error.message });
-          return;
-        }
-
-        const affectedRows = result.rowCount;
-
-        if (affectedRows === 0) {
-          res
-            .status(404)
-            .json({ message: `Groupe avec l'ID ${id} non trouvé` });
-          return;
-        }
-        res.json({ message: 'Groupe mis à jour avec succès' });
-      },
-    );
-    connection.release(); // Libérer la connexion
-  });
-});
-
-// Get group by Id
-app.get(
-  '/getGroupById',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id } = req.query;
-
-    if (!id) {
-      res.status(400).json({ error: 'Veuillez passer un id en paramètre.' });
-      return;
-    }
-
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      const sql = 'SELECT * FROM groupe WHERE id = $1;';
-
-      connection.query(sql, [id], (error: any, result: any) => {
-        connection.release();
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        if (result.rows.length === 0) {
-          return res.status(404).json({ error: 'Groupe non trouvé.' });
-        }
-
-        return res.status(200).json(result.rows[0]);
-      });
-    });
-  },
-);
-
-// Delete a group
-app.delete(
-  '/deleteGroup',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id } = req.query;
-
-    if (!id) {
-      res.status(400).json({ message: 'Veuillez passer un id en paramètre.' });
-      return;
-    }
-
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      const sql = 'DELETE FROM groupe WHERE id = $1';
-
-      connection.query(sql, [id], (error: any, result: any) => {
-        connection.release(); // Libérer la connexion
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        const affectedRows = result.rowCount;
-
-        if (affectedRows === 0) {
-          return res.status(404).json({ message: 'Groupe non trouvé' });
-        }
-
-        return res.json({ message: 'Groupe supprimé avec succès' });
-      });
-    });
-  },
-);
-
+/*========== EVENT ==========*/
 // Delete an event
 app.delete(
   '/deleteEvent',
