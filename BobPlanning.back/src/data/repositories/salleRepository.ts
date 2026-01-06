@@ -31,5 +31,29 @@ export const salleRepository = {
     ]);
 
     return result.rows[0].id;
+  },
+
+  // Met à jour une salle existante
+  async update(
+    nom: string,
+    type: string,
+    capacite: number,
+    etage: number
+  ): Promise<string> {
+    const sql = `
+      UPDATE salle 
+      SET nom = $1, capacite = $2, type = $3, etage = $5 
+      WHERE id = $4
+      RETURNING id
+    `;
+
+    const result = await pool.query(sql, [
+      nom,
+      type,
+      capacite,
+      etage
+    ]);
+
+    return result.rows[0].id;
   }
 };
