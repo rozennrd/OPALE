@@ -13,6 +13,7 @@ CREATE TYPE type_salle      AS ENUM ('projet', 'td', 'tp', 'reunion', 'autre');
 CREATE TYPE type_event      AS ENUM ('cours', 'entreprise', 'examen', 'reunion', 'fermeture', 'soutenance', 'portes ouvertes', 'stage', 'mobilite', 'PFE', 'rattrapage', 'autre');
 CREATE TYPE type_cours      AS ENUM ('TD', 'TP', 'PROJET', 'AUTRE');
 CREATE TYPE type_cycle      AS ENUM ('Initial', 'Apprentissage');
+CREATE TYPE campus          AS ENUM ('Bordeaux', 'Lille', 'Chateauroux');
 
 -- ==============================================================
 -- 2. Tables de base
@@ -24,9 +25,12 @@ CREATE TABLE professeur (
                             nom         VARCHAR(255)        NOT NULL,
                             prenom      VARCHAR(255)        NOT NULL,
                             email       VARCHAR(255),
+                            email_perso VARCHAR(255),
                             type        type_professeur     NOT NULL,
                             distanciel  BOOLEAN             DEFAULT FALSE,
-                            CONSTRAINT uq_professeur_email UNIQUE (email)
+                            campus_origin campus,
+                            CONSTRAINT uq_professeur_email UNIQUE (email),
+                            CONSTRAINT uq_professeur_email_perso UNIQUE (email_perso)
 );
 
 -- 2.2 salle
