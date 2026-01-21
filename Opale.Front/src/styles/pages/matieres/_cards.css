@@ -1,0 +1,25 @@
+/* src/styles/pages/matieres/_cards.css */
+
+@layer pages {
+    .matiere-card-main {
+        gap: 0.2rem;
+    }
+
+    .matiere-card-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    .matiere-card-meta {
+        font-size: 0.85rem;
+        color: var(--muted);
+    }
+
+    .matiere-card-badge {
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 5.25rem;
+    }
+}

@@ -7,6 +7,7 @@ import Placeholder from './pages/Placeholder.jsx'
 import Login from './pages/Login'
 import Rooms from './pages/Rooms'
 import Events from './pages/Events'
+import Matieres from './pages/Matieres'
 import { authService } from './services/base/AuthService'
 
 
@@ -69,6 +70,7 @@ export default function App() {
                 <Route path="/evenements" element={<Events />} />
                 <Route path="/teachers" element={<Teachers />} />
                 <Route path="/salles" element={<Rooms />} />
+                <Route path="/matieres" element={<Matieres />} />
                 <Route path="/parametres" element={<Placeholder title="Paramètres" />} />
                 <Route path="*" element={<Placeholder title="Page introuvable" notFound />} />
             </Route>

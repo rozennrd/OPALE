@@ -37,18 +37,13 @@ const floorLabel = (floor: Room['floor']): string => {
     }
 }
 
-export default function RoomDetailCard({
-                                           room,
-                                           onClose,
-                                           onChange,
-                                       }: RoomDetailCardProps) {
+export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCardProps) {
     const [name, setName] = useState(room.name)
     const [fullName, setFullName] = useState(room.fullName ?? '')
     const [mainType, setMainType] = useState<RoomType>(room.mainType)
     const [types, setTypes] = useState<RoomType[]>(room.types)
     const [description, setDescription] = useState(room.description ?? '')
 
-    // synchro si on change de salle sans fermer la modale
     useEffect(() => {
         setName(room.name)
         setFullName(room.fullName ?? '')
@@ -88,9 +83,7 @@ export default function RoomDetailCard({
 
         setTypes((prevTypes) => {
             const exists = prevTypes.includes(type)
-            const nextTypes = exists
-                ? prevTypes.filter((t) => t !== type)
-                : [...prevTypes, type]
+            const nextTypes = exists ? prevTypes.filter((t) => t !== type) : [...prevTypes, type]
 
             console.log('[ROOMS] Toggle type', { roomId: room.id, type, nextTypes })
 
@@ -145,22 +138,16 @@ export default function RoomDetailCard({
                     />
                 </DetailCardHeader>
 
-                {/* Layout 2 colonnes */}
-                <div className="room-detail-layout">
+                {/* Layout 2 colonnes (générique) */}
+                <div className="detail-layout">
                     {/* Colonne gauche : identité + types */}
-                    <div className="room-detail-main-column">
+                    <div className="detail-main-column">
                         <section className="room-detail-section">
-                            <h3 className="room-detail-section-title">
-                                Identité de la salle &amp; types
-                            </h3>
+                            <h3 className="room-detail-section-title">Identité de la salle &amp; types</h3>
 
-                            {/* Nom + surnom */}
                             <div className="room-detail-identity-grid">
                                 <div className="room-detail-field">
-                                    <label
-                                        className="room-detail-field-label"
-                                        htmlFor="room-name-input"
-                                    >
+                                    <label className="room-detail-field-label" htmlFor="room-name-input">
                                         Nom court (code salle)
                                     </label>
                                     <input
@@ -173,10 +160,7 @@ export default function RoomDetailCard({
                                 </div>
 
                                 <div className="room-detail-field">
-                                    <label
-                                        className="room-detail-field-label"
-                                        htmlFor="room-fullname-input"
-                                    >
+                                    <label className="room-detail-field-label" htmlFor="room-fullname-input">
                                         Surnom / nom complet
                                     </label>
                                     <input
@@ -189,16 +173,11 @@ export default function RoomDetailCard({
                                 </div>
                             </div>
 
-                            {/* Deux colonnes : type principal / types disponibles */}
                             <div className="room-detail-types-grid">
-                                {/* Colonne gauche : type principal */}
                                 <div className="room-detail-types-column">
-                                    <h3 className="room-detail-section-title">
-                                        Type principal
-                                    </h3>
+                                    <h3 className="room-detail-section-title">Type principal</h3>
                                     <p className="room-detail-hint-small">
-                                        Utilisé pour l’icône, le filtrage et la
-                                        planification.
+                                        Utilisé pour l’icône, le filtrage et la planification.
                                     </p>
 
                                     <div className="room-detail-types">
@@ -219,22 +198,13 @@ export default function RoomDetailCard({
                                                     key={type}
                                                     type="button"
                                                     className={chipClassName}
-                                                    onClick={() =>
-                                                        handleSelectMainType(type)
-                                                    }
+                                                    onClick={() => handleSelectMainType(type)}
                                                     aria-pressed={isSelected}
                                                 >
-                                                    <span
-                                                        className="room-type-chip-dot"
-                                                        aria-hidden="true"
-                                                    />
-                                                    <span className="room-type-chip-label">
-                                                        {ROOM_TYPE_LABELS[type]}
-                                                    </span>
+                                                    <span className="room-type-chip-dot" aria-hidden="true" />
+                                                    <span className="room-type-chip-label">{ROOM_TYPE_LABELS[type]}</span>
                                                     {isSelected && (
-                                                        <span className="room-type-chip-main-tag">
-                                                            Principal
-                                                        </span>
+                                                        <span className="room-type-chip-main-tag">Principal</span>
                                                     )}
                                                 </button>
                                             )
@@ -242,15 +212,10 @@ export default function RoomDetailCard({
                                     </div>
                                 </div>
 
-                                {/* Colonne droite : types disponibles */}
                                 <div className="room-detail-types-column">
-                                    <h3 className="room-detail-section-title">
-                                        Types disponibles
-                                    </h3>
+                                    <h3 className="room-detail-section-title">Types disponibles</h3>
                                     <p className="room-detail-hint-small">
-                                        Coche les types compatibles avec cette
-                                        salle. Le type principal est toujours
-                                        inclus.
+                                        Coche les types compatibles avec cette salle. Le type principal est toujours inclus.
                                     </p>
 
                                     <div className="room-detail-types">
@@ -260,9 +225,7 @@ export default function RoomDetailCard({
 
                                             const chipClassName = [
                                                 'room-type-chip',
-                                                isChecked
-                                                    ? 'room-type-chip-selected'
-                                                    : '',
+                                                isChecked ? 'room-type-chip-selected' : '',
                                             ]
                                                 .filter(Boolean)
                                                 .join(' ')
@@ -279,22 +242,13 @@ export default function RoomDetailCard({
                                                     key={type}
                                                     type="button"
                                                     className={chipClassName}
-                                                    onClick={() =>
-                                                        handleToggleType(type)
-                                                    }
+                                                    onClick={() => handleToggleType(type)}
                                                     aria-pressed={isChecked}
                                                 >
-                                                    <span
-                                                        className={checkboxClassName}
-                                                        aria-hidden="true"
-                                                    />
-                                                    <span className="room-type-chip-label">
-                                                        {ROOM_TYPE_LABELS[type]}
-                                                    </span>
+                                                    <span className={checkboxClassName} aria-hidden="true" />
+                                                    <span className="room-type-chip-label">{ROOM_TYPE_LABELS[type]}</span>
                                                     {isMain && (
-                                                        <span className="room-type-chip-main-lock">
-                                                            Principal
-                                                        </span>
+                                                        <span className="room-type-chip-main-lock">Principal</span>
                                                     )}
                                                 </button>
                                             )
@@ -305,12 +259,10 @@ export default function RoomDetailCard({
                         </section>
                     </div>
 
-                    {/* Colonne droite : description seule */}
-                    <aside className="room-detail-aside-column">
+                    {/* Colonne droite : description */}
+                    <aside className="detail-aside-column">
                         <section className="room-detail-section room-detail-description-section">
-                            <h3 className="room-detail-section-title">
-                                Description / commentaires
-                            </h3>
+                            <h3 className="room-detail-section-title">Description / commentaires</h3>
                             <textarea
                                 className="room-detail-textarea"
                                 placeholder="Notes sur la salle, équipements, contraintes d’utilisation…"
@@ -322,7 +274,6 @@ export default function RoomDetailCard({
                     </aside>
                 </div>
 
-                {/* Footer boutons – hors des 2 colonnes */}
                 <DetailCardFooter
                     saveLabel="Enregistrer"
                     cancelLabel="Annuler"
@@ -333,8 +284,7 @@ export default function RoomDetailCard({
                     cancelDirtyTitle="Modifications non enregistrées"
                     cancelDirtyMessage={
                         <>
-                            Tu as des modifications non enregistrées sur cette
-                            salle.
+                            Tu as des modifications non enregistrées sur cette salle.
                             <br />
                             Souhaites-tu les enregistrer avant de fermer ?
                         </>
@@ -347,7 +297,6 @@ export default function RoomDetailCard({
                 />
             </DetailCardBody>
 
-            {/* Popup spécifique ESC / croix */}
             <ConfirmDialog
                 open={isConfirmOpen}
                 title="Modifications non enregistrées"

@@ -1,4 +1,4 @@
-# OPALE Front (v1.8.4.2)
+# OPALE Front (v1.8.5.1)
 
 Interface web du projet **OPALE**, développée en **React** avec **Vite**.  
 Objectif : piloter la génération d’un planning **macro** annuel et des vues **micro** par promotion et par enseignant.
@@ -47,185 +47,99 @@ Le projet utilise **react-router-dom** (routing minimal) :
 
 ---
 
-# ✨ **Nouveautés des versions 1.8.2 → 1.8.4.2**
+# ✨ **Nouveautés des versions 1.8.5.1**
 
-Cette série de versions 1.8.x représente un **énorme travail de stabilisation, refactorisation et unification de l’interface**, ainsi que l’arrivée de nouvelles pages (Rooms, Events) et d’une architecture plus modulaire.
-
----
-
-## 🧩 **v1.8.2 — Unification des dialogs + Drag & Drop promotions**
-
-### ✔ Refonte du système de fenêtres modales (`ConfirmDialog`)
-
-* Fermeture unifiée via :
-
-  * **ESC**
-  * clic **overlay**
-  * bouton **✕**
-* Support du **cross-button** (teachers + promotions)
-* Suppression de la duplication de logique dans les cartes et dialogs
-* Sécurisation des fermetures intempestives
-
-### ✔ Amélioration UX : correction des comportements ESC / Cancel
-
-### ✔ Promotions : nouvelles fonctionnalités
-
-* **Drag & Drop Excel**
-* **Refactor CycleCard** (structure simplifiée + CSS réduit)
-* **Introduction de mock data** pour les cycles et promotions
-  → début de la séparation données / UI.
+Cette version poursuit le travail engagé en 1.8.x : **extension fonctionnelle + consolidation du design system**, ainsi que l’arrivée de la page Matières.
 
 ---
 
-## 🏫 **v1.8.3 — Page Salles + état dirty unifié**
+## 🧩 **1. Nouvelle page Matières**
 
-### ✔ Fix du système de dirty-state
+### ✔ Page Matières complète
 
-* Le bouton “Enregistrer” remet correctement `hasChanges = false`
-* Correction des fermetures intempestives après sauvegarde
+*   Liste des matières **groupées par promotion**
+*   Recherche par nom
+*   Filtres :
+    *   semestre
+    *   cycle
+    *   promotion
+    *   enseignant (préparation à la vue micro)
+*   Affichage du **volume horaire total par promotion**
 
-### ✔ Nouvelle page **Rooms**
 
-* Liste des salles
-* **RoomDetailCard initiale** avec :
+### ✔ Card matière moderne (alignée Rooms / Teachers / Events)
 
-  * types disponibles
-  * type principal
-  * champs nom + surnom
-* Début d’un système commun aux modales Teachers / Rooms
-
----
-
-## 🎨 **v1.8.4.0 — Refactorisation UI massive**
-
-## 🧱 Réorganisation structurelle du front
-
-* Répartition des assets dans des sous-dossiers cohérents
-* Refonte du *header* des pages (uniformisation Teachers / Rooms / Events)
-* Refonte du *toolbar* (search + filtres)
-* Nettoyage CSS transversal :
-
-  * badges
-  * cards
-  * listes
-  * couleurs
-  * supports dark mode
-
-> Cette version pose les bases du **design system** utilisé dans 1.8.4.1 et 1.8.4.2.
+*   Header unifié (badge + couleur)
+*   Layout **2 colonnes**
+*   Dark mode natif
+*   Responsive
 
 ---
 
-## 📆 **v1.8.4.1 — Nouvelle page Événements + Card détail événement**
+## 🏫 **2. Nouvelle MatiereDetailCard**
 
-### ✔ Page Événements complète
+### Structure
 
-* Recherche
-* Filtre par cible (Tous / Junia / Externe)
-* Filtre par type d’événement
-* Filtre par date (du / au)
-* Groupement automatique par **mois** et par **année**
+*   **Colonne gauche**
+    *   nom de la matière
+    *   volume total
+    *   volume TD / TP
 
-### ✔ EventCard moderne (alignée avec Teachers & Rooms)
+*   **Colonne droite**
+    *   affectation d’un ou plusieurs enseignants
+    *   distinction TD / TP
+    *   saisie du nombre d’heures par enseignant
 
-* badges unifiés
-* icônes par type
-* couleurs harmonisées
-* responsive + dark mode
 
-### ✔ EventDetailCard (nouvelle modale)
+### Comportements
 
-* structure à **2 colonnes**
-* header unifié (badge + icône)
-* édition du nom, dates, type, cible, lieu, description
-* support ESC + overlay close
-* intégration de `ActionButtonsWithConfirm`
-* flow **Création d’événement** avec card vide (bouton "+")
-* snapshot + détection des modifications
+*   gestion du dirty-state
+*   confirmation avant fermeture
+*   support ESC / overlay / bouton ✕
+*   footer unifié (DetailCardFooter)
 
 ---
 
-## 🏛️ **v1.8.4.2 — Factorisation majeure & refonte RoomDetailCard**
+## 🎨 **3. Mutualisation RoomDetailCard / MatiereDetailCard*
 
-> C’est LA version clé de la branche 1.8.x.
-> Elle transforme le front en un système cohérent, modulaire et extensible.
+### Nouveau layout générique
 
-### 🧩 **1. Composants transverses pour toutes les modales**
+Introduction d’un **layout de card détail mutualisé** :
+```css
+.detail-layout
+.detail-main-column
+.detail-aside-column
+```
 
-#### 🔸 `ActionButtonsWithConfirm`
+### Bénéfices
 
-Maintenant utilisé dans :
-
-* Teachers
-* Promotions
-* Events
-* Rooms
-
-Fonctionnalités :
-
-* Confirmations d’annulation/sauvegarde
-* Gestion état dirty
-* Fermeture automatique après save
-* Support ESC / overlay intégré
-
-#### 🔸 Système de **header unifié**
-
-Pour :
-
-* Teachers
-* Rooms
-* Events
-
-Toujours même structure :
-
-* icône
-* label
-* couleur spécifique
-* responsive
-
-#### 🔸 Style unifié des inputs, pills, textarea
-
-→ même expérience dans toutes les modales.
+*   même structure visuelle pour :
+    *   Rooms
+    *   Matières
+*   override par page possible (largeur, gap, ratio)
+*   suppression de la dépendance métier dans les layouts (room-\*)
 
 ---
 
-### 🧱 **2. Refonte complète de la RoomDetailCard**
+## 📆 **4. Design system renforcé**
 
-#### Nouveau layout 2 colonnes
-
-* **Gauche** : nom, surnom, type principal, types disponibles
-* **Droite** : description étirable
-
-#### Footer séparé
-
-→ les boutons n’affectent plus l’alignement vertical.
-
-#### Pills unifiées :
-
-* dot radio pour type principal
-* checkbox visuelle pour types disponibles
-
-#### Alignement vertical parfait entre colonnes
-
-→ expérience identique à EventDetailCard.
-
----
-
-### 🧼 **3. Nettoyage & réduction massive du CSS**
-
-* fusion des styles dupliqués
-* simplification des variables
-* réduction des règles pour pills, inputs, cards
-* facteur commun entre Events, Teachers, Rooms
-* dark mode homogène
+*   espacement configurable par card (ex: Matière > Room)
+*   boutons et chips **compatibles dark mode**
+*   clarification des responsabilités CSS :
+    *   layout générique
+    *   styles métiers
+    *   overrides par page
 
 ---
 
 ### 🏗️ **4. Architecture stabilisée**
 
-* début d’un vrai **design system minimal**
-* séparation logique/UI via hooks (ex : `useEventDetail`)
-* modales désormais construites via un **schéma commun**
-  → très facile de créer une nouvelle fiche détail (campus, matières, etc.)
+*   espacement configurable par card (ex: Matière > Room)
+*   boutons et chips **compatibles dark mode**
+*   clarification des responsabilités CSS :
+    *   layout générique 
+    *   styles métiers 
+    *   overrides par page
 
 ---
 
@@ -239,249 +153,242 @@ Toujours même structure :
 | CSS          | réduction, homogénéisation, dark mode propre               |
 | Fonctionnel  | Refonte RoomDetailCard + perfectionnement EventDetailCard  |
 
+
 # 📂 Structure du projet (mise à jour v1.8)
 
 ```
 src/
-├─ assets/
-│   ├── icons/
-│   │   ├── ic-add.svg
-│   │   ├── ic-arrow-down.svg
-│   │   ├── ic-arrow-left.svg
-│   │   ├── ic-arrow-right.svg
-│   │   ├── ic-calendar.svg
-│   │   ├── ic-close.svg
-│   │   ├── ic-delete.svg
-│   │   ├── ic-edit.svg
-│   │   ├── ic-filter.svg
-│   │   ├── ic-plus.svg
-│   │   ├── ic-search.svg
-│   │   └── ic-warning.svg
-│   │
-│   ├── rooms/
-│   │   ├── ic-room-autre.png
-│   │   ├── ic-room-projet.png
-│   │   ├── ic-room-td.png
-│   │   ├── ic-room-tp_electronique.png
-│   │   └── ic-room-tp_numerique.png
-│   │
-│   ├── events/
+├── App.tsx
+├── assets
+│   ├── events
 │   │   ├── ic-event-conference.png
 │   │   ├── ic-event-exam.png
 │   │   ├── ic-event-forum.png
 │   │   ├── ic-event-jpo.png
 │   │   ├── ic-event-other.png
-│   │   ├── ic-event-salon.png
-│   │   └── ic-event-workshop.png
-│   │
-│   └── teachers/
-│   │   ├── ic-teacher-distanciel.png
-│   │   ├── ic-teacher-hybride.png
-│   │   ├── ic-teacher-presentiel.png
-│   │   └── icon-avatar.png
-│   │ 
+│   │   └── ic-event-salon.png
+│   ├── ic-event-conference.png
+│   ├── ic-event-exam.png
+│   ├── ic-event-forum.png
+│   ├── ic-event-jpo.png
+│   ├── ic-event-other.png
+│   ├── ic-event-salon.png
 │   ├── ic-modif.png
 │   ├── ic-moins.png
 │   ├── ic-plus.png
 │   ├── ic-search.png
 │   ├── ic-tel.png
 │   ├── ic-user.png
-│   └── ic-warning.png
-│
-├─ components/
-│   ├─ common/
+│   ├── ic-warning.png
+│   ├── logo
+│   │   ├── logo-compact.png
+│   │   └── logo-full.png
+│   ├── mode
+│   │   ├── ic-mode-distanciel.png
+│   │   ├── ic-mode-hybride.png
+│   │   └── ic-mode-presentiel.png
+│   ├── rooms
+│   │   ├── ic-room-autre.png
+│   │   ├── ic-room-projet.png
+│   │   ├── ic-room-td.png
+│   │   ├── ic-room-tp-electronique.png
+│   │   └── ic-room-tp-numerique.png
+│   └── sidebar
+│       ├── ic-contact.png
+│       ├── ic-events.png
+│       ├── ic-logout.png
+│       ├── ic-matieres.png
+│       ├── ic-para.png
+│       ├── ic-planning.png
+│       ├── ic-profs.png
+│       ├── ic-promos.png
+│       └── ic-salles.png
+├── components
+│   ├── Checklist.tsx
+│   ├── Sidebar.tsx
+│   ├── ThemeToggle.tsx
+│   ├── common
 │   │   ├── ActionButtonsWithConfirm.tsx
 │   │   ├── ConfirmDialog.tsx
-│   │   ├── DetailCardBody.tsx
+│   │   ├── DateRangePill.tsx
 │   │   ├── DetailCardBody.tsx
 │   │   ├── DetailCardFooter.tsx
-│   │   ├── DateRangeHeader.tsx
+│   │   ├── DetailCardHeader.tsx
 │   │   ├── EntityBadge.tsx
 │   │   ├── EntityCard.tsx
 │   │   ├── PageHeader.tsx
 │   │   ├── SectionHeader.tsx
 │   │   ├── Toolbar.tsx
 │   │   └── ToolbarSearch.tsx
-│   │
-│   ├─ events/
+│   ├── events
 │   │   ├── EventCard.tsx
 │   │   ├── EventDetailCard.tsx
-│   │   ├── EventSection.tsx
 │   │   ├── EventTypeBadge.tsx
+│   │   ├── EventsSection.tsx
 │   │   └── EventsToolbar.tsx
-│   │
-│   ├─ promotions/
-│   │   ├─ constraints/
+│   ├── matieres
+│   │   ├── MatiereBadge.tsx
+│   │   ├── MatiereCard.tsx
+│   │   ├── MatiereDetailCard.tsx
+│   │   ├── MatiereSection.tsx
+│   │   └── MatieresToolbar.tsx
+│   ├── promotions
+│   │   ├── PromoAdjustDialog.tsx
+│   │   ├── PromoEditDialog.tsx
+│   │   ├── constraints
 │   │   │   ├── ConstraintCard.tsx
 │   │   │   ├── ConstraintPill.tsx
 │   │   │   └── ConstraintsSection.tsx
-│   │   │
-│   │   ├─ cycles/
+│   │   ├── cycles
 │   │   │   ├── CycleCard.tsx
-│   │   │   ├── CycleImportDropzone.tsx
-│   │   │   └── ConstraintsSection.tsx
-│   │   │
-│   │   ├─ sections/
-│   │   │   ├── PromoGroups.tsx
-│   │   │   ├── PromoMainInfo.tsx
-│   │   │   └── PromoSpecialities.tsx
-│   │   │
-│   │   ├── PromoAdjustDialog.tsx
-│   │   └── PromoEditDialog.tsx
-│   │
-│   ├─ rooms/
-│   │    ├── RoomCard.tsx
-│   │    ├── RoomTypeBadge.tsx
-│   │    ├── RoomSection.tsx
-│   │    └── RoomTypeBadge.tsx
-│   │
-│   ├── teachers/
-│   │    ├── sections/
-│   │    │   ├── TeacherAvailabilityColumn.tsx
-│   │    │   ├── TeacherInfoColumn.tsx
-│   │    │   └──TeacherSubjectsColumn.tsx
-│   │    ├── TeacherCard.tsx
-│   │    ├── TeacherCardsGrid.tsx
-│   │    ├── TeacherDetailCard.tsx
-│   │    ├── TeacherModeBadge.tsx
-│   │    ├── TeacherSection.tsx
-│   │    └── TeacherToolbar.tsx
-│   │
-│   ├── Checklist.tsx
-│   ├── Sidebar.tsx
-│   └── ThemeToogle.tsx
-│   
-├─ hooks/
-│   ├─ common/
-│   │    ├── useDetailDirtyClose.ts
-│   │    └── useDetailEscapeClose.ts
-│   │
-│   ├─ events/
-│   │    └── useEventDetail.ts
-│   │
-│   ├─ promotions/
-│   │    ├── index.ts
-│   │    ├── usePromotionAdjustPopup.js
-│   │    ├── usePromotionConstraints.js
-│   │    ├── usePromotionCycles.js
-│   │    └── usePromotionEditing.js
-│   │
-│   └─ teachers/
-│   │    └── useTeacherDetail.js
-│   │
-│   └── useTheme.js
-│
-├─ mocks/
+│   │   │   └── CycleImportDropZone.tsx
+│   │   └── sections
+│   │       ├── PromoGroups.tsx
+│   │       ├── PromoMainInfo.tsx
+│   │       └── PromoSpecialties.tsx
+│   ├── rooms
+│   │   ├── RoomCard.tsx
+│   │   ├── RoomDetailCard.tsx
+│   │   ├── RoomTypeBadge.tsx
+│   │   └── RoomsSection.tsx
+│   └── teachers
+│       ├── TeacherCard.tsx
+│       ├── TeacherCardsGrid.tsx
+│       ├── TeacherDetailCard.tsx
+│       ├── TeacherModeBadge.tsx
+│       ├── TeacherSection.tsx
+│       ├── TeachersToolbar.tsx
+│       └── section
+│           ├── TeacherAvailabilityColumn.tsx
+│           ├── TeacherInfoColumn.tsx
+│           └── TeacherSubjectsColumn.tsx
+├── constants
+│   └── tokenStorage.ts
+├── hooks
+│   ├── common
+│   │   ├── useDetailDirtyClose.ts
+│   │   └── useDetailEscapeClose.ts
+│   ├── events
+│   │   └── useEventDetail.ts
+│   ├── promotions
+│   │   ├── index.ts
+│   │   ├── usePromotionAdjustPopup.ts
+│   │   ├── usePromotionConstraints.ts
+│   │   ├── usePromotionCycles.ts
+│   │   └── usePromotionEditing.ts
+│   ├── teachers
+│   │   └── useTeacherDetail.ts
+│   └── useTheme.ts
+├── main.tsx
+├── mocks
 │   ├── events.mock.ts
-│   ├── promotions.mock.ts
+│   ├── matieres.mock.ts
+│   ├── promotionCycles.mock.ts
 │   ├── rooms.mock.ts
 │   └── teachers.mock.ts
-│
-├─ models/
+├── models
 │   ├── CampusEvent.ts
 │   ├── Constraints.ts
 │   ├── Cycle.ts
 │   ├── DateRange.ts
 │   ├── GroupSpecialtyItem.ts
-│   ├── index.ts
+│   ├── Matiere.ts
 │   ├── Promotion.ts
 │   ├── Room.ts
-│   ├── Teacher.ts
-│   └── Theme.ts
-│
-├─ pages/
-│   Events.tsx
-│   Placeholder.tsx
-│   PlanningMacro.tsx
-│   Promotions.tsx
-│   Rooms.tsx
-│   Teachers.tsx
-│
-├─ services/
-│   ├── api/
-│   │    ├── coursesApi.ts
-│   │    ├── edtApi.ts
-│   │    ├── maquetteApi.ts
-│   │    ├── professorsApi.ts
-│   │    ├── promotionsApi.ts
-│   │    └── roomsApi.ts
-│   │
-│   ├── base/
-│   │    ├── ApiClient.ts
-│   │    ├── AuthService.ts
-│   │    └── type.ts
+│   ├── Teachers.ts
+│   ├── Theme.ts
 │   └── index.ts
-│
-├─ styles/
-│   ├─ common/
-│   │    ├── _action-buttons.css
-│   │    ├── _buttons.css
-│   │    ├── _checklist.css
-│   │    ├── _confirm-dialog.css
-│   │    ├── _date-range-pill.css
-│   │    ├── _detail-card-footer.css
-│   │    ├── _detail-card-header.css
-│   │    ├── _detail-card-footer.css
-│   │    ├── _entity-badge.css
-│   │    ├── _entity-card.css
-│   │    ├── _nav-links.css
-│   │    ├── _page-header.css
-│   │    ├── _section-header.css
-│   │    ├── _theme-toogle.css
-│   │    └── toolbar.css
-│   │
-│   ├─ pages/
-│   │   ├─ events/
-│   │   │    ├── _cards.css
-│   │   │    ├── _detail-modal.css
-│   │   │    ├── _layout.css
-│   │   │    ├── _toolbar.css
-│   │   │    └── index.css
-│   │   │
-│   │   ├─ login/
-│   │   │    └── _login-page.css
-│   │   │
-│   │   ├─ promotions/
-│   │   │    ├── _adjust-popup.css
-│   │   │    ├── _edit-modal.css
-│   │   │    ├── _layout.css
-│   │   │    ├── _lists.css
-│   │   │    ├── _promo-row.css
-│   │   │    └── index.css
-│   │   │
-│   │   ├─ rooms/
-│   │   │    ├── _cards.css
-│   │   │    ├── _detail-modal.css
-│   │   │    ├── _layout.css
-│   │   │    ├── _sections.css
-│   │   │    └── index.css
-│   │   │
-│   │   └── teachers/
-│   │        ├── _availability.css
-│   │        ├── _cards.css
-│   │        ├── _detail-modal.css
-│   │        ├── _layout.css
-│   │        ├── _sections.css
-│   │        ├── _toolbar.css
-│   │        └── index.css
-│   │
-│   └─ themes/
-│   │    └── dark.css
-│   ├── token.css
+├── pages
+│   ├── Events.tsx
+│   ├── Login.tsx
+│   ├── Matieres.tsx
+│   ├── Placeholder.tsx
+│   ├── PlanningMacro.tsx
+│   ├── Promotions.tsx
+│   ├── Rooms.tsx
+│   └── Teachers.tsx
+├── services
+│   ├── api
+│   │   ├── coursesApi.ts
+│   │   ├── edtApi.ts
+│   │   ├── maquetteApi.ts
+│   │   ├── professorsApi.ts
+│   │   ├── promotionsApi.ts
+│   │   └── roomsApi.ts
+│   └── base
+│       ├── ApiClient.ts
+│       ├── AuthService.ts
+│       └── types.ts
+├── styles
 │   ├── base.css
-│   └── components.css
-│
-└─ utils/
+│   ├── components
+│   │   ├── _action-buttons.css
+│   │   ├── _buttons.css
+│   │   ├── _checklist.css
+│   │   ├── _confirm-dialog.css
+│   │   ├── _date-range-pill.css
+│   │   ├── _detail-card-footer.css
+│   │   ├── _detail-card-header.css
+│   │   ├── _detail-card-layout.css
+│   │   ├── _detail-card-shell.css
+│   │   ├── _entity-badge.css
+│   │   ├── _entity-card.css
+│   │   ├── _nav-links.css
+│   │   ├── _page-header.css
+│   │   ├── _section-header.css
+│   │   ├── _theme-toggle.css
+│   │   └── _toolbar.css
+│   ├── components.css
+│   ├── layout.css
+│   ├── pages
+│   │   ├── events
+│   │   │   ├── _cards.css
+│   │   │   ├── _detail-modal.css
+│   │   │   ├── _layout.css
+│   │   │   ├── _sections.css
+│   │   │   ├── _toolbar.css
+│   │   │   └── index.css
+│   │   ├── login
+│   │   │   └── login-page.css
+│   │   ├── matieres
+│   │   │   ├── _cards.css
+│   │   │   ├── _detail-modal.css
+│   │   │   ├── _layout.css
+│   │   │   ├── _toolbar.css
+│   │   │   └── index.css
+│   │   ├── promotions
+│   │   │   ├── _adjust-popup.css
+│   │   │   ├── _edit-modal.css
+│   │   │   ├── _layout.css
+│   │   │   ├── _lists.css
+│   │   │   ├── _promo-row.css
+│   │   │   └── index.css
+│   │   ├── rooms
+│   │   │   ├── _cards.css
+│   │   │   ├── _detail-modal.css
+│   │   │   ├── _layout.css
+│   │   │   ├── _sections.css
+│   │   │   └── index.css
+│   │   └── teachers
+│   │       ├── _availability.css
+│   │       ├── _cards.css
+│   │       ├── _detail-modal.css
+│   │       ├── _layout.css
+│   │       ├── _sections.css
+│   │       ├── _toolbar.css
+│   │       └── index.css
+│   ├── themes
+│   │   └── dark.css
+│   ├── tokens.css
+│   └── utilities.css
+├── utils
 │   └── promoUtils.ts
-│
-├──  App.tsx
-├──  main.tsx
-└──  vite-env.d.ts
+└── vite-env.d.ts
 ```
 
 ---
 
-# ✨ Fonctionnalités actuelles (**v1.8.4.2**)
+# ✨ Fonctionnalités actuelles (**v1.8.5.1**)
 
 ## 🧭 **Structure générale**
 
@@ -531,11 +438,20 @@ src/
 
 * Page de gestion des salles
 * **Refonte totale de la RoomDetailCard (v1.8.4.2)** :
-
   * layout 2 colonnes
   * type principal + types disponibles
   * description étirable
   * footer unifié (actions)
+
+---
+
+## 🏫 **Matières**
+
+* Page de gestion des matières :
+    * layout 2 colonnes
+    * Volume horaires
+    * Affectations des enseignants
+    * footer unifié (actions)
 
 ---
 
@@ -587,12 +503,16 @@ src/
 
 # ⭐ Résumé
 
-La version **1.8.4.2** marque l’aboutissement d’une **unification UX/UI** et d’une **stabilisation technique profonde**, rendant le projet :
+La version **1.8.5.1** marque une **extension fonctionnelle majeure** du front OPALE avec l’arrivée de la **page Matières**, tout en consolidant le travail d’unification engagé en 1.8.x.
 
-* plus lisible
-* plus cohérent
-* plus maintenable
-* plus scalable pour les prochains modules
+Elle renforce le projet en le rendant :
+
+* plus **complet** (gestion des matières et des volumes horaires)
+* plus **structuré** (mutualisation du layout des fiches détail)
+* plus **cohérent** (Rooms et Matières reposent sur une base commune)
+* plus **scalable** (préparation des futures vues micro et croisements métiers)
+
+Cette version confirme la maturité du **design system** et pose des fondations solides pour l’évolution fonctionnelle du projet.
 
 ---
 

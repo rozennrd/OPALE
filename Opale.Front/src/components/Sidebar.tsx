@@ -9,6 +9,7 @@ import icPromotions from '../assets/sidebar/ic-promos.png'
 import icEvenements from '../assets/sidebar/ic-events.png'
 import icEnseignants from '../assets/sidebar/ic-profs.png'
 import icSalles from '../assets/sidebar/ic-salles.png'
+import icMatieres from '../assets/sidebar/ic-matieres.png'
 import icLogout from '../assets/sidebar/ic-logout.png'
 import icContact from '../assets/sidebar/ic-contact.png'
 
@@ -26,6 +27,7 @@ const items: NavItem[] = [
     { to: '/evenements',  label: 'Evenements',  ic: icEvenements },
     { to: '/teachers',    label: 'Enseignants', ic: icEnseignants },
     { to: '/salles',      label: 'Salles',      ic: icSalles },
+    { to: '/matieres',    label: 'Matières',    ic: icMatieres },
 ]
 
 export default function Sidebar(): JSX.Element | null {
