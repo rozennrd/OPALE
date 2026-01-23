@@ -16,7 +16,6 @@ interface MatieresToolbarProps {
     semestreFilter: SemestreFilter
     onSemestreChange: (value: SemestreFilter) => void
 
-    // ✅ nouveaux filtres
     cycleFilter: CycleFilter
     onCycleChange: (value: CycleFilter) => void
     promotionFilter: PromotionFilter

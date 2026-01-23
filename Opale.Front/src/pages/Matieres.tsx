@@ -66,10 +66,6 @@ export default function Matieres() {
             const matchesPromotion =
                 promotionFilter === 'ALL' || m.id_promo === promotionFilter
 
-            // 🔌 Placeholder : filtre enseignants
-            // Tant que tu n'as pas de mapping (matiereId -> teacherIds), on laisse tout passer.
-            // Exemple attendu : const assignedTeacherIds = matiereAssignments[m.id] ?? []
-            // const matchesTeacher = teacherFilter === 'ALL' || assignedTeacherIds.includes(teacherFilter)
             const matchesTeacher = teacherFilter === 'ALL' ? true : true
 
             return (
@@ -116,12 +112,10 @@ export default function Matieres() {
                     onSearchChange={setSearchValue}
                     semestreFilter={semestreFilter}
                     onSemestreChange={setSemestreFilter}
-                    // ✅ nouveaux filtres
                     cycleFilter={cycleFilter}
                     onCycleChange={(v) => {
                         console.log('[MATIERES] Filtre cycle :', v)
                         setCycleFilter(v)
-                        // Optionnel : reset promo si incohérent
                         // setPromotionFilter('ALL')
                     }}
                     promotionFilter={promotionFilter}
