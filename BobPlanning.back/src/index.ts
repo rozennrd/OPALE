@@ -54,7 +54,6 @@ pool.connect((err: any, connection: any) => {
   if (err) {
     console.error('Erreur de connexion à la base de données:', err);
   } else {
-    console.log('Connecté à la base de données via un pool');
     connection.release(); // Libérer la connexion après vérification
   }
 });
@@ -435,7 +434,7 @@ app.post('/setPromosData', authJwt.verifyToken, (req, res) => {
     connection.query(sql, [dateDeb, dateFin], (error: any) => {
       if (error) {
         connection.release();
-        console.log('1. error', error);
+        console.error('1. error', error);
         return res.status(500).json({ error: error.message });
       }
 
@@ -463,7 +462,7 @@ app.post('/setPromosData', authJwt.verifyToken, (req, res) => {
         })
         .catch((errAll) => {
           connection.release();
-          console.log('2. error', errAll);
+          console.error('2. error', errAll);
           res.status(500).json({ error: errAll.message });
         });
     });
@@ -553,7 +552,8 @@ app.delete(
 
 // Set promotion
 app.post('/addPromotion', authJwt.verifyToken, (req, res) => {
-  const { nom, effectifs, id_cycle, date_start, date_end } = req.query;
+
+  const { nom, effectifs, id_cycle, date_start, date_end } = req.body;
   pool.connect((err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
@@ -2157,14 +2157,14 @@ app.get('/getCycleTypes', authJwt.verifyToken, (req, res) => {
       }
 
       // Normalize results: support drivers that return an array or an object with `rows`
-      const cylceTypes = Array.isArray(results)
+      const cycleTypes = Array.isArray(results)
         ? results
         : results && Array.isArray((results as any).rows)
           ? (results as any).rows
           : [];
 
-      res.json(cylceTypes);
-      console.log('Cycle Types:', cylceTypes);
+      res.json(cycleTypes);
+      console.log('Cycle Types:', cycleTypes);
       connection.release(); // Libérer la connexion après vérification
     });
   });
@@ -2220,7 +2220,7 @@ app.post(
         return res.status(500).json({ error: err.message });
       }
 
-      const sql = 'INSERT INTO cycle (nom, type) VALUES ($1, $2)';
+      const sql = 'INSERT INTO cycle (nom, type) VALUES ($1, $2) RETURNING id'; // NOTE : Postgre ne retourne pas d'id par défaut, il faut le lui dire explicitement
 
       connection.query(sql, [nom, type], (error: any, result: any) => {
         connection.release(); // always release the client
@@ -2229,6 +2229,7 @@ app.post(
           return res.status(500).json({ error: error.message });
         }
 
+        console.log(result)
         const insertedId = result?.rows?.[0]?.id ?? null;
 
         return res

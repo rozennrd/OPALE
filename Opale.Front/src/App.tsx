@@ -13,7 +13,6 @@ import { authService } from './services/base/AuthService'
 
 import Teachers from './pages/Teachers'
 
-import { useTheme } from './hooks/useTheme'
 
 
 function AppLayout() {
@@ -37,12 +36,6 @@ function AppLayout() {
     }, [navigate]);
 
 
-    const handleDisconnect = () => {
-        console.log('[AUTH] Se déconnecter')
-        authService.logout();
-        navigate('/login');
-    }
-
     return (
         <div className="app">
             <Sidebar />
@@ -60,7 +53,6 @@ function AppLayout() {
 }
 
 export default function App() {
-    const { theme } = useTheme()
     return (
         <Routes>
             <Route element={<AppLayout />}>

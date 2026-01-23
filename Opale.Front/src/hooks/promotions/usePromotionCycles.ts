@@ -1,73 +1,185 @@
-// src/hooks/promotions/usePromotionCycles.ts
-import { useState, useEffect } from 'react'
-import { Cycle } from '../../models'
-import { buildMockCycles } from '../../mocks/promotionCycles.mock'
+import { useState, useEffect, useRef } from 'react'
+import { Cycle, Promotion } from '../../models'
+
 import {
-    uid,
-    makePromotions,
     hasPromoMismatch,
 } from '../../utils/promoUtils'
+import { cyclesApi } from '../../services/api/cyclesApi'
+import { promotionsApi } from '../../services/api/promotionsApi'
+import {
+    transformBackendPromotionToFrontend,
+    transformBackendCycleToFrontend,
+    transformFrontendPromotionToBackendCreate,
+} from '../../services/api/promotionsApiTransformers'
+import { CYCLE_TYPES } from '../../constants/cycleTypes'
+
+
+
 
 export function usePromotionCycles() {
-    const [cycles, setCycles] = useState<Cycle[]>(() => buildMockCycles())
+    const [cycles, setCycles] = useState<Cycle[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
+    const [cycleTypes] = useState<string[]>([...CYCLE_TYPES])
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
-    // Ajout d’un cycle
-    const addCycle = (): void => {
-        const name = (window.prompt('Nom du cycle (diplôme) ?', 'Nouveau cycle') || '').trim()
-        if (!name) return
+    // Store pending rename timeouts for each cycle
+    const renameTimeoutsRef = useRef<Map<string, number>>(new Map())
 
-        let years = Number(window.prompt('Nombre d’années (1 à 6) ?', '3'))
-        if (!Number.isFinite(years)) years = 3
-        years = Math.max(1, Math.min(6, years))
+// Load cycles from backend on mount
+    const loadCycles = async () => {
+        try {
+            setLoading(true)
+            const [cyclesResponse, promotionsResponse] = await Promise.all([
+                cyclesApi.getCycles(),
+                promotionsApi.getPromotions()
+            ])
 
-        const newCycle: Cycle = {
-            id: uid('cycle'),
-            name,
-            promotions: makePromotions(name, years),
-        }
+            if (cyclesResponse.data && promotionsResponse.data) {
+                // Group promotions by cycle
+                const backendCycles = cyclesResponse.data
+                const backendPromotions = promotionsResponse.data
+                const promotionsByCycle: { [key: string]: Promotion[] } = {}
 
-        setCycles(prev => {
-            const next = [...prev, newCycle]
-            console.log('[CYCLES] add', newCycle)
-            return next
-        })
-    }
+                backendPromotions.forEach(bp => {
+                    const promo = transformBackendPromotionToFrontend(bp)
+                    if (bp.id_cycle) {
+                        if (!promotionsByCycle[bp.id_cycle]) {
+                            promotionsByCycle[bp.id_cycle] = []
+                        }
+                        promotionsByCycle[bp.id_cycle].push(promo)
+                    }
+                })
 
-    const removeCycle = (cycleId: string): void => {
-        setCycles(prev => {
-            const next = prev.filter(c => c.id !== cycleId)
-            console.log('[CYCLES] remove', cycleId)
-            return next
-        })
-    }
+                // Transform cycles with their associated promotions
+                const frontendCycles = backendCycles.map(bc =>
+                    transformBackendCycleToFrontend(bc, promotionsByCycle[bc.id] || [])
+                )
 
-    const renameCycle = (cycleId: string, name: string): void => {
-        setCycles(prev => prev.map(c => {
-            if (c.id !== cycleId) return c
-            const renamed: Cycle = {
-                ...c,
-                name,
-                promotions: c.promotions.map((p, i) => ({
-                    ...p,
-                    label: `${name} ${i + 1}`,
-                })),
+                setCycles(frontendCycles)
+                setError('')
             }
-            console.log('[CYCLES] rename', { cycleId, name })
-            return renamed
-        }))
+        } catch (err) {
+            console.error('Error loading cycles:', err)
+            setError('Erreur lors du chargement des cycles et promotions')
+        } finally {
+            setLoading(false)
+        }
     }
 
-    const removePromotion = (cycleId: string, promoId: string): void => {
-        setCycles(prev =>
-            prev.map(c =>
-                c.id === cycleId
-                    ? { ...c, promotions: c.promotions.filter(p => p.id !== promoId) }
-                    : c
-            )
-        )
+// Load data on mount
+    useEffect(() => {
+        loadCycles()
+    }, [])
+
+    // Modal management
+    const openCreateModal = (): void => {
+        setIsCreateModalOpen(true)
     }
 
-    // Flag global d’incohérence (stocké en localStorage)
+    const closeCreateModal = (): void => {
+        setIsCreateModalOpen(false)
+    }
+
+    // Create cycle with multiple promotions
+    const createCycleWithPromotions = async (formData: { name: string; type: string; promotionCount: number }): Promise<void> => {
+        try {
+            setLoading(true)
+            setError('')
+
+            // 1. Create the cycle
+            const cycleResponse = await cyclesApi.addCycle({ nom: formData.name, type: formData.type })
+            if (!cycleResponse.data?.insertedId) {
+                throw new Error('Failed to create cycle')
+            }
+
+            const newCycleId = cycleResponse.data.insertedId
+
+            // 2. Create the promotions
+            const promotionPromises = []
+            const now = new Date()
+            const oneYearFromNow = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000)
+
+            for (let i = 1; i <= formData.promotionCount; i++) {
+                const promotionData = transformFrontendPromotionToBackendCreate({
+                    id: '',
+                    label: `${formData.name} ${i}`,
+                    students: 0,
+                    startDate: now.toISOString(),
+                    endDate: oneYearFromNow.toISOString(),
+                    groups: [],
+                    specialties: [],
+                    constraints: {
+                        vacances: [],
+                        entreprise: [],
+                        stages: [],
+                        international: [],
+                        partiels: [],
+                        rattrapages: [],
+                    },
+                }, newCycleId.toString())
+
+                promotionPromises.push(promotionsApi.addPromotion(promotionData))
+            }
+
+            // Wait for all promotions to be created
+            await Promise.all(promotionPromises)
+
+            // 3. Refresh the data
+            await loadCycles()
+
+        } catch (err) {
+            console.error('Error creating cycle with promotions:', err)
+            setError('Erreur lors de la création du cycle et des promotions')
+        } finally {
+            setLoading(false)
+        }
+    }
+    
+
+    const removeCycle = async (cycleId: string): Promise<void> => {
+
+        try {
+            await cyclesApi.deleteCycle(cycleId)
+            await loadCycles()
+        } catch (err) {
+            console.error('Error removing cycle:', err)
+            setError('Erreur lors de la suppression du cycle')
+        }
+    }
+
+    const renameCycle = async (cycleId: string, name: string): Promise<void> => {
+
+        try {
+            // Get current cycle to preserve type
+            const currentCycle = cycles.find(c => c.id === cycleId)
+            if (!currentCycle) return
+
+            await cyclesApi.updateCycle({
+                id: cycleId,
+                nom: name,
+                type: cycleTypes.length > 0 ? cycleTypes[0] : 'default' // Use first available type
+            }).then(() => {loadCycles()})
+
+        } catch (err) {
+            console.error('Error renaming cycle:', err)
+            setError('Erreur lors de la modification du cycle')
+        }
+    }
+
+    const removePromotion = async (promoId: string): Promise<void> => {
+
+        try {
+            await promotionsApi.deletePromotion(promoId)
+            // Refresh cycles from backend to get updated data
+            await loadCycles()
+        } catch (err) {
+            console.error('Error removing promotion:', err)
+            setError('Erreur lors de la suppression de la promotion')
+        }
+    }
+
+    // Flag global d'incohérence (stocké en localStorage)
     useEffect(() => {
         const anyMismatch = cycles.some(cycle =>
             (cycle.promotions || []).some(promo => hasPromoMismatch(promo))
@@ -78,10 +190,27 @@ export function usePromotionCycles() {
         }
     }, [cycles])
 
+    // Cleanup pending timeouts on unmount
+       useEffect(() => {
+        const timeouts = renameTimeoutsRef.current
+        return () => {
+            timeouts.forEach(timeoutId => {
+                clearTimeout(timeoutId)
+            })
+            timeouts.clear()
+        }
+    }, [])
+
     return {
         cycles,
         setCycles,
-        addCycle,
+        loading,
+        error,
+        isCreateModalOpen,
+        openCreateModal,
+        closeCreateModal,
+        createCycleWithPromotions,
+
         removeCycle,
         renameCycle,
         removePromotion,

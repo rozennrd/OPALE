@@ -83,7 +83,6 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
     })
 
     const handleSave = () => {
-        console.log('→ mettre à jour la BDD côté back')
         props.onSubmit()
     }
 
