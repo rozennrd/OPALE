@@ -12,7 +12,8 @@
 
     .detail-card-header .event-detail-close,
     .detail-card-header .room-detail-close,
-    .detail-card-header .teacher-detail-close {
+    .detail-card-header .teacher-detail-close,
+    .detail-card-header .matiere-detail-close {
         position: absolute;
         top: 0.5rem;
         right: 1rem;
@@ -27,7 +28,8 @@
 
     .detail-card-header .event-detail-close:hover,
     .detail-card-header .room-detail-close:hover,
-    .detail-card-header .teacher-detail-close:hover {
+    .detail-card-header .teacher-detail-close:hover,
+    .detail-card-header .matiere-detail-close:hover {
         color: var(--primary);
     }
 
@@ -35,7 +37,8 @@
 
     .detail-card-header .event-detail-header-badge,
     .detail-card-header .room-detail-header-badge,
-    .detail-card-header .teacher-detail-header-badge {
+    .detail-card-header .teacher-detail-header-badge,
+    .detail-card-header .matiere-detail-header-badge {
         width: 100%;
         margin-bottom: 0.1rem; /* petit espace interne avant le contenu */
     }
@@ -44,7 +47,8 @@
 
     .detail-card-header .event-detail-header-pill,
     .detail-card-header .room-type-badge.room-type-badge-header,
-    .detail-card-header .teacher-mode-badge.teacher-mode-badge-header {
+    .detail-card-header .teacher-mode-badge.teacher-mode-badge-header,
+    .detail-card-header .matiere-badge.matiere-badge-header {
         display: flex;
         flex-direction: row;
         align-items: center;

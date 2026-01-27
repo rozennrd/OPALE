@@ -1,0 +1,32 @@
+/* src/styles/components/_detail-card-layout.css */
+@layer components {
+    /* =========================
+       Layout générique 2 colonnes
+       ========================= */
+
+    .detail-layout,
+    .room-detail-layout {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr; /* par défaut ~60/40 */
+        gap: 1rem;
+        align-items: start;
+    }
+
+    .detail-main-column,
+    .room-detail-main-column {
+        min-width: 0; /* important pour éviter les débordements */
+    }
+
+    .detail-aside-column,
+    .room-detail-aside-column {
+        min-width: 0;
+    }
+
+    /* Responsive : 1 colonne */
+    @media (max-width: 780px) {
+        .detail-layout,
+        .room-detail-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+}
