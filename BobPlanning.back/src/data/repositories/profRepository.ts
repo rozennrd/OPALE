@@ -6,7 +6,7 @@ export const profRepository = {
   // Récupère tous les profs
     async getAll(): Promise<ProfDAO[]> {
         const sql = `
-            SELECT id, nom, prenom, email, type, distanciel 
+            SELECT id, nom, prenom, email, email_perso, type, distanciel, campus_origin
             FROM professeur 
             ORDER BY nom ASC, prenom ASC
         `;
@@ -17,7 +17,7 @@ export const profRepository = {
   // Récupère un prof avec son ID
   async getById(id: string): Promise<ProfDAO | null> {
     const sql = `
-            SELECT id, nom, prenom, email, type, distanciel 
+            SELECT id, nom, prenom, email, email_perso, type, distanciel, campus_origin
             FROM professeur 
             WHERE id = $1
         `;
@@ -26,20 +26,22 @@ export const profRepository = {
   },
 
   // Met à jour les informations d'un professeur existant
-  async update(
-      id: string,
-      nom: string,
-      prenom: string,
-      email: string | null,
-      type: string,
-      distanciel: boolean
-  ): Promise<void> {
-    const sql = `
-            UPDATE professeur 
-            SET nom = $1, prenom = $2, email = $3, type = $4, distanciel = $5 
-            WHERE id = $6
+    async update(
+        id: string,
+        nom: string,
+        prenom: string,
+        email: string | null,
+        email_perso: string | null,
+        type: string,
+        distanciel: boolean,
+        campus_origin: string | null
+    ): Promise<void> {
+        const sql = `
+            UPDATE professeur
+            SET nom = $1, prenom = $2, email = $3, email_perso = $4, type = $5, distanciel = $6, campus_origin = $7
+            WHERE id = $8
         `;
-    await pool.query(sql, [nom, prenom, email, type, distanciel, id]);
+    await pool.query(sql, [id, nom, prenom, email, email_perso, type, distanciel, campus_origin]);
   },
 
 
@@ -48,15 +50,17 @@ export const profRepository = {
       nom: string,
       prenom: string,
       email: string | null,
+      email_perso: string | null,
       type: string,
-      distanciel: boolean
+      distanciel: boolean,
+      campus_origin: string | null
   ): Promise<string> {
     const sql = `
-            INSERT INTO professeur (nom, prenom, email, type, distanciel) 
-            VALUES ($1, $2, $3, $4, $5) 
+            INSERT INTO professeur ( nom, prenom, email, email_perso, type, distanciel, campus_origin) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7) 
             RETURNING id
         `;
-    const result = await pool.query(sql, [nom, prenom, email, type, distanciel]);
+    const result = await pool.query(sql, [nom, prenom, email, email_perso, type, distanciel, campus_origin]);
     return result.rows[0].id;
   },
 

@@ -21,8 +21,10 @@ export const profService = {
             dto.nom,
             dto.prenom,
             dto.email || null,
+            dto.email_perso || null,
             dto.type,
-            dto.distanciel ?? false
+            dto.distanciel || false,
+            dto.campus_origin || null
         );
 
         return {
@@ -30,8 +32,10 @@ export const profService = {
             nom: dto.nom,
             prenom: dto.prenom,
             email: dto.email,
+            email_perso: dto.email_perso,
             type: dto.type,
-            distanciel: dto.distanciel ?? false,
+            distanciel: dto.distanciel,
+            campus_origin: dto.campus_origin
         };
     },
 
@@ -48,8 +52,10 @@ export const profService = {
             dto.nom,
             dto.prenom,
             dto.email || null,
+            dto.email_perso || null,
             dto.type,
-            dto.distanciel ?? false
+            dto.distanciel || false,
+            dto.campus_origin || null
         );
     },
 

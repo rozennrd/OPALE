@@ -8,8 +8,10 @@ export const profMapper = {
             nom: dao.nom,
             prenom: dao.prenom,
             email: dao.email,
-            type: dao.type,
+            email_perso: dao.email_perso,
+            type: dao.type as 'permanent' | 'intervenant' | 'invite',
             distanciel: dao.distanciel,
+            campus_origin: dao.campus_origin as 'Bordeaux' | 'Lille' | 'Chateauroux'
         };
     },
 };
