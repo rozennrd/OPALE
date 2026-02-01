@@ -1,6 +1,43 @@
 import { Request, Response } from "express";
 import { profService } from "../../domain/services/profService";
 
+function validateProfDto(req: Request, res: Response) {
+    const {
+        nom,
+        prenom,
+        email,
+        email_perso,
+        type,
+        distanciel,
+        campus_origin
+    } = req.body;
+
+    if (!nom || !prenom || !type) {
+        res.status(400).json({
+            error: 'Les champs nom, prenom et type sont obligatoires.'
+        });
+        return null;
+    }
+
+    const validTypes = ['permanent', 'intervenant', 'invite'];
+    if (!validTypes.includes(type)) {
+        res.status(400).json({
+            error: `Le type doit être parmi: ${validTypes.join(', ')}`
+        });
+        return null;
+    }
+
+    return {
+        nom,
+        prenom,
+        email: email || null,
+        email_perso: email_perso || null,
+        type,
+        distanciel: distanciel || false,
+        campus_origin: campus_origin || null,
+    };
+}
+
 export const profController = {
     async getProfsData(req: Request, res: Response): Promise<void> {
         try {
@@ -29,40 +66,8 @@ export const profController = {
 
     async createProf(req: Request, res: Response): Promise<void> {
         try {
-            const {
-                nom,
-                prenom,
-                email,
-                email_perso,
-                type,
-                distanciel,
-                campus_origin
-            } = req.body;
-
-            if (!nom || !prenom || !type) {
-                res.status(400).json({
-                    error: 'Les champs nom, prenom et type sont obligatoires.'
-                });
-                return;
-            }
-
-            const validTypes = ['permanent', 'intervenant', 'invite'];
-            if (!validTypes.includes(type)) {
-                res.status(400).json({
-                    error: `Le type doit être parmi: ${validTypes.join(', ')}`
-                });
-                return;
-            }
-
-            const dto = {
-                nom,
-                prenom,
-                email: email || null,
-                email_perso: email_perso || null,
-                type,
-                distanciel: distanciel || false,
-                campus_origin: campus_origin || null,
-            };
+            const dto = validateProfDto(req, res);
+            if (!dto) return;
 
             const result = await profService.createProf(dto);
 
@@ -88,40 +93,18 @@ export const profController = {
     async updateProf(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            const {
-                nom,
-                prenom,
-                email,
-                email_perso,
-                type,
-                distanciel,
-                campus_origin
-            } = req.body;
-
-            if (!nom || !prenom || !type) {
-                res.status(400).json({
-                    error: 'Les champs nom, prenom et type sont obligatoires.'
-                });
-                return;
-            }
-
-            const validTypes = ['permanent', 'intervenant', 'invite'];
-            if (!validTypes.includes(type)) {
-                res.status(400).json({
-                    error: `Le type doit être parmi: ${validTypes.join(', ')}`
-                });
-                return;
-            }
+            const dto = validateProfDto(req, res);
+            if (!dto) return;
 
             await profService.updateProf({
                 id,
-                nom,
-                prenom,
-                email: email || null,
-                email_perso: email_perso || null,
-                type,
-                distanciel: distanciel || false,
-                campus_origin: campus_origin || null,
+                nom: dto.nom,
+                prenom: dto.prenom,
+                email: dto.email,
+                email_perso: dto.email_perso,
+                type: dto.type,
+                distanciel: dto.distanciel,
+                campus_origin: dto.campus_origin,
             });
 
             res.status(200).json({
