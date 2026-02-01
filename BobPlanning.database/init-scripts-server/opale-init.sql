@@ -36,6 +36,7 @@ CREATE TABLE salle (
                        type        type_salle          NOT NULL,
                        capacite    INT,
                        etage       INT,
+                       utilisable  BOOLEAN             DEFAULT FALSE,
                        CONSTRAINT uq_salle_nom UNIQUE (nom)
 );
 
