@@ -8,6 +8,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- 1. Types ENUM
 -- ==============================================================
 
+
 CREATE TYPE type_professeur AS ENUM ('Permanent', 'Intervenant', 'Invite');
 CREATE TYPE type_salle      AS ENUM ('Cours', 'Informatique', 'Projet', 'Rassemblement', 'Associatif', 'Reunion', 'Electronique', 'Fablab', 'Reseau');
 CREATE TYPE type_event      AS ENUM ('Cours', 'Entreprise', 'Examen', 'Reunion', 'Fermeture', 'Soutenance', 'JPO', 'Stage', 'Mobilite', 'PFE', 'Rattrapage', 'Conference', 'Rentrée', 'Réunion parents', 'Journée Immersion', 'Concours', 'Salon', 'Fin des cours', 'Autre');

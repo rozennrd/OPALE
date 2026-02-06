@@ -1,5 +1,6 @@
 import React from 'react'
-import { CampusEvent, EventType } from '../../models/CampusEvent'
+import { CampusEvent } from '../../models/CampusEvent'
+import { EventType, EVENT_TYPE_LABELS } from '../../models/EventTypes'
 import { useEventDetail } from '../../hooks/events/useEventDetail'
 import { Cycle } from '../../models/Cycle'
 import DetailCardHeader from '../common/DetailCardHeader'
@@ -265,14 +266,11 @@ export default function EventDetailCard({
                                         )
                                     }
                                 >
-                                    <option value="JOURNEE_PO">
-                                        Journee Portes Ouvertes
-                                    </option>
-                                    <option value="EXAMEN">Examen</option>
-                                    <option value="CONFERENCE">Conference</option>
-                                    <option value="FORUM">Forum</option>
-                                    <option value="SALON">Salon</option>
-                                    <option value="AUTRE">Autre</option>
+                                    {Object.entries(EVENT_TYPE_LABELS).map(([value, label]) => (
+                                        <option key={value} value={value}>
+                                            {label}
+                                        </option>
+                                    ))}
                                 </select>
                             </dd>
                         </div>

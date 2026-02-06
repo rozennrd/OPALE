@@ -52,7 +52,7 @@ const PromoMainInfo: React.FC<PromoMainInfoProps> = ({
                     <input
                         type="date"
                         className="promo-edit-input"
-                        value={editingPromo.startDate}
+                        value={editingPromo.startDate?.split('T')[0] || ''}
                         onChange={(e) => onFieldChange('startDate', e.target.value)}
                     />
                 </label>
@@ -62,7 +62,7 @@ const PromoMainInfo: React.FC<PromoMainInfoProps> = ({
                     <input
                         type="date"
                         className="promo-edit-input"
-                        value={editingPromo.endDate}
+                        value={editingPromo.endDate?.split('T')[0] || ''}
                         onChange={(e) => onFieldChange('endDate', e.target.value)}
                     />
                 </label>

@@ -13,9 +13,10 @@ import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import ConfirmDialog from '../common/ConfirmDialog'
 
 interface PromoEditDialogProps {
+    isApprentissage: boolean
     editingPromo: EditingPromotion
     hasChanges: boolean
-    onSubmit: () => void
+    onSubmit: () => Promise<void>
     onClose: () => void
     onFieldChange: (field: string, value: string | number) => void
     onStudentsBlur?: () => void
@@ -37,9 +38,10 @@ interface PromoEditDialogProps {
 }
 
 const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
-    const { editingPromo, hasChanges, onClose } = props
+    const { isApprentissage, editingPromo, hasChanges, onClose } = props
 
     const [openCloseConfirm, setOpenCloseConfirm] = useState(false)
+    const [saveError, setSaveError] = useState<string | null>(null)
 
     // Fermeture demandée par la croix / ESC (au niveau de la card)
     const handleRequestClose = useCallback(() => {
@@ -82,14 +84,22 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
         constraints: editingPromo.constraints,
     })
 
-    const handleSave = () => {
-        props.onSubmit()
+    const handleSave = async () => {
+        try {
+            setSaveError(null)
+            await props.onSubmit()
+        } catch (error) {
+            console.error('Save error:', error)
+            setSaveError('Erreur lors de la sauvegarde. Veuillez réessayer.')
+        }
     }
 
-    const handleConfirmSaveAndClose = () => {
+    const handleConfirmSaveAndClose = async () => {
         setOpenCloseConfirm(false)
-        handleSave()
-        props.onClose()
+        await handleSave()
+        if (!saveError) {
+            props.onClose()
+        }
     }
 
     const handleDiscardAndClose = () => {
@@ -129,6 +139,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                     <div className="promo-edit-side">
                         <PromoGroups
                             groups={editingPromo.groups}
+                            idPromo={editingPromo.promoId}
                             onAddGroup={props.onAddGroup}
                             onGroupChange={props.onGroupChange}
                             onRemoveGroup={props.onRemoveGroup}
@@ -143,7 +154,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                     </div>
 
                     <ConstraintsSection
-                        promoName={editingPromo.name}
+                        promoIsApprentissage={isApprentissage}
                         constraints={props.constraints}
                         onAddConstraint={props.onAddConstraint}
                         onRemoveConstraint={props.onRemoveConstraint}
@@ -165,6 +176,12 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                                 {totals.totalStudents}.
                             </p>
                         )}
+                    </div>
+                )}
+
+                {saveError && (
+                    <div className="promo-edit-error">
+                        <p>{saveError}</p>
                     </div>
                 )}
 

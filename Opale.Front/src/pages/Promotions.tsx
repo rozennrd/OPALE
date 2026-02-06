@@ -44,10 +44,7 @@ export default function Promotions() {
         addGroup,
         removeGroup,
         handleGroupChange,
-        addSpecialty,
-        removeSpecialty,
-        handleSpecialtyChange,
-        hasChanges: promoHasChanges,
+        hasChanges,
     } = usePromotionEditing(cycles, setCycles)
 
     const {
@@ -100,16 +97,13 @@ export default function Promotions() {
             {editingPromo && (
                 <PromoEditDialog
                     editingPromo={editingPromo}
-                    hasChanges={promoHasChanges}
+                    hasChanges={hasChanges}
                     onSubmit={handleSavePromotion}
                     onClose={closeEditPromotion}
                     onFieldChange={handleEditFieldChange}
                     onGroupChange={handleGroupChange}
                     onAddGroup={addGroup}
                     onRemoveGroup={removeGroup}
-                    onSpecialtyChange={handleSpecialtyChange}
-                    onAddSpecialty={addSpecialty}
-                    onRemoveSpecialty={removeSpecialty}
                     onStudentsBlur={handleStudentsBlur}
                     constraints={editingPromo.constraints}
                     onAddConstraint={handleAddConstraint}
