@@ -31,6 +31,7 @@ export default function Promotions() {
         removeCycle,
         renameCycle,
         removePromotion,
+        addPromotionToCycle,
     } = usePromotionCycles()
 
     const {
@@ -79,6 +80,7 @@ export default function Promotions() {
                         removeCycle={removeCycle}
                         openEditPromotion={openEditPromotion}
                         removePromotion={removePromotion}
+                        addPromotion={addPromotionToCycle}
                     />
                 ))}
 

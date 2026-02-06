@@ -3,10 +3,12 @@ import React, { useState } from 'react'
 import icMoins from '../../../assets/ic-moins.png'
 import icWarning from '../../../assets/ic-warning.png'
 import icModif from '../../../assets/ic-modif.png'
+import icPlus from '../../../assets/ic-plus.png'
 
 import { hasPromoMismatch } from '../../../utils/promoUtils'
 import { Cycle } from '../../models'
 import CycleImportDropzone from './CycleImportDropZone'
+import ConfirmDialog from '../../common/ConfirmDialog'
 
 
 interface CycleCardProps {
@@ -15,6 +17,7 @@ interface CycleCardProps {
     removeCycle: (cycleId: string) => void
     openEditPromotion: (cycleId: string, promoId: string) => void
     removePromotion: (promoId: string) => void
+    addPromotion: (cycleId: string, label: string) => void
 }
 
 const CycleCard: React.FC<CycleCardProps> = ({
@@ -23,8 +26,27 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                                  removeCycle,
                                                  openEditPromotion,
                                                  removePromotion,
+                                                 addPromotion,
                                              }) => {
     const [cycleName, setCycleName] = useState(cycle.name);
+    const [isAddPromoOpen, setIsAddPromoOpen] = useState(false)
+    const [promoName, setPromoName] = useState('')
+
+    const openAddPromoDialog = () => {
+        const nextIndex = (cycle.promotions?.length || 0) + 1
+        setPromoName(`${cycleName} ${nextIndex}`)
+        setIsAddPromoOpen(true)
+    }
+
+    const closeAddPromoDialog = () => {
+        setIsAddPromoOpen(false)
+    }
+
+    const handleConfirmAddPromo = () => {
+        if (!promoName.trim()) return
+        addPromotion(cycle.id, promoName)
+        setIsAddPromoOpen(false)
+    }
     return (
         <section className="card cycle-card">
             <div className="cycle-head">
@@ -93,6 +115,15 @@ const CycleCard: React.FC<CycleCardProps> = ({
                     </div>
                 ))}
 
+                <button
+                    className="btn-tertiary btn-add-promo btn-icon-responsive"
+                    onClick={openAddPromoDialog}
+                    aria-label="Ajouter une promotion"
+                    title="Ajouter une promotion"
+                >
+                    <img src={icPlus} alt="" aria-hidden="true" />
+                    <span className="btn-label">Ajouter une promotion</span>
+                </button>
                 {/* Dropzone Excel sous la dernière promo */}
                 <CycleImportDropzone
                     cycleId={cycle.id}
@@ -106,6 +137,37 @@ const CycleCard: React.FC<CycleCardProps> = ({
                     }}
                 />
             </div>
+
+            <ConfirmDialog
+                open={isAddPromoOpen}
+                title="Ajouter une promotion"
+                message={(
+                    <div className="promo-edit-field">
+                        <label className="promo-edit-label" htmlFor={`promo-name-${cycle.id}`}>
+                            Nom de la promotion
+                        </label>
+                        <input
+                            id={`promo-name-${cycle.id}`}
+                            className="promo-edit-input"
+                            value={promoName}
+                            onChange={(e) => setPromoName(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault()
+                                    handleConfirmAddPromo()
+                                }
+                            }}
+                            autoFocus
+                        />
+                    </div>
+                )}
+                confirmLabel="Ajouter"
+                cancelLabel="Annuler"
+                cardClassName="promo-add-dialog"
+                onConfirm={handleConfirmAddPromo}
+                onCancel={closeAddPromoDialog}
+                onRequestClose={closeAddPromoDialog}
+            />
         </section>
     )
 }

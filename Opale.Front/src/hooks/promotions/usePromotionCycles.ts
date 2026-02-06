@@ -3,6 +3,7 @@ import { Cycle, Promotion } from '../../models'
 
 import {
     hasPromoMismatch,
+    uid,
 } from '../../utils/promoUtils'
 import { cyclesApi } from '../../services/api/cyclesApi'
 import { promotionsApi } from '../../services/api/promotionsApi'
@@ -12,6 +13,7 @@ import {
     transformFrontendPromotionToBackendCreate,
 } from '../../services/api/promotionsApiTransformers'
 import { CYCLE_TYPES } from '../../constants/cycleTypes'
+import { createEmptyConstraints } from './usePromotionConstraints'
 
 
 
@@ -179,6 +181,38 @@ export function usePromotionCycles() {
         }
     }
 
+    const addPromotionToCycle = (cycleId: string, label: string): void => {
+        const trimmedLabel = label.trim()
+        if (!trimmedLabel) return
+
+        setCycles(prevCycles =>
+            prevCycles.map(cycle => {
+                if (cycle.id !== cycleId) return cycle
+
+                const newPromotion: Promotion = {
+                    id: uid('promo'),
+                    label: trimmedLabel,
+                    students: 0,
+                    startDate: '',
+                    endDate: '',
+                    groups: [],
+                    specialties: [],
+                    constraints: createEmptyConstraints(),
+                }
+
+                console.log('[Promotions] Ajout promotion (front only):', {
+                    cycleId: cycle.id,
+                    promotion: newPromotion,
+                })
+
+                return {
+                    ...cycle,
+                    promotions: [...(cycle.promotions || []), newPromotion],
+                }
+            })
+        )
+    }
+
     // Flag global d'incohérence (stocké en localStorage)
     useEffect(() => {
         const anyMismatch = cycles.some(cycle =>
@@ -214,5 +248,6 @@ export function usePromotionCycles() {
         removeCycle,
         renameCycle,
         removePromotion,
+        addPromotionToCycle,
     }
 }
