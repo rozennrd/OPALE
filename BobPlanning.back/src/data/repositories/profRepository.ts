@@ -41,11 +41,10 @@ export const profRepository = {
             SET nom = $1, prenom = $2, email = $3, email_perso = $4, type = $5, distanciel = $6, campus_origin = $7
             WHERE id = $8
         `;
-    await pool.query(sql, [id, nom, prenom, email, email_perso, type, distanciel, campus_origin]);
+    await pool.query(sql, [nom, prenom, email, email_perso, type, distanciel, campus_origin, id]);
   },
 
-
-  // Ajoute un professeur
+    // Ajoute un professeur
   async insert(
       nom: string,
       prenom: string,
