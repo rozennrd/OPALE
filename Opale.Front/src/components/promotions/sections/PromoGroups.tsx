@@ -5,12 +5,14 @@ interface PromoGroupsProps {
     groups: GroupSpecialtyItem[]
     onAddGroup: () => void
     onGroupChange: (index: number, field: string, value: string | number) => void
-    onRemoveGroup: (index: number) => void
+    onRemoveGroup: (index: number) => void,
+    idPromo: string
 }
 
 const PromoGroups: React.FC<PromoGroupsProps> = ({
     groups,
     onAddGroup,
+    idPromo, // TODO check 
     onGroupChange,
     onRemoveGroup,
 }) => {

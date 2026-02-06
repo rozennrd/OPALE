@@ -11,6 +11,9 @@ export interface BackendPromotion {
   id_cycle: string
   date_start: string
   date_end: string
+  type: string
+  groups: Array<{ id: string; nom: string; effectifs: number }>
+  specialties: Array<{ id: string; nom: string; effectifs: number }>
 }
 
 export interface PromotionCreateRequest {
@@ -31,7 +34,7 @@ export interface PromotionUpdateRequest {
 }
 
 export interface PromotionDeleteRequest {
-  id: number
+  id: string
 }
 
 class PromotionsApi {

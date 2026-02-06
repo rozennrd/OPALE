@@ -250,7 +250,7 @@ export default function Events() {
             startDate: start,
             endDate: end,
             location: '',
-            type: 'AUTRE',
+            type: 'autre',
             source: 'JUNIA',
             description: '',
             show_macro: true,
