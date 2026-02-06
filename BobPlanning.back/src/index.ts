@@ -18,7 +18,7 @@ import salleRoutes from './api/routes/salleRoutes';
 import cycleRoutes from "./api/routes/cycleRoutes";
 import groupeRoutes from './api/routes/groupeRoutes';
 import promotionRoutes from './api/routes/promotionRoutes';
-
+import specialiteRoutes from "./api/routes/specialiteRoutes";
 
 require('dotenv').config();
 
@@ -39,20 +39,20 @@ const app = express();
 const PORT = 3000;
 app.use(express.json({ limit: '50mb' }));
 app.use(
-  cors({
-    origin: function (
-      origin: string | undefined,
-      callback: (err: Error | null, allow?: string | boolean) => void,
-    ) {
-      // Allow requests with no origin (mobile apps, curl, etc.)
-      if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
-        return callback(null, origin || true);
-      } else {
-        return callback(null, false);
-      }
-    },
-    credentials: true,
-  }),
+    cors({
+      origin: function (
+          origin: string | undefined,
+          callback: (err: Error | null, allow?: string | boolean) => void,
+      ) {
+        // Allow requests with no origin (mobile apps, curl, etc.)
+        if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
+          return callback(null, origin || true);
+        } else {
+          return callback(null, false);
+        }
+      },
+      credentials: true,
+    }),
 );
 
 pool.connect((err: any, connection: any) => {
@@ -68,7 +68,7 @@ app.use('/', salleRoutes);
 app.use('/', cycleRoutes);
 app.use('/', groupeRoutes);
 app.use('/', promotionRoutes);
-
+app.use('/', specialiteRoutes);
 
 // Swagger options
 const swaggerOptions = {
@@ -191,411 +191,6 @@ app.post('/login', async (req: Request, res: Response) => {
   }
 });
 
-// /*========== PROMOTIONS ==========*/
-//
-// // TODO : A supprimer une fois que l'ancien back n'est plus utilisé. Pour le nouveau front, utiliser : /getPromotions
-// /**
-//  * @swagger
-//  * /getPromosData:
-//  *   get:
-//  *     summary: Récupérer les données des promotions
-//  *     tags:
-//  *       - DB
-//  *     description: Retourne toutes les données des promotions.
-//  *     responses:
-//  *       200:
-//  *         description: Une liste d'objets promotionnels
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: array
-//  *               items:
-//  *                 type: object
-//  *                 properties:
-//  *                   id:
-//  *                     type: integer
-//  *                     example: 1
-//  *                   Name:
-//  *                     type: string
-//  *                     example: "ADI1"
-//  *                   Nombre:
-//  *                     type: integer
-//  *                     example: 0
-//  *                   Periode:
-//  *                     type: array
-//  *                     items:
-//  *                       type: object
-//  *                       properties:
-//  *                         DateDebutP:
-//  *                           type: string
-//  *                           format: date
-//  *                           example: "2024-01-01"
-//  *                         DateFinP:
-//  *                           type: string
-//  *                           format: date
-//  *                           example: "2024-01-31"
-//  *       500:
-//  *         description: Une erreur est survenue
-//  */
-// // File: `BobPlanning.back/src/index.ts`
-// app.get('/getPromosData', authJwt.verifyToken, (req, res) => {
-//   interface Promo {
-//     nom: string;
-//     effectif: number;
-//     date_start: string;
-//     date_end: string;
-//     Periode?: any;
-//   }
-//
-//   const promosData: { date_start: string; date_end: string; Promos: Promo[] } =
-//     {
-//       date_start: '2024-08-01',
-//       date_end: '2025-08-01',
-//       Promos: [],
-//     };
-//
-//   const sql = 'SELECT nom, effectifs, date_start, date_end FROM promotion';
-//   pool.connect((err: any, connection: any) => {
-//     if (err) {
-//       return res.status(500).json({ error: err.message });
-//     }
-//
-//     connection.query(sql, (error: any, results: any) => {
-//       if (error) {
-//         connection.release();
-//         return res.status(500).json({ error: error.message });
-//       }
-//
-//       // Normalize results to an array for different drivers
-//       const rows = Array.isArray(results)
-//         ? results
-//         : results && Array.isArray((results as any).rows)
-//           ? (results as any).rows
-//           : [];
-//
-//       const parsedResults = rows.map((promo: any) => ({
-//         ...promo,
-//         Periode: promo.Periode ? safeParse(promo.Periode) : [],
-//       }));
-//
-//       promosData.Promos = parsedResults;
-//       res.json(promosData);
-//       connection.release();
-//     });
-//   });
-//
-//   function safeParse(value: any) {
-//     try {
-//       return typeof value === 'string' ? JSON.parse(value) : value;
-//     } catch {
-//       return [];
-//     }
-//   }
-// });
-//
-// // TODO : A utiliser pour le nouveau front
-// // Get promotions
-// app.get(
-//   '/getPromotions',
-//   authJwt.verifyToken,
-//   (req: Request, res: Response): void => {
-//     pool.connect((err: any, connection: any) => {
-//       if (err) {
-//         return res.status(500).json({ error: err.message });
-//       }
-//       const sql = 'SELECT p.id, p.nom, p.effectifs, p.id_cycle, p.date_start, p.date_end, c.type ' +
-//         'FROM promotion p, cycle c ' +
-//         'WHERE p.id_cycle = c.id';
-//       connection.query(sql, (error: any, results: any) => {
-//         connection.release(); // always release the client
-//         if (error) {
-//           return res.status(500).json({ error: error.message });
-//         }
-//
-//         // Normalize results: support drivers that return an array or an object with `rows`
-//         const promotions = Array.isArray(results)
-//           ? results
-//           : results && Array.isArray((results as any).rows)
-//             ? (results as any).rows
-//             : [];
-//
-//         return res.json(promotions);
-//       });
-//     });
-//   },
-// );
-//
-// // Get promotion by ID
-// app.get(
-//   '/getPromoById',
-//   authJwt.verifyToken,
-//   (req: Request, res: Response): void => {
-//     const { id } = req.query;
-//
-//     pool.connect((err: any, connection: any) => {
-//       if (err) {
-//         return res.status(500).json({ error: err.message });
-//       }
-//
-//       const sql = 'SELECT * FROM promotion WHERE id = $1';
-//
-//       connection.query(sql, [id], (error: any, results: any) => {
-//         connection.release(); // always release the client
-//
-//         if (error) {
-//           return res.status(500).json({ error: error.message });
-//         }
-//
-//         if (results.length === 0) {
-//           return res.status(404).json({ message: 'Promotion non trouvée' });
-//         }
-//
-//         // Normalize results: support drivers that return an array or an object with `rows`
-//         const promoById = Array.isArray(results)
-//           ? results
-//           : results && Array.isArray((results as any).rows)
-//             ? (results as any).rows
-//             : [];
-//
-//         return res.json(promoById);
-//       });
-//     });
-//   },
-// );
-//
-// // TODO : Supprimer ce endpoint une fois que le front ne l'utilisera plus : Utilisation de /setPromotion à la place
-// /**
-//  * @swagger
-//  * /setPromosData:
-//  *   post:
-//  *     summary: Ajouter des données de promotions
-//  *     tags:
-//  *       - DB
-//  *     description: Cette route permet d'ajouter des données de promotions à la base de données.
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             type: object
-//  *             properties:
-//  *               DateDeb:
-//  *                 type: string
-//  *                 format: date
-//  *                 description: La date de début des promotions.
-//  *                 example: "2024-01-01"  # Exemple de date
-//  *               DateFin:
-//  *                 type: string
-//  *                 format: date
-//  *                 description: La date de fin des promotions.
-//  *                 example: "2024-12-31"  # Exemple de date
-//  *               Promos:
-//  *                 type: array
-//  *                 items:
-//  *                   type: object
-//  *                   properties:
-//  *                     Name:
-//  *                       type: string
-//  *                       description: Le nom de la promotion.
-//  *                       example: "AP5"  # Exemple de nom de promotion
-//  *                     Nombre:
-//  *                       type: integer
-//  *                       description: Le nombre d'éléments de la promotion.
-//  *                       example: 5  # Exemple de nombre
-//  *                     Periode:
-//  *                       type: array
-//  *                       items:
-//  *                         type: object
-//  *                         properties:
-//  *                           DateDebutP:
-//  *                             type: string
-//  *                             format: date
-//  *                             description: La date de début de la période.
-//  *                             example: "2024-01-01"  # Exemple de date
-//  *                           DateFinP:
-//  *                             type: string
-//  *                             format: date
-//  *                             description: La date de fin de la période.
-//  *                             example: "2024-01-31"  # Exemple de date
-//  *     responses:
-//  *       200:
-//  *         description: Données de promotions ajoutées avec succès.
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 message:
-//  *                   type: string
-//  *                   example: "Données de promotions ajoutées avec succès."
-//  *       500:
-//  *         description: Erreur interne du serveur.
-//  */
-// app.post('/setPromosData', authJwt.verifyToken, (req, res) => {
-//   const { DateDeb, DateFin, Promos } = req.body;
-//
-//   const dateDeb = DateDeb || null;
-//   const dateFin = DateFin || null;
-//   // TypeScript
-//   pool.connect((err: any, connection: any) => {
-//     if (err) {
-//       return res.status(500).json({ error: err.message });
-//     }
-//
-//     const sql = 'UPDATE promotion SET date_start = $1, date_end = $2';
-//     connection.query(sql, [dateDeb, dateFin], (error: any) => {
-//       if (error) {
-//         connection.release();
-//         console.log('1. error', error);
-//         return res.status(500).json({ error: error.message });
-//       }
-//
-//       const updatePromises = Promos.map(
-//         (promo: { Nombre: any; DateDeb: any; DateFin: any; Name: any }) => {
-//           return new Promise<void>((resolve, reject) => {
-//             const updatePromosSql =
-//               'UPDATE promotion SET effectifs = $1, date_start = $2, date_end = $3 WHERE nom = $4';
-//             connection.query(
-//               updatePromosSql,
-//               [promo.Nombre, promo.DateDeb, promo.DateFin, promo.Name],
-//               (err2: any) => {
-//                 if (err2) return reject(err2);
-//                 resolve();
-//               },
-//             );
-//           });
-//         },
-//       );
-//
-//       Promise.all(updatePromises)
-//         .then(() => {
-//           connection.release();
-//           res.json({ DateDeb, DateFin, Promos });
-//         })
-//         .catch((errAll) => {
-//           connection.release();
-//           console.log('2. error', errAll);
-//           res.status(500).json({ error: errAll.message });
-//         });
-//     });
-//   });
-// });
-//
-// // Update a promotion
-// app.put('/updatePromotion', authJwt.verifyToken, (req, res): void => {
-//   const { id, nom, effectifs, date_start, date_end } = req.body;
-//   if (!id || !nom || !effectifs || !date_start || !date_end) {
-//     res.status(400).json({
-//       message: "Tous les champs sont requis, à l'exception d'id_cycle.",
-//     });
-//     return;
-//   }
-//
-//   pool.connect((err: any, connection: any) => {
-//     if (err) {
-//       return res.status(500).json({ error: err.message });
-//     }
-//
-//     const sql =
-//       'UPDATE promotion SET nom = $2, effectifs = $3, date_start = $4, date_end = $5 WHERE id = $1';
-//     connection.query(
-//       sql,
-//       [id, nom, effectifs, date_start, date_end],
-//       (error: any, result: any) => {
-//         if (error) {
-//           console.error(error);
-//           res.status(500).json({ error: error.message });
-//           return;
-//         }
-//
-//         const affectedRows = result.rowCount;
-//         if (affectedRows === 0) {
-//           res
-//             .status(404)
-//             .json({ message: `Promotion avec l'ID ${id} non trouvé` });
-//           return;
-//         }
-//
-//         res.json({ message: `Promotion mise à jour avec succès` });
-//       },
-//     );
-//     connection.release(); // Libérer la connexion après vérification
-//   });
-// });
-//
-// app.delete(
-//   '/deletePromotion',
-//   authJwt.verifyToken,
-//   (req: Request, res: Response): void => {
-//     const { id } = req.query;
-//     const sql = 'DELETE FROM promotion WHERE id = $1';
-//
-//     pool.connect((err: any, connection: any) => {
-//       if (err) {
-//         return res.status(500).json({ error: err.message });
-//       }
-//
-//       connection.query(sql, [id], (error: any, result: any) => {
-//         connection.release(); // always release the client
-//
-//         if (error) {
-//           return res.status(500).json({ error: error.message });
-//         }
-//
-//         if (id == undefined || Array.isArray(id)) {
-//           return res
-//             .status(400)
-//             .json({ message: 'ID de la promotion invalide' });
-//         }
-//
-//         const affectedRows = result.rowCount;
-//
-//         if (affectedRows === 0) {
-//           return res.status(404).json({ message: 'Promotion non trouvée' });
-//         }
-//
-//         return res.json({ message: 'Promotion supprimée avec succès' });
-//       });
-//     });
-//   },
-// );
-//
-// // TODO : Utiliser ce endpoint pour le nouveau front
-//
-// // Set promotion
-// app.post('/addPromotion', authJwt.verifyToken, (req, res) => {
-//   const { nom, effectifs, id_cycle, date_start, date_end } = req.query;
-//   pool.connect((err: any, connection: any) => {
-//     if (err) {
-//       return res.status(500).json({ error: err.message });
-//     }
-//     const sql =
-//       'INSERT INTO promotion (nom, effectifs, id_cycle, date_start, date_end) VALUES ($1, $2, $3, $4, $5) RETURNING id';
-//     connection.query(
-//       sql,
-//       [nom, effectifs, id_cycle, date_start, date_end],
-//       (error: any, result: any) => {
-//         connection.release(); // always release the client
-//         if (error) {
-//           if (
-//             error.message.startsWith('insert or update on table') &&
-//             error.message.includes('violates foreign key constraint')
-//           ) {
-//             return res
-//               .status(400)
-//               .json({ error: 'Cycle invalide pour la promotion.' });
-//           }
-//           return res.status(500).json({ error: error.message });
-//         }
-//         const insertedId = result?.rows?.[0]?.id ?? null;
-//         return res
-//           .status(201)
-//           .json({ message: 'Promotion ajoutée avec succès', insertedId });
-//       },
-//     );
-//   });
-// });
-
 // Get event by promo and list of types
 app.get(
     '/getEventPromo',
@@ -604,7 +199,7 @@ app.get(
       const { promo, types } = req.body;
 
       if (!promo || !Array.isArray(types) || types.length === 0) {
-          res.status(400).json({ message: "Les champs 'promo' et 'types[]' sont obligatoires." });
+        res.status(400).json({ message: "Les champs 'promo' et 'types[]' sont obligatoires." });
         return;
       }
 
@@ -761,65 +356,65 @@ app.get('/getProfsData', authJwt.verifyToken, (req, res) => {
 app.post('/setProfsData', authJwt.verifyToken, (req, res) => {
   const insertedIds: number[] = [];
   const updatePromises = req.body.map(
-    (prof: { id: any; name: any; type: any; dispo: any }) => {
-      return new Promise<void>((resolve, reject) => {
-        if (prof.id) {
-          // Si un ID est fourni, mettre à jour le professeur existant
-          pool.connect((err: any, connection: any) => {
-            if (err) {
-              return res.status(500).json({ error: err.message });
-            }
-            const updateSql =
-              'UPDATE professeur SET nom = ?, type = ? WHERE id = ?';
-            connection.query(
-              updateSql,
-              [prof.name, prof.type, prof.dispo, prof.id],
-              (error: any) => {
-                if (error) {
-                  return reject(error);
-                }
-                resolve();
-              },
-            );
-            connection.release(); // Libérer la connexion après vérification
-          });
-        } else {
-          // Sinon, ajouter un nouveau professeur
-          pool.connect((err: any, connection: any) => {
-            if (err) {
-              return res.status(500).json({ error: err.message });
-            }
-            const insertSql =
-              'INSERT INTO professeur (nom, type) VALUES (?, ?)';
-            connection.query(
-              insertSql,
-              [prof.name, prof.type, prof.dispo],
-              (error: any, results: any) => {
-                if (error) {
-                  return reject(error);
-                }
-                insertedIds.push(results.insertId);
-                resolve();
-              },
-            );
-            connection.release(); // Libérer la connexion après vérification
-          });
-        }
-      });
-    },
+      (prof: { id: any; name: any; type: any; dispo: any }) => {
+        return new Promise<void>((resolve, reject) => {
+          if (prof.id) {
+            // Si un ID est fourni, mettre à jour le professeur existant
+            pool.connect((err: any, connection: any) => {
+              if (err) {
+                return res.status(500).json({ error: err.message });
+              }
+              const updateSql =
+                  'UPDATE professeur SET nom = ?, type = ? WHERE id = ?';
+              connection.query(
+                  updateSql,
+                  [prof.name, prof.type, prof.dispo, prof.id],
+                  (error: any) => {
+                    if (error) {
+                      return reject(error);
+                    }
+                    resolve();
+                  },
+              );
+              connection.release(); // Libérer la connexion après vérification
+            });
+          } else {
+            // Sinon, ajouter un nouveau professeur
+            pool.connect((err: any, connection: any) => {
+              if (err) {
+                return res.status(500).json({ error: err.message });
+              }
+              const insertSql =
+                  'INSERT INTO professeur (nom, type) VALUES (?, ?)';
+              connection.query(
+                  insertSql,
+                  [prof.name, prof.type, prof.dispo],
+                  (error: any, results: any) => {
+                    if (error) {
+                      return reject(error);
+                    }
+                    insertedIds.push(results.insertId);
+                    resolve();
+                  },
+              );
+              connection.release(); // Libérer la connexion après vérification
+            });
+          }
+        });
+      },
   );
 
   Promise.all(updatePromises)
-    .then(() => {
-      res.json({
-        success: true,
-        message: 'Informations des professeurs mises à jour avec succès.',
-        insertedIds,
+      .then(() => {
+        res.json({
+          success: true,
+          message: 'Informations des professeurs mises à jour avec succès.',
+          insertedIds,
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({ success: false, error: error.message });
       });
-    })
-    .catch((error) => {
-      res.status(500).json({ success: false, error: error.message });
-    });
 });
 
 app.post('/addProf', authJwt.verifyToken, async (req, res) => {
@@ -834,7 +429,7 @@ app.post('/addProf', authJwt.verifyToken, async (req, res) => {
     const client = await pool.connect();
 
     const sql =
-      'INSERT INTO professeur (nom, type) VALUES ($1, $2) RETURNING id';
+        'INSERT INTO professeur (nom, type) VALUES ($1, $2) RETURNING id';
 
     const result = await client.query(sql, [name, type, JSON.stringify(dispo)]);
 
@@ -878,38 +473,38 @@ app.post('/addProf', authJwt.verifyToken, async (req, res) => {
  *         description: Erreur interne du serveur.
  */
 app.delete(
-  '/deleteProf/:id',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id } = req.params;
+    '/deleteProf/:id',
+    authJwt.verifyToken,
+    (req: Request, res: Response): void => {
+      const { id } = req.params;
 
-    if (!id) {
-      res.status(400).json({ error: 'ID du professeur est requis.' });
-      return;
-    }
-
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
+      if (!id) {
+        res.status(400).json({ error: 'ID du professeur est requis.' });
+        return;
       }
-      const deleteSql = 'DELETE FROM professeur WHERE id = ?';
-      connection.query(deleteSql, [id], (error: any, results: any) => {
-        if (error) {
-          res.status(500).json({ error: error.message });
-          return;
-        }
 
-        if (results.affectedRows === 0) {
-          res
-            .status(400)
-            .json({ error: 'Aucun professeur trouvé avec cet ID.' });
-          return;
+      pool.connect((err: any, connection: any) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
         }
+        const deleteSql = 'DELETE FROM professeur WHERE id = ?';
+        connection.query(deleteSql, [id], (error: any, results: any) => {
+          if (error) {
+            res.status(500).json({ error: error.message });
+            return;
+          }
 
-        res.json({ message: 'Professeur supprimé avec succès.' });
+          if (results.affectedRows === 0) {
+            res
+                .status(400)
+                .json({ error: 'Aucun professeur trouvé avec cet ID.' });
+            return;
+          }
+
+          res.json({ message: 'Professeur supprimé avec succès.' });
+        });
       });
-    });
-  },
+    },
 );
 
 
@@ -919,13 +514,13 @@ app.get('/getEventsMacro', authJwt.verifyToken, (req, res) => {
       return res.status(500).json({ error: err.message });
     }
     const sql =
-      "SELECT p.id as id_promotion, e.datetime_start, e.datetime_end, e.type, e.nom \n" +
-      "FROM event e, promotion p, concerner c\n" +
-      "WHERE e.show_macro = True\n  " +
-      "AND e.type in ('stage', 'mobilite', 'PFE', 'rattrapage', 'entreprise')\n    " +
-      "AND e.id = c.id_event\n" +
-      "AND p.id = c.id_promo\n" +
-      "ORDER BY nom ASC";
+        "SELECT p.id as id_promotion, e.datetime_start, e.datetime_end, e.type, e.nom \n" +
+        "FROM event e, promotion p, concerner c\n" +
+        "WHERE e.show_macro = True\n  " +
+        "AND e.type in ('stage', 'mobilite', 'PFE', 'rattrapage', 'entreprise')\n    " +
+        "AND e.id = c.id_event\n" +
+        "AND p.id = c.id_promo\n" +
+        "ORDER BY nom ASC";
     connection.query(sql, (error: any, results: any) => {
       if (error) {
         connection.release();
@@ -934,10 +529,10 @@ app.get('/getEventsMacro', authJwt.verifyToken, (req, res) => {
 
       // Normalize results: support drivers that return an array or an object with `rows`
       const eventsMacro = Array.isArray(results)
-        ? results
-        : results && Array.isArray((results as any).rows)
-          ? (results as any).rows
-          : [];
+          ? results
+          : results && Array.isArray((results as any).rows)
+              ? (results as any).rows
+              : [];
 
       res.json(eventsMacro);
       connection.release();
@@ -1006,63 +601,63 @@ app.get('/getEventsMacro', authJwt.verifyToken, (req, res) => {
 
 
 app.post(
-  "/generateEdtMacro",
-  authJwt.verifyToken,
-  async (req: Request, res: Response) => {
-    // Type definitions
-    type RawMacroEvent = {
-      id_promotion: string;
-      datetime_start: string;
-      datetime_end: string;
-      type: string;
-      nom: string;
-    };
+    "/generateEdtMacro",
+    authJwt.verifyToken,
+    async (req: Request, res: Response) => {
+      // Type definitions
+      type RawMacroEvent = {
+        id_promotion: string;
+        datetime_start: string;
+        datetime_end: string;
+        type: string;
+        nom: string;
+      };
 
-    try {
-      // ========================================
-      // 1. Fetch Promotions
-      // ========================================
-      const promotions = await new Promise<Promos[]>((resolve, reject) => {
-        pool.connect((err: any, connection: any) => {
-          if (err) {
-            return reject(err);
-          }
+      try {
+        // ========================================
+        // 1. Fetch Promotions
+        // ========================================
+        const promotions = await new Promise<Promos[]>((resolve, reject) => {
+          pool.connect((err: any, connection: any) => {
+            if (err) {
+              return reject(err);
+            }
 
-          const sql = `
+            const sql = `
             SELECT p.id, p.nom, p.effectifs, p.id_cycle, p.date_start, p.date_end, c.type
             FROM promotion p
             INNER JOIN cycle c ON p.id_cycle = c.id
           `;
 
-          connection.query(sql, (error: any, results: any) => {
-            connection.release();
+            connection.query(sql, (error: any, results: any) => {
+              connection.release();
 
-            if (error) {
-              return reject(error);
-            }
+              if (error) {
+                return reject(error);
+              }
 
-            // Normalize results for different drivers
-            const normalized = Array.isArray(results)
-              ? results
-              : results?.rows || [];
+              // Normalize results for different drivers
+              const normalized = Array.isArray(results)
+                  ? results
+                  : results?.rows || [];
 
-            resolve(normalized);
+              resolve(normalized);
+            });
           });
         });
-      });
 
-      console.log("Promotions récupérées :", promotions);
+        console.log("Promotions récupérées :", promotions);
 
-      // ========================================
-      // 2. Fetch Macro Events
-      // ========================================
-      const eventsMacro = await new Promise<RawMacroEvent[]>((resolve, reject) => {
-        pool.connect((err: any, connection: any) => {
-          if (err) {
-            return reject(err);
-          }
+        // ========================================
+        // 2. Fetch Macro Events
+        // ========================================
+        const eventsMacro = await new Promise<RawMacroEvent[]>((resolve, reject) => {
+          pool.connect((err: any, connection: any) => {
+            if (err) {
+              return reject(err);
+            }
 
-          const sql = `
+            const sql = `
             SELECT 
               p.id as id_promotion, 
               e.datetime_start, 
@@ -1077,83 +672,83 @@ app.post(
             ORDER BY e.nom ASC
           `;
 
-          connection.query(sql, (error: any, results: any) => {
-            connection.release();
+            connection.query(sql, (error: any, results: any) => {
+              connection.release();
 
-            if (error) {
-              return reject(error);
-            }
+              if (error) {
+                return reject(error);
+              }
 
-            // Normalize results for different drivers
-            const normalized = Array.isArray(results)
-              ? results
-              : results?.rows || [];
+              // Normalize results for different drivers
+              const normalized = Array.isArray(results)
+                  ? results
+                  : results?.rows || [];
 
-            resolve(normalized);
+              resolve(normalized);
+            });
           });
         });
-      });
 
-      console.log("Événements récupérés :", eventsMacro);
+        console.log("Événements récupérés :", eventsMacro);
 
-      // ========================================
-      // 3. Build Promotions with Periods
-      // ========================================
-      const promotionsWithPeriods: Promos[] = promotions.map((promo) => {
-        // Filter events for this promotion
-        const promoEvents = eventsMacro.filter(
-          (ev) => ev.id_promotion === promo.id
-        );
+        // ========================================
+        // 3. Build Promotions with Periods
+        // ========================================
+        const promotionsWithPeriods: Promos[] = promotions.map((promo) => {
+          // Filter events for this promotion
+          const promoEvents = eventsMacro.filter(
+              (ev) => ev.id_promotion === promo.id
+          );
 
-        // Transform to Periode objects and sort
-        const promoPeriods: Periode[] = promoEvents
-          .map((ev): Periode => ({
-            DateDebutP: new Date(ev.datetime_start),
-            DateFinP: new Date(ev.datetime_end),
-            type: ev.nom,
-          }))
-          .sort((a, b) => a.DateDebutP.getTime() - b.DateDebutP.getTime());
+          // Transform to Periode objects and sort
+          const promoPeriods: Periode[] = promoEvents
+              .map((ev): Periode => ({
+                DateDebutP: new Date(ev.datetime_start),
+                DateFinP: new Date(ev.datetime_end),
+                type: ev.nom,
+              }))
+              .sort((a, b) => a.DateDebutP.getTime() - b.DateDebutP.getTime());
 
-        return {
-          ...promo,
-          periode: promoPeriods,
-          i: 0,
-        };
-      });
+          return {
+            ...promo,
+            periode: promoPeriods,
+            i: 0,
+          };
+        });
 
-      console.log("Promotions enrichies :", promotionsWithPeriods);
+        console.log("Promotions enrichies :", promotionsWithPeriods);
 
-      // ========================================
-      // 4. Define Date Range
-      // ========================================
-      const start = new Date("2025-09-01");
-      const end = new Date("2026-08-31");
+        // ========================================
+        // 4. Define Date Range
+        // ========================================
+        const start = new Date("2025-09-01");
+        const end = new Date("2026-08-31");
 
-      // ========================================
-      // 5. Generate Excel
-      // ========================================
-      await generateEdtMacro({
-        DateDeb: start,
-        DateFin: end,
-        Promos: promotionsWithPeriods,
-      });
+        // ========================================
+        // 5. Generate Excel
+        // ========================================
+        await generateEdtMacro({
+          DateDeb: start,
+          DateFin: end,
+          Promos: promotionsWithPeriods,
+        });
 
-      // ========================================
-      // 6. Send Success Response
-      // ========================================
-      res.status(200).json({
-        message: "Excel généré avec succès",
-        fileUrl: "/download/EdtMacro",
-      });
+        // ========================================
+        // 6. Send Success Response
+        // ========================================
+        res.status(200).json({
+          message: "Excel généré avec succès",
+          fileUrl: "/download/EdtMacro",
+        });
 
-    } catch (error: any) {
-      console.error("Error in generateEdtMacro:", error);
-      res.status(500).json({
-        error: "Internal server error",
-        message: error.message || "Unknown error occurred",
-      });
+      } catch (error: any) {
+        console.error("Error in generateEdtMacro:", error);
+        res.status(500).json({
+          error: "Internal server error",
+          message: error.message || "Unknown error occurred",
+        });
+      }
     }
-  }
 );
 
 
@@ -1256,24 +851,24 @@ app.get('/download/EdtMacro', authJwt.verifyToken, (req, res) => {
  *                   type: string
  */
 app.post(
-  '/readMaquette',
-  authJwt.verifyToken,
-  upload.single('file'),
-  async (req: Request, res: Response): Promise<any> => {
-    if (!req.file) {
-      return res.status(400).send("Aucun fichier n'a été téléchargé");
-    }
+    '/readMaquette',
+    authJwt.verifyToken,
+    upload.single('file'),
+    async (req: Request, res: Response): Promise<any> => {
+      if (!req.file) {
+        return res.status(400).send("Aucun fichier n'a été téléchargé");
+      }
 
-    try {
-      let data: MaquetteData;
-      data = await readMaquette(req.file.buffer);
-      res.json(data);
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: 'Erreur lors de la lecture du fichier Excel', error });
-    }
-  },
+      try {
+        let data: MaquetteData;
+        data = await readMaquette(req.file.buffer);
+        res.json(data);
+      } catch (error) {
+        res
+            .status(500)
+            .json({ message: 'Erreur lors de la lecture du fichier Excel', error });
+      }
+    },
 );
 
 /**
@@ -1287,26 +882,26 @@ app.post(
  *       required: true
  */
 app.post(
-  '/generateEdtMicro',
-  authJwt.verifyToken,
-  async (req: Request, res: Response) => {
-    try {
-      pool.connect(async (err: any, connection: any) => {
-        if (err) {
-          return res.status(500).json({ error: err.message });
-        }
-        const filePath = await generateEdtMicro(connection);
-        connection.release(); // Libérer la connexion après vérification
-        res.status(200).json({
-          message: 'Excel file generated and saved on the server',
-          data: filePath,
-          fileUrl: `${process.env.VITE_RACINE_FETCHER_URL}/download/EdtMicro`,
+    '/generateEdtMicro',
+    authJwt.verifyToken,
+    async (req: Request, res: Response) => {
+      try {
+        pool.connect(async (err: any, connection: any) => {
+          if (err) {
+            return res.status(500).json({ error: err.message });
+          }
+          const filePath = await generateEdtMicro(connection);
+          connection.release(); // Libérer la connexion après vérification
+          res.status(200).json({
+            message: 'Excel file generated and saved on the server',
+            data: filePath,
+            fileUrl: `${process.env.VITE_RACINE_FETCHER_URL}/download/EdtMicro`,
+          });
         });
-      });
-    } catch (error) {
-      res.status(500).send('Internal server error: ' + error);
-    }
-  },
+      } catch (error) {
+        res.status(500).send('Internal server error: ' + error);
+      }
+    },
 );
 
 /**
@@ -1431,67 +1026,67 @@ app.get('/download/EdtMicro', authJwt.verifyToken, (req, res) => {
  *               example: "Internal server error"
  */
 app.post(
-  '/generateEdtSquelette',
-  authJwt.verifyToken,
-  async (req: Request, res: Response) => {
-    try {
-      const edtMicroArray: EdtMicro[] = req.body;
+    '/generateEdtSquelette',
+    authJwt.verifyToken,
+    async (req: Request, res: Response) => {
+      try {
+        const edtMicroArray: EdtMicro[] = req.body;
 
-      // Check if edtMicroArray is an array of objects
-      if (!Array.isArray(edtMicroArray)) {
-        res
-          .status(400)
-          .send('Invalid data format: Expected an array of timetable entries.');
-        return;
+        // Check if edtMicroArray is an array of objects
+        if (!Array.isArray(edtMicroArray)) {
+          res
+              .status(400)
+              .send('Invalid data format: Expected an array of timetable entries.');
+          return;
+        }
+
+        // Validate structure of each object in edtMicroArray
+        const isValid = edtMicroArray.every(
+            (edtMicro: EdtMicro) =>
+                edtMicro.dateDebut &&
+                Array.isArray(edtMicro.promos) &&
+                edtMicro.promos.every(
+                    (promo: any) =>
+                        promo.name &&
+                        Array.isArray(promo.semaine) &&
+                        promo.semaine.every(
+                            (semaine: any) =>
+                                semaine.jour &&
+                                typeof semaine.enCours === 'boolean' &&
+                                Array.isArray(semaine.cours) &&
+                                semaine.cours.every(
+                                    (cours: any) =>
+                                        cours.matiere &&
+                                        cours.heureDebut &&
+                                        cours.heureFin &&
+                                        cours.professeur &&
+                                        cours.salleDeCours,
+                                ),
+                        ),
+                ),
+        );
+
+        if (!isValid) {
+          res
+              .status(400)
+              .send(
+                  'Invalid data: Ensure EdtMicro structure follows the required format.',
+              );
+          return;
+        }
+
+        // Call function to generate the Excel file
+        const filePath = await generateEdtSquelette(edtMicroArray);
+
+        res.status(200).json({
+          message: 'Excel file generated and saved on the server',
+          filePath,
+        });
+      } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal server error: ' + error);
       }
-
-      // Validate structure of each object in edtMicroArray
-      const isValid = edtMicroArray.every(
-        (edtMicro: EdtMicro) =>
-          edtMicro.dateDebut &&
-          Array.isArray(edtMicro.promos) &&
-          edtMicro.promos.every(
-            (promo: any) =>
-              promo.name &&
-              Array.isArray(promo.semaine) &&
-              promo.semaine.every(
-                (semaine: any) =>
-                  semaine.jour &&
-                  typeof semaine.enCours === 'boolean' &&
-                  Array.isArray(semaine.cours) &&
-                  semaine.cours.every(
-                    (cours: any) =>
-                      cours.matiere &&
-                      cours.heureDebut &&
-                      cours.heureFin &&
-                      cours.professeur &&
-                      cours.salleDeCours,
-                  ),
-              ),
-          ),
-      );
-
-      if (!isValid) {
-        res
-          .status(400)
-          .send(
-            'Invalid data: Ensure EdtMicro structure follows the required format.',
-          );
-        return;
-      }
-
-      // Call function to generate the Excel file
-      const filePath = await generateEdtSquelette(edtMicroArray);
-
-      res.status(200).json({
-        message: 'Excel file generated and saved on the server',
-        filePath,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal server error: ' + error);
-    }
-  },
+    },
 );
 
 /**
@@ -1613,21 +1208,21 @@ app.post(
  *                             example: 2
  */
 app.post(
-  '/generateDataEdtMicro',
-  authJwt.verifyToken,
-  async (req: Request, res: Response) => {
-    try {
-      const { macro }: { macro: EdtMacroData } = req.body;
+    '/generateDataEdtMicro',
+    authJwt.verifyToken,
+    async (req: Request, res: Response) => {
+      try {
+        const { macro }: { macro: EdtMacroData } = req.body;
 
-      const result = await generateDataEdtMicro(macro);
-      res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({
-        message: 'Erreur lors de la génération des données EdtMicro',
-        error,
-      });
-    }
-  },
+        const result = await generateDataEdtMicro(macro);
+        res.status(200).json(result);
+      } catch (error) {
+        res.status(500).json({
+          message: 'Erreur lors de la génération des données EdtMicro',
+          error,
+        });
+      }
+    },
 );
 
 /*========== COURS ==========*/
@@ -1646,7 +1241,7 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
 
       // Extraire la promo unique des cours
       const promo =
-        req.body.courses.length > 0 ? req.body.courses[0].promo : null;
+          req.body.courses.length > 0 ? req.body.courses[0].promo : null;
 
       if (!promo) {
         connection.release();
@@ -1668,81 +1263,81 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
 
         // Insérer les nouvelles matières
         const insertPromises = req.body.courses.map(
-          (cours: {
-            promo: string;
-            name: string;
-            UE: string;
-            Semestre: string;
-            Periode: string;
-            Prof: string;
-            typeSalle: string;
-            heure: string;
-          }) => {
-            return new Promise<void>((resolve, reject) => {
-              // Ancienne requête permettant l'update d'une matière si elle existe déjà ou l'insert
-              // TODO : À garder jusqu'à ce que la fonction soit fonctionnelle avec la nouvelle base de données
-              // const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
-              //               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-              //               ON DUPLICATE KEY UPDATE
-              //               UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode),
-              //               Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
+            (cours: {
+              promo: string;
+              name: string;
+              UE: string;
+              Semestre: string;
+              Periode: string;
+              Prof: string;
+              typeSalle: string;
+              heure: string;
+            }) => {
+              return new Promise<void>((resolve, reject) => {
+                // Ancienne requête permettant l'update d'une matière si elle existe déjà ou l'insert
+                // TODO : À garder jusqu'à ce que la fonction soit fonctionnelle avec la nouvelle base de données
+                // const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
+                //               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                //               ON DUPLICATE KEY UPDATE
+                //               UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode),
+                //               Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
 
-              const sql = `INSERT INTO matiere (id_promo, nom, semestre, volume_horaire)
+                const sql = `INSERT INTO matiere (id_promo, nom, semestre, volume_horaire)
                                          VALUES (?, ?, ?, ?) ON CONFLICT (id_promo, nom) 
                             DO
                             UPDATE SET
                                 semestre = EXCLUDED.semestre,
                                 volume_horaire = EXCLUDED.volume_horaire`;
-              connection.query(
-                sql,
-                [
-                  cours.promo,
-                  cours.name,
-                  cours.UE,
-                  cours.Semestre,
-                  cours.Periode,
-                  cours.Prof,
-                  cours.typeSalle,
-                  cours.heure,
-                ],
-                (error: any) => {
-                  if (error) {
-                    console.error(
-                      "Erreur lors de l'insertion/mise à jour :",
-                      error,
-                    );
-                    return reject(error);
-                  }
-                  resolve();
-                },
-              );
-            });
-          },
+                connection.query(
+                    sql,
+                    [
+                      cours.promo,
+                      cours.name,
+                      cours.UE,
+                      cours.Semestre,
+                      cours.Periode,
+                      cours.Prof,
+                      cours.typeSalle,
+                      cours.heure,
+                    ],
+                    (error: any) => {
+                      if (error) {
+                        console.error(
+                            "Erreur lors de l'insertion/mise à jour :",
+                            error,
+                        );
+                        return reject(error);
+                      }
+                      resolve();
+                    },
+                );
+              });
+            },
         );
 
         Promise.all(insertPromises)
-          .then(() => {
-            connection.commit((commitErr: any) => {
-              if (commitErr) {
-                return connection.rollback(() => {
-                  connection.release();
-                  res.status(500).json({ error: commitErr.message });
+            .then(() => {
+              connection.commit((commitErr: any) => {
+                if (commitErr) {
+                  return connection.rollback(() => {
+                    connection.release();
+                    res.status(500).json({ error: commitErr.message });
+                  });
+                }
+                res.json({
+                  message:
+                      'Matières mises à jour avec succès pour la promo ' + promo,
                 });
-              }
-              res.json({
-                message:
-                  'Matières mises à jour avec succès pour la promo ' + promo,
               });
+            })
+            .catch((error) => {
+              connection.rollback(() => {
+                res.status(500).json({ error: error.message });
+              });
+            })
+            .finally(() => {
+              connection.release();
             });
-          })
-          .catch((error) => {
-            connection.rollback(() => {
-              res.status(500).json({ error: error.message });
-            });
-          })
-          .finally(() => {
-            connection.release();
-          });
       });
     });
   });
@@ -1755,45 +1350,45 @@ app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
     }
 
     const updatePromises = req.body.courses.map(
-      (cours: {
-        promo: string;
-        name: string;
-        UE: string;
-        Semestre: string;
-        Periode: string;
-        Prof: string;
-        typeSalle: string;
-        heure: string;
-      }) => {
-        return new Promise<void>((resolve, reject) => {
-          const sql = `UPDATE Cours
+        (cours: {
+          promo: string;
+          name: string;
+          UE: string;
+          Semestre: string;
+          Periode: string;
+          Prof: string;
+          typeSalle: string;
+          heure: string;
+        }) => {
+          return new Promise<void>((resolve, reject) => {
+            const sql = `UPDATE Cours
                                  SET id_prof = ?
                                  WHERE id_event = ?`;
 
-          connection.query(sql, [cours.Prof, cours.name], (error: any) => {
-            if (error) {
-              console.error(
-                'Erreur lors de la mise à jour du professeur :',
-                error,
-              );
-              return reject(error);
-            }
-            resolve();
+            connection.query(sql, [cours.Prof, cours.name], (error: any) => {
+              if (error) {
+                console.error(
+                    'Erreur lors de la mise à jour du professeur :',
+                    error,
+                );
+                return reject(error);
+              }
+              resolve();
+            });
           });
-        });
-      },
+        },
     );
 
     Promise.all(updatePromises)
-      .then(() => {
-        res.json({ message: 'Professeurs mis à jour avec succès.' });
-      })
-      .catch((error) => {
-        res.status(500).json({ error: error.message });
-      })
-      .finally(() => {
-        connection.release(); // Libérer la connexion après exécution
-      });
+        .then(() => {
+          res.json({ message: 'Professeurs mis à jour avec succès.' });
+        })
+        .catch((error) => {
+          res.status(500).json({ error: error.message });
+        })
+        .finally(() => {
+          connection.release(); // Libérer la connexion après exécution
+        });
   });
 });
 
@@ -1821,42 +1416,42 @@ app.get('/getCours', authJwt.verifyToken, (req, res) => {
 /*========== EVENT ==========*/
 // Delete an event
 app.delete(
-  '/deleteEvent',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id } = req.query;
+    '/deleteEvent',
+    authJwt.verifyToken,
+    (req: Request, res: Response): void => {
+      const { id } = req.query;
 
-    if (!id) {
-      res.status(400).json({ message: "Le paramètre 'id' est obligatoire." });
-      return;
-    }
-
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
+      if (!id) {
+        res.status(400).json({ message: "Le paramètre 'id' est obligatoire." });
+        return;
       }
 
-      const sql = 'DELETE FROM event WHERE id = $1';
-
-      connection.query(sql, [id], (error: any, result: any) => {
-        connection.release(); // Libérer la connexion
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
+      pool.connect((err: any, connection: any) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
         }
 
-        const affectedRows = result.rowCount;
+        const sql = 'DELETE FROM event WHERE id = $1';
 
-        if (affectedRows === 0) {
-          return res
-            .status(404)
-            .json({ message: `Événement avec l'ID ${id} non trouvé` });
-        }
+        connection.query(sql, [id], (error: any, result: any) => {
+          connection.release(); // Libérer la connexion
 
-        return res.json({ message: "Événement supprimé avec succès" });
+          if (error) {
+            return res.status(500).json({ error: error.message });
+          }
+
+          const affectedRows = result.rowCount;
+
+          if (affectedRows === 0) {
+            return res
+                .status(404)
+                .json({ message: `Événement avec l'ID ${id} non trouvé` });
+          }
+
+          return res.json({ message: "Événement supprimé avec succès" });
+        });
       });
-    });
-  },
+    },
 );
 // Update event
 app.put('/updateEvent', authJwt.verifyToken, (req: Request, res: Response): void => {
@@ -1965,10 +1560,10 @@ app.get('/getExceptionalEvents', authJwt.verifyToken, (req: Request, res: Respon
 
       // Normalize results: support drivers that return an array or an object with `rows`
       const exceptionalEvents = Array.isArray(results)
-        ? results
-        : results && Array.isArray((results as any).rows)
-          ? (results as any).rows
-          : [];
+          ? results
+          : results && Array.isArray((results as any).rows)
+              ? (results as any).rows
+              : [];
 
       return res.json(exceptionalEvents);
     });

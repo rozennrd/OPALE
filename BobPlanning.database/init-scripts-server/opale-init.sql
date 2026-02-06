@@ -108,6 +108,11 @@ CREATE TABLE specialite (
                                     REFERENCES groupe(id)
                                     ON UPDATE CASCADE
                                     ON DELETE CASCADE,
+                            CONSTRAINT fk_specialite_promo
+                                FOREIGN KEY (id_promo)
+                                    REFERENCES promotion(id)
+                                    ON UPDATE CASCADE
+                                    ON DELETE CASCADE,
                             CONSTRAINT uq_specialite_nom_groupe UNIQUE (id_groupe, nom)
 );
 
