@@ -20,6 +20,7 @@ import groupeRoutes from './api/routes/groupeRoutes';
 import promotionRoutes from './api/routes/promotionRoutes';
 import matiereRoutes from "./api/routes/matiereRoutes";
 import profRoutes from "./api/routes/profRoutes";
+import specialiteRoutes from "./api/routes/specialiteRoutes";
 
 require('dotenv').config();
 
@@ -69,9 +70,8 @@ app.use('/', cycleRoutes);
 app.use('/', groupeRoutes);
 app.use('/', promotionRoutes);
 app.use("/", matiereRoutes);
-
 app.use('/', profRoutes);
-
+app.use('/', specialiteRoutes);
 
 // Swagger options
 const swaggerOptions = {
