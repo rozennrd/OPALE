@@ -11,17 +11,16 @@ interface EditingRange {
 type ConstraintType = keyof Constraints
 
 interface ConstraintsSectionProps {
-    promoName: string
+    promoIsApprentissage: Boolean
     constraints: Constraints
     onAddConstraint: (type: string) => void
     onRemoveConstraint: (type: string, id: string) => void
     onUpdateConstraintRange: (type: string, id: string, field: 'start' | 'end', value: string) => void
 }
 
-const isApPromo = (name: string): boolean => /^AP/i.test(name || '')
 
 const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
-    promoName,
+    promoIsApprentissage,
     constraints,
     onAddConstraint,
     onRemoveConstraint,
@@ -30,7 +29,7 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
     const [editingRange, setEditingRange] = useState<EditingRange | null>(null)
 
     const safeConstraints = constraints || {}
-    const getRanges = (type: string) => safeConstraints[type] || []
+    const getRanges = (type: string) => safeConstraints[type as ConstraintType] || []
 
     const handleRangeClick = (type: string, id: string): void => {
         setEditingRange({ type, id })
@@ -51,13 +50,12 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
         }
     }
 
-    const useEntreprise = isApPromo(promoName)
-    const firstType = useEntreprise ? 'entreprise' : 'vacances'
-    const firstLabel = useEntreprise ? 'Entreprise' : 'Vacances'
+    const firstType = promoIsApprentissage ? 'entreprise' : 'vacances'
+    const firstLabel = promoIsApprentissage ? 'Entreprise' : 'Vacances'
     const firstCardClass = `constraint-card ${
-        useEntreprise ? 'constraint-entreprise' : 'constraint-vacances'
+        promoIsApprentissage ? 'constraint-entreprise' : 'constraint-vacances'
     }`
-    const firstPillClass = useEntreprise
+    const firstPillClass = promoIsApprentissage
         ? 'constraint-pill-entreprise'
         : 'constraint-pill-vacances'
 

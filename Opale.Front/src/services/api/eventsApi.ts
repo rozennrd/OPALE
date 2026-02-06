@@ -2,6 +2,8 @@
 
 import { apiClient } from '../base/ApiClient'
 import { ApiResponse } from '../base/types'
+import { Event } from '../../models/Event'
+import { EventType } from '../../models/EventTypes'
 
 // Event types matching backend
 export type TypeEvent =
