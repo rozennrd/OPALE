@@ -45,7 +45,18 @@ const TeacherInfoColumn: React.FC<TeacherInfoColumnProps> = ({ teacher, onInfoCh
                     </dd>
                 </div>
                 <div className="teacher-detail-item">
-                    <dt>Email</dt>
+                    <dt>Email Junia</dt>
+                    <dd>
+                        <input
+                            className="teacher-detail-input"
+                            type="email"
+                            value={teacher.emailJunia || ''}
+                            onChange={(e) => onInfoChange('emailJunia', e.target.value)}
+                        />
+                    </dd>
+                </div>
+                <div className="teacher-detail-item">
+                    <dt>Email perso</dt>
                     <dd>
                         <input
                             className="teacher-detail-input"
@@ -71,6 +82,18 @@ const TeacherInfoColumn: React.FC<TeacherInfoColumnProps> = ({ teacher, onInfoCh
                         </select>
                     </dd>
                 </div>
+                {teacher.campus !== undefined && (
+                    <div className="teacher-detail-item">
+                        <dt>Campus d'origine</dt>
+                        <dd>
+                            <input
+                                className="teacher-detail-input"
+                                value={teacher.campus || ''}
+                                onChange={(e) => onInfoChange('campus', e.target.value)}
+                            />
+                        </dd>
+                    </div>
+                )}
             </dl>
         </div>
     )

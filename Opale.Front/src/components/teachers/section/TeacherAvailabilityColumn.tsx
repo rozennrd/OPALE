@@ -39,7 +39,7 @@ const TeacherAvailabilityColumn: React.FC<TeacherAvailabilityColumnProps> = ({
         return (
             <div className="teacher-detail-col">
                 <h4>Disponibilités</h4>
-                <p className="teacher-detail-muted">Aucune période définie.</p>
+                <p className="teacher-detail-muted">Aucune période de disponibilité définie.</p>
             </div>
         )
     }
@@ -57,7 +57,7 @@ const TeacherAvailabilityColumn: React.FC<TeacherAvailabilityColumnProps> = ({
         <div className="teacher-detail-col">
             <h4>Disponibilités</h4>
 
-            {/* Header périodes */}
+            {/* Header périodes de disponibilité */}
             <div className="teacher-periods-header">
                 {periods.map((period) => (
                     <div
@@ -93,7 +93,7 @@ const TeacherAvailabilityColumn: React.FC<TeacherAvailabilityColumnProps> = ({
                     className="teacher-period-add-pill"
                     onClick={onAddPeriod}
                 >
-                    + Ajouter une période
+                    + Ajouter une période de disponibilité
                 </button>
             </div>
 

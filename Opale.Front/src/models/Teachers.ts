@@ -17,6 +17,8 @@ export interface Teacher {
     lastName: string
     phone: string
     email: string
+    emailJunia?: string
+    campus?: string
     mode: TeachingMode
     subjects: TeacherSubject[]
 

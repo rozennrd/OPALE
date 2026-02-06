@@ -8,6 +8,8 @@ export const INTERNAL_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Dupont',
         phone: '06 12 34 56 78',
         email: 'marie.dupont@exemple.com',
+        emailJunia: 'marie.dupont@ext.junia.com',
+        campus: 'Campus Lille',
         mode: 'PRESENTIEL',
         subjects: [
             { name: 'Maths', promo: 'AP 3' },
@@ -22,6 +24,8 @@ export const INTERNAL_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Martin',
         phone: '06 98 76 54 32',
         email: 'lucas.martin@exemple.com',
+        emailJunia: 'lucas.martin@ext.junia.com',
+        campus: 'Campus Lille',
         mode: 'HYBRIDE',
         subjects: [
             { name: 'Algo', promo: 'CIR 1' },
@@ -36,6 +40,8 @@ export const INTERNAL_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Leroy',
         phone: '06 11 22 33 44',
         email: 'sarah.leroy@exemple.com',
+        emailJunia: 'sarah.leroy@ext.junia.com',
+        campus: 'Campus Bordeaux',
         mode: 'DISTANCIEL',
         subjects: [
             { name: 'Programmation Web', promo: 'ISEN 4' },
@@ -50,6 +56,8 @@ export const INTERNAL_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Roche',
         phone: '06 34 22 19 88',
         email: 'nicolas.roche@exemple.com',
+        emailJunia: 'nicolas.roche@ext.junia.com',
+        campus: 'Campus Lille',
         mode: 'PRESENTIEL',
         subjects: [
             { name: 'Architecture des SI', promo: 'ADI 1' },
@@ -63,6 +71,8 @@ export const INTERNAL_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Petit',
         phone: '06 21 45 87 90',
         email: 'camille.petit@exemple.com',
+        emailJunia: 'camille.petit@ext.junia.com',
+        campus: 'Campus Paris',
         mode: 'HYBRIDE',
         subjects: [
             { name: 'Projet tutoré', promo: 'AP 5' },
@@ -76,6 +86,8 @@ export const INTERNAL_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Baron',
         phone: '06 65 14 97 03',
         email: 'adrien.baron@exemple.com',
+        emailJunia: 'adrien.baron@ext.junia.com',
+        campus: 'Campus Lille',
         mode: 'DISTANCIEL',
         subjects: [
             { name: 'Réseaux', promo: 'CIR 2' },
@@ -89,6 +101,8 @@ export const INTERNAL_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Fournier',
         phone: '06 87 56 23 41',
         email: 'claire.fournier@exemple.com',
+        emailJunia: 'claire.fournier@ext.junia.com',
+        campus: 'Campus Bordeaux',
         mode: 'PRESENTIEL',
         subjects: [
             { name: 'Physique', promo: 'AP 3' },
@@ -102,6 +116,8 @@ export const INTERNAL_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Lopez',
         phone: '06 44 21 09 98',
         email: 'hugo.lopez@exemple.com',
+        emailJunia: 'hugo.lopez@ext.junia.com',
+        campus: 'Campus Paris',
         mode: 'HYBRIDE',
         subjects: [
             { name: 'IA', promo: 'ISEN 5' },
@@ -119,6 +135,7 @@ export const VACATAIRE_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Bernard',
         phone: '07 12 34 56 78',
         email: 'thomas.bernard@exemple.com',
+        emailJunia: 'thomas.bernard@ext.junia.com',
         mode: 'HYBRIDE',
         subjects: [
             { name: 'Économie', promo: 'AP 4' },
@@ -132,6 +149,7 @@ export const VACATAIRE_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Moreau',
         phone: '07 98 76 54 32',
         email: 'julie.moreau@exemple.com',
+        emailJunia: 'julie.moreau@ext.junia.com',
         mode: 'PRESENTIEL',
         subjects: [
             { name: 'Anglais', promo: 'AP 3' },
@@ -146,6 +164,7 @@ export const VACATAIRE_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Chevalier',
         phone: '07 44 22 11 55',
         email: 'emilie.chevalier@exemple.com',
+        emailJunia: 'emilie.chevalier@ext.junia.com',
         mode: 'DISTANCIEL',
         subjects: [
             { name: 'UX Design', promo: 'ADI 2' },
@@ -159,6 +178,7 @@ export const VACATAIRE_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Renard',
         phone: '07 88 19 43 22',
         email: 'baptiste.renard@exemple.com',
+        emailJunia: 'baptiste.renard@ext.junia.com',
         mode: 'PRESENTIEL',
         subjects: [
             { name: 'Bases de données', promo: 'CIR 1' },
@@ -172,6 +192,7 @@ export const VACATAIRE_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Gauthier',
         phone: '07 33 55 91 84',
         email: 'laura.gauthier@exemple.com',
+        emailJunia: 'laura.gauthier@ext.junia.com',
         mode: 'HYBRIDE',
         subjects: [
             { name: 'Maths appliquées', promo: 'ISEN 4' },
@@ -185,6 +206,7 @@ export const VACATAIRE_TEACHERS_MOCK: Teacher[] = [
         lastName: 'Perrin',
         phone: '07 66 22 87 09',
         email: 'antoine.perrin@exemple.com',
+        emailJunia: 'antoine.perrin@ext.junia.com',
         mode: 'PRESENTIEL',
         subjects: [
             { name: 'C', promo: 'CIR 2' },
