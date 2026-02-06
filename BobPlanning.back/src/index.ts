@@ -60,7 +60,6 @@ pool.connect((err: any, connection: any) => {
   if (err) {
     console.error('Erreur de connexion à la base de données:', err);
   } else {
-    console.log('Connecté à la base de données via un pool');
     connection.release(); // Libérer la connexion après vérification
   }
 });

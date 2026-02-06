@@ -1,0 +1,114 @@
+/* src/styles/pages/matieres/_detail-modal.css */
+
+@layer pages {
+    .matiere-detail-card .detail-layout {
+        grid-template-columns: 0.95fr 420px;
+        gap: 4rem;
+    }
+
+    .matiere-detail-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    }
+
+    .matiere-detail-card {
+        width: min(1080px, 96vw);
+        max-height: min(720px, 96vh);
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* ============================
+       Colonne enseignants (UI spécifique)
+       ============================ */
+
+    .matiere-detail-aside-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.6rem;
+    }
+
+    .matiere-assign-add {
+        padding-inline: 0.9rem;
+        border-radius: 999px;
+    }
+
+    .matiere-assign-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .matiere-assign-row {
+        border: 1px solid var(--border-subtle);
+        border-radius: 0.9rem;
+        background: var(--panel-soft);
+        padding: 0.7rem 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    .matiere-assign-top {
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+    }
+
+    .matiere-assign-select {
+        flex: 1;
+    }
+
+    .matiere-assign-remove {
+        padding-inline: 0.8rem;
+        border-radius: 999px;
+        line-height: 1;
+    }
+
+    .matiere-assign-hours {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr);
+        gap: 0.6rem;
+        align-items: center;
+    }
+
+    .matiere-hours-input {
+        min-width: 0;
+    }
+
+    .matiere-kind-chip {
+        border: 1px solid var(--border);
+        background: var(--panel);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 0.35rem 0.7rem;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 140ms ease;
+    }
+
+    .matiere-kind-chip:hover {
+        border-color: var(--primary);
+    }
+
+    .matiere-kind-chip.is-active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    @media (max-width: 780px) {
+        .matiere-assign-hours {
+            grid-template-columns: auto minmax(0, 1fr);
+        }
+    }
+}

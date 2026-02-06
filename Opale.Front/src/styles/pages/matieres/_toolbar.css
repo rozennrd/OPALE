@@ -1,0 +1,27 @@
+/* src/styles/pages/matieres/_toolbar.css */
+
+@layer pages {
+    .matieres-toolbar {
+        margin-top: 0.5rem;
+    }
+
+    .matieres-toolbar-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .matieres-toolbar-search {
+        flex: 1 1 320px;
+        min-width: min(320px, 100%);
+    }
+
+    .matieres-toolbar-filters {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex: 0 0 auto;
+    }
+}

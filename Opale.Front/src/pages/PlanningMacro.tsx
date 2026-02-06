@@ -27,11 +27,11 @@ export default function PlanningMacro(): React.ReactElement {
     }, []);
 
     const [items, setItems] = useState<ChecklistItem[]>([
-        { id: 'promos',    label: 'Toutes les promotions sont créé',                     status: 'ok',    checked: true,  warning: false },
-        { id: 'periodes',  label: 'Toutes les période de présence ont été remplit',      status: 'ok',    checked: true  },
-        { id: 'maquettes', label: 'Les maquettes de chaque promos créé ont été ajoutée', status: 'ok',    checked: true  },
-        { id: 'events',    label: 'Les évènements majeur du campus ont été renseignés',  status: 'alert', checked: false },
-    ]);
+        { id: 'promos',    label: 'Toutes les promotions sont créées',                     status: 'ok',    checked: true,  warning: false },
+        { id: 'periodes',  label: 'Toutes les périodes de présence ont été remplies',      status: 'ok',    checked: true  },
+        { id: 'maquettes', label: 'Les maquettes de chaque promos créées ont été ajoutées', status: 'ok',    checked: true  },
+        { id: 'events',    label: 'Les évènements majeurs du campus ont été renseignés',  status: 'alert', checked: false },
+    ])
 
     useEffect(() => {
         setItems(prev =>

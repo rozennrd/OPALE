@@ -1,10 +1,13 @@
 // src/pages/Promotions.tsx
-import React from 'react'
+import React, { useEffect } from 'react'
 import icPlus from '../assets/ic-plus.png'
 
 import PromoEditDialog from '../components/promotions/PromoEditDialog.tsx'
 import PromoAdjustDialog from '../components/promotions/PromoAdjustDialog.tsx'
 import CycleCard from '../components/promotions/cycles/CycleCard'
+
+import CycleCreateDialog from '../components/promotions/CycleCreateDialog'
+
 
 import {
     usePromotionCycles,
@@ -19,7 +22,12 @@ export default function Promotions() {
     const {
         cycles,
         setCycles,
-        addCycle,
+        loading,
+        error,
+        isCreateModalOpen,
+        openCreateModal,
+        closeCreateModal,
+        createCycleWithPromotions,
         removeCycle,
         renameCycle,
         removePromotion,
@@ -54,7 +62,7 @@ export default function Promotions() {
         handleRemoveConstraint,
         handleUpdateConstraintRange,
     } = usePromotionConstraints(editingPromo, setEditingPromo)
-
+    useEffect(() => {console.log(cycles)}, [cycles] )
     return (
         <div className="promos">
             <PageHeader
@@ -78,7 +86,7 @@ export default function Promotions() {
                 <button
                     type="button"
                     className="card add-cycle-card"
-                    onClick={addCycle}
+                    onClick={openCreateModal}
                     aria-label="Ajouter un cycle"
                     title="Ajouter un cycle"
                 >
@@ -117,6 +125,13 @@ export default function Promotions() {
                     onValidate={handleAdjustValidate}
                 />
             )}
+
+            {/* Modal de création de cycle */}
+            <CycleCreateDialog
+                isOpen={isCreateModalOpen}
+                onSubmit={createCycleWithPromotions}
+                onClose={closeCreateModal}
+            />
         </div>
     )
 }

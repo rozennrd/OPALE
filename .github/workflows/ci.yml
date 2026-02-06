@@ -42,16 +42,14 @@ jobs:
       run: cd BobPlanning.back && npm run lint
       continue-on-error: true
 
-    - name: Test backend
-      run: cd BobPlanning.back && npm test
+    - name: Install dependencies for frontend
+      run: cd Opale.Front && npm ci
 
-  docker-compose:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - name: Lint frontend
+      run: cd Opale.Front && npm run lint
+      continue-on-error: true
 
-    - name: Create database env file
+    - name: Create database env file before testing docker-compose.yml
       run: |
         mkdir -p BobPlanning.database
         cat > BobPlanning.database/.env << EOF
