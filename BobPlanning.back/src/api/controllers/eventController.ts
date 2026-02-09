@@ -25,18 +25,25 @@ function validateEventDto(req: Request, res: Response): EventDTO | null {
   }
 
   const validTypes = [
-    'cours',
-    'entreprise',
-    'examen',
-    'reunion',
-    'fermeture',
-    'soutenance',
-    'portes ouvertes',
-    'stage',
-    'mobilite',
+    'Cours',
+    'Entreprise',
+    'Examen',
+    'Reunion',
+    'Fermeture',
+    'Soutenance',
+    'JPO',
+    'Stage',
+    'Mobilite',
     'PFE',
-    'rattrapage',
-    'autre',
+    'Rattrapage',
+    'Conference',
+    'Rentrée',
+    'Réunion parents',
+    'Journée Immersion',
+    'Concours',
+    'Salon',
+    'Fin des cours',
+    'Autre',
   ];
   if (!validTypes.includes(type)) {
     res.status(400).json({

@@ -19,7 +19,7 @@ function validateProfDto(req: Request, res: Response) {
         return null;
     }
 
-    const validTypes = ['permanent', 'intervenant', 'invite'];
+    const validTypes = ['Permanent', 'Intervenant', 'Invite'];
     if (!validTypes.includes(type)) {
         res.status(400).json({
             error: `Le type doit être parmi: ${validTypes.join(', ')}`

@@ -8,10 +8,10 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- 1. Types ENUM
 -- ==============================================================
 
-CREATE TYPE type_professeur AS ENUM ('permanent', 'intervenant', 'invite');
-CREATE TYPE type_salle      AS ENUM ('projet', 'td', 'tp', 'reunion', 'autre');
-CREATE TYPE type_event      AS ENUM ('cours', 'entreprise', 'examen', 'reunion', 'fermeture', 'soutenance', 'portes ouvertes', 'stage', 'mobilite', 'PFE', 'rattrapage', 'autre');
-CREATE TYPE type_cours      AS ENUM ('TD', 'TP', 'PROJET', 'AUTRE');
+CREATE TYPE type_professeur AS ENUM ('Permanent', 'Intervenant', 'Invite');
+CREATE TYPE type_salle      AS ENUM ('Cours', 'Informatique', 'Projet', 'Rassemblement', 'Associatif', 'Reunion', 'Electronique', 'Fablab', 'Reseau');
+CREATE TYPE type_event      AS ENUM ('Cours', 'Entreprise', 'Examen', 'Reunion', 'Fermeture', 'Soutenance', 'JPO', 'Stage', 'Mobilite', 'PFE', 'Rattrapage', 'Conference', 'Rentrée', 'Réunion parents', 'Journée Immersion', 'Concours', 'Salon', 'Fin des cours', 'Autre');
+CREATE TYPE type_cours      AS ENUM ('Cours_TD', 'Cours_TD_DIST', 'Cours_TP', 'Cours_TP_DIST', 'E-Learning', 'Entreprise', 'Examen', 'Projet', 'Rattrapage', 'Associatif', 'Conférence', 'Stage', 'Encadrement', 'Auto-géré', 'Autre');
 CREATE TYPE type_cycle      AS ENUM ('Initial', 'Apprentissage');
 CREATE TYPE campus          AS ENUM ('Bordeaux', 'Lille', 'Chateauroux');
 

@@ -31,7 +31,6 @@ export const salleService = {
     const updated = await salleRepository.update(dto);
 
     if (!updated) {
-      // Ici tu peux aussi throw une NotFoundError custom si tu as un système d'erreurs
       const err: any = new Error(`Salle avec l'ID ${dto.id} non trouvée`);
       err.statusCode = 404;
       throw err;

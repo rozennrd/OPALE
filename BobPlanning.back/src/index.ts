@@ -1073,24 +1073,6 @@ const server = app.listen(PORT, () => {
   console.log(`Swagger docs available at http://localhost:${PORT}/docs`);
 });
 
-app.get('/getEventsExceptionnels', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    const sql = 'SELECT * FROM event where is_exceptional is TRUE;';
-
-    connection.query(sql, (error: any, result: any) => {
-      connection.release();
-      if (error) {
-        return res.status(500).json({ error: error.message });
-      }
-      return res.status(200).json(result.rows);
-    });
-  });
-});
-
 server.timeout = 0;
 
 export default app;

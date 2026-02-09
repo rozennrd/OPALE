@@ -9,7 +9,7 @@ export const profMapper = {
             prenom: dao.prenom,
             email: dao.email,
             email_perso: dao.email_perso,
-            type: dao.type as 'permanent' | 'intervenant' | 'invite',
+            type: dao.type as 'Permanent' | 'Intervenant' | 'Invite',
             distanciel: dao.distanciel,
             campus_origin: dao.campus_origin as 'Bordeaux' | 'Lille' | 'Chateauroux'
         };

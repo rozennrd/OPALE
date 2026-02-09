@@ -43,11 +43,23 @@ export const eventRepository = {
     // Récupère les événements macro
     async getMacro(): Promise<EventDAO[]> {
         const sql = `
-            SELECT id, type, nom, num_semaine, datetime_start, datetime_end,
-                   show_macro, show_micro, is_blocking, is_exceptional, is_external
+            SELECT id,
+                   type,
+                   nom,
+                   num_semaine,
+                   datetime_start,
+                   datetime_end,
+                   show_macro,
+                   show_micro,
+                   is_blocking,
+                   is_exceptional,
+                   is_external
             FROM event
             WHERE show_macro = TRUE
-              AND type IN ('cours', 'entreprise', 'examen', 'reunion', 'fermeture', 'soutenance', 'portes ouvertes', 'stage', 'mobilite', 'PFE', 'rattrapage', 'autre')
+              AND type IN
+                  ('Cours', 'Entreprise', 'Examen', 'Reunion', 'Fermeture', 'Soutenance', 'JPO', 'Stage', 'Mobilite',
+                   'PFE', 'Rattrapage', 'Conference', 'Rentrée', 'Réunion parents', 'Journée Immersion', 'Concours',
+                   'Salon', 'Fin des cours', 'Autre')
             ORDER BY nom ASC
         `;
         const result = await pool.query(sql);

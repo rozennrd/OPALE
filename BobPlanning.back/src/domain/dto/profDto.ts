@@ -4,7 +4,7 @@ export interface ProfDTO {
     prenom: string;
     email?: string;
     email_perso?: string;
-    type: 'permanent' | 'intervenant' | 'invite';
+    type: 'Permanent' | 'Intervenant' | 'Invite';
     distanciel?: boolean;
     campus_origin?: 'Bordeaux' | 'Lille' | 'Chateauroux';
 }

@@ -1,4 +1,4 @@
-export type TypeEvent = 'cours' | 'entreprise' | 'examen' | 'reunion' | 'fermeture' | 'soutenance' | 'portes ouvertes' | 'stage' | 'mobilite' | 'PFE' | 'rattrapage' | 'autre';
+export type TypeEvent = 'Cours'| 'Entreprise'| 'Examen'| 'Reunion'| 'Fermeture'| 'Soutenance'| 'JPO'| 'Stage'| 'Mobilite'| 'PFE'| 'Rattrapage'| 'Conference'| 'Rentrée'| 'Réunion parents'| 'Journée Immersion'| 'Concours'| 'Salon'| 'Fin des cours'| 'Autre';
 
 export interface EventDTO {
     id?: string;
