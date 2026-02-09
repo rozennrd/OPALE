@@ -14,6 +14,13 @@ import authJwt from './middleware/authJwt';
 import { pool } from './database/pool';
 
 import { Periode, Promos } from "./types/EdtMacroData";
+import salleRoutes from './api/routes/salleRoutes';
+import cycleRoutes from "./api/routes/cycleRoutes";
+import groupeRoutes from './api/routes/groupeRoutes';
+import promotionRoutes from './api/routes/promotionRoutes';
+import matiereRoutes from "./api/routes/matiereRoutes";
+import profRoutes from "./api/routes/profRoutes";
+import specialiteRoutes from "./api/routes/specialiteRoutes";
 
 require('dotenv').config();
 
@@ -26,6 +33,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 import dotenv from "dotenv";
+import eventRoutes from "./api/routes/eventRoutes";
 dotenv.config();
 
 const dbConfig = getDBConfig();
@@ -34,20 +42,20 @@ const app = express();
 const PORT = 3000;
 app.use(express.json({ limit: '50mb' }));
 app.use(
-  cors({
-    origin: function (
-      origin: string | undefined,
-      callback: (err: Error | null, allow?: string | boolean) => void,
-    ) {
-      // Allow requests with no origin (mobile apps, curl, etc.)
-      if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
-        return callback(null, origin || true);
-      } else {
-        return callback(null, false);
-      }
-    },
-    credentials: true,
-  }),
+    cors({
+      origin: function (
+          origin: string | undefined,
+          callback: (err: Error | null, allow?: string | boolean) => void,
+      ) {
+        // Allow requests with no origin (mobile apps, curl, etc.)
+        if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
+          return callback(null, origin || true);
+        } else {
+          return callback(null, false);
+        }
+      },
+      credentials: true,
+    }),
 );
 
 pool.connect((err: any, connection: any) => {
@@ -57,6 +65,15 @@ pool.connect((err: any, connection: any) => {
     connection.release(); // Libérer la connexion après vérification
   }
 });
+
+app.use('/', salleRoutes);
+app.use('/', cycleRoutes);
+app.use('/', groupeRoutes);
+app.use('/', promotionRoutes);
+app.use("/", matiereRoutes);
+app.use('/', profRoutes);
+app.use('/', specialiteRoutes);
+app.use('/', eventRoutes);
 
 // Swagger options
 const swaggerOptions = {
@@ -179,762 +196,6 @@ app.post('/login', async (req: Request, res: Response) => {
   }
 });
 
-/*========== PROMOTIONS ==========*/
-
-// TODO : A supprimer une fois que l'ancien back n'est plus utilisé. Pour le nouveau front, utiliser : /getPromotions
-/**
- * @swagger
- * /getPromosData:
- *   get:
- *     summary: Récupérer les données des promotions
- *     tags:
- *       - DB
- *     description: Retourne toutes les données des promotions.
- *     responses:
- *       200:
- *         description: Une liste d'objets promotionnels
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                     example: 1
- *                   Name:
- *                     type: string
- *                     example: "ADI1"
- *                   Nombre:
- *                     type: integer
- *                     example: 0
- *                   Periode:
- *                     type: array
- *                     items:
- *                       type: object
- *                       properties:
- *                         DateDebutP:
- *                           type: string
- *                           format: date
- *                           example: "2024-01-01"
- *                         DateFinP:
- *                           type: string
- *                           format: date
- *                           example: "2024-01-31"
- *       500:
- *         description: Une erreur est survenue
- */
-// File: `BobPlanning.back/src/index.ts`
-app.get('/getPromosData', authJwt.verifyToken, (req, res) => {
-  interface Promo {
-    nom: string;
-    effectif: number;
-    date_start: string;
-    date_end: string;
-    Periode?: any;
-  }
-
-  const promosData: { date_start: string; date_end: string; Promos: Promo[] } =
-    {
-      date_start: '2024-08-01',
-      date_end: '2025-08-01',
-      Promos: [],
-    };
-
-  const sql = 'SELECT nom, effectifs, date_start, date_end FROM promotion';
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    connection.query(sql, (error: any, results: any) => {
-      if (error) {
-        connection.release();
-        return res.status(500).json({ error: error.message });
-      }
-
-      // Normalize results to an array for different drivers
-      const rows = Array.isArray(results)
-        ? results
-        : results && Array.isArray((results as any).rows)
-          ? (results as any).rows
-          : [];
-
-      const parsedResults = rows.map((promo: any) => ({
-        ...promo,
-        Periode: promo.Periode ? safeParse(promo.Periode) : [],
-      }));
-
-      promosData.Promos = parsedResults;
-      res.json(promosData);
-      connection.release();
-    });
-  });
-
-  function safeParse(value: any) {
-    try {
-      return typeof value === 'string' ? JSON.parse(value) : value;
-    } catch {
-      return [];
-    }
-  }
-});
-
-// TODO : A utiliser pour le nouveau front
-// Get promotions
-app.get(
-  '/getPromotions',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      const sql = 'SELECT p.id, p.nom, p.effectifs, p.id_cycle, p.date_start, p.date_end, c.type ' +
-        'FROM promotion p, cycle c ' +
-        'WHERE p.id_cycle = c.id';
-      connection.query(sql, (error: any, results: any) => {
-        connection.release(); // always release the client
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        // Normalize results: support drivers that return an array or an object with `rows`
-        const promotions = Array.isArray(results)
-          ? results
-          : results && Array.isArray((results as any).rows)
-            ? (results as any).rows
-            : [];
-
-        return res.json(promotions);
-      });
-    });
-  },
-);
-
-// Get promotion by ID
-app.get(
-  '/getPromoById',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id } = req.query;
-
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      const sql = 'SELECT * FROM promotion WHERE id = $1';
-
-      connection.query(sql, [id], (error: any, results: any) => {
-        connection.release(); // always release the client
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        if (results.length === 0) {
-          return res.status(404).json({ message: 'Promotion non trouvée' });
-        }
-
-        // Normalize results: support drivers that return an array or an object with `rows`
-        const promoById = Array.isArray(results)
-          ? results
-          : results && Array.isArray((results as any).rows)
-            ? (results as any).rows
-            : [];
-
-        return res.json(promoById);
-      });
-    });
-  },
-);
-
-// TODO : Supprimer ce endpoint une fois que le front ne l'utilisera plus : Utilisation de /setPromotion à la place
-/**
- * @swagger
- * /setPromosData:
- *   post:
- *     summary: Ajouter des données de promotions
- *     tags:
- *       - DB
- *     description: Cette route permet d'ajouter des données de promotions à la base de données.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               DateDeb:
- *                 type: string
- *                 format: date
- *                 description: La date de début des promotions.
- *                 example: "2024-01-01"  # Exemple de date
- *               DateFin:
- *                 type: string
- *                 format: date
- *                 description: La date de fin des promotions.
- *                 example: "2024-12-31"  # Exemple de date
- *               Promos:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     Name:
- *                       type: string
- *                       description: Le nom de la promotion.
- *                       example: "AP5"  # Exemple de nom de promotion
- *                     Nombre:
- *                       type: integer
- *                       description: Le nombre d'éléments de la promotion.
- *                       example: 5  # Exemple de nombre
- *                     Periode:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           DateDebutP:
- *                             type: string
- *                             format: date
- *                             description: La date de début de la période.
- *                             example: "2024-01-01"  # Exemple de date
- *                           DateFinP:
- *                             type: string
- *                             format: date
- *                             description: La date de fin de la période.
- *                             example: "2024-01-31"  # Exemple de date
- *     responses:
- *       200:
- *         description: Données de promotions ajoutées avec succès.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Données de promotions ajoutées avec succès."
- *       500:
- *         description: Erreur interne du serveur.
- */
-app.post('/setPromosData', authJwt.verifyToken, (req, res) => {
-  const { DateDeb, DateFin, Promos } = req.body;
-
-  const dateDeb = DateDeb || null;
-  const dateFin = DateFin || null;
-  // TypeScript
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    const sql = 'UPDATE promotion SET date_start = $1, date_end = $2';
-    connection.query(sql, [dateDeb, dateFin], (error: any) => {
-      if (error) {
-        connection.release();
-        console.error('1. error', error);
-        return res.status(500).json({ error: error.message });
-      }
-
-      const updatePromises = Promos.map(
-        (promo: { Nombre: any; DateDeb: any; DateFin: any; Name: any }) => {
-          return new Promise<void>((resolve, reject) => {
-            const updatePromosSql =
-              'UPDATE promotion SET effectifs = $1, date_start = $2, date_end = $3 WHERE nom = $4';
-            connection.query(
-              updatePromosSql,
-              [promo.Nombre, promo.DateDeb, promo.DateFin, promo.Name],
-              (err2: any) => {
-                if (err2) return reject(err2);
-                resolve();
-              },
-            );
-          });
-        },
-      );
-
-      Promise.all(updatePromises)
-        .then(() => {
-          connection.release();
-          res.json({ DateDeb, DateFin, Promos });
-        })
-        .catch((errAll) => {
-          connection.release();
-          console.error('2. error', errAll);
-          res.status(500).json({ error: errAll.message });
-        });
-    });
-  });
-});
-
-// Update a promotion
-app.put('/updatePromotion', authJwt.verifyToken, (req, res): void => {
-  const { id, nom, effectifs, date_start, date_end } = req.body;
-  if (!id || !nom || !effectifs || !date_start || !date_end) {
-    res.status(400).json({
-      message: "Tous les champs sont requis, à l'exception d'id_cycle.",
-    });
-    return;
-  }
-
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    const sql =
-      'UPDATE promotion SET nom = $2, effectifs = $3, date_start = $4, date_end = $5 WHERE id = $1';
-    connection.query(
-      sql,
-      [id, nom, effectifs, date_start, date_end],
-      (error: any, result: any) => {
-        if (error) {
-          console.error(error);
-          res.status(500).json({ error: error.message });
-          return;
-        }
-
-        const affectedRows = result.rowCount;
-        if (affectedRows === 0) {
-          res
-            .status(404)
-            .json({ message: `Promotion avec l'ID ${id} non trouvé` });
-          return;
-        }
-
-        res.json({ message: `Promotion mise à jour avec succès` });
-      },
-    );
-    connection.release(); // Libérer la connexion après vérification
-  });
-});
-
-app.delete(
-  '/deletePromotion',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id } = req.query;
-    const sql = 'DELETE FROM promotion WHERE id = $1';
-
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      connection.query(sql, [id], (error: any, result: any) => {
-        connection.release(); // always release the client
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        if (id == undefined || Array.isArray(id)) {
-          return res
-            .status(400)
-            .json({ message: 'ID de la promotion invalide' });
-        }
-
-        const affectedRows = result.rowCount;
-
-        if (affectedRows === 0) {
-          return res.status(404).json({ message: 'Promotion non trouvée' });
-        }
-
-        return res.json({ message: 'Promotion supprimée avec succès' });
-      });
-    });
-  },
-);
-
-// TODO : Utiliser ce endpoint pour le nouveau front
-
-// Set promotion
-app.post('/addPromotion', authJwt.verifyToken, (req, res) => {
-
-  const { nom, effectifs, id_cycle, date_start, date_end } = req.body;
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    const sql =
-      'INSERT INTO promotion (nom, effectifs, id_cycle, date_start, date_end) VALUES ($1, $2, $3, $4, $5) RETURNING id';
-    connection.query(
-      sql,
-      [nom, effectifs, id_cycle, date_start, date_end],
-      (error: any, result: any) => {
-        connection.release(); // always release the client
-        if (error) {
-          if (
-            error.message.startsWith('insert or update on table') &&
-            error.message.includes('violates foreign key constraint')
-          ) {
-            return res
-              .status(400)
-              .json({ error: 'Cycle invalide pour la promotion.' });
-          }
-          return res.status(500).json({ error: error.message });
-        }
-        const insertedId = result?.rows?.[0]?.id ?? null;
-        return res
-          .status(201)
-          .json({ message: 'Promotion ajoutée avec succès', insertedId });
-      },
-    );
-  });
-});
-
-// Get event by promo and list of types
-app.get(
-    '/getEventPromo',
-    authJwt.verifyToken,
-    (req: Request, res: Response): void => {
-      const { promo, types } = req.body;
-
-      if (!promo || !Array.isArray(types) || types.length === 0) {
-          res.status(400).json({ message: "Les champs 'promo' et 'types[]' sont obligatoires." });
-        return;
-      }
-
-      pool.connect((err: any, connection: any) => {
-        if (err) {
-          return res.status(500).json({ error: err.message });
-        }
-
-        const sql = `
-          SELECT e.*
-          FROM event e
-                 JOIN concerner c ON c.id_event = e.id
-                 JOIN promotion p ON p.id = c.id_promo
-          WHERE p.nom = $1
-            AND e.type = ANY($2)
-          ORDER BY e.datetime_start ASC
-        `;
-
-        connection.query(sql, [promo, types], (error: any, result: any) => {
-          connection.release();
-
-          if (error) {
-            return res.status(500).json({ error: error.message });
-          }
-
-          const rows = result.rows;
-
-          // Order by type
-          const response: Record<string, any[]> = {};
-          types.forEach((t) => {
-            response[t] = rows.filter((ev: Event) => ev.type === t);
-          });
-
-          const nothingFound = Object.values(response).every(
-              (list) => list.length === 0
-          );
-
-          if (nothingFound) {
-            return res.status(404).json({ message:`Aucun évènement trouvé pour la promo ${promo}.` });
-          }
-
-          return res.json(response);
-        });
-      });
-    }
-);
-
-/*========== PROFESSEURS ==========*/
-
-/**
- * @swagger
- * /getProfsData:
- *   get:
- *     summary: Récupérer les informations des professeurs
- *     tags:
- *       - DB
- *     description: Retourne toutes les informations des professeurs.
- *     responses:
- *       200:
- *         description: Une liste d'objets professeurs
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                     example: 1
- *                   name:
- *                     type: string
- *                     example: "Dupont"
- *                   type:
- *                     type: string
- *                     enum: [EXT, INT]
- *                     example: "INT"
- *                   dispo:
- *                     type: string
- *                     example: "{\"lundiMatin\": true, \"lundiAprem\": false, ...}"
- *       500:
- *         description: Une erreur est survenue
- */
-app.get('/getProfsData', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    const sql = 'SELECT id, nom, type FROM professeur';
-    connection.query(sql, (error: any, results: any[]) => {
-      if (error) {
-        return res.status(500).json({ error: error.message });
-      }
-
-      res.json(results);
-    });
-    connection.release(); // Libérer la connexion après vérification
-  });
-});
-
-/**
- * @swagger
- * /setProfsData:
- *   post:
- *     summary: Ajouter ou mettre à jour les informations des professeurs
- *     tags:
- *       - DB
- *     description: Cette route permet d'ajouter ou de mettre à jour les informations des professeurs dans la base de données.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: array
- *             items:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                   description: L'identifiant du professeur (optionnel pour l'ajout)
- *                   example: 1
- *                 name:
- *                   type: string
- *                   description: Le nom du professeur
- *                   example: "Dupont"
- *                 type:
- *                   type: string
- *                   enum: [EXT, INT]
- *                   description: Le type du professeur
- *                   example: "INT"
- *                 dispo:
- *                   type: string
- *                   description: Les disponibilités du professeur au format JSON
- *                   example: "{\"lundiMatin\": true, \"lundiAprem\": false, ...}"
- *     responses:
- *       200:
- *         description: Informations du professeur ajoutées ou mises à jour avec succès.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Informations du professeur mises à jour avec succès."
- *                 insertedIds:
- *                   type: array
- *                   items:
- *                     type: integer
- *                   description: Liste des IDs des nouveaux professeurs insérés.
- *       500:
- *         description: Erreur interne du serveur.
- */
-app.post('/setProfsData', authJwt.verifyToken, (req, res) => {
-  const insertedIds: number[] = [];
-  const updatePromises = req.body.map(
-    (prof: { id: any; name: any; type: any; dispo: any }) => {
-      return new Promise<void>((resolve, reject) => {
-        if (prof.id) {
-          // Si un ID est fourni, mettre à jour le professeur existant
-          pool.connect((err: any, connection: any) => {
-            if (err) {
-              return res.status(500).json({ error: err.message });
-            }
-            const updateSql =
-              'UPDATE professeur SET nom = ?, type = ? WHERE id = ?';
-            connection.query(
-              updateSql,
-              [prof.name, prof.type, prof.dispo, prof.id],
-              (error: any) => {
-                if (error) {
-                  return reject(error);
-                }
-                resolve();
-              },
-            );
-            connection.release(); // Libérer la connexion après vérification
-          });
-        } else {
-          // Sinon, ajouter un nouveau professeur
-          pool.connect((err: any, connection: any) => {
-            if (err) {
-              return res.status(500).json({ error: err.message });
-            }
-            const insertSql =
-              'INSERT INTO professeur (nom, type) VALUES (?, ?)';
-            connection.query(
-              insertSql,
-              [prof.name, prof.type, prof.dispo],
-              (error: any, results: any) => {
-                if (error) {
-                  return reject(error);
-                }
-                insertedIds.push(results.insertId);
-                resolve();
-              },
-            );
-            connection.release(); // Libérer la connexion après vérification
-          });
-        }
-      });
-    },
-  );
-
-  Promise.all(updatePromises)
-    .then(() => {
-      res.json({
-        success: true,
-        message: 'Informations des professeurs mises à jour avec succès.',
-        insertedIds,
-      });
-    })
-    .catch((error) => {
-      res.status(500).json({ success: false, error: error.message });
-    });
-});
-
-app.post('/addProf', authJwt.verifyToken, async (req, res) => {
-  const { name, type, dispo } = req.body;
-
-  if (!name || !type) {
-    res.status(400).json({ error: 'Le nom et le type sont obligatoires.' });
-    return;
-  }
-
-  try {
-    const client = await pool.connect();
-
-    const sql =
-      'INSERT INTO professeur (nom, type) VALUES ($1, $2) RETURNING id';
-
-    const result = await client.query(sql, [name, type, JSON.stringify(dispo)]);
-
-    client.release();
-
-    res.json({
-      success: true,
-      insertedId: result.rows[0].id,
-    });
-  } catch (err: any) {
-    console.error('Erreur SQL :', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-/**
- * @swagger
- * /deleteProf:
- *   delete:
- *     summary: Supprimer un professeur
- *     tags:
- *       - DB
- *     description: Cette route permet de supprimer un professeur de la base de données en utilisant son ID.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: integer
- *                 description: L'identifiant du professeur à supprimer
- *                 example: 1
- *     responses:
- *       200:
- *         description: Le professeur a été supprimé avec succès.
- *       400:
- *         description: Erreur, ID invalide ou professeur non trouvé.
- *       500:
- *         description: Erreur interne du serveur.
- */
-app.delete(
-  '/deleteProf/:id',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id } = req.params;
-
-    if (!id) {
-      res.status(400).json({ error: 'ID du professeur est requis.' });
-      return;
-    }
-
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      const deleteSql = 'DELETE FROM professeur WHERE id = ?';
-      connection.query(deleteSql, [id], (error: any, results: any) => {
-        if (error) {
-          res.status(500).json({ error: error.message });
-          return;
-        }
-
-        if (results.affectedRows === 0) {
-          res
-            .status(400)
-            .json({ error: 'Aucun professeur trouvé avec cet ID.' });
-          return;
-        }
-
-        res.json({ message: 'Professeur supprimé avec succès.' });
-      });
-    });
-  },
-);
-
-
-app.get('/getEventsMacro', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    const sql =
-      "SELECT p.id as id_promotion, e.datetime_start, e.datetime_end, e.type, e.nom \n" +
-      "FROM event e, promotion p, concerner c\n" +
-      "WHERE e.show_macro = True\n  " +
-      "AND e.type in ('stage', 'mobilite', 'PFE', 'rattrapage', 'entreprise')\n    " +
-      "AND e.id = c.id_event\n" +
-      "AND p.id = c.id_promo\n" +
-      "ORDER BY nom ASC";
-    connection.query(sql, (error: any, results: any) => {
-      if (error) {
-        connection.release();
-        return res.status(500).json({ error: error.message });
-      }
-
-      // Normalize results: support drivers that return an array or an object with `rows`
-      const eventsMacro = Array.isArray(results)
-        ? results
-        : results && Array.isArray((results as any).rows)
-          ? (results as any).rows
-          : [];
-
-      res.json(eventsMacro);
-      connection.release();
-    });
-  });
-})
-
-
 /**
  * @swagger
  * /generateEdtMacro:
@@ -995,63 +256,63 @@ app.get('/getEventsMacro', authJwt.verifyToken, (req, res) => {
 
 
 app.post(
-  "/generateEdtMacro",
-  authJwt.verifyToken,
-  async (req: Request, res: Response) => {
-    // Type definitions
-    type RawMacroEvent = {
-      id_promotion: string;
-      datetime_start: string;
-      datetime_end: string;
-      type: string;
-      nom: string;
-    };
+    "/generateEdtMacro",
+    authJwt.verifyToken,
+    async (req: Request, res: Response) => {
+      // Type definitions
+      type RawMacroEvent = {
+        id_promotion: string;
+        datetime_start: string;
+        datetime_end: string;
+        type: string;
+        nom: string;
+      };
 
-    try {
-      // ========================================
-      // 1. Fetch Promotions
-      // ========================================
-      const promotions = await new Promise<Promos[]>((resolve, reject) => {
-        pool.connect((err: any, connection: any) => {
-          if (err) {
-            return reject(err);
-          }
+      try {
+        // ========================================
+        // 1. Fetch Promotions
+        // ========================================
+        const promotions = await new Promise<Promos[]>((resolve, reject) => {
+          pool.connect((err: any, connection: any) => {
+            if (err) {
+              return reject(err);
+            }
 
-          const sql = `
+            const sql = `
             SELECT p.id, p.nom, p.effectifs, p.id_cycle, p.date_start, p.date_end, c.type
             FROM promotion p
             INNER JOIN cycle c ON p.id_cycle = c.id
           `;
 
-          connection.query(sql, (error: any, results: any) => {
-            connection.release();
+            connection.query(sql, (error: any, results: any) => {
+              connection.release();
 
-            if (error) {
-              return reject(error);
-            }
+              if (error) {
+                return reject(error);
+              }
 
-            // Normalize results for different drivers
-            const normalized = Array.isArray(results)
-              ? results
-              : results?.rows || [];
+              // Normalize results for different drivers
+              const normalized = Array.isArray(results)
+                  ? results
+                  : results?.rows || [];
 
-            resolve(normalized);
+              resolve(normalized);
+            });
           });
         });
-      });
 
-      console.log("Promotions récupérées :", promotions);
+        console.log("Promotions récupérées :", promotions);
 
-      // ========================================
-      // 2. Fetch Macro Events
-      // ========================================
-      const eventsMacro = await new Promise<RawMacroEvent[]>((resolve, reject) => {
-        pool.connect((err: any, connection: any) => {
-          if (err) {
-            return reject(err);
-          }
+        // ========================================
+        // 2. Fetch Macro Events
+        // ========================================
+        const eventsMacro = await new Promise<RawMacroEvent[]>((resolve, reject) => {
+          pool.connect((err: any, connection: any) => {
+            if (err) {
+              return reject(err);
+            }
 
-          const sql = `
+            const sql = `
             SELECT 
               p.id as id_promotion, 
               e.datetime_start, 
@@ -1066,83 +327,83 @@ app.post(
             ORDER BY e.nom ASC
           `;
 
-          connection.query(sql, (error: any, results: any) => {
-            connection.release();
+            connection.query(sql, (error: any, results: any) => {
+              connection.release();
 
-            if (error) {
-              return reject(error);
-            }
+              if (error) {
+                return reject(error);
+              }
 
-            // Normalize results for different drivers
-            const normalized = Array.isArray(results)
-              ? results
-              : results?.rows || [];
+              // Normalize results for different drivers
+              const normalized = Array.isArray(results)
+                  ? results
+                  : results?.rows || [];
 
-            resolve(normalized);
+              resolve(normalized);
+            });
           });
         });
-      });
 
-      console.log("Événements récupérés :", eventsMacro);
+        console.log("Événements récupérés :", eventsMacro);
 
-      // ========================================
-      // 3. Build Promotions with Periods
-      // ========================================
-      const promotionsWithPeriods: Promos[] = promotions.map((promo) => {
-        // Filter events for this promotion
-        const promoEvents = eventsMacro.filter(
-          (ev) => ev.id_promotion === promo.id
-        );
+        // ========================================
+        // 3. Build Promotions with Periods
+        // ========================================
+        const promotionsWithPeriods: Promos[] = promotions.map((promo) => {
+          // Filter events for this promotion
+          const promoEvents = eventsMacro.filter(
+              (ev) => ev.id_promotion === promo.id
+          );
 
-        // Transform to Periode objects and sort
-        const promoPeriods: Periode[] = promoEvents
-          .map((ev): Periode => ({
-            DateDebutP: new Date(ev.datetime_start),
-            DateFinP: new Date(ev.datetime_end),
-            type: ev.nom,
-          }))
-          .sort((a, b) => a.DateDebutP.getTime() - b.DateDebutP.getTime());
+          // Transform to Periode objects and sort
+          const promoPeriods: Periode[] = promoEvents
+              .map((ev): Periode => ({
+                DateDebutP: new Date(ev.datetime_start),
+                DateFinP: new Date(ev.datetime_end),
+                type: ev.nom,
+              }))
+              .sort((a, b) => a.DateDebutP.getTime() - b.DateDebutP.getTime());
 
-        return {
-          ...promo,
-          periode: promoPeriods,
-          i: 0,
-        };
-      });
+          return {
+            ...promo,
+            periode: promoPeriods,
+            i: 0,
+          };
+        });
 
-      console.log("Promotions enrichies :", promotionsWithPeriods);
+        console.log("Promotions enrichies :", promotionsWithPeriods);
 
-      // ========================================
-      // 4. Define Date Range
-      // ========================================
-      const start = new Date("2025-09-01");
-      const end = new Date("2026-08-31");
+        // ========================================
+        // 4. Define Date Range
+        // ========================================
+        const start = new Date("2025-09-01");
+        const end = new Date("2026-08-31");
 
-      // ========================================
-      // 5. Generate Excel
-      // ========================================
-      await generateEdtMacro({
-        DateDeb: start,
-        DateFin: end,
-        Promos: promotionsWithPeriods,
-      });
+        // ========================================
+        // 5. Generate Excel
+        // ========================================
+        await generateEdtMacro({
+          DateDeb: start,
+          DateFin: end,
+          Promos: promotionsWithPeriods,
+        });
 
-      // ========================================
-      // 6. Send Success Response
-      // ========================================
-      res.status(200).json({
-        message: "Excel généré avec succès",
-        fileUrl: "/download/EdtMacro",
-      });
+        // ========================================
+        // 6. Send Success Response
+        // ========================================
+        res.status(200).json({
+          message: "Excel généré avec succès",
+          fileUrl: "/download/EdtMacro",
+        });
 
-    } catch (error: any) {
-      console.error("Error in generateEdtMacro:", error);
-      res.status(500).json({
-        error: "Internal server error",
-        message: error.message || "Unknown error occurred",
-      });
+      } catch (error: any) {
+        console.error("Error in generateEdtMacro:", error);
+        res.status(500).json({
+          error: "Internal server error",
+          message: error.message || "Unknown error occurred",
+        });
+      }
     }
-  }
 );
 
 
@@ -1245,24 +506,24 @@ app.get('/download/EdtMacro', authJwt.verifyToken, (req, res) => {
  *                   type: string
  */
 app.post(
-  '/readMaquette',
-  authJwt.verifyToken,
-  upload.single('file'),
-  async (req: Request, res: Response): Promise<any> => {
-    if (!req.file) {
-      return res.status(400).send("Aucun fichier n'a été téléchargé");
-    }
+    '/readMaquette',
+    authJwt.verifyToken,
+    upload.single('file'),
+    async (req: Request, res: Response): Promise<any> => {
+      if (!req.file) {
+        return res.status(400).send("Aucun fichier n'a été téléchargé");
+      }
 
-    try {
-      let data: MaquetteData;
-      data = await readMaquette(req.file.buffer);
-      res.json(data);
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: 'Erreur lors de la lecture du fichier Excel', error });
-    }
-  },
+      try {
+        let data: MaquetteData;
+        data = await readMaquette(req.file.buffer);
+        res.json(data);
+      } catch (error) {
+        res
+            .status(500)
+            .json({ message: 'Erreur lors de la lecture du fichier Excel', error });
+      }
+    },
 );
 
 /**
@@ -1276,26 +537,26 @@ app.post(
  *       required: true
  */
 app.post(
-  '/generateEdtMicro',
-  authJwt.verifyToken,
-  async (req: Request, res: Response) => {
-    try {
-      pool.connect(async (err: any, connection: any) => {
-        if (err) {
-          return res.status(500).json({ error: err.message });
-        }
-        const filePath = await generateEdtMicro(connection);
-        connection.release(); // Libérer la connexion après vérification
-        res.status(200).json({
-          message: 'Excel file generated and saved on the server',
-          data: filePath,
-          fileUrl: `${process.env.VITE_RACINE_FETCHER_URL}/download/EdtMicro`,
+    '/generateEdtMicro',
+    authJwt.verifyToken,
+    async (req: Request, res: Response) => {
+      try {
+        pool.connect(async (err: any, connection: any) => {
+          if (err) {
+            return res.status(500).json({ error: err.message });
+          }
+          const filePath = await generateEdtMicro(connection);
+          connection.release(); // Libérer la connexion après vérification
+          res.status(200).json({
+            message: 'Excel file generated and saved on the server',
+            data: filePath,
+            fileUrl: `${process.env.VITE_RACINE_FETCHER_URL}/download/EdtMicro`,
+          });
         });
-      });
-    } catch (error) {
-      res.status(500).send('Internal server error: ' + error);
-    }
-  },
+      } catch (error) {
+        res.status(500).send('Internal server error: ' + error);
+      }
+    },
 );
 
 /**
@@ -1420,67 +681,67 @@ app.get('/download/EdtMicro', authJwt.verifyToken, (req, res) => {
  *               example: "Internal server error"
  */
 app.post(
-  '/generateEdtSquelette',
-  authJwt.verifyToken,
-  async (req: Request, res: Response) => {
-    try {
-      const edtMicroArray: EdtMicro[] = req.body;
+    '/generateEdtSquelette',
+    authJwt.verifyToken,
+    async (req: Request, res: Response) => {
+      try {
+        const edtMicroArray: EdtMicro[] = req.body;
 
-      // Check if edtMicroArray is an array of objects
-      if (!Array.isArray(edtMicroArray)) {
-        res
-          .status(400)
-          .send('Invalid data format: Expected an array of timetable entries.');
-        return;
+        // Check if edtMicroArray is an array of objects
+        if (!Array.isArray(edtMicroArray)) {
+          res
+              .status(400)
+              .send('Invalid data format: Expected an array of timetable entries.');
+          return;
+        }
+
+        // Validate structure of each object in edtMicroArray
+        const isValid = edtMicroArray.every(
+            (edtMicro: EdtMicro) =>
+                edtMicro.dateDebut &&
+                Array.isArray(edtMicro.promos) &&
+                edtMicro.promos.every(
+                    (promo: any) =>
+                        promo.name &&
+                        Array.isArray(promo.semaine) &&
+                        promo.semaine.every(
+                            (semaine: any) =>
+                                semaine.jour &&
+                                typeof semaine.enCours === 'boolean' &&
+                                Array.isArray(semaine.cours) &&
+                                semaine.cours.every(
+                                    (cours: any) =>
+                                        cours.matiere &&
+                                        cours.heureDebut &&
+                                        cours.heureFin &&
+                                        cours.professeur &&
+                                        cours.salleDeCours,
+                                ),
+                        ),
+                ),
+        );
+
+        if (!isValid) {
+          res
+              .status(400)
+              .send(
+                  'Invalid data: Ensure EdtMicro structure follows the required format.',
+              );
+          return;
+        }
+
+        // Call function to generate the Excel file
+        const filePath = await generateEdtSquelette(edtMicroArray);
+
+        res.status(200).json({
+          message: 'Excel file generated and saved on the server',
+          filePath,
+        });
+      } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal server error: ' + error);
       }
-
-      // Validate structure of each object in edtMicroArray
-      const isValid = edtMicroArray.every(
-        (edtMicro: EdtMicro) =>
-          edtMicro.dateDebut &&
-          Array.isArray(edtMicro.promos) &&
-          edtMicro.promos.every(
-            (promo: any) =>
-              promo.name &&
-              Array.isArray(promo.semaine) &&
-              promo.semaine.every(
-                (semaine: any) =>
-                  semaine.jour &&
-                  typeof semaine.enCours === 'boolean' &&
-                  Array.isArray(semaine.cours) &&
-                  semaine.cours.every(
-                    (cours: any) =>
-                      cours.matiere &&
-                      cours.heureDebut &&
-                      cours.heureFin &&
-                      cours.professeur &&
-                      cours.salleDeCours,
-                  ),
-              ),
-          ),
-      );
-
-      if (!isValid) {
-        res
-          .status(400)
-          .send(
-            'Invalid data: Ensure EdtMicro structure follows the required format.',
-          );
-        return;
-      }
-
-      // Call function to generate the Excel file
-      const filePath = await generateEdtSquelette(edtMicroArray);
-
-      res.status(200).json({
-        message: 'Excel file generated and saved on the server',
-        filePath,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal server error: ' + error);
-    }
-  },
+    },
 );
 
 /**
@@ -1602,291 +863,22 @@ app.post(
  *                             example: 2
  */
 app.post(
-  '/generateDataEdtMicro',
-  authJwt.verifyToken,
-  async (req: Request, res: Response) => {
-    try {
-      const { macro }: { macro: EdtMacroData } = req.body;
+    '/generateDataEdtMicro',
+    authJwt.verifyToken,
+    async (req: Request, res: Response) => {
+      try {
+        const { macro }: { macro: EdtMacroData } = req.body;
 
-      const result = await generateDataEdtMicro(macro);
-      res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({
-        message: 'Erreur lors de la génération des données EdtMicro',
-        error,
-      });
-    }
-  },
+        const result = await generateDataEdtMicro(macro);
+        res.status(200).json(result);
+      } catch (error) {
+        res.status(500).json({
+          message: 'Erreur lors de la génération des données EdtMicro',
+          error,
+        });
+      }
+    },
 );
-
-/*========== SALLES ==========*/
-
-/**
- * @swagger
- * /getSallesData:
- *   get:
- *     summary: Récupérer les données des salles
- *     tags:
- *       - Salles
- *     description: Retourne toutes les données des salles disponibles.
- *     responses:
- *       200:
- *         description: Une liste d'objets contenant les informations des salles
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                     example: 1
- *                   name:
- *                     type: string
- *                     example: "Salle 101"
- *                   capacity:
- *                     type: integer
- *                     example: 30
- *       500:
- *         description: Une erreur est survenue
- */
-// TypeScript
-app.get('/getSallesData', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    const sql = 'SELECT * FROM salle ORDER BY nom ASC';
-    connection.query(sql, (error: any, results: any) => {
-      if (error) {
-        connection.release();
-        return res.status(500).json({ error: error.message });
-      }
-
-      // Normalize results: support drivers that return an array or an object with `rows`
-      const salles = Array.isArray(results)
-        ? results
-        : results && Array.isArray((results as any).rows)
-          ? (results as any).rows
-          : [];
-
-      res.json(salles);
-      connection.release(); // Libérer la connexion après vérification
-    });
-  });
-});
-
-/**
- * @swagger
- * /setSallesData:
- *   post:
- *     summary: Ajouter une nouvelle salle
- *     tags:
- *       - Salles
- *     description: Ajoute une nouvelle salle à la base de données.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 description: Le nom de la salle.
- *                 example: "Salle 102"
- *               capacity:
- *                 type: integer
- *                 description: La capacité maximale de la salle.
- *                 example: 25
- *     responses:
- *       201:
- *         description: Salle ajoutée avec succès.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Salle ajoutée avec succès"
- *       500:
- *         description: Erreur interne du serveur.
- */
-// File: `BobPlanning.back/src/index.ts`
-app.post('/setSallesData', authJwt.verifyToken, (req, res) => {
-  const { nom, type, capacite, etage } = req.body;
-
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    const sql =
-      'INSERT INTO salle (nom, type, capacite, etage) VALUES ($1, $2, $3, $4) RETURNING id';
-    const capaciteNum =
-      typeof capacite === 'number' ? capacite : Number(capacite) || null;
-
-    connection.query(
-      sql,
-      [nom, type, capaciteNum, etage],
-      (error: any, result: any) => {
-        connection.release(); // always release the client
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        const insertedId = result?.rows?.[0]?.id ?? null;
-        return res
-          .status(201)
-          .json({ message: 'Salle ajoutée avec succès', insertedId });
-      },
-    );
-  });
-});
-
-/**
- * @swagger
- * /updateSalle:
- *   put:
- *     summary: Mettre à jour une salle existante
- *     tags:
- *       - Salles
- *     description: Met à jour les informations d'une salle spécifique.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               id:
- *                 type: integer
- *                 description: L'ID de la salle à mettre à jour.
- *                 example: 1
- *               name:
- *                 type: string
- *                 description: Le nouveau nom de la salle.
- *                 example: "Salle Informatique"
- *               capacity:
- *                 type: integer
- *                 description: La nouvelle capacité de la salle.
- *                 example: 40
- *     responses:
- *       200:
- *         description: Salle mise à jour avec succès.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Salle mise à jour avec succès"
- *       404:
- *         description: Salle non trouvée.
- *       500:
- *         description: Erreur interne du serveur.
- */
-app.put('/updateSalle', authJwt.verifyToken, (req, res): void => {
-  const { id, nom, capacite, type, etage } = req.body;
-
-  if (!id || !nom || !capacite || !type) {
-    res.status(400).json({ message: 'Tous les champs sont requis.' });
-    return;
-  }
-
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    const sql =
-      'UPDATE salle SET nom = $1, capacite = $2, type = $3, etage = $5 WHERE id = $4';
-    connection.query(
-      sql,
-      [nom, capacite, type, id, etage],
-      (error: any, result: any) => {
-        if (error) {
-          console.error(error);
-          res.status(500).json({ error: error.message });
-          return;
-        }
-
-        const affectedRows = result.affectedRows;
-        if (affectedRows === 0) {
-          res
-            .status(404)
-            .json({ message: `Salle avec l'ID ${id} non trouvée` });
-          return;
-        }
-
-        res.json({ message: 'Salle mise à jour avec succès' });
-      },
-    );
-    connection.release(); // Libérer la connexion après vérification
-  });
-});
-
-/**
- * @swagger
- * /deleteSalle:
- *   delete:
- *     summary: Supprimer une salle
- *     tags:
- *       - Salles
- *     description: Supprime une salle spécifique de la base de données.
- *     parameters:
- *       - in: query
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: L'ID de la salle à supprimer.
- *     responses:
- *       200:
- *         description: Salle supprimée avec succès.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Salle supprimée avec succès"
- *       404:
- *         description: Salle non trouvée.
- *       500:
- *         description: Erreur interne du serveur.
- */
-app.delete('/deleteSalle', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    const { id } = req.query;
-    const sql = 'DELETE FROM salle WHERE id = $1';
-
-    connection.query(sql, [id], (error: any, result: any) => {
-      if (error) {
-        return res.status(500).json({ error: error.message });
-      }
-
-      const affectedRows = Array.isArray(result)
-        ? result[0].affectedRows
-        : result.affectedRows;
-
-      if (affectedRows === 0) {
-        return res.status(404).json({ message: 'Salle non trouvée' });
-      }
-
-      res.json({ message: 'Salle supprimée avec succès' });
-    });
-    connection.release(); // Libérer la connexion après vérification
-  });
-});
 
 /*========== COURS ==========*/
 
@@ -1904,7 +896,7 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
 
       // Extraire la promo unique des cours
       const promo =
-        req.body.courses.length > 0 ? req.body.courses[0].promo : null;
+          req.body.courses.length > 0 ? req.body.courses[0].promo : null;
 
       if (!promo) {
         connection.release();
@@ -1926,81 +918,81 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
 
         // Insérer les nouvelles matières
         const insertPromises = req.body.courses.map(
-          (cours: {
-            promo: string;
-            name: string;
-            UE: string;
-            Semestre: string;
-            Periode: string;
-            Prof: string;
-            typeSalle: string;
-            heure: string;
-          }) => {
-            return new Promise<void>((resolve, reject) => {
-              // Ancienne requête permettant l'update d'une matière si elle existe déjà ou l'insert
-              // TODO : À garder jusqu'à ce que la fonction soit fonctionnelle avec la nouvelle base de données
-              // const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
-              //               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-              //               ON DUPLICATE KEY UPDATE
-              //               UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode),
-              //               Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
+            (cours: {
+              promo: string;
+              name: string;
+              UE: string;
+              Semestre: string;
+              Periode: string;
+              Prof: string;
+              typeSalle: string;
+              heure: string;
+            }) => {
+              return new Promise<void>((resolve, reject) => {
+                // Ancienne requête permettant l'update d'une matière si elle existe déjà ou l'insert
+                // TODO : À garder jusqu'à ce que la fonction soit fonctionnelle avec la nouvelle base de données
+                // const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
+                //               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                //               ON DUPLICATE KEY UPDATE
+                //               UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode),
+                //               Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
 
-              const sql = `INSERT INTO matiere (id_promo, nom, semestre, volume_horaire)
+                const sql = `INSERT INTO matiere (id_promo, nom, semestre, volume_horaire)
                                          VALUES (?, ?, ?, ?) ON CONFLICT (id_promo, nom) 
                             DO
                             UPDATE SET
                                 semestre = EXCLUDED.semestre,
                                 volume_horaire = EXCLUDED.volume_horaire`;
-              connection.query(
-                sql,
-                [
-                  cours.promo,
-                  cours.name,
-                  cours.UE,
-                  cours.Semestre,
-                  cours.Periode,
-                  cours.Prof,
-                  cours.typeSalle,
-                  cours.heure,
-                ],
-                (error: any) => {
-                  if (error) {
-                    console.error(
-                      "Erreur lors de l'insertion/mise à jour :",
-                      error,
-                    );
-                    return reject(error);
-                  }
-                  resolve();
-                },
-              );
-            });
-          },
+                connection.query(
+                    sql,
+                    [
+                      cours.promo,
+                      cours.name,
+                      cours.UE,
+                      cours.Semestre,
+                      cours.Periode,
+                      cours.Prof,
+                      cours.typeSalle,
+                      cours.heure,
+                    ],
+                    (error: any) => {
+                      if (error) {
+                        console.error(
+                            "Erreur lors de l'insertion/mise à jour :",
+                            error,
+                        );
+                        return reject(error);
+                      }
+                      resolve();
+                    },
+                );
+              });
+            },
         );
 
         Promise.all(insertPromises)
-          .then(() => {
-            connection.commit((commitErr: any) => {
-              if (commitErr) {
-                return connection.rollback(() => {
-                  connection.release();
-                  res.status(500).json({ error: commitErr.message });
+            .then(() => {
+              connection.commit((commitErr: any) => {
+                if (commitErr) {
+                  return connection.rollback(() => {
+                    connection.release();
+                    res.status(500).json({ error: commitErr.message });
+                  });
+                }
+                res.json({
+                  message:
+                      'Matières mises à jour avec succès pour la promo ' + promo,
                 });
-              }
-              res.json({
-                message:
-                  'Matières mises à jour avec succès pour la promo ' + promo,
               });
+            })
+            .catch((error) => {
+              connection.rollback(() => {
+                res.status(500).json({ error: error.message });
+              });
+            })
+            .finally(() => {
+              connection.release();
             });
-          })
-          .catch((error) => {
-            connection.rollback(() => {
-              res.status(500).json({ error: error.message });
-            });
-          })
-          .finally(() => {
-            connection.release();
-          });
       });
     });
   });
@@ -2013,45 +1005,45 @@ app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
     }
 
     const updatePromises = req.body.courses.map(
-      (cours: {
-        promo: string;
-        name: string;
-        UE: string;
-        Semestre: string;
-        Periode: string;
-        Prof: string;
-        typeSalle: string;
-        heure: string;
-      }) => {
-        return new Promise<void>((resolve, reject) => {
-          const sql = `UPDATE Cours
+        (cours: {
+          promo: string;
+          name: string;
+          UE: string;
+          Semestre: string;
+          Periode: string;
+          Prof: string;
+          typeSalle: string;
+          heure: string;
+        }) => {
+          return new Promise<void>((resolve, reject) => {
+            const sql = `UPDATE Cours
                                  SET id_prof = ?
                                  WHERE id_event = ?`;
 
-          connection.query(sql, [cours.Prof, cours.name], (error: any) => {
-            if (error) {
-              console.error(
-                'Erreur lors de la mise à jour du professeur :',
-                error,
-              );
-              return reject(error);
-            }
-            resolve();
+            connection.query(sql, [cours.Prof, cours.name], (error: any) => {
+              if (error) {
+                console.error(
+                    'Erreur lors de la mise à jour du professeur :',
+                    error,
+                );
+                return reject(error);
+              }
+              resolve();
+            });
           });
-        });
-      },
+        },
     );
 
     Promise.all(updatePromises)
-      .then(() => {
-        res.json({ message: 'Professeurs mis à jour avec succès.' });
-      })
-      .catch((error) => {
-        res.status(500).json({ error: error.message });
-      })
-      .finally(() => {
-        connection.release(); // Libérer la connexion après exécution
-      });
+        .then(() => {
+          res.json({ message: 'Professeurs mis à jour avec succès.' });
+        })
+        .catch((error) => {
+          res.status(500).json({ error: error.message });
+        })
+        .finally(() => {
+          connection.release(); // Libérer la connexion après exécution
+        });
   });
 });
 
@@ -2075,650 +1067,10 @@ app.get('/getCours', authJwt.verifyToken, (req, res) => {
   });
 });
 
-/*========== CYCLE ==========*/
-
-// Update cycle
-app.put('/updateCycle', authJwt.verifyToken, (req, res): void => {
-  const { id, nom, type } = req.body;
-
-  if (!id || !nom || !type) {
-    res.status(400).json({ message: 'Tous les champs sont requis.' });
-    return;
-  }
-
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    const sql = 'UPDATE cycle SET nom = $2, type = $3 WHERE id = $1';
-    connection.query(sql, [id, nom, type], (error: any, result: any) => {
-      if (error) {
-        console.error(error);
-        res.status(500).json({ error: error.message });
-        return;
-      }
-
-      const affectedRows = result.affectedRows;
-      if (affectedRows === 0) {
-        res.status(404).json({ message: `Cycle avec l'ID ${id} non trouvé` });
-        return;
-      }
-
-      res.json({ message: 'Cycle mis à jour avec succès' });
-    });
-    connection.release(); // Libérer la connexion après vérification
-  });
-});
-
-// Get all cycles
-app.get(
-  '/getCycles',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      const sql = 'SELECT * FROM cycle';
-
-      connection.query(sql, (error: any, results: any) => {
-        connection.release(); // always release the client
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        // Normalize results: support drivers that return an array or an object with `rows`
-        const cycles = Array.isArray(results)
-          ? results
-          : results && Array.isArray((results as any).rows)
-            ? (results as any).rows
-            : [];
-
-        return res.json(cycles);
-      });
-    });
-  },
-);
-
-// Get enum type_cycle
-app.get('/getCycleTypes', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    const sql = 'SELECT unnest(enum_range(NULL::type_cycle)) AS type';
-    connection.query(sql, (error: any, results: any) => {
-      if (error) {
-        connection.release();
-        return res.status(500).json({ error: error.message });
-      }
-
-      // Normalize results: support drivers that return an array or an object with `rows`
-      const cycleTypes = Array.isArray(results)
-        ? results
-        : results && Array.isArray((results as any).rows)
-          ? (results as any).rows
-          : [];
-
-      res.json(cycleTypes);
-      console.log('Cycle Types:', cycleTypes);
-      connection.release(); // Libérer la connexion après vérification
-    });
-  });
-});
-
-// Show cycle by id
-app.get(
-  '/getCycleById',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id } = req.query;
-
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      const sql = 'SELECT * FROM cycle WHERE id = $1';
-
-      connection.query(sql, [id], (error: any, results: any) => {
-        connection.release(); // always release the client
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        if (results.length === 0) {
-          return res.status(404).json({ message: 'Cycle non trouvé' });
-        }
-
-        // Normalize results: support drivers that return an array or an object with `rows`
-        const cycleById = Array.isArray(results)
-          ? results
-          : results && Array.isArray((results as any).rows)
-            ? (results as any).rows
-            : [];
-
-        return res.json(cycleById);
-      });
-    });
-  },
-);
-
-// Add a cycle
-app.post(
-  '/addCycle',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { nom, type } = req.body;
-
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      const sql = 'INSERT INTO cycle (nom, type) VALUES ($1, $2) RETURNING id'; // NOTE : Postgre ne retourne pas d'id par défaut, il faut le lui dire explicitement
-
-      connection.query(sql, [nom, type], (error: any, result: any) => {
-        connection.release(); // always release the client
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        console.log(result)
-        const insertedId = result?.rows?.[0]?.id ?? null;
-
-        return res
-          .status(201)
-          .json({ message: 'Cycle ajouté avec succès', insertedId });
-      });
-    });
-  },
-);
-
-// Delete a cycle
-app.delete(
-  '/deleteCycle',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id } = req.query;
-
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      const sql = 'DELETE FROM cycle WHERE id = $1';
-
-      connection.query(sql, [id], (error: any, result: any) => {
-        connection.release(); // always release the client
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        const affectedRows = result.rowCount;
-
-        if (affectedRows === 0) {
-          return res.status(404).json({ message: 'Cycle non trouvé' });
-        }
-
-        return res.json({ message: 'Cycle supprimé avec succès' });
-      });
-    });
-  },
-);
-
-/*========== GROUPE ==========*/
-
-app.get(
-  '/getGroups',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      const sql = 'SELECT * FROM groupe ORDER BY id;';
-
-      connection.query(sql, (error: any, result: any) => {
-        connection.release();
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-        return res.status(200).json(result.rows);
-      });
-    });
-  },
-);
-
-app.post(
-  '/addGroup',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id_promo, nom, effectifs } = req.body;
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      const sql =
-        'INSERT INTO groupe (id_promo, nom, effectifs) VALUES ($1, $2, $3);';
-
-      connection.query(
-        sql,
-        [id_promo, nom, effectifs],
-        (error: any, result: any) => {
-          connection.release();
-
-          if (error) {
-            if (error.constraint === 'uq_groupe_nom_promo') {
-              return res.status(409).json({
-                error:
-                  'Un groupe portant ce nom existe déjà pour cette promotion.',
-              });
-            }
-            return res.status(500).json({ error: error.message });
-          }
-
-          const insertedId = result?.rows?.[0]?.id ?? null;
-          return res.status(201).json({
-            message: 'Groupe ajouté avec succès !',
-            insertedId,
-          });
-        },
-      );
-    });
-  },
-);
-
-// Update group
-app.put('/updateGroup', authJwt.verifyToken, (req, res): void => {
-  const { id, id_promo, nom, effectifs } = req.body;
-
-  // Field verification
-  if (!id || !id_promo || !nom || !effectifs) {
-    res.status(400).json({ message: 'Tous les champs sont requis.' });
-    return;
-  }
-
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-
-    const sql =
-      'UPDATE groupe SET id_promo = $2, nom = $3, effectifs = $4 WHERE id = $1';
-
-    connection.query(
-      sql,
-      [id, id_promo, nom, effectifs],
-      (error: any, result: any) => {
-        if (error) {
-          // Unicity constraint name/promo
-          if (error.constraint === 'uq_groupe_nom_promo') {
-            res.status(409).json({
-              error:
-                'Un groupe portant ce nom existe déjà pour cette promotion.',
-            });
-            return;
-          }
-          res.status(500).json({ error: error.message });
-          return;
-        }
-
-        const affectedRows = result.rowCount;
-
-        if (affectedRows === 0) {
-          res
-            .status(404)
-            .json({ message: `Groupe avec l'ID ${id} non trouvé` });
-          return;
-        }
-        res.json({ message: 'Groupe mis à jour avec succès' });
-      },
-    );
-    connection.release(); // Libérer la connexion
-  });
-});
-
-// Get group by Id
-app.get(
-  '/getGroupById',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id } = req.query;
-
-    if (!id) {
-      res.status(400).json({ error: 'Veuillez passer un id en paramètre.' });
-      return;
-    }
-
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      const sql = 'SELECT * FROM groupe WHERE id = $1;';
-
-      connection.query(sql, [id], (error: any, result: any) => {
-        connection.release();
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        if (result.rows.length === 0) {
-          return res.status(404).json({ error: 'Groupe non trouvé.' });
-        }
-
-        return res.status(200).json(result.rows[0]);
-      });
-    });
-  },
-);
-
-// Delete a group
-app.delete(
-  '/deleteGroup',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id } = req.query;
-
-    if (!id) {
-      res.status(400).json({ message: 'Veuillez passer un id en paramètre.' });
-      return;
-    }
-
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      const sql = 'DELETE FROM groupe WHERE id = $1';
-
-      connection.query(sql, [id], (error: any, result: any) => {
-        connection.release(); // Libérer la connexion
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        const affectedRows = result.rowCount;
-
-        if (affectedRows === 0) {
-          return res.status(404).json({ message: 'Groupe non trouvé' });
-        }
-
-        return res.json({ message: 'Groupe supprimé avec succès' });
-      });
-    });
-  },
-);
-
-// Delete an event
-app.delete(
-  '/deleteEvent',
-  authJwt.verifyToken,
-  (req: Request, res: Response): void => {
-    const { id } = req.query;
-
-    if (!id) {
-      res.status(400).json({ message: "Le paramètre 'id' est obligatoire." });
-      return;
-    }
-
-    pool.connect((err: any, connection: any) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      const sql = 'DELETE FROM event WHERE id = $1';
-
-      connection.query(sql, [id], (error: any, result: any) => {
-        connection.release(); // Libérer la connexion
-
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-
-        const affectedRows = result.rowCount;
-
-        if (affectedRows === 0) {
-          return res
-            .status(404)
-            .json({ message: `Événement avec l'ID ${id} non trouvé` });
-        }
-
-        return res.json({ message: "Événement supprimé avec succès" });
-      });
-    });
-  },
-);
-// Update event
-app.put('/updateEvent', authJwt.verifyToken, (req: Request, res: Response): void => {
-  const {
-    id,
-    type,
-    nom,
-    num_semaine,
-    datetime_start,
-    datetime_end,
-    show_macro,
-    show_micro,
-    is_blocking,
-    is_exceptional,
-    is_external,
-  } = req.body;
-
-  // Field verification
-  if (!id || !type || !nom || !datetime_start || !datetime_end) {
-    res.status(400).json({
-      message:
-          'Les champs id, type, nom, datetime_start et datetime_end sont obligatoires.',
-    });
-    return;
-  }
-
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-
-    const sql = `
-      UPDATE event
-      SET type = $2,
-          nom = $3,
-          num_semaine = $4,
-          datetime_start = $5,
-          datetime_end = $6,
-          show_macro = $7,
-          show_micro = $8,
-          is_blocking = $9,
-          is_exceptional = $10,
-          is_external = $11
-      WHERE id = $1
-    `;
-
-    connection.query(
-        sql,
-        [
-          id,
-          type,
-          nom,
-          num_semaine,
-          datetime_start,
-          datetime_end,
-          show_macro,
-          show_micro,
-          is_blocking,
-          is_exceptional,
-          is_external,
-        ],
-        (error: any, result: any) => {
-          if (error) {
-            // Date constraint
-            if (error.constraint === 'ck_event_dates') {
-              res.status(400).json({
-                error: 'La date de début doit être antérieure à la date de fin.',
-              });
-              return;
-            }
-            res.status(500).json({ error: error.message });
-            return;
-          }
-
-          const affectedRows = result.rowCount;
-
-          if (affectedRows === 0) {
-            res
-                .status(404)
-                .json({ message: `Événement avec l'ID ${id} non trouvé` });
-            return;
-          }
-
-          res.json({ message: 'Événement mis à jour avec succès' });
-        },
-    );
-    connection.release(); // Libérer la connexion
-  });
-});
-
-app.get('/getExceptionalEvents', authJwt.verifyToken, (req: Request, res: Response): void => {
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    const sql = 'SELECT * FROM event where is_exceptional is true';
-
-    connection.query(sql, (error: any, results: any) => {
-      connection.release(); // always release the client
-
-      if (error) {
-        return res.status(500).json({ error: error.message });
-      }
-
-      // Normalize results: support drivers that return an array or an object with `rows`
-      const exceptionalEvents = Array.isArray(results)
-        ? results
-        : results && Array.isArray((results as any).rows)
-          ? (results as any).rows
-          : [];
-
-      return res.json(exceptionalEvents);
-    });
-  });
-});
-
-
-// Add event
-app.post(
-    '/addEvent',
-    authJwt.verifyToken,
-    (req: Request, res: Response): void => {
-      const {
-        type,
-        nom,
-        num_semaine,
-        datetime_start,
-        datetime_end,
-        show_macro,
-        show_micro,
-        is_blocking,
-        is_exceptional,
-        is_external
-      } = req.body;
-
-      // Check required fields
-      if (!type || !nom || !datetime_start || !datetime_end) {
-        res.status(400).json({
-          message: "Les champs type, nom, datetime_start et datetime_end sont obligatoires."
-        });
-        return;
-      }
-
-      pool.connect((err: any, connection: any) => {
-        if (err) {
-          return res.status(500).json({ error: err.message });
-        }
-
-        const sql = `
-            INSERT INTO event (type, nom, num_semaine, datetime_start, datetime_end, show_macro, show_micro,
-                               is_blocking,
-                               is_exceptional, is_external)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
-        `;
-
-        connection.query(
-            sql,
-            [
-              type,
-              nom,
-              num_semaine,
-              datetime_start,
-              datetime_end,
-              show_macro,
-              show_micro,
-              is_blocking,
-              is_exceptional,
-              is_external,
-            ],
-            (error: any, result: any) => {
-              connection.release();
-
-              if (error) {
-                // Check date constraint
-                if (error.constraint === 'ck_event_dates') {
-                  res.status(400).json({
-                    error: 'La date de début doit être antérieure à la date de fin.',
-                  });
-                  return;
-                }
-                res.status(500).json({ error: error.message });
-                return;
-              }
-
-
-              const insertedId = result?.rows?.[0]?.id ?? null;
-              return res.status(201).json({
-                message: "Évènement ajouté avec succès",
-                insertedId
-              });
-            }
-        );
-      });
-    }
-);
-
 // Start the server
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   console.log(`Swagger docs available at http://localhost:${PORT}/docs`);
-});
-
-app.get('/getEventsExceptionnels', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    const sql = 'SELECT * FROM event where is_exceptional is TRUE;';
-
-    connection.query(sql, (error: any, result: any) => {
-      connection.release();
-      if (error) {
-        return res.status(500).json({ error: error.message });
-      }
-      return res.status(200).json(result.rows);
-    });
-  });
 });
 
 server.timeout = 0;

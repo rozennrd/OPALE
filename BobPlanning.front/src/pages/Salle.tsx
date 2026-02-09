@@ -29,7 +29,7 @@ const Salle: React.FC = () => {
         throw new Error('Erreur lors du chargement des salles');
       }
     } catch (err) {
-      setError('Problème de connexion avec le serveur');
+      setError('Problème de connexion avec le serveur : ' + err);
     }
   };
 
@@ -69,7 +69,7 @@ const Salle: React.FC = () => {
         setError("Erreur lors de l'enregistrement de la salle");
       }
     } catch (err) {
-      setError('Problème de connexion avec le serveur');
+      setError('Problème de connexion avec le serveur : ' + err);
     }
   };
 
@@ -89,7 +89,7 @@ const Salle: React.FC = () => {
         setError('Erreur lors de la suppression de la salle');
       }
     } catch (err) {
-      setError('Problème de connexion avec le serveur');
+      setError('Problème de connexion avec le serveur : ' + err);
     }
   };
 
