@@ -52,9 +52,9 @@ const ConstraintCard: React.FC<ConstraintCardProps> = ({
             <div className="constraint-tags">
                 {ranges.map((range) => {
                     const isEditing =
-                        !!(editingRange &&
-                        editingRange.type === type &&
-                        editingRange.id === range.id)
+                        (editingRange &&
+                            editingRange.type === type &&
+                            editingRange.id === range.id) || false;
 
                     return (
                         <ConstraintPill

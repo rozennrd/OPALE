@@ -203,7 +203,7 @@ app.post('/login', async (req: Request, res: Response) => {
 
 
 
-// Get event by promo and list of types
+// Get event by promo ID and list of types
 app.get(
     '/getEventPromo',
     authJwt.verifyToken,
@@ -225,7 +225,7 @@ app.get(
           FROM event e
                  JOIN concerner c ON c.id_event = e.id
                  JOIN promotion p ON p.id = c.id_promo
-          WHERE p.nom = $1
+          WHERE p.id = $1
             AND e.type = ANY($2)
           ORDER BY e.datetime_start ASC
         `;
@@ -250,7 +250,7 @@ app.get(
           );
 
           if (nothingFound) {
-            return res.status(404).json({ message:`Aucun évènement trouvé pour la promo ${promo}.` });
+            return res.status(404).json({ message:`Aucun évènement trouvé pour la promo avec l'ID ${promo}.` });
           }
 
           return res.json(response);
@@ -1209,90 +1209,81 @@ app.post(
 
 /*========== COURS ==========*/
 
-app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
+app.post('/setAllCourses', authJwt.verifyToken, async (req, res) => {
+  pool.connect(async (err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
 
-    connection.beginTransaction((err: any) => {
-      if (err) {
-        connection.release();
-        return res.status(500).json({ error: err.message });
-      }
+    try {
+      // Start transaction
+      await connection.query('BEGIN');
 
       // Extraire la promo unique des cours
       const promo =
           req.body.courses.length > 0 ? req.body.courses[0].promo : null;
 
       if (!promo) {
+        await connection.query('ROLLBACK');
         connection.release();
         return res.status(400).json({ error: 'Aucune promotion fournie' });
       }
 
       // Supprimer les matières associées à cette promo
-      const deleteSql = `DELETE
-                               FROM concerner
-                               WHERE id_promo = ?`;
+      const deleteSql = `DELETE FROM concerner WHERE id_promo = $1`;
 
-      connection.query(deleteSql, [promo], (deleteErr: any) => {
-        if (deleteErr) {
-          return connection.rollback(() => {
-            connection.release();
-            res.status(500).json({ error: deleteErr.message });
-          });
-        }
+      await connection.query(deleteSql, [promo]);
 
-        // Insérer les nouvelles matières
-        const insertPromises = req.body.courses.map(
-            (cours: {
-              promo: string;
-              name: string;
-              UE: string;
-              Semestre: string;
-              Periode: string;
-              Prof: string;
-              typeSalle: string;
-              heure: string;
-            }) => {
-              return new Promise<void>((resolve, reject) => {
-                // Ancienne requête permettant l'update d'une matière si elle existe déjà ou l'insert
-                // TODO : À garder jusqu'à ce que la fonction soit fonctionnelle avec la nouvelle base de données
-                // const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
-                //               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                //               ON DUPLICATE KEY UPDATE
-                //               UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode),
-                //               Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
+      // Insérer les nouvelles matières
+      const insertPromises = req.body.courses.map(
+          (cours: {
+            promo: string;
+            name: string;
+            UE: string;
+            Semestre: string;
+            Periode: string;
+            Prof: string;
+            typeSalle: string;
+            heure: string;
+          }) => {
+            return new Promise<void>((resolve, reject) => {
+              // Ancienne requête permettant l'update d'une matière si elle existe déjà ou l'insert
+              // TODO : À garder jusqu'à ce que la fonction soit fonctionnelle avec la nouvelle base de données
+              // const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
+              //               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+              //               ON DUPLICATE KEY UPDATE
+              //               UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode),
+              //               Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
 
-                const sql = `INSERT INTO matiere (id_promo, nom, semestre, volume_horaire)
-                                         VALUES (?, ?, ?, ?) ON CONFLICT (id_promo, nom) 
-                            DO
-                            UPDATE SET
-                                semestre = EXCLUDED.semestre,
-                                volume_horaire = EXCLUDED.volume_horaire`;
-                connection.query(
-                    sql,
-                    [
-                      cours.promo,
-                      cours.name,
-                      cours.UE,
-                      cours.Semestre,
-                      cours.Periode,
-                      cours.Prof,
-                      cours.typeSalle,
-                      cours.heure,
-                    ],
-                    (error: any) => {
-                      if (error) {
-                        console.error(
-                            "Erreur lors de l'insertion/mise à jour :",
-                            error,
-                        );
-                        return reject(error);
-                      }
-                      resolve();
-                    },
-                );
+              const sql = `INSERT INTO matiere (id_promo, nom, semestre, volume_horaire)
+                                        VALUES (?, ?, ?, ?) ON CONFLICT (id_promo, nom) 
+                          DO
+                          UPDATE SET
+                              semestre = EXCLUDED.semestre,
+                              volume_horaire = EXCLUDED.volume_horaire`;
+              connection.query(
+                  sql,
+                  [
+                    cours.promo,
+                    cours.name,
+                    cours.UE,
+                    cours.Semestre,
+                    cours.Periode,
+                    cours.Prof,
+                    cours.typeSalle,
+                    cours.heure,
+                  ],
+                  (error: any) => {
+                    if (error) {
+                      console.error(
+                          "Erreur lors de l'insertion/mise à jour :",
+                          error,
+                      );
+                      return reject(error);
+                    }
+                    resolve();
+                  },
+              );
               });
             },
         );
@@ -1320,10 +1311,10 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
             .finally(() => {
               connection.release();
             });
-      });
-    });
+      } catch (e) { console.log (e)}
+   
   });
-});
+
 
 app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
   pool.connect((err: any, connection: any) => {
