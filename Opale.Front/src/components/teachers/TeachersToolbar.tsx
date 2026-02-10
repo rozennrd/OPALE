@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { TeachingMode } from '../../models/Teacher'
 import { PageToolbar, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
+import icPlus from '../../assets/ic-plus.png'
 
 type ModeFilter = 'ALL' | TeachingMode
 
@@ -13,7 +14,11 @@ const MODE_OPTIONS: { value: ModeFilter; label: string }[] = [
     { value: 'DISTANCIEL', label: 'Distanciel' },
 ]
 
-export default function TeachersToolbar() {
+interface TeachersToolbarProps {
+    onCreateRequested: () => void
+}
+
+export default function TeachersToolbar({ onCreateRequested }: TeachersToolbarProps) {
     const [searchValue, setSearchValue] = useState('')
     const [modeFilter, setModeFilter] = useState<ModeFilter>('ALL')
 
@@ -82,6 +87,16 @@ export default function TeachersToolbar() {
                         </div>
                     </div>
                 </div>
+
+                <button
+                    type="button"
+                    className="teachers-toolbar-plus-btn"
+                    onClick={onCreateRequested}
+                    aria-label="Ajouter un enseignant"
+                    title="Ajouter un enseignant"
+                >
+                    <img src={icPlus} alt="" className="teachers-toolbar-plus-icon" />
+                </button>
             </ToolbarRow>
         </PageToolbar>
     )

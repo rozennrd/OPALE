@@ -54,6 +54,21 @@ export default function TeacherDetailCard({
         ignoreWhenSelectorExists: '.modal-overlay',
     })
 
+    const getCampusLabel = (value?: string) => {
+        if (!value) return 'Bordeaux'
+        const lower = value.toLowerCase()
+        if (lower.includes('bordeaux')) return 'Bordeaux'
+        if (lower.includes('lille')) return 'Lille'
+        if (lower.includes('chÃ¢teauroux') || lower.includes('chateauroux')) {
+            return 'ChÃ¢teauroux'
+        }
+        return value
+    }
+    const sectionLabel =
+        teacherDraft.category === 'VACATAIRE'
+            ? 'Vacataire'
+            : getCampusLabel(teacherDraft.campus)
+
     return (
         <div className="teacher-detail-overlay" role="dialog" aria-modal="true">
             <DetailCardBody className="teacher-detail-card">
@@ -69,6 +84,7 @@ export default function TeacherDetailCard({
                         title="Détail enseignant"
                         subtitle={`${teacherDraft.lastName.toUpperCase()} ${teacherDraft.firstName}`}
                         className="teacher-detail-header-badge"
+                        sectionLabel={sectionLabel}
                     />
                 </DetailCardHeader>
 

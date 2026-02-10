@@ -13,6 +13,27 @@ import PageHeader from "../components/common/PageHeader";
 
 export default function Teachers() {
     const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null)
+    const internalBordeaux = INTERNAL_TEACHERS_MOCK.filter((teacher) =>
+        teacher.campus?.toLowerCase().includes('bordeaux'),
+    )
+    const internalLilleChateauroux = INTERNAL_TEACHERS_MOCK.filter(
+        (teacher) => !teacher.campus?.toLowerCase().includes('bordeaux'),
+    )
+    const handleCreateRequested = () => {
+        setSelectedTeacher({
+            id: 'new-teacher',
+            firstName: '',
+            lastName: '',
+            phone: '',
+            email: '',
+            emailJunia: '',
+            campus: 'Bordeaux',
+            category: 'INTERNE',
+            mode: 'PRESENTIEL',
+            subjects: [],
+            availability: '0000000000',
+        })
+    }
 
     return (
         <>
@@ -24,11 +45,17 @@ export default function Teachers() {
 
             {/* CONTENU DE LA PAGE */}
             <div className="teachers-page">
-                <TeachersToolbar />
+                <TeachersToolbar onCreateRequested={handleCreateRequested} />
 
                 <TeacherSection
-                    title="Internes"
-                    teachers={INTERNAL_TEACHERS_MOCK}
+                    title="Interne Bordeaux"
+                    teachers={internalBordeaux}
+                    onSelectTeacher={setSelectedTeacher}
+                />
+
+                <TeacherSection
+                    title="Interne Lille/Châteauroux"
+                    teachers={internalLilleChateauroux}
                     onSelectTeacher={setSelectedTeacher}
                 />
 
@@ -48,3 +75,5 @@ export default function Teachers() {
         </>
     )
 }
+
+

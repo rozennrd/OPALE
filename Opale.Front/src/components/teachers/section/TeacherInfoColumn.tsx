@@ -82,15 +82,34 @@ const TeacherInfoColumn: React.FC<TeacherInfoColumnProps> = ({ teacher, onInfoCh
                         </select>
                     </dd>
                 </div>
-                {teacher.campus !== undefined && (
+                <div className="teacher-detail-item">
+                    <dt>Rattachement</dt>
+                    <dd>
+                        <select
+                            className="teacher-detail-select"
+                            value={teacher.category || 'INTERNE'}
+                            onChange={(e) =>
+                                onInfoChange('category', e.target.value as Teacher['category'])
+                            }
+                        >
+                            <option value="INTERNE">Interne</option>
+                            <option value="VACATAIRE">Vacataire</option>
+                        </select>
+                    </dd>
+                </div>
+                {teacher.category !== 'VACATAIRE' && (
                     <div className="teacher-detail-item">
                         <dt>Campus d'origine</dt>
                         <dd>
-                            <input
-                                className="teacher-detail-input"
-                                value={teacher.campus || ''}
+                            <select
+                                className="teacher-detail-select"
+                                value={teacher.campus || 'Bordeaux'}
                                 onChange={(e) => onInfoChange('campus', e.target.value)}
-                            />
+                            >
+                                <option value="Bordeaux">Bordeaux</option>
+                                <option value="Lille">Lille</option>
+                                <option value="ChÃ¢teauroux">ChÃ¢teauroux</option>
+                            </select>
                         </dd>
                     </div>
                 )}

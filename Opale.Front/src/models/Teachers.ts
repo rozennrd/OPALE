@@ -19,6 +19,7 @@ export interface Teacher {
     email: string
     emailJunia?: string
     campus?: string
+    category?: 'INTERNE' | 'VACATAIRE'
     mode: TeachingMode
     subjects: TeacherSubject[]
 
