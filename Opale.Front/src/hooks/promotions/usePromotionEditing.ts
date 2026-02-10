@@ -5,6 +5,22 @@ import { distributeEvenly } from '../../utils/promoUtils'
 import { createEmptyConstraints } from './usePromotionConstraints'
 import { promotionsApi } from '../../services/api/promotionsApi'
 import { GroupsApi } from '../../services/api/groupsApi'
+import { eventsApi } from '../../services/api/eventsApi'
+import { EventType } from '../../models/EventTypes'
+
+// Interface for event creation request that includes promotion ID
+interface EventCreationRequest {
+    type: EventType
+    nom: string
+    datetime_start: string
+    datetime_end: string
+    show_macro: boolean
+    show_micro: boolean
+    is_blocking: boolean
+    is_exceptional: boolean
+    is_external: boolean
+    promo_id: string
+}
 
 export interface EditingPromotion {
     cycleId: string
@@ -102,11 +118,36 @@ export function usePromotionEditing(
      * - Met à jour cycles localement si succès
      * - NE FERME PLUS la modale (l'utilisateur choisit ensuite de fermer)
      */
+    /**
+     * Convert constraint type to event type
+     */
+    const getEventTypeForConstraint = (constraintType: string): EventType => {
+        switch (constraintType) {
+            case 'vacances':
+                return 'fermeture'
+            case 'entreprise':
+                return 'entreprise'
+            case 'stages':
+                return 'stage'
+            case 'international':
+                return 'mobilite'
+            case 'partiels':
+                return 'examen'
+            case 'rattrapages':
+                return 'rattrapage'
+            default:
+                return 'autre'
+        }
+    }
+
+
+
     const handleSavePromotion = async (): Promise<void> => {
         if (!editingPromo) return
 
         try {
-            // 1. Identifier les nouveaux groupes (avec ID temporaire) et les groupes modifiés
+
+            // 2. Identifier les nouveaux groupes (avec ID temporaire) et les groupes modifiés
             const newGroups = editingPromo.groups.filter(g => 
                 typeof g.idPromo === 'string' && g.idPromo.startsWith('new-group-')
             )
@@ -115,7 +156,7 @@ export function usePromotionEditing(
                 typeof g.idPromo === 'number' || (typeof g.idPromo === 'string' && !g.idPromo.startsWith('new-group-'))
             )
 
-            // 2. Créer les nouveaux groupes
+            // 3. Créer les nouveaux groupes
             const createdGroups: GroupSpecialtyItem[] = []
             for (const newGroup of newGroups) {
                 const groupData = {
@@ -134,7 +175,7 @@ export function usePromotionEditing(
                 }
             }
 
-            // 3. Mettre à jour les groupes existants modifiés
+            // 4. Mettre à jour les groupes existants modifiés
             for (const existingGroup of existingGroups) {
                 const groupData = {
                     id: existingGroup.idPromo.toString(),
@@ -146,7 +187,7 @@ export function usePromotionEditing(
                 await groupsApi.updateGroup(groupData)
             }
 
-            // 4. Mettre à jour la promotion avec la liste complète des groupes
+            // 5. Mettre à jour la promotion avec la liste complète des groupes
             // Use the current groups from editingPromo, not the filtered originals
             const currentGroups = editingPromo.groups
             const allGroups = currentGroups.map(g => {
@@ -163,7 +204,7 @@ export function usePromotionEditing(
                 date_end: editingPromo.endDate,
             })
 
-            // 5. Mettre à jour l'état local
+            // 6. Mettre à jour l'état local
             setCycles(prev =>
                 prev.map(c => {
                     if (c.id !== editingPromo.cycleId) return c
@@ -188,7 +229,7 @@ export function usePromotionEditing(
                 })
             )
 
-            // 6. Mettre à jour le snapshot et hasChanges
+            // 7. Mettre à jour le snapshot et hasChanges
             const updatedEditingPromo = {
                 ...editingPromo,
                 groups: allGroups

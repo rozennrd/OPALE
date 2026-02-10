@@ -12,7 +12,6 @@ interface PromoGroupsProps {
 const PromoGroups: React.FC<PromoGroupsProps> = ({
     groups,
     onAddGroup,
-    idPromo, // TODO check 
     onGroupChange,
     onRemoveGroup,
 }) => {
