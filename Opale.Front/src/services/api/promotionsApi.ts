@@ -5,7 +5,7 @@ import { ApiResponse } from '../base/types'
 
 // Backend promotion data types (from BobPlanning back)
 export interface BackendPromotion {
-  id: number
+  id: string
   nom: string
   effectifs: number
   id_cycle: string
@@ -22,7 +22,7 @@ export interface PromotionCreateRequest {
 }
 
 export interface PromotionUpdateRequest {
-  id: number
+  id: string
   nom: string
   effectifs: number
   id_cycle?: string

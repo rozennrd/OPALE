@@ -1,6 +1,6 @@
 // src/pages/Matieres.tsx
 
-import React, { useMemo, useState } from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import PageHeader from '../components/common/PageHeader'
 import MatieresToolbar, {
     CycleFilter,
@@ -11,11 +11,14 @@ import MatieresToolbar, {
 import MatiereSection from '../components/matieres/MatiereSection'
 import MatiereDetailCard from '../components/matieres/MatiereDetailCard'
 import SelectionToolbar from '../components/common/SelectionToolbar'
-import { MATIERES_MOCK } from '../mocks/matieres.mock'
-import { INTERNAL_TEACHERS_MOCK } from '../mocks/teachers.mock'
+import { getMatieres } from '../services/api/matieresApi'
+import { TeacherApi } from '../services/api/professorsApi'
+import { promotionsApi } from '../services/api/promotionsApi'
 import { Matiere } from '../models/Matiere'
 import { useSelectionState } from '../hooks/common/useSelectionState'
 import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
+import {transformBackendPromotionToFrontend} from "../services/api/promotionsApiTransformers.ts";
+import {transformBackendMatiereToFrontend} from "../services/api/matieresApiTransformers.ts";
 
 const getCycleFromPromoLabel = (promoLabel: string) => {
     return (promoLabel || '').trim().split(/\s+/)[0] || '-'
@@ -43,6 +46,64 @@ export default function Matieres() {
     const [cycleFilter, setCycleFilter] = useState<CycleFilter>('ALL')
     const [promotionFilter, setPromotionFilter] = useState<PromotionFilter>('ALL')
     const [teacherFilter, setTeacherFilter] = useState<TeacherFilter>('ALL')
+
+    const [matieres, setMatieres] = useState<Matiere[]>([])
+    const [teachers] = useState<TeacherApi[]>([])
+
+    useEffect(() => {
+        let mounted = true
+
+        ;(async () => {
+            try {
+                const backendMatieres = await getMatieres()
+                console.log('[MATIERES] fetching promotions via promotionsApi.getPromotions()...')
+                const promosRes = await promotionsApi.getPromotions()
+
+                if (!promosRes.success) {
+                    console.error('[MATIERES] promos error:', promosRes.error)
+                    throw new Error(promosRes.error?.message ?? 'Failed to fetch promotions')
+                }
+
+                const backendPromos = promosRes.data ?? []
+                // Transform backend promos -> front promos (juste pour avoir label)
+                const frontPromos = backendPromos.map(transformBackendPromotionToFrontend)
+                console.log(
+                    '[MATIERES] promo id sample (frontend):',
+                    frontPromos.slice(0, 5).map((p) => p.id)
+                )
+
+                // Build promo map: promoId(string) -> label
+                const promoMap = new Map<string, string>()
+                for (const p of frontPromos) promoMap.set(p.id, p.label)
+
+                const promoIdsInMatieres = new Set(
+                    backendMatieres.map((m: any) => String(m.id_promo ?? ''))
+                )
+                const promoIdsInPromos = new Set(Array.from(promoMap.keys()))
+
+                // Count matches
+                let matchCount = 0
+                for (const id of promoIdsInMatieres) if (promoIdsInPromos.has(id)) matchCount++
+
+                const frontMatieres = backendMatieres.map(m => transformBackendMatiereToFrontend(m, promoMap))
+
+                if (!mounted) return
+                setMatieres(frontMatieres)
+
+            } catch (e) {
+                console.error('[MATIERES] load failed:', e)
+                if (!mounted) return
+                setMatieres([])
+            }
+        })()
+
+        return () => {
+            mounted = false
+            console.log('[MATIERES][useEffect] unmount')
+        }
+    }, [])
+
+
 
     const [selected, setSelected] = useState<Matiere | null>(null)
 
@@ -76,7 +137,7 @@ export default function Matieres() {
     }, [matieres])
 
     const teacherOptions = useMemo(() => {
-        return INTERNAL_TEACHERS_MOCK
+        return teachers
             .map((t) => ({
                 id: t.id,
                 label: `${t.firstName} ${t.lastName}`.trim(),
