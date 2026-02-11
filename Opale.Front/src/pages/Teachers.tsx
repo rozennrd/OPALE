@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import TeachersToolbar from '../components/teachers/TeachersToolbar'
+import React, { useMemo, useState } from 'react'
+import TeachersToolbar, { ModeFilter } from '../components/teachers/TeachersToolbar'
 import TeacherSection from '../components/teachers/TeacherSection'
 import TeacherDetailCard from '../components/teachers/TeacherDetailCard'
 
@@ -7,12 +7,16 @@ import {
     INTERNAL_TEACHERS_MOCK,
     VACATAIRE_TEACHERS_MOCK,
 } from '../mocks/teachers.mock'
+import { MATIERES_MOCK } from '../mocks/matieres.mock'
 
 import { Teacher } from '../models/Teacher'
 import PageHeader from "../components/common/PageHeader";
 
 export default function Teachers() {
     const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null)
+    const [searchValue, setSearchValue] = useState('')
+    const [modeFilter, setModeFilter] = useState<ModeFilter>('ALL')
+    const [subjectFilter, setSubjectFilter] = useState('')
     const internalBordeaux = INTERNAL_TEACHERS_MOCK.filter((teacher) =>
         teacher.campus?.toLowerCase().includes('bordeaux'),
     )
@@ -35,6 +39,33 @@ export default function Teachers() {
         })
     }
 
+    const subjectOptions = useMemo(() => {
+        const names = MATIERES_MOCK.map((matiere) => matiere.nom.trim())
+        return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b))
+    }, [])
+
+    const filteredTeachers = (list: Teacher[]) => {
+        const needle = searchValue.trim().toLowerCase()
+        const subjectNeedle = subjectFilter.trim().toLowerCase()
+
+        return list.filter((teacher) => {
+            const fullName = `${teacher.lastName} ${teacher.firstName} ${teacher.firstName} ${teacher.lastName}`.toLowerCase()
+            const matchesSearch = !needle || fullName.includes(needle)
+            const matchesMode = modeFilter === 'ALL' || teacher.mode === modeFilter
+            const matchesSubject =
+                !subjectNeedle ||
+                (teacher.subjects || []).some((subject) =>
+                    subject.name.toLowerCase().includes(subjectNeedle),
+                )
+
+            return matchesSearch && matchesMode && matchesSubject
+        })
+    }
+
+    const filteredInternalBordeaux = filteredTeachers(internalBordeaux)
+    const filteredInternalLilleChateauroux = filteredTeachers(internalLilleChateauroux)
+    const filteredVacataires = filteredTeachers(VACATAIRE_TEACHERS_MOCK)
+
     return (
         <>
             {/* TITRE & SOUS-TITRE */}
@@ -45,25 +76,40 @@ export default function Teachers() {
 
             {/* CONTENU DE LA PAGE */}
             <div className="teachers-page">
-                <TeachersToolbar onCreateRequested={handleCreateRequested} />
-
-                <TeacherSection
-                    title="Interne Bordeaux"
-                    teachers={internalBordeaux}
-                    onSelectTeacher={setSelectedTeacher}
+                <TeachersToolbar
+                    onCreateRequested={handleCreateRequested}
+                    searchValue={searchValue}
+                    onSearchChange={setSearchValue}
+                    modeFilter={modeFilter}
+                    onModeChange={setModeFilter}
+                    subjectFilter={subjectFilter}
+                    onSubjectChange={setSubjectFilter}
+                    subjectOptions={subjectOptions}
                 />
 
-                <TeacherSection
-                    title="Interne Lille/Châteauroux"
-                    teachers={internalLilleChateauroux}
-                    onSelectTeacher={setSelectedTeacher}
-                />
+                {filteredInternalBordeaux.length > 0 && (
+                    <TeacherSection
+                        title="Interne Bordeaux"
+                        teachers={filteredInternalBordeaux}
+                        onSelectTeacher={setSelectedTeacher}
+                    />
+                )}
 
-                <TeacherSection
-                    title="Vacataires"
-                    teachers={VACATAIRE_TEACHERS_MOCK}
-                    onSelectTeacher={setSelectedTeacher}
-                />
+                {filteredInternalLilleChateauroux.length > 0 && (
+                    <TeacherSection
+                        title="Interne Lille/ChÃ¢teauroux"
+                        teachers={filteredInternalLilleChateauroux}
+                        onSelectTeacher={setSelectedTeacher}
+                    />
+                )}
+
+                {filteredVacataires.length > 0 && (
+                    <TeacherSection
+                        title="Vacataires"
+                        teachers={filteredVacataires}
+                        onSelectTeacher={setSelectedTeacher}
+                    />
+                )}
             </div>
 
             {selectedTeacher && (
@@ -75,5 +121,3 @@ export default function Teachers() {
         </>
     )
 }
-
-

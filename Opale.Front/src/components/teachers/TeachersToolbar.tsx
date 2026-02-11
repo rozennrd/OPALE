@@ -1,11 +1,11 @@
 // src/components/teachers/TeachersToolbar.tsx
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { TeachingMode } from '../../models/Teacher'
 import { PageToolbar, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 import icPlus from '../../assets/ic-plus.png'
 
-type ModeFilter = 'ALL' | TeachingMode
+export type ModeFilter = 'ALL' | TeachingMode
 
 const MODE_OPTIONS: { value: ModeFilter; label: string }[] = [
     { value: 'ALL', label: 'Tous' },
@@ -16,25 +16,46 @@ const MODE_OPTIONS: { value: ModeFilter; label: string }[] = [
 
 interface TeachersToolbarProps {
     onCreateRequested: () => void
+    searchValue: string
+    onSearchChange: (value: string) => void
+    modeFilter: ModeFilter
+    onModeChange: (value: ModeFilter) => void
+    subjectFilter: string
+    onSubjectChange: (value: string) => void
+    subjectOptions: string[]
 }
 
-export default function TeachersToolbar({ onCreateRequested }: TeachersToolbarProps) {
-    const [searchValue, setSearchValue] = useState('')
-    const [modeFilter, setModeFilter] = useState<ModeFilter>('ALL')
+export default function TeachersToolbar({
+    onCreateRequested,
+    searchValue,
+    onSearchChange,
+    modeFilter,
+    onModeChange,
+    subjectFilter,
+    onSubjectChange,
+    subjectOptions,
+}: TeachersToolbarProps) {
+    const [isSubjectsOpen, setIsSubjectsOpen] = useState(false)
+    const [subjectSearch, setSubjectSearch] = useState('')
 
-    const handleSearchChange = (value: string) => {
-        setSearchValue(value)
-        console.log('[TEACHERS] Recherche :', value)
+    const filteredSubjectOptions = useMemo(() => {
+        if (!subjectSearch.trim()) return subjectOptions
+        const needle = subjectSearch.trim().toLowerCase()
+        return subjectOptions.filter((opt) => opt.toLowerCase().includes(needle))
+    }, [subjectOptions, subjectSearch])
+
+    const handleSubjectsToggle = () => {
+        setIsSubjectsOpen((prev) => !prev)
     }
 
-    const handleSubjectsClick = () => {
-        console.log('[TEACHERS] Ouvrir filtre "Matières"')
+    const handleSubjectsClear = () => {
+        onSubjectChange('')
+        setIsSubjectsOpen(false)
     }
 
-    const handleModeChange = (value: ModeFilter) => {
-        setModeFilter(value)
-        console.log('[TEACHERS] Filtre mode :', value)
-        // plus tard : remonter ce filtre à la page par des props
+    const handleSubjectSelect = (value: string) => {
+        onSubjectChange(value)
+        setIsSubjectsOpen(false)
     }
 
     return (
@@ -43,27 +64,67 @@ export default function TeachersToolbar({ onCreateRequested }: TeachersToolbarPr
                 {/* Searchbar à gauche */}
                 <ToolbarSearch
                     value={searchValue}
-                    onChange={handleSearchChange}
+                    onChange={onSearchChange}
                     placeholder="Rechercher un enseignant"
                     className="teachers-toolbar-search"
                 />
 
                 {/* Filtres à droite */}
                 <div className="teachers-toolbar-filters">
-                    {/* Filtre matières (bouton simple) */}
-                    <button
-                        type="button"
-                        className="toolbar-filter-button"
-                        onClick={handleSubjectsClick}
-                    >
-                        <span>Matières</span>
-                        <span
-                            className="toolbar-filter-button-chevron"
-                            aria-hidden="true"
+                    {/* Filtre matières (liste) */}
+                    <div className="teachers-toolbar-subjects">
+                        <button
+                            type="button"
+                            className="toolbar-filter-button"
+                            onClick={handleSubjectsToggle}
+                            aria-expanded={isSubjectsOpen}
                         >
-                            ▾
-                        </span>
-                    </button>
+                            <span>{subjectFilter || 'Matières'}</span>
+                            <span
+                                className="toolbar-filter-button-chevron"
+                                aria-hidden="true"
+                            >
+                            </span>
+                        </button>
+                        {isSubjectsOpen && (
+                            <div className="teachers-toolbar-subjects-panel">
+                                <input
+                                    className="teachers-toolbar-subjects-input"
+                                    value={subjectSearch}
+                                    onChange={(e) =>
+                                        setSubjectSearch(e.target.value)
+                                    }
+                                    placeholder="Rechercher une matière"
+                                />
+                                <div className="teachers-toolbar-subjects-list">
+                                    <button
+                                        type="button"
+                                        className="teachers-toolbar-subjects-item"
+                                        onClick={handleSubjectsClear}
+                                    >
+                                        Toutes les matières
+                                    </button>
+                                    {filteredSubjectOptions.map((opt) => (
+                                        <button
+                                            key={opt}
+                                            type="button"
+                                            className={
+                                                'teachers-toolbar-subjects-item' +
+                                                (opt === subjectFilter
+                                                    ? ' is-selected'
+                                                    : '')
+                                            }
+                                            onClick={() =>
+                                                handleSubjectSelect(opt)
+                                            }
+                                        >
+                                            {opt}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
 
                     {/* Filtre mode : groupe de chips (radio visuels) */}
                     <div className="toolbar-filter">
@@ -79,7 +140,7 @@ export default function TeachersToolbar({ onCreateRequested }: TeachersToolbarPr
                                             ? ' toolbar-toggle-chip--active'
                                             : '')
                                     }
-                                    onClick={() => handleModeChange(opt.value)}
+                                    onClick={() => onModeChange(opt.value)}
                                 >
                                     {opt.label}
                                 </button>
