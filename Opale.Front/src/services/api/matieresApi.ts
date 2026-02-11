@@ -2,14 +2,21 @@
 import { apiClient } from '../base/ApiClient'
 import { Matiere } from '../../models/Matiere'
 import { BackendMatiere } from './matieresApiTransformers'
+import { ApiResponse } from '../base/types'
 
-//export async function getMatieres(): Promise<Matiere[]> {
-//    const res = await apiClient.get<Matiere[]>('/getMatieres')
-//    if (!res.success) {
-//        throw new Error(res.error?.message ?? 'Failed to fetch matieres')
-//    }
-//    return res.data ?? []
-//}
+export interface BackendMatiereUpdateRequest {
+    id: string
+    nom: string
+    volume_horaire: number
+    id_promo: string              // UUID promo
+    id_specialite?: string | null
+    semestre: number
+    nb_partiels: number
+    nb_eval_intermediaire?: number | null
+    heures_td?: number | null
+    heures_tp?: number | null
+}
+
 
 export async function getMatiereById(id: string): Promise<Matiere> {
     const res = await apiClient.get<Matiere>(`/getMatiereByID?id=${encodeURIComponent(id)}`)
@@ -26,10 +33,11 @@ export async function addMatiere(payload: Partial<Matiere>) {
     return res.data
 }
 
-export async function updateMatiere(payload: Partial<Matiere>) {
-    const res = await apiClient.put('/updateMatiere', payload)
-    if (!res.success) throw new Error(res.error?.message ?? 'Failed to update matiere')
-    return res.data
+export async function updateMatiere(
+    payload: BackendMatiereUpdateRequest
+): Promise<ApiResponse<{ message: string }>> {
+    console.log('[API][updateMatiere] calling /updateMatiere with:', payload)
+    return apiClient.put<{ message: string }>('/updateMatiere', payload)
 }
 
 export async function deleteMatiere(id: string) {

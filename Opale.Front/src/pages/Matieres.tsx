@@ -165,7 +165,7 @@ export default function Matieres() {
         return (teachers ?? [])
             .map((t) => ({
                 id: String(t.id),
-                label: `${t.prenom ?? ''} ${t.nom ?? ''}`.trim(),
+                label: `${t.firstName ?? ''} ${t.lastName ?? ''}`.trim(),
             }))
             .filter((o) => o.label.length > 0)
             .sort((a, b) => a.label.localeCompare(b.label, 'fr'))
@@ -288,6 +288,22 @@ export default function Matieres() {
         setSelected(matiere)
     }
 
+    const reloadMatieres = async () => {
+        console.log('[MATIERES] reloadMatieres()')
+        const backendMatieres = await getMatieres()
+        const promosRes = await promotionsApi.getPromotions()
+        if (!promosRes.success) return
+
+        const promoLabelById = new Map<string, string>()
+        for (const p of promosRes.data ?? []) promoLabelById.set(p.id, p.nom)
+
+        const frontMatieres = (backendMatieres ?? []).map((m: any) =>
+            transformBackendMatiereToFrontend(m, promoLabelById)
+        )
+
+        setMatieres(frontMatieres)
+    }
+
     return (
         <>
             <PageHeader title="Matières" subtitle="Gestion des matières par promotion" />
@@ -351,6 +367,7 @@ export default function Matieres() {
                 <MatiereDetailCard
                     matiere={selected}
                     onClose={() => setSelected(null)}
+                    onAfterSave={reloadMatieres}
                     onDelete={() => handleDeleteSingleMatiere(selected.id)}
                 />
             )}

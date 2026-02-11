@@ -1,7 +1,7 @@
 // src/components/matieres/MatiereDetailCard.tsx
 import React, { useEffect, useMemo, useState } from 'react'
 import { Matiere } from '../../models/Matiere'
-import { Teacher } from '../../models/Teacher'
+import { Teacher } from '../../models/Teachers'
 import { INTERNAL_TEACHERS_MOCK, VACATAIRE_TEACHERS_MOCK } from '../../mocks/teachers.mock'
 import DetailCardBody from '../common/DetailCardBody'
 import DetailCardHeader from '../common/DetailCardHeader'
@@ -9,10 +9,12 @@ import DetailCardFooter from '../common/DetailCardFooter'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 import MatiereBadge from './MatiereBadge'
+import { updateMatiere } from '../../services/api/matieresApi'
 
 interface MatiereDetailCardProps {
     matiere: Matiere
     onClose: () => void
+    onAfterSave?: () => Promise<void> | void
     onDelete?: () => void
 }
 
@@ -29,7 +31,7 @@ const makeRowId = () => `assign-${Math.random().toString(16).slice(2)}`
 
 const teacherLabel = (t: Teacher) => `${t.lastName.toUpperCase()} ${t.firstName}`
 
-export default function MatiereDetailCard({ matiere, onClose, onDelete }: MatiereDetailCardProps) {
+export default function MatiereDetailCard({ matiere, onClose, onDelete, onAfterSave }: MatiereDetailCardProps) {
     const teachers = useMemo(() => {
         const all = [...INTERNAL_TEACHERS_MOCK, ...VACATAIRE_TEACHERS_MOCK]
         return all.slice().sort((a, b) => teacherLabel(a).localeCompare(teacherLabel(b), 'fr'))
@@ -92,24 +94,50 @@ export default function MatiereDetailCard({ matiere, onClose, onDelete }: Matier
         )
     }
 
-    const handleSave = () => {
-        const payload = {
-            ...matiere,
-            nom: name.trim() || matiere.nom,
-            volume_horaire: Math.max(0, Number(volumeTotal) || 0),
-            heures_td: Math.max(0, Number(tdHours) || 0),
-            heures_tp: Math.max(0, Number(tpHours) || 0),
-            assignments: assignments
-                .filter((a) => a.teacherId)
-                .map((a) => ({
-                    teacherId: a.teacherId,
-                    tdHours: Math.max(0, Number(a.tdHours) || 0),
-                    tpHours: Math.max(0, Number(a.tpHours) || 0),
-                })),
+    const handleSave = async () => {
+        // UUID promo obligatoire pour update côté back
+        const promoUuid = (matiere as any).promo_id as string | undefined
+        if (!promoUuid) {
+            console.error('[MATIERES][update] Missing matiere.promo_id (UUID). matiere=', matiere)
+            alert("Impossible d'enregistrer : promo_id (UUID) manquant sur la matière.")
+            return
         }
 
-        console.log('[MATIERES] Save matiere (mock)', payload)
+        // payload backend (on n'envoie PAS assignments tant que l'API ne le gère pas)
+        const payload = {
+            id: matiere.id,
+            nom: name.trim() || matiere.nom,
+            volume_horaire: Math.max(0, Number(volumeTotal) || 0),
+            id_promo: promoUuid, // ✅ UUID attendu par le back
+            id_specialite: matiere.id_specialite ?? null,
+            semestre: Number(matiere.semestre) || 0,
+            nb_partiels: Number(matiere.nb_partiels) || 0,
+            nb_eval_intermediaire: matiere.nb_eval_intermediaire ?? null,
+            heures_td: Math.max(0, Number(tdHours) || 0),
+            heures_tp: Math.max(0, Number(tpHours) || 0),
+        }
+
+        console.log('[MATIERES][update] payload ->', payload)
+
+        const res = await updateMatiere(payload)
+
+        if (!res.success) {
+            console.error('[MATIERES][update] error ->', res.error)
+            alert(res.error?.message ?? 'Erreur lors de la sauvegarde')
+            return
+        }
+
+        console.log('[MATIERES][update] success ->', res.data)
+
+        try {
+            await onAfterSave?.()
+        } catch (e) {
+            console.error('[MATIERES][update] onAfterSave failed:', e)
+        }
+
+        onClose()
     }
+
 
     const {
         handleRequestClose,
@@ -120,9 +148,8 @@ export default function MatiereDetailCard({ matiere, onClose, onDelete }: Matier
     } = useDetailDirtyClose({
         hasChanges,
         onClose,
-        onSaveAndClose: () => {
-            handleSave()
-            onClose()
+        onSaveAndClose: async () => {
+            await handleSave()
         },
         ignoreWhenSelectorExists: '.modal-overlay',
     })
