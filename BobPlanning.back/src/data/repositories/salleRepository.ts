@@ -17,10 +17,11 @@ export const salleRepository = {
     capacite: number,
     etage: number,
     description: string,
+    utilisable: string
   ): Promise<string> {
     const sql = `
-            INSERT INTO salle (nom, type, capacite, etage, description)
-            VALUES ($1, $2, $3, $4, $5) RETURNING id
+            INSERT INTO salle (nom, type, capacite, etage, description, utilisable)
+            VALUES ($1, $2, $3, $4, $5, $6) RETURNING id
         `;
 
     const result = await pool.query(sql, [
@@ -29,6 +30,7 @@ export const salleRepository = {
       capacite,
       etage,
       description,
+      utilisable
     ]);
 
     return result.rows[0].id;
@@ -42,6 +44,7 @@ export const salleRepository = {
     capacite: number;
     etage: number;
     description: string;
+    utilisable: boolean;
   }): Promise<boolean> {
     const sql = `
             UPDATE salle
@@ -49,7 +52,8 @@ export const salleRepository = {
                 capacite    = $2,
                 type        = $3,
                 etage       = $4,
-                description = $5
+                description = $5,
+                utilisable = $6
             WHERE id = $6
         `;
 
@@ -59,6 +63,7 @@ export const salleRepository = {
       dto.type,
       dto.etage,
       dto.description,
+      dto.utilisable,
       dto.id,
     ]);
 

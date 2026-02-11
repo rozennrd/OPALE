@@ -1,9 +1,9 @@
-import { salleRepository } from "../../data/repositories/salleRepository";
-import { salleMapper } from "../../mapper/salleMapper";
-import { SalleDTO } from "../dto/salleDto";
+import { salleRepository } from '../../data/repositories/salleRepository';
+import { salleMapper } from '../../mapper/salleMapper';
+import { SalleDTO } from '../dto/salleDto';
 import { SalleCreatedDTO } from '../dto/salleCreatedDto';
 import { CreateSalleDTO } from '../dto/createSalleDto';
-import { UpdateSalleDto } from "../dto/updateSalleDto";
+import { UpdateSalleDto } from '../dto/updateSalleDto';
 
 export const salleService = {
   // Récupère toutes les salles
@@ -20,11 +20,12 @@ export const salleService = {
       dto.capacite,
       dto.etage,
       dto.description,
+      dto.utilisable,
     );
 
     return {
       id,
-      nom: dto.nom
+      nom: dto.nom,
     };
   },
 

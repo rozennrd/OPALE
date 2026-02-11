@@ -5,4 +5,5 @@ export interface UpdateSalleDto {
   capacite: number;
   etage: number;
   description: string;
+  utilisable: boolean;
 }
