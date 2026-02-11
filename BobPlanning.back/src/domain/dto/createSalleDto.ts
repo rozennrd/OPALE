@@ -3,4 +3,5 @@ export interface CreateSalleDTO {
   type: string;
   capacite: number;
   etage: number;
+  description: string;
 }

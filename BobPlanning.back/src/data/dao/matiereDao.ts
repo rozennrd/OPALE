@@ -9,4 +9,7 @@ export interface MatiereDAO {
   nb_eval_intermediaire: number | null;
   heures_td: number | null;
   heures_tp: number | null;
+  heures_projet: number | null;
+  heures_elearning: number | null;
+  heures_autre: number | null;
 }

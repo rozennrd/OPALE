@@ -2,6 +2,7 @@ export interface EventDAO {
     id: string;
     type: string;
     nom: string;
+    description: string;
     num_semaine: number | null;
     datetime_start: Date;
     datetime_end: Date;

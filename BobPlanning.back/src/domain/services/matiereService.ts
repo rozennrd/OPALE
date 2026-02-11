@@ -40,6 +40,9 @@ export const matiereService = {
         nb_eval_intermediaire: dto.nb_eval_intermediaire ?? null,
         heures_td: dto.heures_td ?? null,
         heures_tp: dto.heures_tp ?? null,
+        heures_projet: dto.heures_projet ?? null,
+        heures_elearning: dto.heures_elearning ?? null,
+        heures_autre: dto.heures_autre ?? null,
       });
 
       return { id };
@@ -84,6 +87,9 @@ export const matiereService = {
       nb_eval_intermediaire: dto.nb_eval_intermediaire ?? null,
       heures_td: dto.heures_td ?? null,
       heures_tp: dto.heures_tp ?? null,
+      heures_projet: dto.heures_projet ?? null,
+      heures_elearning: dto.heures_elearning ?? null,
+      heures_autre: dto.heures_autre ?? null,
     });
 
     if (!updated) {

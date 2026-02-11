@@ -6,6 +6,7 @@ function validateEventDto(req: Request, res: Response): EventDTO | null {
   const {
     type,
     nom,
+    description,
     num_semaine,
     datetime_start,
     datetime_end,
@@ -55,6 +56,7 @@ function validateEventDto(req: Request, res: Response): EventDTO | null {
   return {
     type,
     nom,
+    description,
     num_semaine: num_semaine || undefined,
     datetime_start: new Date(datetime_start),
     datetime_end: new Date(datetime_end),
