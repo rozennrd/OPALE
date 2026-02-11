@@ -28,7 +28,7 @@ export function usePromotionCycles() {
     // Store pending rename timeouts for each cycle
     const renameTimeoutsRef = useRef<Map<string, number>>(new Map())
 
-// Load cycles from backend on mount
+    // Load cycles from backend on mount
     const loadCycles = async () => {
         try {
             setLoading(true)
