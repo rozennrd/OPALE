@@ -32,6 +32,7 @@ export const transformBackendMatiereToFrontend = (
         nom: backend.nom ?? '—',
         volume_horaire: backend.volume_horaire ?? 0,
         id_promo: promoLabel,
+        promo_id: backend.id_promo ?? undefined,
         id_specialite: backend.id_specialite ?? undefined,
         semestre: backend.semestre ?? 0,
         nb_partiels: backend.nb_partiels ?? 0,

@@ -10,7 +10,8 @@ export interface Matiere {
     id: string
     nom: string
     volume_horaire: number
-    id_promo: string
+    id_promo: string // Label de la promo, pas l'UUID
+    promo_id?: string // UUID original de la promo
     id_specialite?: string
     semestre: number
     nb_partiels: number
