@@ -115,7 +115,6 @@ export default function Matieres() {
                 setAllPromotionLabels(promotionLabels)
                 setAllCycleNames(cycleNames)
 
-
             } catch (e) {
                 console.error('[MATIERES] load failed:', e)
                 if (!mounted) return
@@ -163,9 +162,9 @@ export default function Matieres() {
 
     const teacherOptions = useMemo(() => {
         return (teachers ?? [])
-            .map((t) => ({
+            .map((t: any) => ({
                 id: String(t.id),
-                label: `${t.firstName ?? ''} ${t.lastName ?? ''}`.trim(),
+                label: `${t.prenom ?? ''} ${t.nom ?? ''}`.trim(),
             }))
             .filter((o) => o.label.length > 0)
             .sort((a, b) => a.label.localeCompare(b.label, 'fr'))
@@ -304,6 +303,8 @@ export default function Matieres() {
         setMatieres(frontMatieres)
     }
 
+    console.log('Teacher option :', teacherOptions)
+
     return (
         <>
             <PageHeader title="Matières" subtitle="Gestion des matières par promotion" />
@@ -366,9 +367,9 @@ export default function Matieres() {
             {selected && (
                 <MatiereDetailCard
                     matiere={selected}
-                    teachers={teachers}
                     onClose={() => setSelected(null)}
                     onAfterSave={reloadMatieres}
+                    teacherOptions={teacherOptions}
                     onDelete={() => handleDeleteSingleMatiere(selected.id)}
                 />
             )}

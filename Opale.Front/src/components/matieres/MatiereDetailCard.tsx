@@ -8,35 +8,44 @@ import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 import MatiereBadge from './MatiereBadge'
 import { updateMatiere } from '../../services/api/matieresApi'
-import { TeacherApi } from '../../services/api/professorsApi'
+import {
+    addEnseignement,
+    deleteEnseignement,
+    getEnseignements,
+    updateEnseignement,
+} from '../../services/api/enseignementsApi'
+
+type TeacherOption = { id: string; label: string }
 
 interface MatiereDetailCardProps {
     matiere: Matiere
     onClose: () => void
     onAfterSave?: () => Promise<void> | void
-    teachers: TeacherApi[]
+
     onDelete?: () => void
+    teacherOptions: TeacherOption[]
 }
 
 type TeachKind = 'TD' | 'TP'
 
 interface TeacherAssignment {
     rowId: string
+    enseignementId?: string
     teacherId: string
     tdHours: number
     tpHours: number
 }
 
 const makeRowId = () => `assign-${Math.random().toString(16).slice(2)}`
+const clamp0 = (v: any) => Math.max(0, Number(v) || 0)
 
-const teacherLabel = (t: TeacherApi) => `${(t.nom ?? '').toUpperCase()} ${t.prenom ?? ''}`.trim()
-
-export default function MatiereDetailCard({ matiere, onClose, onAfterSave,onDelete, teachers }: MatiereDetailCardProps) {
-    const teacherOptions = useMemo(() => {
-        return (teachers ?? [])
-            .slice()
-            .sort((a, b) => teacherLabel(a).localeCompare(teacherLabel(b), 'fr'))
-    }, [teachers])
+export default function MatiereDetailCard({
+                                              matiere,
+                                              onClose,
+                                              onAfterSave,
+                                              teacherOptions,
+                                          }: MatiereDetailCardProps) {
+    // --- left column (matière)
 
     const [name, setName] = useState(matiere.nom)
     const [volumeTotal, setVolumeTotal] = useState(matiere.volume_horaire)
@@ -46,13 +55,71 @@ export default function MatiereDetailCard({ matiere, onClose, onAfterSave,onDele
         { rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 },
     ])
 
+    // --- right column (enseignements)
+    const [loadingEns, setLoadingEns] = useState(false)
+    const [assignments, setAssignments] = useState<TeacherAssignment[]>([])
+    const [initialAssignments, setInitialAssignments] = useState<TeacherAssignment[]>([])
+    const [removedEnseignementIds, setRemovedEnseignementIds] = useState<string[]>([])
+
+    // Reset local fields when matiere changes
     useEffect(() => {
         setName(matiere.nom)
         setVolumeTotal(matiere.volume_horaire)
         setTdHours(matiere.heures_td)
         setTpHours(matiere.heures_tp ?? 0)
-        setAssignments([{ rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 }])
     }, [matiere])
+
+    // Load enseignements for this matiere
+    useEffect(() => {
+        let mounted = true
+
+        ;(async () => {
+            setLoadingEns(true)
+            setRemovedEnseignementIds([])
+
+            try {
+                console.log('[MATIERE_DETAIL] loading enseignements for matiere:', matiere.id)
+
+                const res = await getEnseignements()
+                console.log('[MATIERE_DETAIL] getEnseignements response ->', res)
+
+                if (!res.success) throw new Error(res.error?.message ?? 'getEnseignements failed')
+
+                const all = res.data ?? []
+
+                // ⚠️ Si ton backend n'utilise pas "id_matiere", change ici.
+                const mine = all.filter((e: any) => String(e.id_matiere) === String(matiere.id))
+
+                console.log('[MATIERE_DETAIL] enseignements filtered ->', mine)
+
+                const rows: TeacherAssignment[] =
+                    mine.length > 0
+                        ? mine.map((e: any) => ({
+                            rowId: makeRowId(),
+                            enseignementId: String(e.id),
+                            teacherId: String(e.id_prof ?? ''),
+                            tdHours: clamp0(e.heures_td),
+                            tpHours: clamp0(e.heures_tp),
+                        }))
+                        : [{ rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 }]
+
+                if (!mounted) return
+                setAssignments(rows)
+                setInitialAssignments(rows.map((r) => ({ ...r })))
+            } catch (err) {
+                console.error('[MATIERE_DETAIL] load enseignements failed:', err)
+                if (!mounted) return
+                setAssignments([{ rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 }])
+                setInitialAssignments([])
+            } finally {
+                if (mounted) setLoadingEns(false)
+            }
+        })()
+
+        return () => {
+            mounted = false
+        }
+    }, [matiere.id])
 
     const assignedTD = useMemo(
         () => assignments.reduce((acc, r) => acc + (Number.isFinite(r.tdHours) ? r.tdHours : 0), 0),
@@ -63,19 +130,18 @@ export default function MatiereDetailCard({ matiere, onClose, onAfterSave,onDele
         [assignments],
     )
 
-    const hasChanges =
-        name !== matiere.nom ||
-        volumeTotal !== matiere.volume_horaire ||
-        tdHours !== matiere.heures_td ||
-        tpHours !== (matiere.heures_tp ?? 0) ||
-        assignments.some((a) => a.tdHours !== 0 || a.tpHours !== 0 || a.teacherId !== '')
-
     const handleAddAssignment = () => {
         setAssignments((prev) => [...prev, { rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 }])
     }
 
     const handleRemoveAssignment = (rowId: string) => {
-        setAssignments((prev) => prev.filter((r) => r.rowId !== rowId))
+        setAssignments((prev) => {
+            const row = prev.find((r) => r.rowId === rowId)
+            if (row?.enseignementId) {
+                setRemovedEnseignementIds((ids) => Array.from(new Set([...ids, row.enseignementId!])))
+            }
+            return prev.filter((r) => r.rowId !== rowId)
+        })
     }
 
     const handleAssignmentChange = (
@@ -95,6 +161,26 @@ export default function MatiereDetailCard({ matiere, onClose, onAfterSave,onDele
         )
     }
 
+    const assignmentsChanged = useMemo(() => {
+        const norm = (a: TeacherAssignment) => ({
+            enseignementId: a.enseignementId ?? '',
+            teacherId: String(a.teacherId ?? ''),
+            td: clamp0(a.tdHours),
+            tp: clamp0(a.tpHours),
+        })
+        return (
+            JSON.stringify(assignments.map(norm)) !== JSON.stringify(initialAssignments.map(norm)) ||
+            removedEnseignementIds.length > 0
+        )
+    }, [assignments, initialAssignments, removedEnseignementIds])
+
+    const hasChanges =
+        name !== matiere.nom ||
+        volumeTotal !== matiere.volume_horaire ||
+        tdHours !== matiere.heures_td ||
+        tpHours !== (matiere.heures_tp ?? 0) ||
+        assignmentsChanged
+
     const handleSave = async () => {
         // UUID promo obligatoire pour update côté back
         const promoUuid = (matiere as any).promo_id as string | undefined
@@ -104,41 +190,92 @@ export default function MatiereDetailCard({ matiere, onClose, onAfterSave,onDele
             return
         }
 
-        // payload backend (on n'envoie PAS assignments tant que l'API ne le gère pas)
-        const payload = {
+        // 1) Update matière
+        const matierePayload = {
             id: matiere.id,
             nom: name.trim() || matiere.nom,
-            volume_horaire: Math.max(0, Number(volumeTotal) || 0),
-            id_promo: promoUuid, // ✅ UUID attendu par le back
-            id_specialite: matiere.id_specialite ?? null,
+            volume_horaire: clamp0(volumeTotal),
+            id_promo: promoUuid,
+            id_specialite: (matiere as any).id_specialite ?? null,
             semestre: Number(matiere.semestre) || 0,
-            nb_partiels: Number(matiere.nb_partiels) || 0,
-            nb_eval_intermediaire: matiere.nb_eval_intermediaire ?? null,
-            heures_td: Math.max(0, Number(tdHours) || 0),
-            heures_tp: Math.max(0, Number(tpHours) || 0),
+            nb_partiels: Number((matiere as any).nb_partiels) || 0,
+            nb_eval_intermediaire: (matiere as any).nb_eval_intermediaire ?? null,
+            heures_td: clamp0(tdHours),
+            heures_tp: clamp0(tpHours),
         }
 
-        console.log('[MATIERES][update] payload ->', payload)
+        console.log('[MATIERE_DETAIL][save] updateMatiere payload ->', matierePayload)
+        const matRes = await updateMatiere(matierePayload as any)
+        console.log('[MATIERE_DETAIL][save] updateMatiere response ->', matRes)
 
-        const res = await updateMatiere(payload)
-
-        if (!res.success) {
-            console.error('[MATIERES][update] error ->', res.error)
-            alert(res.error?.message ?? 'Erreur lors de la sauvegarde')
+        if (!matRes.success) {
+            alert(matRes.error?.message ?? 'Erreur lors de la sauvegarde matière')
             return
         }
 
-        console.log('[MATIERES][update] success ->', res.data)
+        // 2) Enseignements: delete + upsert
+        const rows = assignments
+            .map((r) => ({
+                ...r,
+                teacherId: String(r.teacherId ?? ''),
+                tdHours: clamp0(r.tdHours),
+                tpHours: clamp0(r.tpHours),
+            }))
+            // on ignore les lignes vides
+            .filter((r) => r.teacherId.length > 0 && (r.tdHours > 0 || r.tpHours > 0))
 
+        console.log('[MATIERE_DETAIL][save] rows upsert ->', rows)
+        console.log('[MATIERE_DETAIL][save] rows removed ->', removedEnseignementIds)
+
+        // deletes
+        for (const id of removedEnseignementIds) {
+            const delRes = await deleteEnseignement(id)
+            console.log('[MATIERE_DETAIL][save] deleteEnseignement', id, '->', delRes)
+            if (!delRes.success) {
+                alert(delRes.error?.message ?? `Erreur suppression enseignement ${id}`)
+                return
+            }
+        }
+
+        // upserts
+        for (const r of rows) {
+            if (r.enseignementId) {
+                const upRes = await updateEnseignement({
+                    id: r.enseignementId,
+                    id_matiere: matiere.id,
+                    id_prof: r.teacherId,
+                    heures_td: r.tdHours,
+                    heures_tp: r.tpHours,
+                } as any)
+                console.log('[MATIERE_DETAIL][save] updateEnseignement ->', upRes)
+                if (!upRes.success) {
+                    alert(upRes.error?.message ?? 'Erreur update enseignement')
+                    return
+                }
+            } else {
+                const addRes = await addEnseignement({
+                    id_matiere: matiere.id,
+                    id_prof: r.teacherId,
+                    heures_td: r.tdHours,
+                    heures_tp: r.tpHours,
+                } as any)
+                console.log('[MATIERE_DETAIL][save] addEnseignement ->', addRes)
+                if (!addRes.success) {
+                    alert(addRes.error?.message ?? 'Erreur add enseignement')
+                    return
+                }
+            }
+        }
+
+        // 3) Refresh parent list + close
         try {
             await onAfterSave?.()
         } catch (e) {
-            console.error('[MATIERES][update] onAfterSave failed:', e)
+            console.error('[MATIERE_DETAIL][save] onAfterSave failed:', e)
         }
 
         onClose()
     }
-
 
     const {
         handleRequestClose,
@@ -173,15 +310,12 @@ export default function MatiereDetailCard({ matiere, onClose, onAfterSave,onDele
                     />
                 </DetailCardHeader>
 
-                {/* Layout 2 colonnes générique */}
                 <div className="detail-layout">
                     {/* Colonne gauche : infos matière */}
                     <div className="detail-main-column">
                         <section className="room-detail-section">
                             <h3 className="room-detail-section-title">Informations</h3>
-                            <p className="room-detail-hint-small">
-                                Ajuste les volumes puis répartis les heures par enseignant.
-                            </p>
+                            <p className="room-detail-hint-small">Ajuste les volumes puis répartis les heures par enseignant.</p>
 
                             <div className="room-detail-identity-grid">
                                 <div className="room-detail-field">
@@ -249,26 +383,18 @@ export default function MatiereDetailCard({ matiere, onClose, onAfterSave,onDele
                                 <div>
                                     <h3 className="room-detail-section-title">Enseignants</h3>
                                     <p className="room-detail-hint-xsmall">
-                                        TD assigné : <strong>{assignedTD}h</strong> · TP assigné :{' '}
-                                        <strong>{assignedTP}h</strong>
+                                        TD assigné : <strong>{assignedTD}h</strong> · TP assigné : <strong>{assignedTP}h</strong>
+                                        {loadingEns ? ' · Chargement…' : ''}
                                     </p>
                                 </div>
 
-                                <button
-                                    type="button"
-                                    className="btn-tertiary matiere-assign-add"
-                                    onClick={handleAddAssignment}
-                                >
+                                <button type="button" className="btn-tertiary matiere-assign-add" onClick={handleAddAssignment}>
                                     + Ajouter
                                 </button>
                             </div>
 
                             <div className="matiere-assign-list">
-                                {assignments.length === 0 && (
-                                    <div className="matieres-empty-state">
-                                        Aucun enseignant sélectionné.
-                                    </div>
-                                )}
+                                {assignments.length === 0 && <div className="matieres-empty-state">Aucun enseignant sélectionné.</div>}
 
                                 {assignments.map((row) => {
                                     const tdChecked = row.tdHours > 0
@@ -280,15 +406,12 @@ export default function MatiereDetailCard({ matiere, onClose, onAfterSave,onDele
                                                 <select
                                                     className="room-detail-input matiere-assign-select"
                                                     value={row.teacherId}
-                                                    onChange={(e) =>
-                                                        handleAssignmentChange(row.rowId, {
-                                                            teacherId: e.target.value,
-                                                        })
-                                                    }
+                                                    onChange={(e) => handleAssignmentChange(row.rowId, { teacherId: e.target.value })}
                                                 >
+                                                    <option value="">— Choisir un enseignant —</option>
                                                     {teacherOptions.map((t) => (
                                                         <option key={t.id} value={String(t.id)}>
-                                                            {teacherLabel(t)}
+                                                            {t.label}
                                                         </option>
                                                     ))}
                                                 </select>
@@ -306,9 +429,7 @@ export default function MatiereDetailCard({ matiere, onClose, onAfterSave,onDele
                                             <div className="matiere-assign-hours">
                                                 <button
                                                     type="button"
-                                                    className={
-                                                        tdChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'
-                                                    }
+                                                    className={tdChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
                                                     onClick={() => handleToggleKind(row.rowId, 'TD')}
                                                     aria-pressed={tdChecked}
                                                 >
@@ -320,19 +441,13 @@ export default function MatiereDetailCard({ matiere, onClose, onAfterSave,onDele
                                                     min={0}
                                                     value={row.tdHours}
                                                     disabled={!tdChecked}
-                                                    onChange={(e) =>
-                                                        handleAssignmentChange(row.rowId, {
-                                                            tdHours: Number(e.target.value),
-                                                        })
-                                                    }
+                                                    onChange={(e) => handleAssignmentChange(row.rowId, { tdHours: Number(e.target.value) })}
                                                     aria-label="Heures TD"
                                                 />
 
                                                 <button
                                                     type="button"
-                                                    className={
-                                                        tpChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'
-                                                    }
+                                                    className={tpChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
                                                     onClick={() => handleToggleKind(row.rowId, 'TP')}
                                                     aria-pressed={tpChecked}
                                                 >
@@ -344,11 +459,7 @@ export default function MatiereDetailCard({ matiere, onClose, onAfterSave,onDele
                                                     min={0}
                                                     value={row.tpHours}
                                                     disabled={!tpChecked}
-                                                    onChange={(e) =>
-                                                        handleAssignmentChange(row.rowId, {
-                                                            tpHours: Number(e.target.value),
-                                                        })
-                                                    }
+                                                    onChange={(e) => handleAssignmentChange(row.rowId, { tpHours: Number(e.target.value) })}
                                                     aria-label="Heures TP"
                                                 />
                                             </div>
