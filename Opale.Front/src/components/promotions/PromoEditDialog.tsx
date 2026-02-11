@@ -1,7 +1,7 @@
 // src/components/promotions/PromoEditDialog.tsx
 import React, { useEffect, useState, useCallback } from 'react'
 import { Constraints } from '../../models'
-import { EditingPromotion } from '../../hooks/promotions/usePromotionEditing'
+import { EditingPromotion } from '../../hooks/promotions'
 import { computePromoTotals } from '../../utils/promoUtils'
 
 import PromoMainInfo from './sections/PromoMainInfo'
@@ -13,10 +13,9 @@ import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import ConfirmDialog from '../common/ConfirmDialog'
 
 interface PromoEditDialogProps {
-    isApprentissage: boolean
     editingPromo: EditingPromotion
     hasChanges: boolean
-    onSubmit: () => Promise<void>
+    onSubmit: (promo:EditingPromotion) => Promise<EditingPromotion>
     onClose: () => void
     onFieldChange: (field: string, value: string | number) => void
     onStudentsBlur?: () => void
@@ -32,16 +31,18 @@ interface PromoEditDialogProps {
     onUpdateConstraintRange: (
         type: string,
         id: string,
-        field: string,
+        field: 'start' | 'end',
         value: string
     ) => void
+    onAddEvent?: (type: string, startDate: string, endDate: string) => Promise<void>
+    onUpdateEvent?: (eventId: string, type: string, startDate: string, endDate: string) => Promise<void>
+    onDeleteEvent?: (eventId: string) => Promise<void>
 }
 
 const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
-    const { isApprentissage, editingPromo, hasChanges, onClose } = props
+    const { editingPromo, hasChanges, onClose } = props
 
     const [openCloseConfirm, setOpenCloseConfirm] = useState(false)
-    const [saveError, setSaveError] = useState<string | null>(null)
 
     // Fermeture demandée par la croix / ESC (au niveau de la card)
     const handleRequestClose = useCallback(() => {
@@ -84,22 +85,14 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
         constraints: editingPromo.constraints,
     })
 
-    const handleSave = async () => {
-        try {
-            setSaveError(null)
-            await props.onSubmit()
-        } catch (error) {
-            console.error('Save error:', error)
-            setSaveError('Erreur lors de la sauvegarde. Veuillez réessayer.')
-        }
+    const handleSave = () => {
+        props.onSubmit(editingPromo)
     }
 
-    const handleConfirmSaveAndClose = async () => {
+    const handleConfirmSaveAndClose = () => {
         setOpenCloseConfirm(false)
-        await handleSave()
-        if (!saveError) {
-            props.onClose()
-        }
+        handleSave()
+        props.onClose()
     }
 
     const handleDiscardAndClose = () => {
@@ -154,11 +147,14 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                     </div>
 
                     <ConstraintsSection
-                        promoIsApprentissage={isApprentissage}
+                        promoIsApprentissage={false} // Default value, should be passed from parent
                         constraints={props.constraints}
                         onAddConstraint={props.onAddConstraint}
                         onRemoveConstraint={props.onRemoveConstraint}
                         onUpdateConstraintRange={props.onUpdateConstraintRange}
+                        onUpdateEvent={props.onUpdateEvent}
+                        onDeleteEvent={props.onDeleteEvent}
+                        promoId={editingPromo.promoId}
                     />
                 </div>
 
@@ -176,12 +172,6 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                                 {totals.totalStudents}.
                             </p>
                         )}
-                    </div>
-                )}
-
-                {saveError && (
-                    <div className="promo-edit-error">
-                        <p>{saveError}</p>
                     </div>
                 )}
 

@@ -17,6 +17,7 @@ import {
 } from '../hooks/promotions'
 
 import PageHeader from '../components/common/PageHeader'
+import {usePromotionSync} from "../hooks/promotions/usePromotionSync.ts";
 
 export default function Promotions() {
     const {
@@ -35,17 +36,20 @@ export default function Promotions() {
     } = usePromotionCycles()
 
     const {
+        savePromotion
+    } = usePromotionSync();
+
+    const {
         editingPromo,
         setEditingPromo,
         openEditPromotion,
         closeEditPromotion,
         handleEditFieldChange,
-        handleSavePromotion,
         addGroup,
         removeGroup,
         handleGroupChange,
         hasChanges,
-    } = usePromotionEditing(cycles, setCycles)
+    } = usePromotionEditing(cycles)
 
     const {
         adjustPopup,
@@ -98,13 +102,22 @@ export default function Promotions() {
                 <PromoEditDialog
                     editingPromo={editingPromo}
                     hasChanges={hasChanges}
-                    onSubmit={handleSavePromotion}
+                    onSubmit={savePromotion}
                     onClose={closeEditPromotion}
                     onFieldChange={handleEditFieldChange}
                     onGroupChange={handleGroupChange}
                     onAddGroup={addGroup}
                     onRemoveGroup={removeGroup}
                     onStudentsBlur={handleStudentsBlur}
+                    onSpecialtyChange={(index, field, value) => {
+                        // Add specialty change handler
+                    }}
+                    onAddSpecialty={() => {
+                        // Add specialty handler
+                    }}
+                    onRemoveSpecialty={(index) => {
+                        // Remove specialty handler
+                    }}
                     constraints={editingPromo.constraints}
                     onAddConstraint={handleAddConstraint}
                     onRemoveConstraint={handleRemoveConstraint}

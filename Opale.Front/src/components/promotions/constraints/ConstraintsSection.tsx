@@ -16,6 +16,10 @@ interface ConstraintsSectionProps {
     onAddConstraint: (type: string) => void
     onRemoveConstraint: (type: string, id: string) => void
     onUpdateConstraintRange: (type: string, id: string, field: 'start' | 'end', value: string) => void
+    onAddEvent?: (type: string, startDate: string, endDate: string) => Promise<void>
+    onUpdateEvent?: (eventId: string, type: string, startDate: string, endDate: string) => Promise<void>
+    onDeleteEvent?: (eventId: string) => Promise<void>
+    promoId?: string
 }
 
 
@@ -25,6 +29,7 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
     onAddConstraint,
     onRemoveConstraint,
     onUpdateConstraintRange,
+    promoId,
 }) => {
     const [editingRange, setEditingRange] = useState<EditingRange | null>(null)
 
@@ -77,6 +82,7 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
                     onRangeDateChange={handleRangeDateChange}
                     onRemoveRange={handleRemoveRange}
                     onAddConstraint={onAddConstraint}
+                    promoId={promoId}
                 />
 
                 {/* Stages */}
@@ -92,6 +98,8 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
                     onRangeDateChange={handleRangeDateChange}
                     onRemoveRange={handleRemoveRange}
                     onAddConstraint={onAddConstraint}
+
+                    promoId={promoId}
                 />
 
                 {/* International */}
@@ -107,6 +115,7 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
                     onRangeDateChange={handleRangeDateChange}
                     onRemoveRange={handleRemoveRange}
                     onAddConstraint={onAddConstraint}
+                    promoId={promoId}
                 />
 
                 {/* Partiels */}
@@ -122,6 +131,7 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
                     onRangeDateChange={handleRangeDateChange}
                     onRemoveRange={handleRemoveRange}
                     onAddConstraint={onAddConstraint}
+                    promoId={promoId}
                 />
 
                 {/* Rattrapages */}
@@ -137,6 +147,7 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
                     onRangeDateChange={handleRangeDateChange}
                     onRemoveRange={handleRemoveRange}
                     onAddConstraint={onAddConstraint}
+                    promoId={promoId}
                 />
             </div>
         </section>
