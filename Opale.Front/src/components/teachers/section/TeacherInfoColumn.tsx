@@ -99,7 +99,7 @@ const TeacherInfoColumn: React.FC<TeacherInfoColumnProps> = ({ teacher, onInfoCh
                 </div>
                 {teacher.category !== 'VACATAIRE' && (
                     <div className="teacher-detail-item">
-                        <dt>Campus d'origine</dt>
+                        <dt>Campus d&apos;origine</dt>
                         <dd>
                             <select
                                 className="teacher-detail-select"

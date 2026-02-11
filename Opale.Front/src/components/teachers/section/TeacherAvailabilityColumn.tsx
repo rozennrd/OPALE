@@ -34,6 +34,24 @@ const TeacherAvailabilityColumn: React.FC<TeacherAvailabilityColumnProps> = ({
         () => periods.find((p) => p.id === selectedPeriodId) ?? periods[0],
         [periods, selectedPeriodId],
     )
+    const sortedPeriods = useMemo(() => {
+        const entries = periods.map((period, index) => ({
+            period,
+            index,
+            sortKey: period.start || period.end || null,
+        }))
+        const hasAnyDate = entries.some((entry) => entry.sortKey)
+        if (!hasAnyDate) return periods
+        return entries
+            .sort((a, b) => {
+                if (!a.sortKey && !b.sortKey) return a.index - b.index
+                if (!a.sortKey) return 1
+                if (!b.sortKey) return -1
+                if (a.sortKey === b.sortKey) return a.index - b.index
+                return a.sortKey.localeCompare(b.sortKey)
+            })
+            .map((entry) => entry.period)
+    }, [periods])
 
     if (!selectedPeriod) {
         return (
@@ -72,24 +90,6 @@ const TeacherAvailabilityColumn: React.FC<TeacherAvailabilityColumnProps> = ({
         return formatDate(period.end)
     }
 
-    const sortedPeriods = useMemo(() => {
-        const entries = periods.map((period, index) => ({
-            period,
-            index,
-            sortKey: period.start || period.end || null,
-        }))
-        const hasAnyDate = entries.some((entry) => entry.sortKey)
-        if (!hasAnyDate) return periods
-        return entries
-            .sort((a, b) => {
-                if (!a.sortKey && !b.sortKey) return a.index - b.index
-                if (!a.sortKey) return 1
-                if (!b.sortKey) return -1
-                if (a.sortKey === b.sortKey) return a.index - b.index
-                return a.sortKey.localeCompare(b.sortKey)
-            })
-            .map((entry) => entry.period)
-    }, [periods])
     return (
         <div className="teacher-detail-col">
             <h4>Disponibilités</h4>
