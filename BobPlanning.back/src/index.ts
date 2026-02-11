@@ -1314,6 +1314,7 @@ app.post('/setAllCourses', authJwt.verifyToken, async (req, res) => {
       } catch (e) { console.log (e)}
    
   });
+});
 
 
 app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {

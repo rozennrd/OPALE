@@ -1,3 +1,6 @@
+import {GroupeDAO} from "./groupeDao";
+
+
 export interface PromotionDAO {
   id: string;
   nom: string;
@@ -6,4 +9,5 @@ export interface PromotionDAO {
   date_start: Date | null;
   date_end: Date | null;
   type?: string; // jointure cycle
+  groupes: GroupeDAO[]
 }

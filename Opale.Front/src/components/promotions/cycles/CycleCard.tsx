@@ -12,6 +12,8 @@ import {
     MaquetteAnalyzeResponse,
     MaquetteImportResponse,
 } from '../../../services/api/maquetteApi'
+import { Promotion } from "../../../models"
+
 
 interface CycleCardProps {
     cycle: Cycle
@@ -441,7 +443,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                         aria-label="Supprimer le cycle"
                         title="Supprimer le cycle"
                     >
-                        <img src={icTrash} alt="" aria-hidden="true" />
+                        <img src={icTrash} alt="" aria-hidden="true"/>
                         <span className="btn-label">Supprimer le cycle</span>
                     </button>
                 </div>
@@ -454,7 +456,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                     </div>
                 )}
 
-                {cycle.promotions.map((promo) => (
+                {cycle.promotions.map((promo: Promotion) => (
                     <div key={promo.id} className="promo-row">
                         <div className="promo-main">
                             <span className="promo-label">{promo.label}</span>
