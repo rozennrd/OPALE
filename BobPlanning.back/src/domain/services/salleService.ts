@@ -18,7 +18,8 @@ export const salleService = {
       dto.nom,
       dto.type,
       dto.capacite,
-      dto.etage
+      dto.etage,
+      dto.description,
     );
 
     return {

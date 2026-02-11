@@ -4,5 +4,6 @@ export interface SalleDAO {
   type: string;
   capacite: number;
   etage: number;
+  description: string;
 }
 

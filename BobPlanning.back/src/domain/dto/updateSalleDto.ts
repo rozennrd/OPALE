@@ -4,4 +4,5 @@ export interface UpdateSalleDto {
   type: string;
   capacite: number;
   etage: number;
+  description: string;
 }

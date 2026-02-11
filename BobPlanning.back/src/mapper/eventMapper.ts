@@ -7,6 +7,7 @@ export const eventMapper = {
             id: dao.id,
             type: dao.type as TypeEvent,
             nom: dao.nom,
+            description: dao.description,
             num_semaine: dao.num_semaine || undefined,
             datetime_start: dao.datetime_start,
             datetime_end: dao.datetime_end,

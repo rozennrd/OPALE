@@ -40,6 +40,7 @@ CREATE TABLE salle (
                        type        type_salle          NOT NULL,
                        capacite    INT,
                        etage       INT,
+                       description VARCHAR(255),
                        CONSTRAINT uq_salle_nom UNIQUE (nom)
 );
 
@@ -48,6 +49,7 @@ CREATE TABLE event (
                        id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                        type            type_event          NOT NULL,
                        nom             VARCHAR(255)        NOT NULL,
+                       description     VARCHAR(255),
                        num_semaine     INT,
                        datetime_start  TIMESTAMP           NOT NULL,
                        datetime_end    TIMESTAMP           NOT NULL,
@@ -132,6 +134,9 @@ CREATE TABLE matiere (
                          nb_eval_intermediaire  INT,
                          heures_td              INT,
                          heures_tp              INT,
+                         heures_projet          FLOAT,
+                         heures_elearning       FLOAT,
+                         heures_autre           FLOAT,
                          CONSTRAINT fk_matiere_promotion
                              FOREIGN KEY (id_promo)
                                  REFERENCES promotion(id)

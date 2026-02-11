@@ -47,6 +47,7 @@ export const eventService = {
         const id = await eventRepository.insert(
             dto.type,
             dto.nom,
+            dto.description,
             dto.num_semaine || null,
             dto.datetime_start,
             dto.datetime_end,
@@ -85,6 +86,7 @@ export const eventService = {
             dto.id,
             dto.type,
             dto.nom,
+            dto.description,
             dto.num_semaine || null,
             dto.datetime_start,
             dto.datetime_end,

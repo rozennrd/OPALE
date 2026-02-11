@@ -6,7 +6,7 @@ export const eventRepository = {
     // Récupère tous les événements
     async getAll(): Promise<EventDAO[]> {
         const sql = `
-            SELECT id, type, nom, num_semaine, datetime_start, datetime_end,
+            SELECT id, type, nom, description, num_semaine, datetime_start, datetime_end,
                    show_macro, show_micro, is_blocking, is_exceptional, is_external
             FROM event
             ORDER BY datetime_start DESC
@@ -18,7 +18,7 @@ export const eventRepository = {
     // Récupère un événement par son ID
     async getById(id: string): Promise<EventDAO | null> {
         const sql = `
-            SELECT id, type, nom, num_semaine, datetime_start, datetime_end,
+            SELECT id, type, nom, description, num_semaine, datetime_start, datetime_end,
                    show_macro, show_micro, is_blocking, is_exceptional, is_external
             FROM event
             WHERE id = $1
@@ -30,7 +30,7 @@ export const eventRepository = {
     // Récupère les événements exceptionnels
     async getExceptional(): Promise<EventDAO[]> {
         const sql = `
-            SELECT id, type, nom, num_semaine, datetime_start, datetime_end,
+            SELECT id, type, nom, description, num_semaine, datetime_start, datetime_end,
                    show_macro, show_micro, is_blocking, is_exceptional, is_external
             FROM event
             WHERE is_exceptional = TRUE
@@ -46,6 +46,7 @@ export const eventRepository = {
             SELECT id,
                    type,
                    nom,
+                   description, 
                    num_semaine,
                    datetime_start,
                    datetime_end,
@@ -69,7 +70,7 @@ export const eventRepository = {
     // Récupère les événements par promotion et types
     async getByPromoAndTypes(promoNom: string, types: string[]): Promise<EventDAO[]> {
         const sql = `
-            SELECT e.id, e.type, e.nom, e.num_semaine, e.datetime_start, e.datetime_end,
+            SELECT e.id, e.type, e.nom, e.description, e.num_semaine, e.datetime_start, e.datetime_end,
                    e.show_macro, e.show_micro, e.is_blocking, e.is_exceptional, e.is_external
             FROM event e
             JOIN concerner c ON c.id_event = e.id
@@ -86,6 +87,7 @@ export const eventRepository = {
     async insert(
         type: string,
         nom: string,
+        description: string,
         num_semaine: number | null,
         datetime_start: Date,
         datetime_end: Date,
@@ -96,14 +98,15 @@ export const eventRepository = {
         is_external: boolean
     ): Promise<string> {
         const sql = `
-            INSERT INTO event (type, nom, num_semaine, datetime_start, datetime_end,
+            INSERT INTO event (type, nom, description, num_semaine, datetime_start, datetime_end,
                                show_macro, show_micro, is_blocking, is_exceptional, is_external)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
                 RETURNING id
         `;
         const result = await pool.query(sql, [
             type,
             nom,
+            description,
             num_semaine,
             datetime_start,
             datetime_end,
@@ -121,6 +124,7 @@ export const eventRepository = {
         id: string,
         type: string,
         nom: string,
+        description: string,
         num_semaine: number | null,
         datetime_start: Date,
         datetime_end: Date,
@@ -132,13 +136,14 @@ export const eventRepository = {
     ): Promise<void> {
         const sql = `
             UPDATE event
-            SET type = $1, nom = $2, num_semaine = $3, datetime_start = $4, datetime_end = $5,
-                show_macro = $6, show_micro = $7, is_blocking = $8, is_exceptional = $9, is_external = $10
-            WHERE id = $11
+            SET type = $1, nom = $2, description = $3, num_semaine = $4, datetime_start = $5, datetime_end = $6,
+                show_macro = $7, show_micro = $8, is_blocking = $9, is_exceptional = $10, is_external = $11
+            WHERE id = $12
         `;
         await pool.query(sql, [
             type,
             nom,
+            description,
             num_semaine,
             datetime_start,
             datetime_end,

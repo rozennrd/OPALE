@@ -4,4 +4,5 @@ export interface SalleDTO {
   type: string;
   capacite: number;
   etage: number;
+  description: string;
 }

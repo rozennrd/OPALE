@@ -4,6 +4,7 @@ export interface EventDTO {
     id?: string;
     type: TypeEvent;
     nom: string;
+    description: string;
     num_semaine?: number;
     datetime_start: Date;
     datetime_end: Date;

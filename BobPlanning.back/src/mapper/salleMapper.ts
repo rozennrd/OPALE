@@ -10,6 +10,7 @@ export const salleMapper = {
       type: dao.type,
       capacite: dao.capacite,
       etage: dao.etage,
+      description: dao.description
     };
   },
 };
