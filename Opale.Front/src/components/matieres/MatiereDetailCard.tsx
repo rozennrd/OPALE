@@ -1,8 +1,6 @@
 // src/components/matieres/MatiereDetailCard.tsx
 import React, { useEffect, useMemo, useState } from 'react'
 import { Matiere } from '../../models/Matiere'
-import { Teacher } from '../../models/Teachers'
-import { INTERNAL_TEACHERS_MOCK, VACATAIRE_TEACHERS_MOCK } from '../../mocks/teachers.mock'
 import DetailCardBody from '../common/DetailCardBody'
 import DetailCardHeader from '../common/DetailCardHeader'
 import DetailCardFooter from '../common/DetailCardFooter'
@@ -10,11 +8,13 @@ import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 import MatiereBadge from './MatiereBadge'
 import { updateMatiere } from '../../services/api/matieresApi'
+import { TeacherApi } from '../../services/api/professorsApi'
 
 interface MatiereDetailCardProps {
     matiere: Matiere
     onClose: () => void
     onAfterSave?: () => Promise<void> | void
+    teachers: TeacherApi[]
     onDelete?: () => void
 }
 
@@ -29,13 +29,14 @@ interface TeacherAssignment {
 
 const makeRowId = () => `assign-${Math.random().toString(16).slice(2)}`
 
-const teacherLabel = (t: Teacher) => `${t.lastName.toUpperCase()} ${t.firstName}`
+const teacherLabel = (t: TeacherApi) => `${(t.nom ?? '').toUpperCase()} ${t.prenom ?? ''}`.trim()
 
-export default function MatiereDetailCard({ matiere, onClose, onDelete, onAfterSave }: MatiereDetailCardProps) {
-    const teachers = useMemo(() => {
-        const all = [...INTERNAL_TEACHERS_MOCK, ...VACATAIRE_TEACHERS_MOCK]
-        return all.slice().sort((a, b) => teacherLabel(a).localeCompare(teacherLabel(b), 'fr'))
-    }, [])
+export default function MatiereDetailCard({ matiere, onClose, onAfterSave,onDelete, teachers }: MatiereDetailCardProps) {
+    const teacherOptions = useMemo(() => {
+        return (teachers ?? [])
+            .slice()
+            .sort((a, b) => teacherLabel(a).localeCompare(teacherLabel(b), 'fr'))
+    }, [teachers])
 
     const [name, setName] = useState(matiere.nom)
     const [volumeTotal, setVolumeTotal] = useState(matiere.volume_horaire)
@@ -285,9 +286,8 @@ export default function MatiereDetailCard({ matiere, onClose, onDelete, onAfterS
                                                         })
                                                     }
                                                 >
-                                                    <option value="">— Choisir un enseignant —</option>
-                                                    {teachers.map((t) => (
-                                                        <option key={t.id} value={t.id}>
+                                                    {teacherOptions.map((t) => (
+                                                        <option key={t.id} value={String(t.id)}>
                                                             {teacherLabel(t)}
                                                         </option>
                                                     ))}

@@ -366,11 +366,13 @@ export default function Matieres() {
             {selected && (
                 <MatiereDetailCard
                     matiere={selected}
+                    teachers={teachers}
                     onClose={() => setSelected(null)}
                     onAfterSave={reloadMatieres}
                     onDelete={() => handleDeleteSingleMatiere(selected.id)}
                 />
             )}
+
         </>
     )
 }
