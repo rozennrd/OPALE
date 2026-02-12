@@ -23,7 +23,9 @@ const floorLabel = (floor: 0 | 1 | 2): string => {
 }
 
 export default function RoomCard({ room, onSelect }: RoomCardProps) {
-    const fullName = room.fullName || room.name
+    const displayName = room.fullName
+        ? room.fullName.split('_').slice(1).join('_') || room.fullName
+        : room.name
 
     const handleClick = () => {
         console.log('[ROOMS] Click room card', room)
@@ -39,7 +41,7 @@ export default function RoomCard({ room, onSelect }: RoomCardProps) {
             badge={<RoomTypeBadge type={room.mainType} />}
             variant="default" // ou "compact" si tu veux serrer un peu
         >
-            <div className="room-card-name">{fullName}</div>
+            <div className="room-card-name">{displayName}</div>
             <div className="room-card-meta">
                 <span className="room-card-code">{room.name}</span>
                 <span className="room-card-separator">•</span>

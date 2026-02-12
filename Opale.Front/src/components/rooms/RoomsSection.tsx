@@ -1,5 +1,6 @@
 // src/components/rooms/RoomsSection.tsx
 import React, { useState } from 'react'
+import icPlus from '../../assets/ic-plus.png'
 import { Room } from '../../models/Room'
 import RoomCard from './RoomCard'
 import SectionHeader from '../common/SectionHeader'
@@ -8,6 +9,7 @@ interface RoomsSectionProps {
     floor: 0 | 1 | 2
     rooms: Room[]
     onSelectRoom: (room: Room) => void
+    onAddRoom: (floor: 0 | 1 | 2) => void
 }
 
 const FLOOR_LABELS: Record<number, string> = {
@@ -22,12 +24,8 @@ const FLOOR_CODES: Record<number, string> = {
     2: 'Codes J2xx',
 }
 
-export default function RoomsSection({ floor, rooms, onSelectRoom }: RoomsSectionProps) {
+export default function RoomsSection({ floor, rooms, onSelectRoom, onAddRoom }: RoomsSectionProps) {
     const [isOpen, setIsOpen] = useState(true)
-
-    if (!rooms || rooms.length === 0) {
-        return null
-    }
 
     const handleToggle = () => setIsOpen((prev) => !prev)
 
@@ -56,6 +54,15 @@ export default function RoomsSection({ floor, rooms, onSelectRoom }: RoomsSectio
                             onSelect={() => onSelectRoom(room)}
                         />
                     ))}
+                    <button
+                        type="button"
+                        className="card room-add-card"
+                        onClick={() => onAddRoom(floor)}
+                        aria-label="Ajouter une salle"
+                        title="Ajouter une salle"
+                    >
+                        <img src={icPlus} alt="" />
+                    </button>
                 </div>
             )}
         </section>
