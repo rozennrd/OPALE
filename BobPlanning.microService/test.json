@@ -1,0 +1,16 @@
+{'ADI1': [
+    {'num_semaine': 0, 'jours_travailles': ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'
+      ]
+    },
+    {'num_semaine': 1, 'jours_travailles': ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'
+      ]
+    }
+  ], 'ADI2': [
+    {'num_semaine': 0, 'jours_travailles': ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'
+      ]
+    },
+    {'num_semaine': 1, 'jours_travailles': ['Lundi', 'Mardi', 'Mercredi', 'Jeudi'
+      ]
+    }
+  ]
+}

@@ -1,6 +1,10 @@
 // domain/services/promotionService.ts
 import { promotionRepository } from "../../data/repositories/promotionRepository";
+import { groupeRepository } from "../../data/repositories/groupeRepository";
+import { specialiteRepository } from "../../data/repositories/specialiteRepository";
 import { promotionMapper } from "../../mapper/promotionMapper";
+import { groupeMapper } from "../../mapper/groupeMapper";
+import { specialiteMapper } from "../../mapper/specialiteMapper";
 import { CreatePromotionDTO } from "../dto/createPromotionDto";
 import { UpdatePromotionDTO } from "../dto/updatePromotionDto";
 import { PromosLegacyResponseDTO } from "../dto/promoLegacyDto";
@@ -8,7 +12,23 @@ import { PromosLegacyResponseDTO } from "../dto/promoLegacyDto";
 export const promotionService = {
   async getPromotions() {
     const daos = await promotionRepository.getAll();
-    return daos.map(promotionMapper.toDTO);
+    
+    // Fetch groups and specialties for each promotion
+    const promotionsWithDetails = await Promise.all(
+      daos.map(async (dao) => {
+        const [groupDaos, specialtyDaos] = await Promise.all([
+          groupeRepository.getByPromotionId(dao.id),
+          specialiteRepository.getByPromotionId(dao.id),
+        ]);
+        
+        const groups = groupDaos.map(groupeMapper.toDTO);
+        const specialties = specialtyDaos.map(specialiteMapper.toDTO);
+        
+        return promotionMapper.toDTO(dao, groups, specialties);
+      })
+    );
+    
+    return promotionsWithDetails;
   },
 
   async getPromotionById(id: string) {
@@ -18,7 +38,17 @@ export const promotionService = {
       e.statusCode = 404;
       throw e;
     }
-    return promotionMapper.toDTO(promo);
+    
+    // Fetch groups and specialties for this promotion
+    const [groupDaos, specialtyDaos] = await Promise.all([
+      groupeRepository.getByPromotionId(id),
+      specialiteRepository.getByPromotionId(id),
+    ]);
+    
+    const groups = groupDaos.map(groupeMapper.toDTO);
+    const specialties = specialtyDaos.map(specialiteMapper.toDTO);
+    
+    return promotionMapper.toDTO(promo, groups, specialties);
   },
 
   async createPromotion(dto: CreatePromotionDTO) {

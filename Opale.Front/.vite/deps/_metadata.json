@@ -1,0 +1,49 @@
+{
+  "hash": "6c6349ef",
+  "configHash": "135df27c",
+  "lockfileHash": "3f5b5336",
+  "browserHash": "be5e8042",
+  "optimized": {
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "2660da98",
+      "needsInterop": true
+    },
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "f36522d0",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "4c44146c",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.mjs",
+      "file": "react-router-dom.js",
+      "fileHash": "ca76da50",
+      "needsInterop": false
+    },
+    "crypto-js": {
+      "src": "../../node_modules/crypto-js/index.js",
+      "file": "crypto-js.js",
+      "fileHash": "46eee767",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "chunk-WN7W3SD2": {
+      "file": "chunk-WN7W3SD2.js"
+    },
+    "chunk-RCGQOTJJ": {
+      "file": "chunk-RCGQOTJJ.js"
+    },
+    "chunk-7D4SUZUM": {
+      "file": "chunk-7D4SUZUM.js"
+    }
+  }
+}
