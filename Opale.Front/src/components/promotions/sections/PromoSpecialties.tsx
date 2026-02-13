@@ -31,14 +31,14 @@ const PromoSpecialties: React.FC<PromoSpecialtiesProps> = ({
                             <input
                                 type="text"
                                 className="promo-edit-input promo-list-name"
-                                value={s.name}
+                                value={s.nom}
                                 onChange={(e) => onSpecialtyChange(index, 'name', e.target.value)}
                             />
                             <input
                                 type="number"
                                 min="0"
                                 className="promo-edit-input promo-list-count"
-                                value={s.students}
+                                value={s.effectifs}
                                 onChange={(e) => onSpecialtyChange(index, 'students', e.target.value)}
                             />
                         </div>

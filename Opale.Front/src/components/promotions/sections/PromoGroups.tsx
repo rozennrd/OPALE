@@ -31,15 +31,15 @@ const PromoGroups: React.FC<PromoGroupsProps> = ({
                             <input
                                 type="text"
                                 className="promo-edit-input promo-list-name"
-                                value={g.name}
-                                onChange={(e) => onGroupChange(index, 'name', e.target.value)}
+                                value={g.nom}
+                                onChange={(e) => onGroupChange(index, 'nom', e.target.value)}
                             />
                             <input
                                 type="number"
                                 min="0"
                                 className="promo-edit-input promo-list-count"
-                                value={g.students}
-                                onChange={(e) => onGroupChange(index, 'students', e.target.value)}
+                                value={g.effectifs}
+                                onChange={(e) => onGroupChange(index, 'effectifs', e.target.value)}
                             />
                         </div>
 

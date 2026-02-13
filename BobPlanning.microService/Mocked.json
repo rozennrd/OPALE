@@ -1,0 +1,1264 @@
+{
+    "Promos": [
+        {
+            "name": "ADI1",
+            "nombreEtudiants": 20,
+            "cours": [{
+                "name": "Maths 1 : ensembles, applications, logiques, équations et inéquations, dénombrement et combinatoire, proba discrètes",
+                "UE": "Mathématiques 1",
+                "semestre": [
+                    1
+                ],
+                "periode": [],
+                "prof": "31",
+                "typeSalle": "classique",
+                "heure": {
+                    "total": 18,
+                    "totalAvecProf": 9,
+                    "coursMagistral": 0,
+                    "coursInteractif": 9,
+                    "td": 0,
+                    "tp": 0,
+                    "projet": 0,
+                    "elearning": 0
+                }
+            },
+            {
+                "name": "Maths 2 : suites, fonctions usuelles, matrices",
+                "UE": "Mathématiques 1",
+                "semestre": [
+                    1
+                ],
+                "periode": [],
+                "prof": "52",
+                "typeSalle": "classique",
+                "heure": {
+                    "total": 30,
+                    "totalAvecProf": 15,
+                    "coursMagistral": 0,
+                    "coursInteractif": 15,
+                    "td": 0,
+                    "tp": 0,
+                    "projet": 0,
+                    "elearning": 0
+                }
+            },
+            {
+                "name": "Maths 3 : calcul différentiel et intégral, analyse asymptotique",
+                "UE": "Mathématiques 1",
+                "semestre": [
+                    1
+                ],
+                "periode": [],
+                "prof": "52",
+                "typeSalle": "classique",
+                "heure": {
+                    "total": 42,
+                    "totalAvecProf": 21,
+                    "coursMagistral": 0,
+                    "coursInteractif": 21,
+                    "td": 0,
+                    "tp": 0,
+                    "projet": 0,
+                    "elearning": 0
+                }
+            },
+            {
+                "name": "C Microcontrôleur et algorithmie S1",
+                "UE": "Informatique 1",
+                "semestre": [
+                    1
+                ],
+                "periode": [],
+                "prof": "51",
+                "typeSalle": "classique",
+                "heure": {
+                    "total": 42,
+                    "totalAvecProf": 21,
+                    "coursMagistral": 0,
+                    "coursInteractif": 21,
+                    "td": 0,
+                    "tp": 0,
+                    "projet": 0,
+                    "elearning": 0
+                }
+            },
+            {
+                "name": "Bureautique",
+                "UE": "Informatique 1",
+                "semestre": [
+                    1
+                ],
+                "periode": [],
+                "prof": "50",
+                "typeSalle": "classique",
+                "heure": {
+                    "total": 24,
+                    "totalAvecProf": 12,
+                    "coursMagistral": 0,
+                    "coursInteractif": 1.5,
+                    "td": 0,
+                    "tp": 0,
+                    "projet": 10.5,
+                    "elearning": 0
+                }
+            },
+            {
+                "name": "Web S1",
+                "UE": "Informatique 1",
+                "semestre": [
+                    1
+                ],
+                "periode": [],
+                "prof": "6",
+                "typeSalle": "classique",
+                "heure": {
+                    "total": 24,
+                    "totalAvecProf": 12,
+                    "coursMagistral": 0,
+                    "coursInteractif": 12,
+                    "td": 0,
+                    "tp": 0,
+                    "projet": 0,
+                    "elearning": 0
+                }
+            }]
+        },
+        {
+            "name": "ADI2",
+            "nombreEtudiants": 20,
+            "cours": [
+                {
+                    "name": "Math",
+                    "UE": "Mathématiques 1",
+                    "prof": "31",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": {
+                        "total": 10,
+                        "totalAvecProf": null,
+                        "coursMagistral": null,
+                        "coursInteractif": null,
+                        "td": null,
+                        "tp": null,
+                        "projet": null,
+                        "elearning": null
+                    }
+                },
+                {
+                    "name": "Phy",
+                    "UE": "Mathématiques 1",
+                    "prof": "20",
+                    "semestre": [
+                        1
+                    ],
+                    "periode": [],
+                    "heure": {
+                        "total": 10,
+                        "totalAvecProf": null,
+                        "coursMagistral": null,
+                        "coursInteractif": null,
+                        "td": null,
+                        "tp": null,
+                        "projet": null,
+                        "elearning": null
+                    }
+                }
+            ]
+        }
+    ],
+    "Salles": [
+        {
+            "ID": "J001",
+            "type": "TPelec",
+            "capacite": 30
+        },
+        {
+            "ID": "J002",
+            "type": "Interactif",
+            "capacite": 20
+        },
+        {
+            "ID": "J003",
+            "type": "TPinfo",
+            "capacite": 30
+        },
+        {
+            "ID": "J004",
+            "type": "TPinfo",
+            "capacite": 20
+        },
+        {
+            "ID": "J005",
+            "type": "Classique",
+            "capacite": 20
+        },
+        {
+            "ID": "J006",
+            "type": "TPelec",
+            "capacite": 20
+        },
+        {
+            "ID": "J101",
+            "type": "Interactif",
+            "capacite": 30
+        },
+        {
+            "ID": "J102",
+            "type": "TPinfo",
+            "capacite": 20
+        },
+        {
+            "ID": "J103",
+            "type": "Interactif",
+            "capacite": 20
+        },
+        {
+            "ID": "J104",
+            "type": "TPinfo",
+            "capacite": 12
+        },
+        {
+            "ID": "J105",
+            "type": "Classique",
+            "capacite": 30
+        }
+    ],
+    "Profs": [
+        {
+            "ID": "6",
+            "name": "Sassi ",
+            "type": "INT",
+            "dispo": [
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "20",
+            "name": "Antoine pirog",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "28",
+            "name": "Antoine De Conto",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "29",
+            "name": "Sophie",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "31",
+            "name": "Frederic",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "33",
+            "name": "Philippe",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "34",
+            "name": "Romain",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "35",
+            "name": "Robert",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "36",
+            "name": "paul",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "37",
+            "name": "Flavie",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "38",
+            "name": "Theo",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "39",
+            "name": "Jonathan",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "40",
+            "name": "Yoan",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "41",
+            "name": "Chrystelle",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "42",
+            "name": "Guichane",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "43",
+            "name": "Nisrine",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "44",
+            "name": "Jeremie",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "45",
+            "name": "Sebastien",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "46",
+            "name": "Benjamin",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "47",
+            "name": "Emilien",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "48",
+            "name": "Xavier niel",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "49",
+            "name": "Marius",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "50",
+            "name": "Lena",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "51",
+            "name": "Melissa",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "52",
+            "name": "Melissandre",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "53",
+            "name": "Thomas",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "54",
+            "name": "Quentin",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "55",
+            "name": "Weishy",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "56",
+            "name": "Bob",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "57",
+            "name": "Marine",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "58",
+            "name": "Marion",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "59",
+            "name": "Emmanuel",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "60",
+            "name": "Jordan",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "61",
+            "name": "Pierre",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "62",
+            "name": "Eric",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "63",
+            "name": "Mathias",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "64",
+            "name": "Cassandra",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "65",
+            "name": "Damien",
+            "type": "INT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem",
+                "mercredi_matin",
+                "mercredi_aprem",
+                "jeudi_matin",
+                "jeudi_aprem",
+                "vendredi_matin",
+                "vendredi_aprem"
+            ]
+        },
+        {
+            "ID": "80",
+            "name": "KOUKA",
+            "type": "EXT",
+            "dispo": [
+                "lundi_matin",
+                "lundi_aprem",
+                "mardi_matin",
+                "mardi_aprem"
+            ]
+        }
+    ],
+    "Calendrier": [
+        {
+            "dateDebut": "2024-07-29T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-08-05T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        }
+        ,
+        {
+            "dateDebut": "2024-08-12T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-08-19T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dateDebut": "2024-08-26T00:00:00.000Z",
+            "promos": [
+                {
+                    "name": "ADI1",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                },
+                {
+                    "name": "ADI2",
+                    "semaine": [
+                        {
+                            "jour": "Lundi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mardi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Mercredi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Jeudi",
+                            "enCours": true,
+                            "message": "Pas cours",
+                            "cours": []
+                        },
+                        {
+                            "jour": "Vendredi",
+                            "enCours": false,
+                            "message": "Pas cours",
+                            "cours": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

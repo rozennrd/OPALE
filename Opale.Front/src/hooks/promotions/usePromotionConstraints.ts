@@ -3,11 +3,9 @@ import { useCallback } from 'react'
 import { Constraints, DateRange } from '../../models'
 import { uid } from '../../utils/promoUtils'
 import { EditingPromotion } from './usePromotionEditing'
-import {eventsApi} from "../../services/api/eventsApi.ts";
 import {constraintEventTypes} from "../../constants/constraintEventTypes.ts";
 import { eventsApi } from '../../services/api/eventsApi'
 import { EventType } from '../../models/EventTypes'
-import {BackendPromotion} from "../../services/api/promotionsApi.ts";
 import {Event} from '../../models/Event.ts'
 type ConstraintType = keyof Constraints
 
@@ -90,9 +88,9 @@ export function usePromotionConstraints(
                 },
             }
         })
-    }, [setEditingPromo])
+    }, [setEditingPromo]);
 
-    const convertEventsToConstraints(events :Event[] ) {
+    const convertEventsToConstraints= (events :Event[] ) => {
 
         const constraints: Constraints = createEmptyConstraints()
         // Process each event type

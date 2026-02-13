@@ -5,9 +5,8 @@ import icPlus from '../assets/ic-plus.png'
 import PromoEditDialog from '../components/promotions/PromoEditDialog.tsx'
 import PromoAdjustDialog from '../components/promotions/PromoAdjustDialog.tsx'
 import CycleCard from '../components/promotions/cycles/CycleCard'
-
 import CycleCreateDialog from '../components/promotions/CycleCreateDialog'
-
+import PageHeader from '../components/common/PageHeader'
 
 import {
     usePromotionCycles,
@@ -15,11 +14,10 @@ import {
     usePromotionConstraints,
     usePromotionAdjustPopup,
 } from '../hooks/promotions'
-
-import PageHeader from '../components/common/PageHeader'
-import {usePromotionSync} from "../hooks/promotions/usePromotionSync.ts";
+import { usePromotionSync } from "../hooks/promotions/usePromotionSync.ts"
 
 export default function Promotions() {
+    // Cycle management hooks
     const {
         cycles,
         setCycles,
@@ -35,22 +33,25 @@ export default function Promotions() {
         addPromotionToCycle,
     } = usePromotionCycles()
 
-    const {
-        savePromotion
-    } = usePromotionSync();
+    // Promotion sync (save/fetch)
+    const { savePromotion } = usePromotionSync()
 
+    // Promotion editing state
     const {
         editingPromo,
         setEditingPromo,
         openEditPromotion,
         closeEditPromotion,
         handleEditFieldChange,
+        markFormAsUntouched,
         addGroup,
         removeGroup,
         handleGroupChange,
         hasChanges,
+        isLoading: isLoadingPromotion,
     } = usePromotionEditing(cycles)
 
+    // Student adjustment popup
     const {
         adjustPopup,
         handleStudentsBlur,
@@ -59,12 +60,42 @@ export default function Promotions() {
         toggleAdjustSpecialties,
     } = usePromotionAdjustPopup(editingPromo, setEditingPromo)
 
+    // Constraints management
     const {
         handleAddConstraint,
         handleRemoveConstraint,
         handleUpdateConstraintRange,
     } = usePromotionConstraints(editingPromo, setEditingPromo)
-    useEffect(() => {console.log(cycles)}, [cycles] )
+
+    // Debug log cycles (can be removed in production)
+    useEffect(() => {
+        console.log('Cycles updated:', cycles)
+    }, [cycles])
+
+    /**
+     * Handles promotion save with proper error handling
+     */
+    const handleSavePromotion = async () => {
+        if (!editingPromo) return
+
+        try {
+            const updatedPromo = await savePromotion(editingPromo)
+
+            // Update local state with synced groups (containing real IDs)
+            setEditingPromo(updatedPromo)
+            markFormAsUntouched();
+
+            // TODO: Update cycles state to reflect changes
+            // setCycles(prev => updateCyclePromotion(prev, updatedPromo))
+
+            // TODO: Show success notification
+            console.log('Promotion saved successfully')
+        } catch (error) {
+            console.error('Failed to save promotion:', error)
+            // TODO: Show error notification to user
+        }
+    }
+
     return (
         <div className="promos">
             <PageHeader
@@ -72,6 +103,12 @@ export default function Promotions() {
                 subtitle="Gestion des cycles, promotions et contraintes académiques (mock front uniquement)."
             />
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
             <div className="promos-grid">
                 {cycles.map((cycle) => (
                     <CycleCard
@@ -84,25 +121,78 @@ export default function Promotions() {
                         addPromotion={addPromotionToCycle}
                     />
                 ))}
+=======
+=======
+>>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
+=======
+>>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
+=======
+>>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
+=======
+>>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
+=======
+>>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
+            {/* Error display */}
+            {error && (
+                <div className="error-banner" role="alert">
+                    Erreur : {error}
+                </div>
+            )}
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
+=======
+>>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
+=======
+>>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
+=======
+>>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
+=======
+>>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
+=======
+>>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
 
-                {/* Carte "Ajouter un cycle" */}
-                <button
-                    type="button"
-                    className="card add-cycle-card"
-                    onClick={openCreateModal}
-                    aria-label="Ajouter un cycle"
-                    title="Ajouter un cycle"
-                >
-                    <img src={icPlus} alt="" />
-                </button>
+            {/* Cycles grid */}
+            <div className="promos-grid">
+                {loading ? (
+                    <div className="loading-spinner">Chargement...</div>
+                ) : (
+                    <>
+                        {cycles.map((cycle) => (
+                            <CycleCard
+                                key={cycle.id}
+                                cycle={cycle}
+                                renameCycle={renameCycle}
+                                removeCycle={removeCycle}
+                                openEditPromotion={openEditPromotion}
+                                removePromotion={removePromotion}
+                            />
+                        ))}
+
+                        {/* Add cycle card */}
+                        <button
+                            type="button"
+                            className="card add-cycle-card"
+                            onClick={openCreateModal}
+                            aria-label="Ajouter un cycle"
+                            title="Ajouter un cycle"
+                        >
+                            <img src={icPlus} alt="" />
+                        </button>
+                    </>
+                )}
             </div>
 
-            {/* Modale d’édition */}
+            {/* Edit promotion modal */}
             {editingPromo && (
                 <PromoEditDialog
                     editingPromo={editingPromo}
                     hasChanges={hasChanges}
-                    onSubmit={savePromotion}
+                    isLoading={isLoadingPromotion}
+                    onSubmit={handleSavePromotion}
                     onClose={closeEditPromotion}
                     onFieldChange={handleEditFieldChange}
                     onGroupChange={handleGroupChange}
@@ -110,13 +200,16 @@ export default function Promotions() {
                     onRemoveGroup={removeGroup}
                     onStudentsBlur={handleStudentsBlur}
                     onSpecialtyChange={(index, field, value) => {
-                        // Add specialty change handler
+                        // TODO: Implement specialty change handler
+                        console.log('Specialty change:', { index, field, value })
                     }}
                     onAddSpecialty={() => {
-                        // Add specialty handler
+                        // TODO: Implement add specialty handler
+                        console.log('Add specialty')
                     }}
                     onRemoveSpecialty={(index) => {
-                        // Remove specialty handler
+                        // TODO: Implement remove specialty handler
+                        console.log('Remove specialty:', index)
                     }}
                     constraints={editingPromo.constraints}
                     onAddConstraint={handleAddConstraint}
@@ -125,7 +218,7 @@ export default function Promotions() {
                 />
             )}
 
-            {/* Pop-up d’ajustement */}
+            {/* Student adjustment popup */}
             {adjustPopup.open && (
                 <PromoAdjustDialog
                     adjustPopup={adjustPopup}
@@ -135,7 +228,7 @@ export default function Promotions() {
                 />
             )}
 
-            {/* Modal de création de cycle */}
+            {/* Create cycle modal */}
             <CycleCreateDialog
                 isOpen={isCreateModalOpen}
                 onSubmit={createCycleWithPromotions}

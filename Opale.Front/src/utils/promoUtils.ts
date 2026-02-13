@@ -35,14 +35,14 @@ export const distributeEvenly = (total: number | string, items: GroupSpecialtyIt
     if (!items.length) return items
     const safeTotal = Number(total) || 0
     if (safeTotal <= 0) {
-        return items.map(it => ({ ...it, students: 0 }))
+        return items.map(it => ({ ...it, effectifs: 0 }))
     }
     const base = Math.floor(safeTotal / items.length)
     let remainder = safeTotal % items.length
 
     return items.map((it, idx) => ({
         ...it,
-        students: base + (idx < remainder ? 1 : 0),
+        effectifs: base + (idx < remainder ? 1 : 0),
     }))
 }
 
@@ -63,11 +63,11 @@ export const computePromoTotals = (promo: Promotion | undefined): PromoTotals =>
     const specialties = promo.specialties || []
 
     const groupsTotal = groups.reduce(
-        (sum: number, g: GroupSpecialtyItem) => sum + (Number(g.students) || 0),
+        (sum: number, g: GroupSpecialtyItem) => sum + (Number(g.effectifs) || 0),
         0
     )
     const specialtiesTotal = specialties.reduce(
-        (sum: number, s: GroupSpecialtyItem) => sum + (Number(s.students) || 0),
+        (sum: number, s: GroupSpecialtyItem) => sum + (Number(s.effectifs) || 0),
         0
     )
 

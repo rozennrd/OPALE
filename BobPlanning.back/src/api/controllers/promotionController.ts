@@ -13,7 +13,7 @@ export const promotionController = {
 
   async getPromotionById(req: Request, res: Response): Promise<void> {
     try {
-      res.json(await promotionService.getPromotionById(String(req.body?.id)));
+      res.json(await promotionService.getPromotionById(String(req.query?.id)));
     } catch (err: any) {
       res.status(err.statusCode ?? 500).json({ error: err.message });
     }

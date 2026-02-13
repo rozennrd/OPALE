@@ -15,7 +15,7 @@ import ConfirmDialog from '../common/ConfirmDialog'
 interface PromoEditDialogProps {
     editingPromo: EditingPromotion
     hasChanges: boolean
-    onSubmit: (promo:EditingPromotion) => Promise<EditingPromotion>
+    onSubmit: () => Promise<EditingPromotion>
     onClose: () => void
     onFieldChange: (field: string, value: string | number) => void
     onStudentsBlur?: () => void
@@ -86,7 +86,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
     })
 
     const handleSave = () => {
-        props.onSubmit(editingPromo)
+        props.onSubmit()
     }
 
     const handleConfirmSaveAndClose = () => {
