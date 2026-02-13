@@ -6,10 +6,12 @@ const Salle: React.FC = () => {
   const [nom, setNom] = useState('');
   const [type, setType] = useState('');
   const [capacite, setCapacite] = useState('');
+  const [etage, setEtage] = useState('');
   const [error, setError] = useState('');
   const [editId, setEditId] = useState<number | null>(null);
 
-  const typesDisponibles = ['classique', 'electronique', 'informatique', 'projet'];
+  const typesDisponibles = ['projet', 'td', 'tp', 'reunion', 'autre'];
+  const etagesDisponibles = [ 0, 1, 2, 3];
 
   const RACINE_FETCHER_URL = import.meta.env.VITE_RACINE_FETCHER_URL;
 
@@ -27,7 +29,7 @@ const Salle: React.FC = () => {
         throw new Error('Erreur lors du chargement des salles');
       }
     } catch (err) {
-      setError('Problème de connexion avec le serveur');
+      setError('Problème de connexion avec le serveur : ' + err);
     }
   };
 
@@ -44,7 +46,7 @@ const Salle: React.FC = () => {
     try {
       const url = editId ? `${RACINE_FETCHER_URL}/updateSalle` : `${RACINE_FETCHER_URL}/setSallesData`;
       const method = editId ? 'PUT' : 'POST';
-      const body = editId ? { id: editId, name: nom, type, capacite: Number(capacite) } : { name: nom, type, capacite: Number(capacite) };
+      const body = editId ? { id: editId, nom, type, capacite: Number(capacite), etage: Number(etage) } : { nom, type, capacite: Number(capacite), etage: Number(etage)};
 
       const response = await fetch(url, {
         method,
@@ -58,15 +60,16 @@ const Salle: React.FC = () => {
       if (response.ok) {
         loadSalles();
         setNom('');
+        setEtage('');
         setType('');
         setCapacite('');
         setEditId(null);
-        setError(''); 
+        setError('');
       } else {
         setError("Erreur lors de l'enregistrement de la salle");
       }
     } catch (err) {
-      setError('Problème de connexion avec le serveur');
+      setError('Problème de connexion avec le serveur : ' + err);
     }
   };
 
@@ -81,18 +84,19 @@ const Salle: React.FC = () => {
 
       if (response.ok) {
         loadSalles();
-        setError(''); 
+        setError('');
       } else {
         setError('Erreur lors de la suppression de la salle');
       }
     } catch (err) {
-      setError('Problème de connexion avec le serveur');
+      setError('Problème de connexion avec le serveur : ' + err);
     }
   };
 
   const startEdit = (salle: any) => {
     setEditId(salle.id);
-    setNom(salle.name);
+    setNom(salle.nom);
+    setEtage(salle.etage);
     setType(salle.type);
     setCapacite(salle.capacite ? salle.capacite.toString() : '');
   };
@@ -103,6 +107,18 @@ const Salle: React.FC = () => {
 
       <div style={{ marginBottom: 20 }}>
         <TextField label="Nom" value={nom} onChange={(e) => setNom(e.target.value)} style={{ marginRight: 10 }} />
+        <Select
+          value={etage}
+          onChange={(e) => setEtage(e.target.value)}
+          displayEmpty
+          style={{ marginRight: 10, minWidth: 120 }}
+        >
+          <MenuItem value="" disabled>Étage</MenuItem>
+          {etagesDisponibles.map((option) => (
+            <MenuItem key={option} value={option}>{option}</MenuItem>
+          ))}
+        </Select>
+
         <Select
           value={type}
           onChange={(e) => setType(e.target.value)}
@@ -126,6 +142,7 @@ const Salle: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell>Nom</TableCell>
+              <TableCell>Étage</TableCell>
               <TableCell>Type</TableCell>
               <TableCell>Capacité</TableCell>
               <TableCell>Actions</TableCell>
@@ -134,7 +151,8 @@ const Salle: React.FC = () => {
           <TableBody>
             {salles.map((salle: any) => (
               <TableRow key={salle.id}>
-                <TableCell>{salle.name}</TableCell>
+                <TableCell>{salle.nom}</TableCell>
+                <TableCell>{salle.etage}</TableCell>
                 <TableCell>{salle.type}</TableCell>
                 <TableCell>{salle.capacite}</TableCell>
                 <TableCell>

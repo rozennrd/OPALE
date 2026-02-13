@@ -1,0 +1,192 @@
+/* Ligne de promotion (nom + warning + boutons) */
+@layer pages {
+    .promo-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 14px;
+        background: var(--panel-soft);
+        border-radius: 12px;
+        min-width: 0;
+        flex-wrap: nowrap;
+    }
+
+    /* Conteneur nom + icône warning */
+    .promo-main {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .promo-label {
+        flex: 1 1 auto;
+        min-width: 0;
+        font-family: 'Roboto', sans-serif;
+        font-size: clamp(16px, 1.6vw, 20px);
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 620px) {
+        .promo-label {
+            white-space: normal;
+        }
+    }
+
+    /* Icône warning sur la ligne de promo */
+    .promo-warning {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+
+    .promo-actions {
+        display: flex;
+        gap: 8px;
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    /* ==========================
+       Dropzone import Excel cycle
+       ========================== */
+
+    .cycle-import-dropzone {
+        margin-top: 18px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        border: 1.5px dashed var(--border);
+        text-align: center;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        transition:
+                background 150ms ease,
+                border-color 150ms ease,
+                transform 150ms ease,
+                box-shadow 150ms ease;
+    }
+
+    /* Thème clair : fond plus clair et bord plus visible */
+    [data-theme='light'] .cycle-import-dropzone {
+        background: #f5f7fd;
+        border-color: #d2dcf5;
+    }
+
+    /* Thème sombre : fond légèrement plus clair que la card */
+    [data-theme='dark'] .cycle-import-dropzone {
+        background: #1e2836;
+        border-color: #3f5170;
+    }
+
+    .cycle-import-dropzone:hover {
+        box-shadow: var(--shadow-sm);
+        transform: translateY(-1px);
+    }
+
+    .cycle-import-dropzone--dragging {
+        border-style: solid;
+        border-color: var(--brand-500);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+    }
+
+    .cycle-import-dropzone-title {
+        font-weight: 600;
+    }
+
+    .cycle-import-dropzone-hint {
+        font-size: 12px;
+        opacity: 0.85;
+    }
+
+    /* ==========================
+       Fichiers importés (pills)
+       ========================== */
+
+    .cycle-import-dropzone-files {
+        margin-top: 8px;
+        font-size: 12px;
+        text-align: left;
+    }
+
+    .cycle-import-dropzone-files-label {
+        font-weight: 500;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .cycle-import-files-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .cycle-import-file-pill {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 10px;
+        font-size: 13px;
+        background: var(--panel);
+        border: 1px solid var(--border-soft);
+    }
+
+    /* Icône document */
+    .cycle-import-file-pill .file-icon {
+        font-size: 14px;
+        flex-shrink: 0;
+        opacity: 0.85;
+    }
+
+    /* Nom du fichier avec ellipse */
+    .cycle-import-file-pill .file-name {
+        flex: 1 1 auto;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Bouton supprimer fichier */
+    .cycle-import-file-pill .file-remove-btn {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 0 2px;
+        opacity: 0.6;
+        line-height: 1;
+        transition: opacity 120ms ease, transform 120ms ease;
+    }
+
+    .cycle-import-file-pill .file-remove-btn:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    /* Texte "+3 fichiers supplémentaires…" */
+    .cycle-import-file-pill.extra-count {
+        font-style: italic;
+        opacity: 0.8;
+    }
+
+    /* Thème clair */
+    [data-theme="light"] .cycle-import-file-pill {
+        background: #f0f3fa;
+        border-color: #d3d8e4;
+    }
+
+    /* Thème sombre */
+    [data-theme="dark"] .cycle-import-file-pill {
+        background: #1c2431;
+        border-color: #39485c;
+    }
+}

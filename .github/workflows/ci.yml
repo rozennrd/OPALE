@@ -2,12 +2,29 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop, SCRUM-42-infra-ci-cd ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main, SCRUM-42-infra-ci-cd ]
+    branches: [ '*' ]
 
 jobs:
-  check-and-build:
+  opale-front-lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies for Opale frontend
+      run: cd Opale.Front && npm ci
+
+    - name: Lint Opale frontend
+      run: cd Opale.Front && npm run lint
+
+  bobplanning-back:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -26,24 +43,10 @@ jobs:
       continue-on-error: true
 
     - name: Install dependencies for frontend
-      run: cd BobPlanning.front && npm ci
+      run: cd Opale.Front && npm ci
 
     - name: Lint frontend
-      run: cd BobPlanning.front && npm run lint
-      continue-on-error: true
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: Install pylint
-      run: pip install pylint
-
-    - name: Lint Python microservice
-      run: |
-        cd BobPlanning.microService
-        pylint *.py --disable=C0103,C0114,W0233,R0914
+      run: cd Opale.Front && npm run lint
       continue-on-error: true
 
     - name: Create database env file before testing docker-compose.yml

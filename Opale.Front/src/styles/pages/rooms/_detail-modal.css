@@ -1,0 +1,429 @@
+/* src/styles/pages/rooms/_detail-modal.css */
+
+@layer pages {
+    /* ============================
+       Overlay
+       ============================ */
+
+    .room-detail-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    }
+
+    /* ============================
+       Card layout spécifique Rooms
+       (le shell .detail-card est commun)
+       ============================ */
+
+    .room-detail-card {
+        /* On garde la largeur plus généreuse pour les salles */
+        width: min(1080px, 96vw);
+        max-height: min(720px, 96vh);
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* ============================
+       Sections
+       ============================ */
+
+    .room-detail-section {
+        border-top: 1px solid var(--border-subtle);
+        padding-top: 0.9rem;
+    }
+
+    .room-detail-section:first-child {
+        border-top: none;
+        padding-top: 0;
+    }
+
+    .room-detail-section-title,
+    .room-detail-section-subtitle {
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .room-detail-section-title {
+        margin-bottom: 0;
+    }
+
+    .room-detail-section-subtitle {
+        color: var(--muted-strong, var(--muted));
+    }
+
+    .room-detail-hint {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-bottom: 0.5rem;
+    }
+
+    .room-detail-hint-small,
+    .room-detail-hint-xsmall {
+        font-size: 0.75rem;
+        color: var(--muted);
+    }
+
+    .room-detail-hint-xsmall {
+        margin-top: 0.1rem;
+    }
+
+    /* ============================
+       Identité de la salle
+       ============================ */
+
+    .room-detail-identity-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+        gap: 0.75rem 1rem;
+        margin-top: 0.2rem;
+    }
+
+    .room-detail-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .room-detail-field-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--muted);
+    }
+
+    .room-detail-input {
+        width: 100%;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        padding: 6px 10px;
+        font-family: inherit;
+        font-size: 0.9rem;
+        background: var(--input-bg, #f9fafb);
+        color: var(--text);
+        outline: none;
+        transition:
+                border-color 140ms ease,
+                box-shadow 140ms ease,
+                background 140ms ease;
+    }
+
+    @media (max-width: 900px) {
+        .room-detail-identity-grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+
+    /* ============================
+       Types de salle
+       ============================ */
+
+    .room-detail-types-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        gap: 1rem;
+        margin-top: 0.75rem;
+    }
+
+    .room-detail-types-column {
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+    }
+
+    .room-detail-types {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .room-detail-types-column .room-detail-hint-small {
+        margin-top: 0.15rem;
+    }
+
+    @media (max-width: 900px) {
+        .room-detail-types-grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+
+    .room-type-chip {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        padding: 0.28rem 1rem;
+        border-radius: 999px;
+        border: 1px solid var(--border-subtle);
+        background: var(--panel-soft);
+        font-size: 0.8rem;
+        line-height: 1;
+        cursor: pointer;
+        transition:
+                background 120ms ease,
+                border-color 120ms ease,
+                transform 120ms ease;
+    }
+
+    .room-type-chip:hover {
+        transform: translateY(-1px);
+        border-color: var(--primary-soft);
+    }
+
+    .room-type-chip-selected {
+        background: var(--primary-soft);
+        border-color: var(--primary);
+        color: var(--primary-strong-contrast, #0f172a);
+    }
+
+    .room-type-chip-label {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+    .room-type-chip-main {
+        padding-inline: 1.4rem;
+    }
+
+    .room-type-chip-dot {
+        position: absolute;
+        left: 0.8rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border-subtle);
+        background: transparent;
+        flex-shrink: 0;
+    }
+
+    .room-type-chip-main-selected .room-type-chip-dot {
+        border-color: var(--primary);
+        background: var(--primary);
+    }
+
+    .room-type-chip-checkbox {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 12px;
+        height: 12px;
+        border-radius: 4px;
+        border: 1px solid var(--border-subtle);
+        background: transparent;
+        box-sizing: border-box;
+        flex-shrink: 0;
+    }
+
+    .room-type-chip-checkbox.is-checked {
+        border-color: var(--primary);
+        background: var(--primary-soft);
+    }
+
+    .room-type-chip-main-tag {
+        font-size: 0.75rem;
+        opacity: 0.85;
+        margin-left: 0.25rem;
+    }
+
+    .room-type-chip-main-lock {
+        cursor: default;
+    }
+
+    .room-type-chip-main-lock.room-type-chip-selected:hover {
+        transform: none;
+        border-color: var(--primary);
+    }
+
+    /* Focus accentué uniquement sur Nom + Surnom de la salle */
+
+    #room-name-input,
+    #room-fullname-input {
+        transition:
+                border-color 140ms ease,
+                box-shadow 140ms ease,
+                background-color 140ms ease;
+    }
+
+    #room-name-input:focus,
+    #room-fullname-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 1px
+        color-mix(in srgb, var(--primary) 40%, transparent);
+        background: var(--color-surface, #fff);
+    }
+
+    /* Variante dark cohérente avec les events */
+
+    [data-theme='dark'] #room-name-input:focus,
+    [data-theme='dark'] #room-fullname-input:focus {
+        background: #252f42;
+    }
+
+    /* ============================
+       Description
+       ============================ */
+
+    .room-detail-textarea {
+        width: 100%;
+        min-height: 120px;
+        resize: vertical;
+        border-radius: 0.75rem;
+        border: 1px solid var(--border);
+        padding: 0.6rem 0.75rem;
+        font-family: inherit;
+        font-size: 0.9rem;
+        background: var(--panel-soft);
+        color: inherit;
+    }
+
+    /* ============================
+       Layout 2 colonnes (main + aside)
+       ============================ */
+
+    .room-detail-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.2fr);
+        gap: 1.5rem;
+        margin-top: 0.4rem;
+        align-items: stretch;
+    }
+
+    .room-detail-main-column {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .room-detail-aside-column {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .room-detail-description-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .room-detail-description-section .room-detail-textarea {
+        flex: 1;
+        min-height: 0;
+    }
+
+    @media (max-width: 1024px) {
+        .room-detail-layout {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .room-detail-aside-column {
+            margin-top: 0.75rem;
+        }
+    }
+
+    /* ============================
+       Thème sombre — spécifiques Rooms
+       (le fond de .detail-card est géré en commun)
+       ============================ */
+
+    [data-theme='dark'] .room-detail-input {
+        background: rgba(15, 23, 42, 0.85);
+        border-color: var(--border-subtle);
+        color: var(--text);
+    }
+
+    [data-theme='dark'] .room-type-chip {
+        background: #1f2735;
+        border-color: rgba(255, 255, 255, 0.15);
+        color: var(--text);
+    }
+
+    [data-theme='dark'] .room-type-chip-selected {
+        background: rgba(129, 140, 248, 0.25);
+        border-color: rgba(129, 140, 248, 0.7);
+        color: var(--text);
+    }
+
+    [data-theme='dark'] .room-detail-textarea {
+        background: #1f2735;
+        border-color: rgba(255, 255, 255, 0.2);
+        color: var(--text);
+    }
+
+    /* ============================
+       Couleurs de la pill selon le type de salle
+       (déjà présentes dans ton nouveau CSS)
+       ============================ */
+
+    .room-type-badge-header.room-type-td {
+        background: rgba(59, 130, 246, 0.18);
+        border-color: rgba(59, 130, 246, 0.4);
+        color: #1d4ed8;
+    }
+
+    .room-type-badge-header.room-type-tp_electronique {
+        background: rgba(16, 185, 129, 0.18);
+        border-color: rgba(16, 185, 129, 0.4);
+        color: #065f46;
+    }
+
+    .room-type-badge-header.room-type-tp_numerique {
+        background: rgba(14, 165, 233, 0.18);
+        border-color: rgba(14, 165, 233, 0.4);
+        color: #0369a1;
+    }
+
+    .room-type-badge-header.room-type-projet {
+        background: rgba(234, 179, 8, 0.18);
+        border-color: rgba(234, 179, 8, 0.4);
+        color: #92400e;
+    }
+
+    .room-type-badge-header.room-type-autre {
+        background: rgba(148, 163, 184, 0.2);
+        border-color: rgba(148, 163, 184, 0.45);
+        color: #475569;
+    }
+
+    /* Dark theme – couleurs de pill uniquement */
+
+    [data-theme='dark'] .room-type-badge-header.room-type-td {
+        background: rgba(59, 130, 246, 0.22);
+        border-color: rgba(59, 130, 246, 0.6);
+        color: #bfdbfe;
+    }
+
+    [data-theme='dark'] .room-type-badge-header.room-type-tp_electronique {
+        background: rgba(16, 185, 129, 0.22);
+        border-color: rgba(16, 185, 129, 0.6);
+        color: #a7f3d0;
+    }
+
+    [data-theme='dark'] .room-type-badge-header.room-type-tp_numerique {
+        background: rgba(14, 165, 233, 0.22);
+        border-color: rgba(14, 165, 233, 0.6);
+        color: #bae6fd;
+    }
+
+    [data-theme='dark'] .room-type-badge-header.room-type-projet {
+        background: rgba(234, 179, 8, 0.24);
+        border-color: rgba(234, 179, 8, 0.65);
+        color: #fef3c7;
+    }
+
+    [data-theme='dark'] .room-type-badge-header.room-type-autre {
+        background: rgba(148, 163, 184, 0.24);
+        border-color: rgba(148, 163, 184, 0.6);
+        color: #e5e7eb;
+    }
+}

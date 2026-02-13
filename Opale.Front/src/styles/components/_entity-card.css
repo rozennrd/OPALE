@@ -1,0 +1,96 @@
+/* src/styles/components/_entity-card.css */
+
+@layer components {
+    .entity-card {
+        display: flex;
+        align-items: stretch;
+        justify-content: space-between;
+
+        border-radius: 0.9rem;
+        background: var(--panel-soft);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+        cursor: pointer;
+
+        transition:
+                transform 120ms ease,
+                box-shadow 120ms ease,
+                border-color 120ms ease,
+                background-color 120ms ease;
+
+        min-height: 4.5rem;
+        width: 100%;
+        min-width: 0; /* permet au texte de gérer l'espace proprement */
+    }
+
+    .entity-card:hover {
+        transform: translateY(-2px);
+        background: var(--panel-soft);
+        border-color: var(--border);
+        box-shadow: var(--shadow-xl);
+    }
+
+    /* ============================
+       COLONNE GAUCHE (contenu texte)
+       ============================ */
+
+    .entity-card-main {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 0.75rem 0.9rem 0.75rem 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+
+    /* Variante compacte possible (ex: teachers) */
+    .entity-card--compact .entity-card-main {
+        padding: 0.6rem 0.8rem 0.6rem 0.9rem;
+    }
+
+    /* ============================
+       TYPO COMMUNE – TITRES DE CARD
+       ============================ */
+
+    .entity-card-title,
+    .event-card-name,
+    .room-card-name,
+    .teacher-card-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text);
+        letter-spacing: 0.01em;
+    }
+
+    /* ============================
+       TYPO COMMUNE – MÉTADONNÉES
+       ============================ */
+
+    .entity-card-meta,
+    .event-card-meta,
+    .room-card-meta,
+    .teacher-card-phone {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.85rem;
+        color: var(--muted);
+    }
+
+    /* ============================
+       COLONNE DROITE (zone badge)
+       ============================ */
+
+    .entity-card-aside {
+        border-left: 1px solid var(--border);
+        background: var(--panel-soft);
+
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+
+        padding: 0;
+    }
+}

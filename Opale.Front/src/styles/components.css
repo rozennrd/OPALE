@@ -1,0 +1,19 @@
+/* src/styles/components.css */
+/* Agrégateur des styles de composants communs */
+
+@import './components/_nav-links.css';
+@import './components/_buttons.css';
+@import './components/_checklist.css';
+@import './components/_confirm-dialog.css';
+@import './components/_theme-toggle.css';
+@import './components/_action-buttons.css';
+@import './components/_date-range-pill.css';
+@import './components/_section-header.css';
+@import './components/_entity-badge.css';
+@import './components/_entity-card.css';
+@import './components/_page-header.css';
+@import './components/_toolbar.css';
+@import './components/_detail-card-shell.css';
+@import './components/_detail-card-header.css';
+@import './components/_detail-card-footer.css';
+@import './components/_detail-card-layout.css';

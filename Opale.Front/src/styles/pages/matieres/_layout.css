@@ -1,0 +1,35 @@
+/* src/styles/pages/matieres/_layout.css */
+
+@layer pages {
+    .matieres-page {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        background: var(--panel-soft);
+        border-radius: var(--radius-lg, 16px);
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .matieres-sections {
+        margin-top: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .matieres-empty-state {
+        padding: 1.25rem 1rem 1rem;
+        border-radius: 0.75rem;
+        background: var(--panel-soft);
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 640px) {
+        .matieres-page {
+            padding: 1rem;
+        }
+    }
+}

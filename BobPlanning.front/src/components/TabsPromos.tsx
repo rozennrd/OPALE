@@ -89,7 +89,7 @@ function a11yProps(index: number) {
 }
 
 interface FullWidthTabsProps {
-    setPromosData: React.Dispatch<React.SetStateAction<any>>;
+    setPromosData: React.Dispatch<React.SetStateAction<never>>;
     promosData: PromosData; // UseSate du composant parent
 }
 
@@ -98,83 +98,83 @@ export default function TabsPromos({ setPromosData, promosData }: FullWidthTabsP
     const [value, setValue] = React.useState(0);
 
     const [classesPerPromo, setClassesPerPromo] = React.useState<Record<string, string>>({
-        ADI1:  String(promosData.Promos[0].Nombre),
-        ADI2:  String(promosData.Promos[1].Nombre),
-        CIR1:  String(promosData.Promos[2].Nombre),
-        CIR2:  String(promosData.Promos[3].Nombre),
-        AP3:   String(promosData.Promos[4].Nombre),
-        AP4:   String(promosData.Promos[5].Nombre),
-        AP5:   String(promosData.Promos[6].Nombre),
-        ISEN3: String(promosData.Promos[7].Nombre),
-        ISEN4: String(promosData.Promos[8].Nombre),
-        ISEN5: String(promosData.Promos[9].Nombre)
+        ADI1:  String(promosData.effectifs),
+        ADI2:  String(promosData.effectifs),
+        CIR1:  String(promosData.effectifs),
+        CIR2:  String(promosData.effectifs),
+        AP3:   String(promosData.effectifs),
+        AP4:   String(promosData.effectifs),
+        AP5:   String(promosData.effectifs),
+        ISEN3: String(promosData.effectifs),
+        ISEN4: String(promosData.effectifs),
+        ISEN5: String(promosData.effectifs)
     });
 
     const [startDatesPerPromo, setStartDatesPerPromo] = React.useState<Record<string, string>>({
-        ADI1:  String(promosData.Promos[0].Periode[0].DateDebutP),
-                ADI2:  String(promosData.Promos[1].Periode[0].DateDebutP),
-                CIR1:  String(promosData.Promos[2].Periode[0].DateDebutP),
-                CIR2:  String(promosData.Promos[3].Periode[0].DateDebutP),
-                AP3:   String(promosData.Promos[4].Periode[0].DateDebutP),
-                AP4:   String(promosData.Promos[5].Periode[0].DateDebutP),
-                AP5:   String(promosData.Promos[6].Periode[0].DateDebutP),
-                ISEN3: String(promosData.Promos[7].Periode[0].DateDebutP),
-                ISEN4: String(promosData.Promos[8].Periode[0].DateDebutP),
-                ISEN5: String(promosData.Promos[9].Periode[0].DateDebutP)
+        ADI1:  String(promosData.date_start),
+        ADI2:  String(promosData.date_start),
+        CIR1:  String(promosData.date_start),
+        CIR2:  String(promosData.date_start),
+        AP3:   String(promosData.date_start),
+        AP4:   String(promosData.date_start),
+        AP5:   String(promosData.date_start),
+        ISEN3: String(promosData.date_start),
+        ISEN4: String(promosData.date_start),
+        ISEN5: String(promosData.date_start)
     });
     const [endDatesPerPromo, setEndDatesPerPromo] = React.useState<Record<string, string>>({
-        ADI1:  String(promosData.Promos[0].Periode[0].DateFinP),
-            ADI2:  String(promosData.Promos[1].Periode[0].DateFinP),
-            CIR1:  String(promosData.Promos[2].Periode[0].DateFinP),
-            CIR2:  String(promosData.Promos[3].Periode[0].DateFinP),
-            AP3:   String(promosData.Promos[4].Periode[0].DateFinP),
-            AP4:   String(promosData.Promos[5].Periode[0].DateFinP),
-            AP5:   String(promosData.Promos[6].Periode[0].DateFinP),
-            ISEN3: String(promosData.Promos[7].Periode[0].DateFinP),
-            ISEN4: String(promosData.Promos[8].Periode[0].DateFinP),
-            ISEN5: String(promosData.Promos[9].Periode[0].DateFinP)
+        ADI1:  String(promosData.date_end),
+            ADI2:  String(promosData.date_end),
+            CIR1:  String(promosData.date_end),
+            CIR2:  String(promosData.date_end),
+            AP3:   String(promosData.date_end),
+            AP4:   String(promosData.date_end),
+            AP5:   String(promosData.date_end),
+            ISEN3: String(promosData.date_end),
+            ISEN4: String(promosData.date_end),
+            ISEN5: String(promosData.date_end)
     });
 
     React.useEffect(() => {
         // Initialisation des classes
         setClassesPerPromo({
-            ADI1:  String(promosData.Promos[0].Nombre),
-            ADI2:  String(promosData.Promos[1].Nombre),
-            CIR1:  String(promosData.Promos[2].Nombre),
-            CIR2:  String(promosData.Promos[3].Nombre),
-            AP3:   String(promosData.Promos[4].Nombre),
-            AP4:   String(promosData.Promos[5].Nombre),
-            AP5:   String(promosData.Promos[6].Nombre),
-            ISEN3: String(promosData.Promos[7].Nombre),
-            ISEN4: String(promosData.Promos[8].Nombre),
-            ISEN5: String(promosData.Promos[9].Nombre)
+            ADI1:  String(promosData.effectifs),
+            ADI2:  String(promosData.effectifs),
+            CIR1:  String(promosData.effectifs),
+            CIR2:  String(promosData.effectifs),
+            AP3:   String(promosData.effectifs),
+            AP4:   String(promosData.effectifs),
+            AP5:   String(promosData.effectifs),
+            ISEN3: String(promosData.effectifs),
+            ISEN4: String(promosData.effectifs),
+            ISEN5: String(promosData.effectifs)
         });
     
         setStartDatesPerPromo(
             {
-                ADI1:  String(promosData.Promos[0].Periode[0].DateDebutP),
-                ADI2:  String(promosData.Promos[1].Periode[0].DateDebutP),
-                CIR1:  String(promosData.Promos[2].Periode[0].DateDebutP),
-                CIR2:  String(promosData.Promos[3].Periode[0].DateDebutP),
-                AP3:   String(promosData.Promos[4].Periode[0].DateDebutP),
-                AP4:   String(promosData.Promos[5].Periode[0].DateDebutP),
-                AP5:   String(promosData.Promos[6].Periode[0].DateDebutP),
-                ISEN3: String(promosData.Promos[7].Periode[0].DateDebutP),
-                ISEN4: String(promosData.Promos[8].Periode[0].DateDebutP),
-                ISEN5: String(promosData.Promos[9].Periode[0].DateDebutP)
+                ADI1:  String(promosData.date_start),
+                ADI2:  String(promosData.date_start),
+                CIR1:  String(promosData.date_start),
+                CIR2:  String(promosData.date_start),
+                AP3:   String(promosData.date_start),
+                AP4:   String(promosData.date_start),
+                AP5:   String(promosData.date_start),
+                ISEN3: String(promosData.date_start),
+                ISEN4: String(promosData.date_start),
+                ISEN5: String(promosData.date_start)
             }
         );
         setEndDatesPerPromo({
-            ADI1:  String(promosData.Promos[0].Periode[0].DateFinP),
-            ADI2:  String(promosData.Promos[1].Periode[0].DateFinP),
-            CIR1:  String(promosData.Promos[2].Periode[0].DateFinP),
-            CIR2:  String(promosData.Promos[3].Periode[0].DateFinP),
-            AP3:   String(promosData.Promos[4].Periode[0].DateFinP),
-            AP4:   String(promosData.Promos[5].Periode[0].DateFinP),
-            AP5:   String(promosData.Promos[6].Periode[0].DateFinP),
-            ISEN3: String(promosData.Promos[7].Periode[0].DateFinP),
-            ISEN4: String(promosData.Promos[8].Periode[0].DateFinP),
-            ISEN5: String(promosData.Promos[9].Periode[0].DateFinP)
+            ADI1:  String(promosData.date_end),
+            ADI2:  String(promosData.date_end),
+            CIR1:  String(promosData.date_end),
+            CIR2:  String(promosData.date_end),
+            AP3:   String(promosData.date_end),
+            AP4:   String(promosData.date_end),
+            AP5:   String(promosData.date_end),
+            ISEN3: String(promosData.date_end),
+            ISEN4: String(promosData.date_end),
+            ISEN5: String(promosData.date_end)
         });
     }, [promosData]);
     

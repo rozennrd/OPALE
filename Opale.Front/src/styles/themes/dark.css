@@ -1,0 +1,33 @@
+/* Dark theme overrides (activer via <html data-theme="dark">) */
+
+@layer tokens {
+  :root[data-theme="dark"] {
+    --bg: radial-gradient(circle at 30% 0%, #0f1115, #0d1117 40%, #0b0f14 60%, #090d12 100%);
+    --panel: #2a3442;
+    --panel-soft: #1b2029;
+    --text: #e5e7eb;
+    --muted: #9aa3af;
+
+    --brand: #32e0e6;
+    --brand-hover: #28c7cd;
+
+    --primary: #7db993;
+    --primary-hover: #6aa781;
+
+    /* ✅ hover/actif via tokens (au lieu de cibler .nav-btn directement) */
+    --surface-hover: rgba(255,255,255,0.06);
+    --surface-active: rgba(255,255,255,0.08);
+
+    /* ✅ bordures & fond d’input */
+    --border: #2a3442;
+    --input-bg: #0f131a;
+
+    --shadow-sm: 0 2px 6px rgba(0,0,0,.4);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.45);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,.5);
+
+    /* Bordure "Add cycle" en thème sombre */
+    --add-cycle-border-width: 3px;
+    --add-cycle-border-color: #F9F9F9;
+  }
+}

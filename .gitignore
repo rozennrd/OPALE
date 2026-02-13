@@ -28,3 +28,8 @@ dist
 *.pdf
 db.conf
 .env
+*.zip
+
+
+# Don't include dist ! (it's what's created after npm run build, useless in code)
+BobPlanning.back/dist

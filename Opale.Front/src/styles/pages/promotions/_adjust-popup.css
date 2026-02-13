@@ -1,0 +1,80 @@
+/* Pop-up d'ajustement automatique des effectifs */
+@layer pages {
+    .promo-adjust-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 60; /* au-dessus de la card d'édition */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 23, 42, 0.45);
+    }
+
+    .promo-adjust-card {
+        width: min(420px, 94vw);
+        padding: 16px 18px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .promo-adjust-title {
+        margin: 0 0 4px;
+        font-family: 'Nunito', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .promo-adjust-text {
+        margin: 0 0 8px;
+        font-size: 14px;
+        color: var(--muted);
+    }
+
+    .promo-adjust-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 6px 0;
+        cursor: pointer; /* curseur "main" sur toute la ligne */
+    }
+
+    .promo-adjust-label {
+        font-size: 15px;
+        cursor: pointer;
+    }
+
+    /* Bouton "radio" custom */
+    .radio-toggle {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .radio-toggle-input {
+        display: none;
+    }
+
+    .radio-toggle-dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        border: 2px solid var(--muted);
+        background: rgba(255, 255, 255, 0.06);
+        display: inline-block;
+        transition: background .2s, border-color .2s;
+        cursor: pointer;
+    }
+
+    .radio-toggle-input:checked + .radio-toggle-dot {
+        background: var(--brand);
+        border-color: var(--brand);
+    }
+
+    .promo-adjust-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+}

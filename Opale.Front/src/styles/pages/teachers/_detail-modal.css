@@ -1,0 +1,271 @@
+/* src/styles/pages/teachers/_detail-modal.css */
+
+@layer pages {
+    /* ============ Overlay spécifique teacher ============ */
+
+    .teacher-detail-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    }
+
+    /* ============ Layout général de la card ============ */
+    /* Le fond / radius / shadow / padding sont gérés par .detail-card (CSS commun).
+       Ici on ne fait que spécialiser le layout interne pour les enseignants. */
+
+    .teacher-detail-card {
+        width: min(1080px, 96vw); /* un peu plus large que la valeur générique si besoin */
+    }
+
+    .teacher-detail-columns {
+        display: grid;
+        /* Col 1 la plus large, col 2 resserrée, col 3 confortable */
+        grid-template-columns: 1.4fr 0.9fr 1.1fr;
+        gap: 1.75rem;
+        margin-top: 0.75rem;
+    }
+
+    .teacher-detail-col {
+        font-size: 0.9rem;
+        color: var(--text);
+    }
+
+    .teacher-detail-col h4 {
+        margin-bottom: 0.5rem;
+        font-size: 1.05rem;
+        font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+        .teacher-detail-card {
+            width: min(1040px, 96vw);
+        }
+
+        .teacher-detail-columns {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+    }
+
+    /* ============ Colonne 1 : informations générales ============ */
+
+    .teacher-detail-list {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+    }
+
+    .teacher-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .teacher-detail-item dt {
+        min-width: 80px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+    }
+
+    .teacher-detail-item dd {
+        margin: 0;
+        flex: 1;
+    }
+
+    .teacher-detail-input,
+    .teacher-detail-select {
+        width: 100%;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        padding: 6px 10px;
+        font-family: inherit;
+        font-size: 0.9rem;
+        background: var(--input-bg, #f9fafb);
+        color: var(--text);
+        outline: none;
+        transition:
+                border-color 140ms ease,
+                box-shadow 140ms ease,
+                background-color 140ms ease;
+    }
+
+    .teacher-detail-select {
+        padding-right: 28px;
+    }
+
+    /* ============ Colonne 2 : matières ============ */
+
+    .teacher-subjects-edit-list {
+        margin: 0.3rem 0 0.4rem;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .teacher-subject-row {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .teacher-subject-input {
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        padding: 5px 10px;
+        font-size: 0.85rem;
+        background: var(--panel-soft);
+        color: var(--text);
+        min-width: 0;
+        outline: none;
+        transition:
+                border-color 140ms ease,
+                background-color 140ms ease;
+    }
+
+    .teacher-subject-input-name {
+        flex: 1.6;
+    }
+
+    .teacher-subject-input-promo {
+        flex: 0.9;
+        max-width: 130px; /* évite que la 2ᵉ input s'étire trop */
+        text-align: center;
+    }
+
+    .teacher-subject-sep {
+        text-align: center;
+        font-size: 0.8rem;
+        color: var(--muted);
+    }
+
+    .teacher-subject-remove {
+        width: 20px;
+        height: 20px;
+        border-radius: 999px;
+        border: none;
+        background: rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        cursor: pointer;
+        color: var(--muted);
+        transition:
+                background-color 120ms ease,
+                color 120ms ease;
+    }
+
+    .teacher-subject-remove:hover {
+        background: rgba(0, 0, 0, 0.12);
+        color: var(--text);
+    }
+
+    .teacher-subject-add-btn {
+        margin-top: 0.4rem;
+        border-radius: 999px;
+        border: 1px dashed var(--border);
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+        background: transparent;
+        cursor: pointer;
+        color: var(--muted);
+        transition:
+                background-color 120ms ease,
+                border-color 120ms ease,
+                color 120ms ease;
+    }
+
+    .teacher-subject-add-btn:hover {
+        background: var(--panel-soft);
+        border-color: var(--border);
+        color: var(--text);
+    }
+
+    .teacher-detail-muted {
+        margin-top: 0.25rem;
+        font-size: 0.88rem;
+        color: var(--muted);
+    }
+
+    /* ============ Colonne 3 : dispos (styles principaux dans leurs fichiers dédiés) ============ */
+    /* Ici on ne redéfinit pas toute la grille des dispos, juste les tweaks dark theme plus bas. */
+
+    /* ============ Thème sombre — corps de la card ============ */
+
+    [data-theme='dark'] .teacher-detail-input,
+    [data-theme='dark'] .teacher-detail-select {
+        background: #1f2735;
+        border-color: rgba(255, 255, 255, 0.15);
+        color: var(--text);
+    }
+
+    [data-theme='dark'] .teacher-subject-input {
+        background: #1f2735;
+        border-color: rgba(255, 255, 255, 0.15);
+        color: var(--text);
+    }
+
+    [data-theme='dark'] .teacher-subject-add-btn,
+    [data-theme='dark'] .teacher-period-add-btn {
+        border-color: rgba(255, 255, 255, 0.2);
+        color: var(--muted);
+    }
+
+    [data-theme='dark'] .teacher-subject-add-btn:hover,
+    [data-theme='dark'] .teacher-period-add-btn:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    [data-theme='dark'] .ta-cell.is-available {
+        background: rgba(16, 185, 129, 0.35);
+        border-color: rgba(16, 185, 129, 0.7);
+    }
+
+    [data-theme='dark'] .ta-cell.is-unavailable {
+        background: rgba(239, 68, 68, 0.35);
+        border-color: rgba(239, 68, 68, 0.7);
+    }
+
+    [data-theme='dark'] .ta-day {
+        color: var(--text);
+    }
+
+    [data-theme='dark'] .ta-label {
+        color: var(--text);
+    }
+
+    [data-theme='dark'] .teacher-availability-legend {
+        color: var(--muted);
+    }
+
+    [data-theme='dark'] .teacher-period-pill {
+        background: #1f2735;
+        border-color: rgba(255, 255, 255, 0.15);
+        color: var(--text);
+    }
+
+    [data-theme='dark'] .teacher-period-pill.is-active {
+        background: rgba(129, 140, 248, 0.25);
+        border-color: rgba(129, 140, 248, 0.7);
+        box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.5);
+    }
+
+    [data-theme='dark'] .constraint-date-input,
+    [data-theme='dark'] .teacher-period-range-pill input[type='date'] {
+        background: #1f2735;
+        border-color: rgba(255, 255, 255, 0.2);
+        color: var(--text);
+    }
+}

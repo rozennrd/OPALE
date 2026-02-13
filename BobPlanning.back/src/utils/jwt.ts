@@ -3,8 +3,8 @@ import config from '../config/auth.config';
 
 const generateToken = (user: any) => {
   const payload = {
-    id: user.IdUtilisateur,
-    email: user.Email
+    id: user.id_utilisateur,
+    email: user.email
   };
 
   // On signe le token avec une clé secrète

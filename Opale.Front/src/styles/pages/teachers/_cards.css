@@ -1,0 +1,74 @@
+/* src/styles/pages/teachers/_cards.css */
+
+@layer pages {
+    /* ============================
+       COLONNE GAUCHE (texte)
+       ============================ */
+
+    .teacher-card-name {
+        /* typographie commune via .entity-card-title */
+    }
+
+    .teacher-card-phone {
+        /* typographie commune via .entity-card-meta */
+        /* on garde juste le layout spécifique si besoin */
+    }
+
+    .teacher-card-phone-icon {
+        width: 1rem;
+        height: 1rem;
+        opacity: 0.75;
+        display: block;
+    }
+
+    /* ============================
+       COLONNE DROITE (badge mode)
+       ============================ */
+
+    .teacher-card-mode {
+        width: 90px;
+        min-width: 90px;
+    }
+
+    @media (max-width: 640px) {
+        .teacher-card-mode {
+            width: 80px;
+            min-width: 80px;
+        }
+    }
+
+    /* ============================
+       Couleurs par mode
+       (layout = .entity-badge)
+       ============================ */
+
+    .teacher-mode-distanciel {
+        background: rgba(59, 130, 246, 0.10);
+        color: #1d4ed8;
+    }
+
+    .teacher-mode-hybride {
+        background: rgba(139, 92, 246, 0.10);
+        color: #6d28d9;
+    }
+
+    .teacher-mode-presentiel {
+        background: rgba(16, 185, 129, 0.10);
+        color: #047857;
+    }
+
+    [data-theme="dark"] .teacher-mode-distanciel {
+        background: rgba(59, 130, 246, 0.18);
+        color: #bfdbfe;
+    }
+
+    [data-theme="dark"] .teacher-mode-hybride {
+        background: rgba(139, 92, 246, 0.18);
+        color: #ddd6fe;
+    }
+
+    [data-theme="dark"] .teacher-mode-presentiel {
+        background: rgba(16, 185, 129, 0.18);
+        color: #a7f3d0;
+    }
+}

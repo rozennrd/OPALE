@@ -1,0 +1,101 @@
+/* Layout général de la page Promotions (grille, cycles, bouton +) */
+@layer pages {
+    .promos {
+        /* conteneur global si besoin d'espacement spécifique plus tard */
+    }
+
+    .promos-header {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+
+    .promos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 16px;
+    }
+
+    .cycle-card {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px;
+        min-width: 0;
+        box-shadow: var(--shadow-lg);
+
+        background: var(--panel-soft);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+    }
+
+    .cycle-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+    }
+
+    .cycle-name {
+        flex: 1 1 auto;
+        min-width: 0;
+        font-family: 'Nunito', sans-serif;
+        font-size: clamp(18px, 2vw, 28px);
+        font-weight: 700;
+        border: 1px solid #e5e7eb;
+        border-radius: var(--radius-sm);
+        padding: 10px 12px;
+        background: #fff;
+    }
+
+    .cycle-actions {
+        display: flex;
+        gap: 8px;
+        flex: 0 0 auto;
+    }
+
+    .promotions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .empty {
+        color: var(--muted);
+        font-family: 'Nunito', sans-serif;
+        font-size: clamp(14px, 1.6vw, 18px);
+        padding: 8px 4px;
+    }
+
+    /* Carte “+ Ajouter un cycle” */
+    .add-cycle-card {
+        display: grid;
+        place-items: center;
+        min-height: 140px;
+        padding: 16px;
+
+        /* transparent + bordure en tirets (pilotée par tokens) */
+        background: transparent;
+        border: var(--add-cycle-border-width) dashed var(--add-cycle-border-color);
+
+        cursor: pointer;
+        transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+        box-shadow: var(--shadow-md);
+    }
+
+    .add-cycle-card img {
+        width: clamp(36px, 6vw, 72px);
+        height: clamp(36px, 6vw, 72px);
+        object-fit: contain;
+        opacity: .9;
+    }
+
+    .add-cycle-card:hover {
+        background: transparent;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-lg);
+    }
+}

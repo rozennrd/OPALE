@@ -1,0 +1,79 @@
+import { apiClient } from './ApiClient'
+import { LoginCredentials, LoginResponse, User } from './types'
+import * as CryptoJS from 'crypto-js'
+import {
+    setTokenInLocalStorage,
+    removeTokenFromLocalStorage,
+    getTokenFromLocalStorage
+} from '../../constants/tokenStorage'
+
+class AuthService {
+    // Store user context in memory (could be expanded to include user data)
+    private user: User | null = null
+
+    hashPassword = (password: string) => {
+        return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
+    };
+
+    async login(credentials: LoginCredentials): Promise<{ success: boolean, response?: import('./types').ApiResponse<LoginResponse> }>{
+        credentials.password = this.hashPassword(credentials.password);
+        const response = await apiClient.post<LoginResponse>('/login', credentials)
+        if (response.success && response.data && response.data.token) {
+            // Store JWT token in localStorage like BobPlanning.front
+            setTokenInLocalStorage(response.data.token)
+            // Store minimal user context
+            this.user = {
+                id: 'unknown', // Not provided in this simple login response
+                email: credentials.email,
+            }
+            return { success: true, response }
+        }
+
+        return { success: false, response }
+    }
+
+    logout(): void {
+        this.user = null
+        // Clear token from localStorage
+        removeTokenFromLocalStorage()
+    }
+
+    async getCurrentUser(): Promise<User | null> {
+        return this.user
+    }
+
+    isAuthenticated(): boolean {
+        if (typeof window === 'undefined') return false
+
+        const token = getTokenFromLocalStorage()
+        if (!token) return false
+
+        return !this.isTokenExpired(token) && this.user !== null
+    }
+
+    isTokenExpired(token: string): boolean {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]))
+            const expiration = payload.exp * 1000
+            return Date.now() > expiration
+        } catch (e) {
+            console.error('Error parsing token:', e)
+            return true
+        }
+    }
+
+    // Handle authentication errors (e.g., redirect to login)
+    onAuthError(): void {
+        this.logout()
+        // Could trigger a global event or redirect
+        if (typeof window !== 'undefined') {
+            window.location.href = '/login'
+        }
+    }
+}
+
+// Singleton instance
+export const authService = new AuthService()
+
+// Export class for custom instances if needed
+export { AuthService }

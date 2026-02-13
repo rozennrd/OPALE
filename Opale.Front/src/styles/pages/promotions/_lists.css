@@ -1,0 +1,45 @@
+/* Listes groupes / spécialités dans la modale */
+@layer pages {
+    .promo-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .promo-list-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 6px 8px;
+        border-radius: var(--radius-sm);
+        background: var(--panel-soft);
+    }
+
+    /* Ligne groupe/spécialité : nom + nb étudiants */
+    .promo-list-main {
+        display: grid;
+        grid-template-columns: 2fr 0.7fr;  /* nom plus large */
+        gap: 10px;
+        align-items: center;
+    }
+
+    /* Input du nom */
+    .promo-list-name {
+        width: 100%;
+        min-width: 0;
+        font-size: 15px;
+    }
+
+    /* Input du nombre d'étudiants */
+    .promo-list-count {
+        width: 100%;
+        min-width: 60px;
+        max-width: 100px;
+        text-align: center;
+        font-size: 15px;
+    }
+}

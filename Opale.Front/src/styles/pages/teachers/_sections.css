@@ -1,0 +1,30 @@
+/* src/styles/pages/teachers/_sections.css */
+
+@layer pages {
+
+    /* Espacement des sections */
+    .teacher-section:last-of-type {
+        margin-top: 0.5rem;
+    }
+
+    /* Le body de section */
+    .teacher-section-body {
+        margin-top: 0.75rem;
+    }
+
+    /* Empty state */
+    .teacher-empty-state {
+        padding: 1.25rem 1rem 1rem;
+        border-radius: 0.75rem;
+        background: var(--panel-soft);
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+
+    /* Grille de cards */
+    .teacher-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+    }
+}
