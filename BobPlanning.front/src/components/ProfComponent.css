@@ -1,0 +1,111 @@
+/* Style pour le conteneur principal */
+.contact-container {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+/* Style pour le titre */
+.contact-container h1 {
+  text-align: center;
+  color: #333;
+}
+
+/* Style pour le formulaire */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+/* Style pour les labels */
+form label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* Style pour les inputs et selects */
+form input,
+form select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+/* Style pour les checkboxes */
+form input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+}
+
+/* Style pour les boutons */
+form button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+/* Style pour le bouton de suppression */
+form button[type="button"] {
+  background-color: #dc3545;
+}
+
+form button[type="button"]:hover {
+  background-color: #c82333;
+}
+
+/* Style pour le bouton d'ajout */
+.contact-container button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #28a745;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  align-self: center;
+}
+
+.contact-container button:hover {
+  background-color: #218838;
+}
+
+/* Style pour les disponibilités */
+form .disponibilites {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+form .disponibilites .day-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+form .disponibilites label {
+  display: flex;
+  align-items: center;
+}

@@ -12,14 +12,16 @@ export const transformBackendPromotionToFrontend = (backend: BackendPromotion): 
   startDate: backend.date_start,
   endDate: backend.date_end,
   groups: (backend.groups || []).map(g => ({
-    idPromo: g.id,
-    name: g.nom,
-    students: g.effectifs
+    id: g.id,
+    idPromo: g.id_promo,
+    nom: g.nom,
+    effectifs: g.effectifs
   })),
   specialties: (backend.specialties || []).map(s => ({
-    idPromo: s.id,
-    name: s.nom,
-    students: s.effectifs
+    id: s.id,
+    idPromo: s.id_promo,
+    nom: s.nom,
+    effectifs: s.effectifs
   })),
   constraints: {
     vacances: [],
