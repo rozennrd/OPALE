@@ -33,3 +33,4 @@ db.conf
 
 # Don't include dist ! (it's what's created after npm run build, useless in code)
 BobPlanning.back/dist
+.sonar-project.properties
