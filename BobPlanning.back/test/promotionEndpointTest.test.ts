@@ -1,4 +1,4 @@
-import request from 'supertest';
+const request = require('supertest');
 
 // Mocks must be defined before importing the app so the modules used
 // when routes/controllers are registered will use the mocked implementations.
