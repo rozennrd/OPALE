@@ -179,10 +179,11 @@ export default function Matieres() {
             const matchesQuery = q.length === 0 || m.nom.toLowerCase().includes(q)
 
             // Semestre (UI: 'S1'/'S2' | data: number)
+            const semestreValue = Number(m.semestre) // au cas où ça arrive en string "1"/"2"
             const matchesSemestre =
                 semestreFilter === 'ALL' ||
-                (semestreFilter === 'S1' && m.semestre === 1) ||
-                (semestreFilter === 'S2' && m.semestre === 2)
+                (semestreFilter === 1 && semestreValue === 1) ||
+                (semestreFilter === 2 && semestreValue === 2)
 
             // Cycle (API: via promo_id -> promotion.id_cycle -> cycleNameById)
             const promoId = m.promo_id ?? ''
