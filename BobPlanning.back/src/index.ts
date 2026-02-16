@@ -34,6 +34,7 @@ const upload = multer({ storage });
 
 import dotenv from "dotenv";
 import eventRoutes from "./api/routes/eventRoutes";
+import localisationRoutes from "./api/routes/localisationRoutes";
 dotenv.config();
 
 const dbConfig = getDBConfig();
@@ -74,6 +75,7 @@ app.use("/", matiereRoutes);
 app.use('/', profRoutes);
 app.use('/', specialiteRoutes);
 app.use('/', eventRoutes);
+app.use('/', localisationRoutes);
 
 // Swagger options
 const swaggerOptions = {
