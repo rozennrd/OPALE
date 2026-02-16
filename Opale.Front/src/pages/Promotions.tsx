@@ -49,6 +49,9 @@ export default function Promotions() {
         handleGroupChange,
         hasChanges,
         isLoading: isLoadingPromotion,
+        addSpecialty,
+        removeSpecialty,
+        handleSpecialtyChange
     } = usePromotionEditing(cycles)
 
     // Student adjustment popup
@@ -81,9 +84,8 @@ export default function Promotions() {
         try {
             const updatedPromo = await savePromotion(editingPromo)
 
-            // Update local state with synced groups (containing real IDs)
-            setEditingPromo(updatedPromo)
-            markFormAsUntouched();
+            // Update local state with synced groups (containing real IDs) and refresh state
+            markFormAsUntouched(updatedPromo);
 
             // TODO: Update cycles state to reflect changes
             // setCycles(prev => updateCyclePromotion(prev, updatedPromo))
@@ -199,18 +201,9 @@ export default function Promotions() {
                     onAddGroup={addGroup}
                     onRemoveGroup={removeGroup}
                     onStudentsBlur={handleStudentsBlur}
-                    onSpecialtyChange={(index, field, value) => {
-                        // TODO: Implement specialty change handler
-                        console.log('Specialty change:', { index, field, value })
-                    }}
-                    onAddSpecialty={() => {
-                        // TODO: Implement add specialty handler
-                        console.log('Add specialty')
-                    }}
-                    onRemoveSpecialty={(index) => {
-                        // TODO: Implement remove specialty handler
-                        console.log('Remove specialty:', index)
-                    }}
+                    onSpecialtyChange={handleSpecialtyChange}
+                    onAddSpecialty={addSpecialty}
+                    onRemoveSpecialty={removeSpecialty}
                     constraints={editingPromo.constraints}
                     onAddConstraint={handleAddConstraint}
                     onRemoveConstraint={handleRemoveConstraint}
