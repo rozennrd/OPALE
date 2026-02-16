@@ -5,7 +5,7 @@ import { EnseignementDAO } from "../dao/enseignementDao";
 export const enseignementRepository = {
   async getAll(): Promise<EnseignementDAO[]> {
     const sql = `
-      SELECT id, id_matiere, id_prof, heures_td, heures_tp
+      SELECT id, id_matiere, id_prof, heures_td, heures_tp, heures_projet, heures_elearning, heures_autre
       FROM enseignement
       ORDER BY id
     `;
@@ -15,7 +15,7 @@ export const enseignementRepository = {
 
   async getById(id: string): Promise<EnseignementDAO | null> {
     const sql = `
-      SELECT id, id_matiere, id_prof, heures_td, heures_tp
+      SELECT id, id_matiere, id_prof, heures_td, heures_tp, heures_projet, heures_elearning, heures_autre
       FROM enseignement
       WHERE id = $1
     `;
@@ -25,11 +25,11 @@ export const enseignementRepository = {
 
   async insert(dto: Omit<EnseignementDAO, "id">): Promise<string> {
     const sql = `
-      INSERT INTO enseignement (id_matiere, id_prof, heures_td, heures_tp)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO enseignement (id_matiere, id_prof, heures_td, heures_tp, heures_projet, heures_elearning, heures_autre)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING id
     `;
-    const result = await pool.query(sql, [dto.id_matiere, dto.id_prof, dto.heures_td, dto.heures_tp]);
+    const result = await pool.query(sql, [dto.id_matiere, dto.id_prof, dto.heures_td, dto.heures_tp, dto.heures_projet, dto.heures_elearning, dto.heures_autre]);
     return result.rows[0].id as string;
   },
 
@@ -39,10 +39,13 @@ export const enseignementRepository = {
       SET id_matiere = $2,
           id_prof = $3,
           heures_td = $4,
-          heures_tp = $5
+          heures_tp = $5,
+          heures_projet = $6,
+          heures_elearning = $7,
+          heures_autre = $8
       WHERE id = $1
     `;
-    const result = await pool.query(sql, [dto.id, dto.id_matiere, dto.id_prof, dto.heures_td, dto.heures_tp]);
+    const result = await pool.query(sql, [dto.id, dto.id_matiere, dto.id_prof, dto.heures_td, dto.heures_tp, dto.heures_projet, dto.heures_elearning, dto.heures_autre]);
     return (result.rowCount ?? 0) > 0;
   },
 

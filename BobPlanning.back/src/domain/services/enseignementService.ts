@@ -32,6 +32,9 @@ export const enseignementService = {
     if (!dto.id_prof) throw badRequest("id_prof est obligatoire.");
     if (dto.heures_td === undefined || dto.heures_td === null) throw badRequest("heures_td est obligatoire.");
     if (dto.heures_tp === undefined || dto.heures_tp === null) throw badRequest("heures_tp est obligatoire.");
+    if (dto.heures_projet === undefined || dto.heures_projet === null) throw badRequest("heures_projet est obligatoire.");
+    if (dto.heures_elearning === undefined || dto.heures_elearning === null) throw badRequest("heures_elearning est obligatoire.");
+    if (dto.heures_autre === undefined || dto.heures_autre === null) throw badRequest("heures_autre est obligatoire.");
     if (!Number.isInteger(Number(dto.heures_td)) || Number(dto.heures_td) < 0) {
       throw badRequest("heures_td doit être un entier >= 0.");
     }
