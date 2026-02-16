@@ -260,7 +260,8 @@ CREATE TABLE enseignement (
                               id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                               id_matiere  UUID    NOT NULL,
                               id_prof     UUID    NOT NULL,
-                              nb_heures   INT,
+                              heures_td   INT,
+                              heures_tp   INT,
                               CONSTRAINT fk_enseignement_matiere
                                   FOREIGN KEY (id_matiere)
                                       REFERENCES matiere(id)
@@ -273,7 +274,9 @@ CREATE TABLE enseignement (
                                       ON DELETE CASCADE,
     -- Un prof ne doit pas avoir deux lignes pour la même matière
                               CONSTRAINT uq_enseignement_unique UNIQUE (id_matiere, id_prof),
-                              CONSTRAINT ck_enseignement_heures CHECK (nb_heures IS NULL OR nb_heures >= 0)
+                              CONSTRAINT ck_enseignement_heures_td CHECK (heures_td IS NULL OR heures_td >= 0),
+                              CONSTRAINT ck_enseignement_heures_tp CHECK (heures_tp IS NULL OR heures_tp >= 0)
+
 );
 
 -- --------------------------------------------------------
