@@ -22,6 +22,23 @@ import { cyclesApi } from '../services/api/cyclesApi'
 import { getEnseignements } from '../services/api/enseignementsApi'
 import {transformBackendMatiereToFrontend} from "../services/api/matieresApiTransformers.ts";
 
+type ApiResponse<T> = {
+    success: boolean
+    data?: T
+    error?: { message?: string }
+}
+
+type BackendEnseignement = {
+    // on rend optionnel parce que tu ne m’as pas donné le modèle exact du back
+    id_matiere?: string | number
+    id_prof?: string | number
+}
+
+function unwrapApiArray<T>(res: ApiResponse<T[]> | T[]): T[] {
+    if (Array.isArray(res)) return res
+    return res.data ?? []
+}
+
 const getCycleFromPromoLabel = (promoLabel: string) => {
     return (promoLabel || '').trim().split(/\s+/)[0] || '-'
 }
@@ -78,16 +95,14 @@ export default function Matieres() {
                 if (!promosRes.success) throw new Error(promosRes.error?.message ?? 'Promotions fetch failed')
                 if (!cyclesRes.success) throw new Error(cyclesRes.error?.message ?? 'Cycles fetch failed')
 
-                const enseignements = (enseignementsRes as any)?.data ?? enseignementsRes ?? []
+                const enseignements: BackendEnseignement[] = unwrapApiArray<BackendEnseignement>(enseignementsRes)
 
                 const map = new Map<string, Set<string>>()
 
                 for (const e of enseignements) {
-                    const matiereId =
-                        e.id_matiere ?? e.matiere_id ?? e.idMatiere ?? e.matiereId ?? e.id_matiere_uuid
+                    const matiereId = e.id_matiere
 
-                    const teacherId =
-                        e.id_prof ?? e.prof_id ?? e.idProf ?? e.profId ?? e.id_enseignant ?? e.enseignant_id
+                    const teacherId = e.id_prof
 
                     if (!matiereId || !teacherId) continue
 
@@ -108,7 +123,7 @@ export default function Matieres() {
                 console.log('[MATIERES] backendCycles length:', backendCycles.length)
 
                 console.log('[MATIERES] example matiere id:', matieres?.[0]?.id)
-                console.log('[MATIERES] example enseignement matiereId:', enseignements?.[0]?.id_matiere ?? enseignements?.[0]?.matiere_id)
+                console.log('[MATIERES] example enseignement matiereId:', enseignements?.[0]?.id_matiere)
 
                 const promotionLabels = backendPromos
                     .map((p) => p.nom)
@@ -132,7 +147,7 @@ export default function Matieres() {
                 const promoLabelById = new Map<string, string>()
                 for (const p of backendPromos) promoLabelById.set(p.id, p.nom)
 
-                const frontMatieres = (backendMatieres ?? []).map((m: any) =>
+                const frontMatieres = (backendMatieres ?? []).map((m) =>
                     transformBackendMatiereToFrontend(m, promoLabelById)
                 )
 
@@ -192,7 +207,7 @@ export default function Matieres() {
 
     const teacherOptions = useMemo(() => {
         return (teachers ?? [])
-            .map((t: any) => ({
+            .map((t) => ({
                 id: String(t.id),
                 label: `${t.prenom ?? ''} ${t.nom ?? ''}`.trim(),
             }))
@@ -331,7 +346,7 @@ export default function Matieres() {
         const promoLabelById = new Map<string, string>()
         for (const p of promosRes.data ?? []) promoLabelById.set(p.id, p.nom)
 
-        const frontMatieres = (backendMatieres ?? []).map((m: any) =>
+        const frontMatieres = (backendMatieres ?? []).map((m) =>
             transformBackendMatiereToFrontend(m, promoLabelById)
         )
 

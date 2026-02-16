@@ -2,8 +2,8 @@ import { apiClient } from '../base/ApiClient'
 
 export interface TeacherApi {
     id: string
-    firstName: string
-    lastName: string
+    prenom: string
+    nom: string
 }
 
 export async function getProfsData(): Promise<TeacherApi[]> {
