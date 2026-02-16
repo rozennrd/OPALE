@@ -63,6 +63,30 @@
         gap: 10px;
     }
 
+    .btn-add-promo {
+        border-color: #9edcb7;
+        background: #e7f7ee;
+        color: #0f5132;
+    }
+
+    .btn-add-promo:hover {
+        background: #dcf2e4;
+        border-color: #86cfaa;
+    }
+
+    .promo-add-dialog {
+        width: min(560px, 92vw);
+        gap: 8px;
+    }
+
+    .promo-add-dialog .confirm-dialog-title {
+        margin-bottom: 2px;
+    }
+
+    .promo-add-dialog .promo-edit-field {
+        gap: 10px;
+    }
+
     .empty {
         color: var(--muted);
         font-family: 'Nunito', sans-serif;

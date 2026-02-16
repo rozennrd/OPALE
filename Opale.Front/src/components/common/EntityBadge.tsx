@@ -39,10 +39,10 @@ export default function EntityBadge({
                 </div>
 
                 <div className="entity-badge__header-right">
+                    <span className="entity-badge__label">{label}</span>
                     <div className="entity-badge__icon" aria-hidden="true">
                         <img src={iconSrc} alt="" />
                     </div>
-                    <span className="entity-badge__label">{label}</span>
                 </div>
             </div>
         )

@@ -11,7 +11,7 @@ const buildInitialPeriods = (teacher: Teacher): TeacherAvailabilityPeriod[] => {
     if (teacher.availabilityPeriods && teacher.availabilityPeriods.length > 0) {
         return teacher.availabilityPeriods.map((p, index) => ({
             id: p.id || `period-${index + 1}`,
-            label: p.label || `Période ${index + 1}`,
+            label: p.label || `Période de disponibilité ${index + 1}`,
             availability: normalizeAvailability(p.availability),
             start: p.start || '',
             end: p.end || '',
@@ -21,7 +21,7 @@ const buildInitialPeriods = (teacher: Teacher): TeacherAvailabilityPeriod[] => {
     return [
         {
             id: 'period-1',
-            label: 'Période 1',
+            label: 'Période de disponibilité 1',
             availability: normalizeAvailability(teacher.availability),
             start: '',
             end: '',
@@ -143,7 +143,7 @@ export const useTeacherDetail = (teacher: Teacher) => {
             const nextIndex = prev.length + 1
             const newPeriod: TeacherAvailabilityPeriod = {
                 id: `period-${nextIndex}`,
-                label: `Période ${nextIndex}`,
+                label: `Période de disponibilité ${nextIndex}`,
                 availability: '0000000000',
                 start: '',
                 end: '',

@@ -34,12 +34,30 @@ const TeacherAvailabilityColumn: React.FC<TeacherAvailabilityColumnProps> = ({
         () => periods.find((p) => p.id === selectedPeriodId) ?? periods[0],
         [periods, selectedPeriodId],
     )
+    const sortedPeriods = useMemo(() => {
+        const entries = periods.map((period, index) => ({
+            period,
+            index,
+            sortKey: period.start || period.end || null,
+        }))
+        const hasAnyDate = entries.some((entry) => entry.sortKey)
+        if (!hasAnyDate) return periods
+        return entries
+            .sort((a, b) => {
+                if (!a.sortKey && !b.sortKey) return a.index - b.index
+                if (!a.sortKey) return 1
+                if (!b.sortKey) return -1
+                if (a.sortKey === b.sortKey) return a.index - b.index
+                return a.sortKey.localeCompare(b.sortKey)
+            })
+            .map((entry) => entry.period)
+    }, [periods])
 
     if (!selectedPeriod) {
         return (
             <div className="teacher-detail-col">
                 <h4>Disponibilités</h4>
-                <p className="teacher-detail-muted">Aucune période définie.</p>
+                <p className="teacher-detail-muted">Aucune période de disponibilité définie.</p>
             </div>
         )
     }
@@ -53,47 +71,69 @@ const TeacherAvailabilityColumn: React.FC<TeacherAvailabilityColumnProps> = ({
         end: selectedPeriod.end || '',
     }
 
+    const buildPeriodLabel = (period: TeacherAvailabilityPeriod) => {
+        const formatDate = (value?: string) => {
+            if (!value) return ''
+            const parts = value.split('-')
+            if (parts.length === 3) {
+                return `${parts[2]}/${parts[1]}/${parts[0]}`
+            }
+            return value
+        }
+        if (!period.start && !period.end) return period.label
+        if (period.start && period.end) {
+            return `${formatDate(period.start)} - ${formatDate(period.end)}`
+        }
+        if (period.start) {
+            return formatDate(period.start)
+        }
+        return formatDate(period.end)
+    }
+
     return (
         <div className="teacher-detail-col">
             <h4>Disponibilités</h4>
 
-            {/* Header périodes */}
+            {/* Header périodes de disponibilité */}
             <div className="teacher-periods-header">
-                {periods.map((period) => (
-                    <div
-                        key={period.id}
-                        className={
-                            'teacher-period-pill' +
-                            (period.id === selectedPeriodId ? ' is-active' : '')
-                        }
-                    >
-                        <button
-                            type="button"
-                            className="teacher-period-pill-main"
-                            onClick={() => onSelectPeriod(period.id)}
+                {sortedPeriods.map((period) => {
+                    const displayLabel = buildPeriodLabel(period)
+                    return (
+                        <div
+                            key={period.id}
+                            className={
+                                'teacher-period-pill' +
+                                (period.id === selectedPeriodId ? ' is-active' : '')
+                            }
                         >
-                            {period.label}
-                        </button>
-
-                        {periods.length > 1 && (
                             <button
                                 type="button"
-                                className="teacher-period-pill-remove"
-                                onClick={() => onRemovePeriod(period.id)}
-                                aria-label={`Supprimer ${period.label}`}
+                                className="teacher-period-pill-main"
+                                onClick={() => onSelectPeriod(period.id)}
                             >
-                                ×
+                                {displayLabel}
                             </button>
-                        )}
-                    </div>
-                ))}
+
+                            {periods.length > 1 && (
+                                <button
+                                    type="button"
+                                    className="teacher-period-pill-remove"
+                                    onClick={() => onRemovePeriod(period.id)}
+                                    aria-label={`Supprimer ${displayLabel}`}
+                                >
+                                    ×
+                                </button>
+                            )}
+                        </div>
+                    )
+                })}
 
                 <button
                     type="button"
                     className="teacher-period-add-pill"
                     onClick={onAddPeriod}
                 >
-                    + Ajouter une période
+                    + Ajouter une période de disponibilité
                 </button>
             </div>
 
@@ -174,3 +214,4 @@ const TeacherAvailabilityColumn: React.FC<TeacherAvailabilityColumnProps> = ({
 }
 
 export default TeacherAvailabilityColumn
+

@@ -13,6 +13,7 @@ interface TeacherModeBadgeProps {
     variant?: BadgeVariant // 'card' | 'header'
     title?: string
     subtitle?: string
+    sectionLabel?: string
 }
 
 export default function TeacherModeBadge({
@@ -21,6 +22,7 @@ export default function TeacherModeBadge({
                                              variant = 'card',
                                              title,
                                              subtitle,
+                                             sectionLabel,
                                          }: TeacherModeBadgeProps) {
     let label: string
     let iconSrc: string
@@ -54,10 +56,12 @@ export default function TeacherModeBadge({
         .filter(Boolean)
         .join(' ')
 
+    const displayLabel = sectionLabel ? `${sectionLabel} - ${label}` : label
+
     return (
         <EntityBadge
             iconSrc={iconSrc}
-            label={label}
+            label={displayLabel}
             className={rootClassName}
             variant={variant}
             title={title}
