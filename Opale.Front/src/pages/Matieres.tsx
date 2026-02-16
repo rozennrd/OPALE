@@ -19,6 +19,7 @@ import { useSelectionState } from '../hooks/common/useSelectionState'
 import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
 import {transformBackendPromotionToFrontend} from "../services/api/promotionsApiTransformers.ts";
 import { cyclesApi } from '../services/api/cyclesApi'
+import { getEnseignements } from '../services/api/enseignementsApi'
 import {transformBackendMatiereToFrontend} from "../services/api/matieresApiTransformers.ts";
 
 const getCycleFromPromoLabel = (promoLabel: string) => {
@@ -50,6 +51,7 @@ export default function Matieres() {
     const [teachers, setTeachers] = useState<TeacherApi[]>([])
     const [promoById, setPromoById] = useState<Map<string, { id: string; nom: string; id_cycle: string }>>(new Map())
     const [cycleNameById, setCycleNameById] = useState<Map<string, string>>(new Map())
+    const [teacherIdsByMatiereId, setTeacherIdsByMatiereId] = useState<Map<string, Set<string>>>(new Map())
 
     const [allPromotionLabels, setAllPromotionLabels] = useState<string[]>([])
     const [allCycleNames, setAllCycleNames] = useState<string[]>([])
@@ -62,10 +64,12 @@ export default function Matieres() {
             try {
                 console.log('[MATIERES] fetching matieres + promotions + cycles + profs')
 
-                const [backendMatieres, promosRes, cyclesRes, profs] = await Promise.all([
+                const [backendMatieres, promosRes, cyclesRes, profs, enseignementsRes] = await Promise.all([
                     getMatieres(),                 // Array backend matieres
                     promotionsApi.getPromotions(), // ApiResponse<BackendPromotion[]>
                     cyclesApi.getCycles(),         // ApiResponse<BackendCycle[]>
+                    getProfsData(),                // ApiResponse<BackendTeacher[]>
+                    getEnseignements(),            // ApiResponse<BackendEnseignement[]>
                 ])
 
                 console.log('[MATIERES] backendMatieres length:', backendMatieres?.length)
@@ -74,11 +78,37 @@ export default function Matieres() {
                 if (!promosRes.success) throw new Error(promosRes.error?.message ?? 'Promotions fetch failed')
                 if (!cyclesRes.success) throw new Error(cyclesRes.error?.message ?? 'Cycles fetch failed')
 
+                const enseignements = (enseignementsRes as any)?.data ?? enseignementsRes ?? []
+
+                const map = new Map<string, Set<string>>()
+
+                for (const e of enseignements) {
+                    const matiereId =
+                        e.id_matiere ?? e.matiere_id ?? e.idMatiere ?? e.matiereId ?? e.id_matiere_uuid
+
+                    const teacherId =
+                        e.id_prof ?? e.prof_id ?? e.idProf ?? e.profId ?? e.id_enseignant ?? e.enseignant_id
+
+                    if (!matiereId || !teacherId) continue
+
+                    const key = String(matiereId)
+                    const tId = String(teacherId)
+
+                    const set = map.get(key) ?? new Set<string>()
+                    set.add(tId)
+                    map.set(key, set)
+                }
+
+                if (!mounted) return
+                setTeacherIdsByMatiereId(map)
                 const backendPromos = promosRes.data ?? []
                 const backendCycles = cyclesRes.data ?? []
 
                 console.log('[MATIERES] backendPromos length:', backendPromos.length)
                 console.log('[MATIERES] backendCycles length:', backendCycles.length)
+
+                console.log('[MATIERES] example matiere id:', matieres?.[0]?.id)
+                console.log('[MATIERES] example enseignement matiereId:', enseignements?.[0]?.id_matiere ?? enseignements?.[0]?.matiere_id)
 
                 const promotionLabels = backendPromos
                     .map((p) => p.nom)
@@ -124,7 +154,7 @@ export default function Matieres() {
                 setTeachers([])
                 setAllPromotionLabels([])
                 setAllCycleNames([])
-
+                setTeacherIdsByMatiereId(new Map())
             }
         })()
 
@@ -196,7 +226,10 @@ export default function Matieres() {
                 promotionFilter === 'ALL' || m.id_promo === promotionFilter
 
             // Teacher (not wired yet -> keep existing behavior)
-            const matchesTeacher = teacherFilter === 'ALL' ? true : true
+            const matchesTeacher =
+                teacherFilter === 'ALL'
+                    ? true
+                    : (teacherIdsByMatiereId.get(String(m.id))?.has(String(teacherFilter)) ?? false)
 
             return (
                 matchesQuery &&
@@ -215,6 +248,7 @@ export default function Matieres() {
         teacherFilter,
         promoById,
         cycleNameById,
+        teacherIdsByMatiereId,
     ])
 
     const visibleMatiereIds = useMemo(
