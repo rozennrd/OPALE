@@ -124,7 +124,6 @@ export const eventController = {
         });
         return;
       }
-
       const events = await eventService.getEventsByPromoAndTypes(promo, types);
 
       const nothingFound = Object.values(events).every(

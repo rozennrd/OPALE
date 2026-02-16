@@ -1,3 +1,8 @@
+
+import {GroupeDTO} from "./groupeDto";
+import {SpecialiteDTO} from "./specialiteDto";
+import {PromotionDTO} from "./promotionDto";
+
 export type TypeEvent = 'Cours'| 'Entreprise'| 'Examen'| 'Reunion'| 'Fermeture'| 'Soutenance'| 'JPO'| 'Stage'| 'Mobilite'| 'PFE'| 'Rattrapage'| 'Conference'| 'Rentrée'| 'Réunion parents'| 'Journée Immersion'| 'Concours'| 'Salon'| 'Fin des cours'| 'Autre';
 
 export interface EventDTO {
@@ -13,4 +18,5 @@ export interface EventDTO {
     is_blocking?: boolean;
     is_exceptional?: boolean;
     is_external?: boolean;
+    concerne?: { groupes: GroupeDTO[], specialites: SpecialiteDTO[], promotions: PromotionDTO[]}
 }

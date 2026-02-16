@@ -26,8 +26,8 @@ export const eventService = {
         return daos.map(eventMapper.toDTO);
     },
 
-    async getEventsByPromoAndTypes(promoNom: string, types: string[]): Promise<Record<string, EventDTO[]>> {
-        const daos = await eventRepository.getByPromoAndTypes(promoNom, types);
+    async getEventsByPromoAndTypes(promoId: string, types: string[]): Promise<Record<string, EventDTO[]>> {
+        const daos = await eventRepository.getByPromoAndTypes(promoId, types);
         const dtos = daos.map(eventMapper.toDTO);
 
         // Organiser par type

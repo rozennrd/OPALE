@@ -68,18 +68,18 @@ export const eventRepository = {
     },
 
     // Récupère les événements par promotion et types
-    async getByPromoAndTypes(promoNom: string, types: string[]): Promise<EventDAO[]> {
+    async getByPromoAndTypes(promoId: string, types: string[]): Promise<EventDAO[]> {
         const sql = `
             SELECT e.id, e.type, e.nom, e.description, e.num_semaine, e.datetime_start, e.datetime_end,
                    e.show_macro, e.show_micro, e.is_blocking, e.is_exceptional, e.is_external
             FROM event e
             JOIN concerner c ON c.id_event = e.id
             JOIN promotion p ON p.id = c.id_promo
-            WHERE p.nom = $1
+            WHERE p.id = $1
               AND e.type = ANY($2)
             ORDER BY e.datetime_start ASC
         `;
-        const result = await pool.query(sql, [promoNom, types]);
+        const result = await pool.query(sql, [promoId, types]);
         return result.rows as EventDAO[];
     },
 
@@ -95,28 +95,46 @@ export const eventRepository = {
         show_micro: boolean,
         is_blocking: boolean,
         is_exceptional: boolean,
-        is_external: boolean
+        is_external: boolean,
+        concerne?: string[],
     ): Promise<string> {
-        const sql = `
+        const client = await pool.connect();
+
+        try {
+            await client.query('BEGIN');
+
+            // Insert event
+            const eventSql = `
             INSERT INTO event (type, nom, description, num_semaine, datetime_start, datetime_end,
                                show_macro, show_micro, is_blocking, is_exceptional, is_external)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-                RETURNING id
+            RETURNING id
         `;
-        const result = await pool.query(sql, [
-            type,
-            nom,
-            description,
-            num_semaine,
-            datetime_start,
-            datetime_end,
-            show_macro,
-            show_micro,
-            is_blocking,
-            is_exceptional,
-            is_external
-        ]);
-        return result.rows[0].id;
+            const eventResult = await client.query(eventSql, [
+                type, nom, num_semaine, datetime_start, datetime_end,
+                show_macro, show_micro, is_blocking, is_exceptional, is_external
+            ]);
+            const eventId = eventResult.rows[0].id;
+
+            // Insert into concerner table
+            if (concerne && concerne.length > 0) {
+                for (const promoId of concerne) {
+                    await client.query(
+                        'INSERT INTO concerner (id_event, id_promo) VALUES ($1, $2)',
+                        [eventId, promoId]
+                    );
+                }
+            }
+
+            await client.query('COMMIT');
+            return eventId;
+
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
     },
 
     // Met à jour un événement existant
