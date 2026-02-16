@@ -21,6 +21,7 @@ import promotionRoutes from './api/routes/promotionRoutes';
 import matiereRoutes from "./api/routes/matiereRoutes";
 import profRoutes from "./api/routes/profRoutes";
 import specialiteRoutes from "./api/routes/specialiteRoutes";
+import maquetteRoutes from './api/routes/maquetteRoutes';
 
 require('dotenv').config();
 
@@ -74,6 +75,7 @@ app.use("/", matiereRoutes);
 app.use('/', profRoutes);
 app.use('/', specialiteRoutes);
 app.use('/', eventRoutes);
+app.use('/', maquetteRoutes);
 
 // Swagger options
 const swaggerOptions = {
