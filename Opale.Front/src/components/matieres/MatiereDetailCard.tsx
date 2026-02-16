@@ -148,7 +148,28 @@ export default function MatiereDetailCard({
         rowId: string,
         patch: Partial<Pick<TeacherAssignment, 'teacherId' | 'tdHours' | 'tpHours'>>,
     ) => {
-        setAssignments((prev) => prev.map((r) => (r.rowId === rowId ? { ...r, ...patch } : r)))
+        setAssignments((prev) => {
+            const next = prev.map((r) => (r.rowId === rowId ? { ...r, ...patch } : r))
+
+            const row = next.find((r) => r.rowId === rowId)
+            if (!row) return next
+
+            const maxTD = Math.max(0, Number(tdHours) || 0)
+            const maxTP = Math.max(0, Number(tpHours) || 0)
+
+            // totaux sans la ligne courante (pour calculer le “reste” dispo)
+            const tdOther = next.reduce((acc, r) => acc + (r.rowId === rowId ? 0 : (Number(r.tdHours) || 0)), 0)
+            const tpOther = next.reduce((acc, r) => acc + (r.rowId === rowId ? 0 : (Number(r.tpHours) || 0)), 0)
+
+            const tdRemaining = Math.max(0, maxTD - tdOther)
+            const tpRemaining = Math.max(0, maxTP - tpOther)
+
+            // clamp la ligne courante
+            row.tdHours = Math.max(0, Math.min(Number(row.tdHours) || 0, tdRemaining))
+            row.tpHours = Math.max(0, Math.min(Number(row.tpHours) || 0, tpRemaining))
+
+            return next
+        })
     }
 
     const handleToggleKind = (rowId: string, kind: TeachKind) => {
