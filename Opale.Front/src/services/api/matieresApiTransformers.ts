@@ -13,6 +13,9 @@ export interface BackendMatiere {
     nb_eval_intermediaire: number | null
     heures_td: number | null
     heures_tp: number | null
+    heures_projet: number | null
+    heures_elearning: number | null
+    heures_autre: number | null
 }
 
 /**
@@ -40,5 +43,8 @@ export const transformBackendMatiereToFrontend = (
             backend.nb_eval_intermediaire === null ? undefined : backend.nb_eval_intermediaire ?? undefined,
         heures_td: backend.heures_td ?? 0,
         heures_tp: backend.heures_tp === null ? undefined : backend.heures_tp ?? undefined,
+        heures_projet: backend.heures_projet ?? 0, // Pas dans le backend, on laisse undefined
+        heures_elearning: backend.heures_elearning ?? 0, // Pas dans le backend, on laisse undefined
+        heures_autre: backend.heures_autre ?? 0, // Pas dans le backend, on laisse undefined
     }
 }

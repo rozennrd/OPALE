@@ -133,8 +133,8 @@ CREATE TABLE matiere (
                          semestre               INT            NOT NULL,
                          nb_partiels            INT            NOT NULL,
                          nb_eval_intermediaire  INT,
-                         heures_td              INT,
-                         heures_tp              INT,
+                         heures_td              FLOAT,
+                         heures_tp              FLOAT,
                          heures_projet          FLOAT,
                          heures_elearning       FLOAT,
                          heures_autre           FLOAT,
@@ -260,8 +260,11 @@ CREATE TABLE enseignement (
                               id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                               id_matiere  UUID    NOT NULL,
                               id_prof     UUID    NOT NULL,
-                              heures_td   INT,
-                              heures_tp   INT,
+                              heures_td   FLOAT,
+                              heures_tp   FLOAT,
+                              heures_projet FLOAT,
+                              heures_elearning FLOAT,
+                              heures_autre FLOAT,
                               CONSTRAINT fk_enseignement_matiere
                                   FOREIGN KEY (id_matiere)
                                       REFERENCES matiere(id)

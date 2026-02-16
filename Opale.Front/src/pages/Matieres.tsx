@@ -29,7 +29,6 @@ type ApiResponse<T> = {
 }
 
 type BackendEnseignement = {
-    // on rend optionnel parce que tu ne m’as pas donné le modèle exact du back
     id_matiere?: string | number
     id_prof?: string | number
 }

@@ -8,6 +8,9 @@ export interface BackendEnseignement {
     id_prof: string
     heures_td: number
     heures_tp: number
+    heures_projet?: number
+    heures_elearning?: number
+    heures_autre?: number
 }
 
 export interface EnseignementCreateRequest {
@@ -15,6 +18,9 @@ export interface EnseignementCreateRequest {
     id_prof: string
     heures_td?: number
     heures_tp?: number
+    heures_projet?: number
+    heures_elearning?: number
+    heures_autre?: number
 }
 
 export interface EnseignementUpdateRequest {
@@ -23,6 +29,9 @@ export interface EnseignementUpdateRequest {
     id_prof: string
     heures_td?: number
     heures_tp?: number
+    heures_projet?: number
+    heures_elearning?: number
+    heures_autre?: number
 }
 
 export async function getEnseignements(): Promise<ApiResponse<BackendEnseignement[]>> {

@@ -26,7 +26,7 @@ interface MatiereDetailCardProps {
     teacherOptions: TeacherOption[]
 }
 
-type TeachKind = 'TD' | 'TP'
+type TeachKind = 'TD' | 'TP' | 'PROJET' | 'E-LEARNING' | 'AUTRES'
 
 interface TeacherAssignment {
     rowId: string
@@ -34,6 +34,9 @@ interface TeacherAssignment {
     teacherId: string
     tdHours: number
     tpHours: number
+    projectHours: number
+    elearningHours: number
+    autresHours: number
 }
 
 const makeRowId = () => `assign-${Math.random().toString(16).slice(2)}`
@@ -51,6 +54,9 @@ export default function MatiereDetailCard({
     const [volumeTotal, setVolumeTotal] = useState(matiere.volume_horaire)
     const [tdHours, setTdHours] = useState(matiere.heures_td)
     const [tpHours, setTpHours] = useState(matiere.heures_tp ?? 0)
+    const [projectHours, setProjectHours] = useState(matiere.heures_projet ?? 0)
+    const [eLearningHours, setELearningHours] = useState(matiere.heures_elearning ?? 0)
+    const [autresHours, setAutresHours] = useState(matiere.heures_autre ?? 0)
     const [assignments, setAssignments] = useState<TeacherAssignment[]>(() => [
         { rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 },
     ])
@@ -67,7 +73,10 @@ export default function MatiereDetailCard({
         setVolumeTotal(matiere.volume_horaire)
         setTdHours(matiere.heures_td)
         setTpHours(matiere.heures_tp ?? 0)
-    }, [matiere])
+        setProjectHours(matiere.heures_projet ?? 0)
+        setELearningHours(matiere.heures_elearning ?? 0)
+        setAutresHours(matiere.heures_autre ?? 0)
+    }, [matiere.id])
 
     // Load enseignements for this matiere
     useEffect(() => {
@@ -87,7 +96,6 @@ export default function MatiereDetailCard({
 
                 const all = res.data ?? []
 
-                // ⚠️ Si ton backend n'utilise pas "id_matiere", change ici.
                 const mine = all.filter((e) => String(e.id_matiere) === String(matiere.id))
 
                 console.log('[MATIERE_DETAIL] enseignements filtered ->', mine)
@@ -100,8 +108,11 @@ export default function MatiereDetailCard({
                             teacherId: String(e.id_prof ?? ''),
                             tdHours: clamp0(e.heures_td),
                             tpHours: clamp0(e.heures_tp),
+                            projectHours: clamp0(e.heures_projet ?? 0),
+                            elearningHours: clamp0(e.heures_elearning ?? 0),
+                            autresHours: clamp0(e.heures_autre ?? 0),
                         }))
-                        : [{ rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 }]
+                        : [{ rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 , projectHours: 0, elearningHours: 0, autresHours: 0 }]
 
                 if (!mounted) return
                 setAssignments(rows)
@@ -109,7 +120,7 @@ export default function MatiereDetailCard({
             } catch (err) {
                 console.error('[MATIERE_DETAIL] load enseignements failed:', err)
                 if (!mounted) return
-                setAssignments([{ rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 }])
+                setAssignments([{ rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0, projectHours: 0, elearningHours: 0, autresHours: 0 }])
                 setInitialAssignments([])
             } finally {
                 if (mounted) setLoadingEns(false)
@@ -121,6 +132,7 @@ export default function MatiereDetailCard({
         }
     }, [matiere.id])
 
+    // Cours assignés par type (TD/TP/Projet/E-learning/Autres)
     const assignedTD = useMemo(
         () => assignments.reduce((acc, r) => acc + (Number.isFinite(r.tdHours) ? r.tdHours : 0), 0),
         [assignments],
@@ -130,8 +142,23 @@ export default function MatiereDetailCard({
         [assignments],
     )
 
+    const assignedProject = useMemo(
+        () => assignments.reduce((acc, r) => acc + (Number.isFinite(r.projectHours) ? r.projectHours : 0), 0),
+        [assignments],
+    )
+
+    const assignedELearning = useMemo(
+        () => assignments.reduce((acc, r) => acc + (Number.isFinite(r.elearningHours) ? r.elearningHours : 0), 0),
+        [assignments],
+    )
+
+    const assignedAutres = useMemo(
+        () => assignments.reduce((acc, r) => acc + (Number.isFinite(r.autresHours) ? r.autresHours : 0), 0),
+        [assignments],
+    )
+
     const handleAddAssignment = () => {
-        setAssignments((prev) => [...prev, { rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 }])
+        setAssignments((prev) => [...prev, { rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 , projectHours:0, elearningHours:0, autresHours:0}])
     }
 
     const handleRemoveAssignment = (rowId: string) => {
@@ -146,7 +173,7 @@ export default function MatiereDetailCard({
 
     const handleAssignmentChange = (
         rowId: string,
-        patch: Partial<Pick<TeacherAssignment, 'teacherId' | 'tdHours' | 'tpHours'>>,
+        patch: Partial<Pick<TeacherAssignment, 'teacherId' | 'tdHours' | 'tpHours' | 'projectHours' | 'elearningHours' | 'autresHours'>>,
     ) => {
         setAssignments((prev) => {
             const next = prev.map((r) => (r.rowId === rowId ? { ...r, ...patch } : r))
@@ -176,8 +203,18 @@ export default function MatiereDetailCard({
         setAssignments((prev) =>
             prev.map((r) => {
                 if (r.rowId !== rowId) return r
-                if (kind === 'TD') return { ...r, tdHours: r.tdHours > 0 ? 0 : 1 }
-                return { ...r, tpHours: r.tpHours > 0 ? 0 : 1 }
+                switch (kind) {
+                    case 'TD':
+                        return { ...r, tdHours: r.tdHours > 0 ? 0 : 1 }
+                    case 'TP':
+                        return { ...r, tpHours: r.tpHours > 0 ? 0 : 1 }
+                    case 'PROJET':
+                        return { ...r, projectHours: r.projectHours > 0 ? 0 : 1 }
+                    case 'E-LEARNING':
+                        return { ...r, elearningHours: r.elearningHours > 0 ? 0 : 1 }
+                    case 'AUTRES':
+                        return { ...r, autresHours: r.autresHours > 0 ? 0 : 1 }
+                }
             }),
         )
     }
@@ -188,6 +225,9 @@ export default function MatiereDetailCard({
             teacherId: String(a.teacherId ?? ''),
             td: clamp0(a.tdHours),
             tp: clamp0(a.tpHours),
+            project: clamp0(a.projectHours),
+            elearning: clamp0(a.elearningHours),
+            autres: clamp0(a.autresHours),
         })
         return (
             JSON.stringify(assignments.map(norm)) !== JSON.stringify(initialAssignments.map(norm)) ||
@@ -200,10 +240,12 @@ export default function MatiereDetailCard({
         volumeTotal !== matiere.volume_horaire ||
         tdHours !== matiere.heures_td ||
         tpHours !== (matiere.heures_tp ?? 0) ||
+        projectHours !== (matiere.heures_projet ?? 0) ||
+        eLearningHours !== (matiere.heures_elearning ?? 0) ||
+        autresHours !== (matiere.heures_autre ?? 0) ||
         assignmentsChanged
 
     const handleSave = async () => {
-        // UUID promo obligatoire pour update côté back
         const promoUuid = (matiere).promo_id as string | undefined
         if (!promoUuid) {
             console.error('[MATIERES][update] Missing matiere.promo_id (UUID). matiere=', matiere)
@@ -223,6 +265,9 @@ export default function MatiereDetailCard({
             nb_eval_intermediaire: (matiere).nb_eval_intermediaire ?? null,
             heures_td: clamp0(tdHours),
             heures_tp: clamp0(tpHours),
+            heures_projet: clamp0(projectHours),
+            heures_elearning: clamp0(eLearningHours),
+            heures_autre: clamp0(autresHours),
         }
 
         console.log('[MATIERE_DETAIL][save] updateMatiere payload ->', matierePayload)
@@ -241,9 +286,12 @@ export default function MatiereDetailCard({
                 teacherId: String(r.teacherId ?? ''),
                 tdHours: clamp0(r.tdHours),
                 tpHours: clamp0(r.tpHours),
+                projectHours: clamp0(r.projectHours),
+                elearningHours: clamp0(r.elearningHours),
+                autresHours: clamp0(r.autresHours),
             }))
             // on ignore les lignes vides
-            .filter((r) => r.teacherId.length > 0 && (r.tdHours > 0 || r.tpHours > 0))
+            .filter((r) => r.teacherId.length > 0 && (r.tdHours > 0 || r.tpHours > 0 || r.projectHours > 0 || r.elearningHours > 0 || r.autresHours > 0))
 
         console.log('[MATIERE_DETAIL][save] rows upsert ->', rows)
         console.log('[MATIERE_DETAIL][save] rows removed ->', removedEnseignementIds)
@@ -267,6 +315,9 @@ export default function MatiereDetailCard({
                     id_prof: r.teacherId,
                     heures_td: r.tdHours,
                     heures_tp: r.tpHours,
+                    heures_projet: r.projectHours,
+                    heures_elearning: r.elearningHours,
+                    heures_autre: r.autresHours,
                 })
                 console.log('[MATIERE_DETAIL][save] updateEnseignement ->', upRes)
                 if (!upRes.success) {
@@ -279,6 +330,9 @@ export default function MatiereDetailCard({
                     id_prof: r.teacherId,
                     heures_td: r.tdHours,
                     heures_tp: r.tpHours,
+                    heures_projet: r.projectHours,
+                    heures_elearning: r.elearningHours,
+                    heures_autre: r.autresHours,
                 })
                 console.log('[MATIERE_DETAIL][save] addEnseignement ->', addRes)
                 if (!addRes.success) {
@@ -393,6 +447,48 @@ export default function MatiereDetailCard({
                                         onChange={(e) => setTpHours(Number(e.target.value))}
                                     />
                                 </div>
+
+                                <div className="room-detail-field">
+                                    <label className="room-detail-field-label" htmlFor="matiere-projet">
+                                        Volume Projet (h)
+                                    </label>
+                                    <input
+                                        id="matiere-projet"
+                                        className="room-detail-input"
+                                        type="number"
+                                        min={0}
+                                        value={projectHours}
+                                        onChange={(e) => setProjectHours(Number(e.target.value))}
+                                    />
+                                </div>
+
+                                <div className="room-detail-field">
+                                    <label className="room-detail-field-label" htmlFor="matiere-projet">
+                                        Volume E-Learning (h)
+                                    </label>
+                                    <input
+                                        id="matiere-projet"
+                                        className="room-detail-input"
+                                        type="number"
+                                        min={0}
+                                        value={eLearningHours}
+                                        onChange={(e) => setELearningHours(Number(e.target.value))}
+                                    />
+                                </div>
+
+                                <div className="room-detail-field">
+                                    <label className="room-detail-field-label" htmlFor="matiere-projet">
+                                        Volume Autres (h)
+                                    </label>
+                                    <input
+                                        id="matiere-projet"
+                                        className="room-detail-input"
+                                        type="number"
+                                        min={0}
+                                        value={autresHours}
+                                        onChange={(e) => setAutresHours(Number(e.target.value))}
+                                    />
+                                </div>
                             </div>
                         </section>
                     </div>
@@ -404,7 +500,7 @@ export default function MatiereDetailCard({
                                 <div>
                                     <h3 className="room-detail-section-title">Enseignants</h3>
                                     <p className="room-detail-hint-xsmall">
-                                        TD assigné : <strong>{assignedTD}h</strong> · TP assigné : <strong>{assignedTP}h</strong>
+                                        TD assigné : <strong>{assignedTD}h</strong> · TP assigné : <strong>{assignedTP}h</strong> · Projet assigné : <strong>{assignedProject}h</strong> · E-learning assigné : <strong>{assignedELearning}h</strong> · Autres assigné : <strong>{assignedAutres}h</strong>
                                         {loadingEns ? ' · Chargement…' : ''}
                                     </p>
                                 </div>
@@ -483,6 +579,64 @@ export default function MatiereDetailCard({
                                                     onChange={(e) => handleAssignmentChange(row.rowId, { tpHours: Number(e.target.value) })}
                                                     aria-label="Heures TP"
                                                 />
+
+                                                {/* PROJET */}
+                                                <button
+                                                    type="button"
+                                                    className={row.projectHours > 0 ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
+                                                    onClick={() => handleToggleKind(row.rowId, 'PROJET')}
+                                                    aria-pressed={row.projectHours > 0}
+                                                >
+                                                    PROJET
+                                                </button>
+                                                <input
+                                                    className="room-detail-input matiere-hours-input"
+                                                    type="number"
+                                                    min={0}
+                                                    value={row.projectHours}
+                                                    disabled={row.projectHours <= 0}
+                                                    onChange={(e) => handleAssignmentChange(row.rowId, { projectHours: Number(e.target.value) })}
+                                                    aria-label="Heures projet"
+                                                />
+
+                                                {/* E-LEARNING */}
+                                                <button
+                                                    type="button"
+                                                    className={row.elearningHours > 0 ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
+                                                    onClick={() => handleToggleKind(row.rowId, 'E-LEARNING')}
+                                                    aria-pressed={row.elearningHours > 0}
+                                                >
+                                                    E-LEARNING
+                                                </button>
+                                                <input
+                                                    className="room-detail-input matiere-hours-input"
+                                                    type="number"
+                                                    min={0}
+                                                    value={row.elearningHours}
+                                                    disabled={row.elearningHours <= 0}
+                                                    onChange={(e) => handleAssignmentChange(row.rowId, { elearningHours: Number(e.target.value) })}
+                                                    aria-label="Heures e-learning"
+                                                />
+
+                                                {/* AUTRES */}
+                                                <button
+                                                    type="button"
+                                                    className={row.autresHours > 0 ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
+                                                    onClick={() => handleToggleKind(row.rowId, 'AUTRES')}
+                                                    aria-pressed={row.autresHours > 0}
+                                                >
+                                                    AUTRES
+                                                </button>
+                                                <input
+                                                    className="room-detail-input matiere-hours-input"
+                                                    type="number"
+                                                    min={0}
+                                                    value={row.autresHours}
+                                                    disabled={row.autresHours <= 0}
+                                                    onChange={(e) => handleAssignmentChange(row.rowId, { autresHours: Number(e.target.value) })}
+                                                    aria-label="Heures autres"
+                                                />
+
                                             </div>
                                         </div>
                                     )

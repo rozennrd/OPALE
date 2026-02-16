@@ -46,6 +46,9 @@ export const enseignementService = {
         id_prof: String(dto.id_prof),
         heures_td: Number(dto.heures_td),
         heures_tp: Number(dto.heures_tp),
+        heures_projet: Number(dto.heures_projet),
+        heures_elearning: Number(dto.heures_elearning),
+        heures_autre: Number(dto.heures_autre),
       });
       return { id };
     } catch (err: any) {
@@ -65,12 +68,23 @@ export const enseignementService = {
     if (!dto.id_prof) throw badRequest("id_prof est obligatoire.");
     if (dto.heures_td === undefined || dto.heures_td === null) throw badRequest("heures_td est obligatoire.");
     if (dto.heures_tp === undefined || dto.heures_tp === null) throw badRequest("heures_tp est obligatoire.");
+    if (dto.heures_projet === undefined || dto.heures_projet === null) throw badRequest("heures_projet est obligatoire.");
+    if (dto.heures_elearning === undefined || dto.heures_elearning === null) throw badRequest("heures_elearning est obligatoire.");
+    if (dto.heures_autre === undefined || dto.heures_autre === null) throw badRequest("heures_autre est obligatoire.");
     if (!Number.isInteger(Number(dto.heures_td)) || Number(dto.heures_td) < 0) {
       throw badRequest("nb_heures doit être un entier >= 0.");
     }
-
     if (!Number.isInteger(Number(dto.heures_tp)) || Number(dto.heures_tp) < 0) {
       throw badRequest("heures_tp doit être un entier >= 0.");
+    }
+    if (!Number.isInteger(Number(dto.heures_projet)) || Number(dto.heures_projet) < 0) {
+      throw badRequest("heures_projet doit être un entier >= 0.");
+    }
+    if (!Number.isInteger(Number(dto.heures_elearning)) || Number(dto.heures_elearning) < 0) {
+      throw badRequest("heures_elearning doit être un entier >= 0.");
+    }
+    if (!Number.isInteger(Number(dto.heures_autre)) || Number(dto.heures_autre) < 0) {
+      throw badRequest("heures_autre doit être un entier >= 0.");
     }
 
     try {
@@ -80,6 +94,9 @@ export const enseignementService = {
         id_prof: String(dto.id_prof),
         heures_td: Number(dto.heures_td),
         heures_tp: Number(dto.heures_tp),
+        heures_projet: Number(dto.heures_projet),
+        heures_elearning: Number(dto.heures_elearning),
+        heures_autre: Number(dto.heures_autre),
       });
 
       if (!updated) {
