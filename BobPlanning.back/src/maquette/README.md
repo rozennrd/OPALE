@@ -63,15 +63,20 @@ BobPlanning.back/
     maquette/
       README.md
       config/
+        README.md
         promotionResolver.ts
       parser/
+        README.md
         maquetteParser.ts
       services/
+        README.md
         maquetteAnalyzeService.ts
         maquetteImportService.ts
       types/
+        README.md
         MaquetteExtracted.ts
       utils/
+        README.md
         cell.ts
         semesters.ts
         text.ts
@@ -287,3 +292,27 @@ docker exec postgres-database psql -U opale_user -d opale -c "BEGIN; DELETE FROM
 - Ajouter une table dediee pour stocker le detail des evaluations (type/poids/ordre) de facon normalisee.
 - Affiner le calendrier des examens avec de vraies regles metier de placement.
 - Ajouter des tests d'integration DB automatises sur `/maquette/import`.
+
+### Q/R issues des discussions
+
+Q1. Si un nouveau cycle apparait (ex: `XP`), est-ce que l'extraction fonctionne ?
+A1. Oui pour le parsing brut (modules, semestres, heures, evaluations), car le parser est generique. En revanche, la resolution cycle/promotion sera en mode fallback tant qu'on n'ajoute pas des regles explicites dans `promotionResolver.ts` (ou une source de configuration dynamique). C'est une piste d'evolution prioritaire pour industrialiser l'onboarding de nouveaux cycles.
+
+Q2. Peut-on mettre les alias d'entetes en base pour les gerer depuis le front ?
+A2. Oui. L'architecture actuelle permet de remplacer les constantes `HEADER_ALIAS` par un provider (DB + cache). Il faudrait ajouter:
+- une table de configuration des alias;
+- une API d'administration pour CRUD des alias;
+- une couche de cache/validation pour eviter les regressions de parsing.
+Cette evolution reduit les redeploiements backend lors de changements de maquettes.
+
+Q3. Les fichiers `maquetteParser.ts` et `maquetteImportService.ts` sont longs. Faut-il les decouper ?
+A3. Oui, c'est recommande a moyen terme. Decoupage propose:
+- parser: `headerDetection`, `rowParsing`, `lineMerging`, `evaluationMapping`;
+- import: `matiereUpsert`, `examEventBuilder`, `examEventRepository`, `schemaCapabilities`.
+Le comportement restera identique mais le test unitaire, la lisibilite et la maintenabilite seront meilleurs.
+
+Q4. Peut-on eviter de parser 2 fois (preview analyze puis import) ?
+A4. Oui. Strategie possible:
+- l'appel `analyze` retourne aussi un identifiant de snapshot (payload parse stocke en cache temporaire ou table technique);
+- l'appel `import` consomme ce snapshot au lieu de relire le fichier.
+Points d'attention: expiration, taille memoire, securite, et invalidation si le fichier source change.
