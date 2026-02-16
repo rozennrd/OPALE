@@ -37,7 +37,7 @@ interface TeacherAssignment {
 }
 
 const makeRowId = () => `assign-${Math.random().toString(16).slice(2)}`
-const clamp0 = (v: any) => Math.max(0, Number(v) || 0)
+const clamp0 = (v: number) => Math.max(0, Number(v) || 0)
 
 export default function MatiereDetailCard({
                                               matiere,
@@ -88,13 +88,13 @@ export default function MatiereDetailCard({
                 const all = res.data ?? []
 
                 // ⚠️ Si ton backend n'utilise pas "id_matiere", change ici.
-                const mine = all.filter((e: any) => String(e.id_matiere) === String(matiere.id))
+                const mine = all.filter((e) => String(e.id_matiere) === String(matiere.id))
 
                 console.log('[MATIERE_DETAIL] enseignements filtered ->', mine)
 
                 const rows: TeacherAssignment[] =
                     mine.length > 0
-                        ? mine.map((e: any) => ({
+                        ? mine.map((e) => ({
                             rowId: makeRowId(),
                             enseignementId: String(e.id),
                             teacherId: String(e.id_prof ?? ''),
@@ -204,7 +204,7 @@ export default function MatiereDetailCard({
 
     const handleSave = async () => {
         // UUID promo obligatoire pour update côté back
-        const promoUuid = (matiere as any).promo_id as string | undefined
+        const promoUuid = (matiere).promo_id as string | undefined
         if (!promoUuid) {
             console.error('[MATIERES][update] Missing matiere.promo_id (UUID). matiere=', matiere)
             alert("Impossible d'enregistrer : promo_id (UUID) manquant sur la matière.")
@@ -217,16 +217,16 @@ export default function MatiereDetailCard({
             nom: name.trim() || matiere.nom,
             volume_horaire: clamp0(volumeTotal),
             id_promo: promoUuid,
-            id_specialite: (matiere as any).id_specialite ?? null,
+            id_specialite: (matiere).id_specialite ?? null,
             semestre: Number(matiere.semestre) || 0,
-            nb_partiels: Number((matiere as any).nb_partiels) || 0,
-            nb_eval_intermediaire: (matiere as any).nb_eval_intermediaire ?? null,
+            nb_partiels: Number((matiere).nb_partiels) || 0,
+            nb_eval_intermediaire: (matiere).nb_eval_intermediaire ?? null,
             heures_td: clamp0(tdHours),
             heures_tp: clamp0(tpHours),
         }
 
         console.log('[MATIERE_DETAIL][save] updateMatiere payload ->', matierePayload)
-        const matRes = await updateMatiere(matierePayload as any)
+        const matRes = await updateMatiere(matierePayload)
         console.log('[MATIERE_DETAIL][save] updateMatiere response ->', matRes)
 
         if (!matRes.success) {
@@ -267,7 +267,7 @@ export default function MatiereDetailCard({
                     id_prof: r.teacherId,
                     heures_td: r.tdHours,
                     heures_tp: r.tpHours,
-                } as any)
+                })
                 console.log('[MATIERE_DETAIL][save] updateEnseignement ->', upRes)
                 if (!upRes.success) {
                     alert(upRes.error?.message ?? 'Erreur update enseignement')
@@ -279,7 +279,7 @@ export default function MatiereDetailCard({
                     id_prof: r.teacherId,
                     heures_td: r.tdHours,
                     heures_tp: r.tpHours,
-                } as any)
+                })
                 console.log('[MATIERE_DETAIL][save] addEnseignement ->', addRes)
                 if (!addRes.success) {
                     alert(addRes.error?.message ?? 'Erreur add enseignement')
