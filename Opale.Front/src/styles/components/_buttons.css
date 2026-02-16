@@ -56,6 +56,16 @@
         .btn-icon-responsive img { display: none; width: 26px; height: 26px; }
         .btn-icon-responsive .btn-label { display: inline; }
 
+        /* version icone-only sur tous les formats */
+        .btn-icon-only {
+                padding: 8px;
+                min-width: 44px;
+                min-height: 44px;
+                justify-content: center;
+        }
+        .btn-icon-only .btn-label { display: none; }
+        .btn-icon-only img { display: block; width: 24px; height: 24px; }
+
         @media (max-width: 620px) {
                 .btn-icon-responsive {
                         padding: 8px;

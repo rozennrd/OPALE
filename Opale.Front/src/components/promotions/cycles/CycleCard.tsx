@@ -1,6 +1,6 @@
 // src/components/promotions/cycles/CycleCard.tsx
 import React, { useState } from 'react'
-import icMoins from '../../../assets/ic-moins.png'
+import icTrash from '../../../assets/ic-trash.png'
 import icWarning from '../../../assets/ic-warning.png'
 import icModif from '../../../assets/ic-modif.png'
 import icPlus from '../../../assets/ic-plus.png'
@@ -59,12 +59,12 @@ const CycleCard: React.FC<CycleCardProps> = ({
 
                 <div className="cycle-actions">
                     <button
-                        className="btn-danger btn-icon-responsive"
+                        className="btn-danger btn-icon-only"
                         onClick={() => removeCycle(cycle.id)}
                         aria-label="Supprimer le cycle"
                         title="Supprimer le cycle"
                     >
-                        <img src={icMoins} alt="" aria-hidden="true" />
+                        <img src={icTrash} alt="" aria-hidden="true" />
                         <span className="btn-label">Supprimer le cycle</span>
                     </button>
                 </div>
@@ -93,7 +93,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
 
                         <div className="promo-actions">
                             <button
-                                className="btn-tertiary btn-icon-responsive"
+                                className="btn-tertiary btn-icon-only"
                                 onClick={() => openEditPromotion(cycle.id, promo.id)}
                                 aria-label="Modifier la promotion"
                                 title="Modifier la promotion"
@@ -103,12 +103,12 @@ const CycleCard: React.FC<CycleCardProps> = ({
                             </button>
 
                             <button
-                                className="btn-danger btn-icon-responsive"
+                                className="btn-danger btn-icon-only"
                                 onClick={() => removePromotion(promo.id)}
                                 aria-label="Supprimer la promotion"
                                 title="Supprimer la promotion"
                             >
-                                <img src={icMoins} alt="" aria-hidden="true" />
+                                <img src={icTrash} alt="" aria-hidden="true" />
                                 <span className="btn-label">Supprimer</span>
                             </button>
                         </div>
