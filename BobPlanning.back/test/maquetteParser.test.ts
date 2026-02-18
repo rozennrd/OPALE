@@ -125,6 +125,101 @@ describe('maquette parser', () => {
     // "totalAvecProf" doit venir de "nbHeuresEncadrees*" module (30), pas UE (777).
     expect(matiere.heures.totalAvecProf).toBe(30);
   });
+
+  it('detects option blocks and propagates option context to nested module rows', async () => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('ISEN5');
+
+    sheet.addRow(['2025-2026']);
+    sheet.addRow(['Cycle : ISEN campus Bordeaux - FISA']);
+    sheet.addRow(['SEMESTRE 9 et 10']);
+    sheet.addRow([
+      'Option',
+      "Unite d'Enseignements (UE)",
+      "Modules constituant l'UE",
+      'Semestre / Periode',
+      'Nb Heures planifiees etudiant module',
+      'Nb Heures encadrees etudiant module',
+      'Cours interactif',
+      'TD',
+      'TP',
+      'Projet',
+      'E-learning',
+      'Epreuve Finale',
+    ]);
+    sheet.addRow([]);
+    sheet.addRow([]);
+    sheet.addRow([
+      'Option 1',
+      'Cyber Securite',
+      'Cryptographie',
+      'S9',
+      28,
+      28,
+      28,
+      0,
+      0,
+      0,
+      0,
+      100,
+    ]);
+    sheet.addRow([
+      '',
+      '',
+      'Pentesting',
+      'S10',
+      28,
+      28,
+      4,
+      0,
+      24,
+      0,
+      0,
+      100,
+    ]);
+    sheet.addRow([
+      'Option 2',
+      'Developpement logiciel',
+      'Java EE',
+      'S10',
+      28,
+      28,
+      14,
+      0,
+      14,
+      0,
+      0,
+      100,
+    ]);
+    sheet.addRow(['TOTAL SEMESTRE 10']);
+
+    const buffer = Buffer.from(await workbook.xlsx.writeBuffer());
+    const result = await parseMaquetteBuffer(buffer, { cycleHint: 'AP' });
+
+    expect(result.matieres).toHaveLength(3);
+
+    const cryptographie = result.matieres.find((matiere) => matiere.matiereNom === 'Cryptographie');
+    const pentesting = result.matieres.find((matiere) => matiere.matiereNom === 'Pentesting');
+    const javaEE = result.matieres.find((matiere) => matiere.matiereNom === 'Java EE');
+
+    expect(cryptographie?.specialiteType).toBe('OPTION');
+    expect(cryptographie?.specialiteCode).toBe('OPTION_1');
+    expect(cryptographie?.specialiteLabel).toBe('Cyber Securite');
+
+    // Doit heriter du contexte "Option 1" meme si la ligne ne porte plus le marqueur.
+    expect(pentesting?.specialiteType).toBe('OPTION');
+    expect(pentesting?.specialiteCode).toBe('OPTION_1');
+    expect(pentesting?.specialiteLabel).toBe('Cyber Securite');
+
+    expect(javaEE?.specialiteType).toBe('OPTION');
+    expect(javaEE?.specialiteCode).toBe('OPTION_2');
+    expect(javaEE?.specialiteLabel).toBe('Developpement logiciel');
+
+    expect(result.metadata.specialites).toEqual([
+      { code: 'OPTION_1', label: 'Cyber Securite', type: 'OPTION' },
+      { code: 'OPTION_2', label: 'Developpement logiciel', type: 'OPTION' },
+    ]);
+  });
 });
 
 describe('promotion resolver', () => {

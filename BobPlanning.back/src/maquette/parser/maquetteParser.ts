@@ -15,6 +15,7 @@ import {
   MaquetteEvaluationType,
   MaquetteExamEventDraft,
   MaquetteMatiereLine,
+  MaquetteSpecialiteType,
 } from '../types/MaquetteExtracted';
 import { extractCellNumber, extractCellText } from '../utils/cell';
 import { extractSchoolYear, extractSemestersAndPeriods, mergeUniqueNumbers } from '../utils/semesters';
@@ -22,6 +23,7 @@ import { hasDigit, normalizeText } from '../utils/text';
 
 interface HeaderMap {
   // Index de colonnes detectees dynamiquement.
+  specialiteTrackCol: number | null;
   ueCol: number | null;
   moduleCol: number | null;
   semPeriodeCol: number | null;
@@ -44,10 +46,26 @@ interface ParseRowContext {
   currentUE: string;
   cycleRaw: string;
   sectionSemesters: number[];
+  // Derniere specialite/option detectee afin de la propager aux lignes filles
+  // qui n'affichent pas explicitement le marqueur.
+  currentSpecialite: DetectedSpecialite | null;
+}
+
+interface DetectedSpecialite {
+  // Code technique stable pour fusionner/identifier les lignes
+  // (ex: OPTION_1, SPECIALITE_CYBER_SECURITE, COMMUN).
+  code: string;
+  // Libelle metier lisible (peut etre absent pour "Option 1" sans intitule).
+  label: string | null;
+  // Type normalise du bloc detecte.
+  type: MaquetteSpecialiteType;
+  // Valeur brute telle qu'elle apparait dans la maquette.
+  rawLabel: string;
 }
 
 // Alias d'entetes connus, issus des variantes constatees dans les maquettes.
 const HEADER_ALIAS = {
+  specialiteTrack: ['specialite', 'option', 'parcours', 'majeure', 'mineure'],
   ue: ["unite d enseignements ue", "unite d enseignements", "matieres", "matiere"],
   module: ["modules constituant l ue", 'modules', 'module', 'matiere', 'matieres'],
   semPeriode: ['semestre / periode', 'semestre periode', 'semestre'],
@@ -132,6 +150,9 @@ const findColumnByAliases = (
   aliases: string[],
   options: { fromCol?: number } = {},
 ): number | null => {
+  // Recherche sequentielle d'une colonne en appliquant des alias tolerants.
+  // "fromCol" permet d'ignorer un premier bloc de colonnes homonymes
+  // (ex: heures UE) pour recuperer le bloc utile (ex: heures module).
   const startCol = Math.max(1, options.fromCol ?? 1);
   for (let col = startCol; col < headers.length; col += 1) {
     const header = headers[col];
@@ -141,6 +162,126 @@ const findColumnByAliases = (
     }
   }
   return null;
+};
+
+const buildOptionSpecialite = (
+  optionIndex: number,
+  label: string | null,
+  rawLabel: string,
+): DetectedSpecialite => {
+  // Constructeur central des blocs "Option N"
+  // pour garder un format homogene partout dans le parser.
+  return {
+    code: `OPTION_${optionIndex}`,
+    label,
+    type: 'OPTION',
+    rawLabel,
+  };
+};
+
+const toSpecialiteCode = (rawLabel: string): string => {
+  // Normalise un libelle libre vers un identifiant deterministic
+  // utilisable en cle technique et en fusion.
+  const normalized = normalizeText(rawLabel)
+    .replace(/[^a-z0-9 ]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!normalized) return 'SPECIALITE';
+  return `SPECIALITE_${normalized.replace(/\s+/g, '_').toUpperCase()}`;
+};
+
+const parseSpecialiteMarker = (rawText: string): DetectedSpecialite | null => {
+  // Interprete un texte brut (cellule) et renvoie une specialite si detectee.
+  // Cas pris en charge:
+  // - tronc commun / commun
+  // - option numerotee (Option 1, Option 2...)
+  // - specialite/parcours/majeure/mineure.
+  const trimmed = rawText.trim();
+  if (!trimmed) return null;
+
+  const normalized = normalizeText(trimmed);
+  if (!normalized) return null;
+
+  if (
+    normalized.includes('tronc commun') ||
+    normalized === 'commun' ||
+    normalized.startsWith('commun ')
+  ) {
+    return {
+      code: 'COMMUN',
+      label: 'Commun',
+      type: 'COMMUN',
+      rawLabel: trimmed,
+    };
+  }
+
+  const optionMatch = normalized.match(/\boption\s*(\d{1,2})\b/);
+  if (optionMatch) {
+    const index = Number(optionMatch[1]);
+    // On retire le prefixe "Option N" pour ne garder que le libelle metier.
+    const labelCandidate = trimmed
+      .replace(/option\s*\d{1,2}\s*[:\-–—]?\s*/i, '')
+      .trim();
+    const label = labelCandidate ? labelCandidate : null;
+    return buildOptionSpecialite(index, label, trimmed);
+  }
+
+  if (['specialite', 'parcours', 'majeure', 'mineure'].some((token) => normalized.includes(token))) {
+    const labelCandidate = trimmed
+      .replace(/(specialite|parcours|majeure|mineure)\s*[:\-–—]?\s*/i, '')
+      .trim();
+    const label = labelCandidate || trimmed;
+    return {
+      code: toSpecialiteCode(label),
+      label,
+      type: 'SPECIALITE',
+      rawLabel: trimmed,
+    };
+  }
+
+  return null;
+};
+
+const parseSpecialiteFromTrackCell = (trackCell: string): DetectedSpecialite | null => {
+  // Priorite 1: interpretation directe du contenu (Option 1, Specialite X...).
+  const marker = parseSpecialiteMarker(trackCell);
+  if (marker) return marker;
+
+  // Priorite 2: colonnes "track" parfois limitees a un numero seul ("1", "2"...).
+  const numericOption = trackCell.trim().match(/^(\d{1,2})$/);
+  if (!numericOption) return null;
+
+  return buildOptionSpecialite(Number(numericOption[1]), null, `Option ${numericOption[1]}`);
+};
+
+const resolveRowSpecialite = (params: {
+  trackCell: string;
+  leftOfUeCell: string;
+  ueCell: string;
+}): DetectedSpecialite | null => {
+  // Strategie de resolution par priorite:
+  // 1) colonne dediee specialite/option
+  // 2) cellule a gauche de l'UE
+  // 3) cellule UE elle-meme.
+  const fromTrack = parseSpecialiteFromTrackCell(params.trackCell);
+  const fromLeftOfUe = parseSpecialiteMarker(params.leftOfUeCell);
+  const fromUe = parseSpecialiteMarker(params.ueCell);
+
+  const candidate = fromTrack ?? fromLeftOfUe ?? fromUe;
+  if (!candidate) return null;
+
+  // Cas frequent: "Option 1" dans une colonne et libelle de specialite dans la cellule UE.
+  if (!candidate.label && params.ueCell.trim()) {
+    const ueMarker = parseSpecialiteMarker(params.ueCell);
+    if (!ueMarker) {
+      candidate.label = params.ueCell.trim();
+      if (candidate.type === 'SPECIALITE') {
+        candidate.code = toSpecialiteCode(candidate.label);
+      }
+    }
+  }
+
+  return candidate;
 };
 
 const detectEvaluationLabel = (headerNormalized: string): string | null => {
@@ -196,6 +337,7 @@ const buildHeaderMap = (
   const moduleHoursStartCol = moduleCol ? moduleCol + 1 : 1;
 
   return {
+    specialiteTrackCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.specialiteTrack),
     ueCol,
     moduleCol,
     semPeriodeCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.semPeriode),
@@ -314,6 +456,32 @@ const parseDataRow = (
     column ? extractCellNumber(row.getCell(column).value) : 0;
 
   const ueCell = readText(headerMap.ueCol);
+  const leftOfUeCell =
+    headerMap.ueCol && headerMap.ueCol > 1
+      ? readText(headerMap.ueCol - 1)
+      : '';
+  const trackCell = readText(headerMap.specialiteTrackCol);
+
+  const rowSpecialite = resolveRowSpecialite({
+    trackCell,
+    leftOfUeCell,
+    ueCell,
+  });
+  if (rowSpecialite) {
+    if (
+      rowContext.currentSpecialite &&
+      rowContext.currentSpecialite.code === rowSpecialite.code &&
+      rowContext.currentSpecialite.label &&
+      !rowSpecialite.label
+    ) {
+      // Si la ligne courante ne porte que "Option N", on conserve le dernier
+      // libelle explicite connu pour cette option.
+      rowSpecialite.label = rowContext.currentSpecialite.label;
+    }
+    // Le contexte specialite reste actif pour les lignes suivantes (modules).
+    rowContext.currentSpecialite = rowSpecialite;
+  }
+
   if (ueCell) rowContext.currentUE = ueCell;
 
   const moduleName = readText(headerMap.moduleCol);
@@ -359,6 +527,7 @@ const parseDataRow = (
     readNumber(headerMap.nbHeuresEncadreesCol),
   ].find((value) => value > 0);
 
+  // Repli: si aucun total explicite fiable, on reconstruit depuis les details.
   const detailSum =
     coursMagistral +
     coursInteractif +
@@ -389,13 +558,18 @@ const parseDataRow = (
     cycleCode: promoResolution.cycleCode,
     cycleRaw: rowContext.cycleRaw,
     promotionCode: promoResolution.promotionCode,
+    specialiteCode: rowContext.currentSpecialite?.code ?? null,
+    specialiteLabel: rowContext.currentSpecialite?.label ?? null,
+    specialiteType: rowContext.currentSpecialite?.type ?? null,
     ueNom: rowContext.currentUE,
     matiereNom: moduleName,
     semestres: [...semestres],
     periodes: [...periodes],
     nbSemestres: semestres.length,
     heures: {
+      // "total" prend d'abord un total explicite maquette, sinon somme detail.
       total: totalFromColumns ?? detailSum,
+      // "totalAvecProf" est prioritairement alimente depuis heures encadrees.
       totalAvecProf: readNumber(headerMap.nbHeuresEncadreesCol) || detailSum,
       coursMagistral,
       coursInteractif,
@@ -422,7 +596,11 @@ const mergeLines = (lines: MaquetteMatiereLine[]): MaquetteMatiereLine[] => {
   lines.forEach((line) => {
     // Regle demandee: matiere avec chiffre = pas de fusion automatique.
     const forceUnique = hasDigit(line.matiereNom);
-    const baseKey = `${line.cycleCode}|${line.promotionCode}|${line.ueNom}|${line.matiereNom.trim()}`;
+    // La specialite fait partie de la cle pour eviter de fusionner des matieres
+    // homonymes appartenant a des options/specialites differentes.
+    const baseKey =
+      `${line.cycleCode}|${line.promotionCode}|${line.specialiteCode ?? ''}|` +
+      `${line.ueNom}|${line.matiereNom.trim()}`;
     const key = forceUnique
       ? `${baseKey}|${line.sources[0]?.sheetName ?? ''}|${line.sources[0]?.rowNumber ?? 0}`
       : baseKey;
@@ -443,6 +621,10 @@ const mergeLines = (lines: MaquetteMatiereLine[]): MaquetteMatiereLine[] => {
     existing.semestres = mergeUniqueNumbers(existing.semestres, line.semestres);
     existing.periodes = mergeUniqueNumbers(existing.periodes, line.periodes);
     existing.nbSemestres = existing.semestres.length;
+    if (!existing.specialiteLabel && line.specialiteLabel) {
+      // On enrichit le libelle seulement s'il manque sur la ligne existante.
+      existing.specialiteLabel = line.specialiteLabel;
+    }
     existing.sources = [...existing.sources, ...line.sources];
     existing.evaluations = mergeEvaluations(existing.evaluations, line.evaluations);
 
@@ -498,6 +680,7 @@ export const parseMaquetteBuffer = async (
       currentUE: '',
       cycleRaw: worksheet.name,
       sectionSemesters: [],
+      currentSpecialite: null,
     };
 
     for (let rowNumber = 1; rowNumber <= worksheet.rowCount; rowNumber += 1) {
@@ -566,6 +749,22 @@ export const parseMaquetteBuffer = async (
   });
 
   const merged = mergeLines(extractedLines);
+  // Synthese metadata des specialites detectees pour aider l'analyse front
+  // (filtres, previsualisation, resume d'import).
+  const specialites = Array.from(
+    new Map(
+      merged
+        .filter((line) => line.specialiteCode && line.specialiteType)
+        .map((line) => [
+          line.specialiteCode as string,
+          {
+            code: line.specialiteCode as string,
+            label: line.specialiteLabel,
+            type: line.specialiteType as MaquetteSpecialiteType,
+          },
+        ]),
+    ).values(),
+  ).sort((left, right) => left.code.localeCompare(right.code));
 
   return {
     matieres: merged,
@@ -575,6 +774,7 @@ export const parseMaquetteBuffer = async (
       cycleRaw: firstCycleRaw,
       cycleCode: firstCycleCode,
       promotions: Array.from(promotions).sort(),
+      specialites,
       feuilles: sheetNames,
     },
   };

@@ -13,6 +13,8 @@ export type MaquetteEvaluationType =
   | 'PROJET'
   | 'AUTRE';
 
+export type MaquetteSpecialiteType = 'OPTION' | 'SPECIALITE' | 'COMMUN';
+
 export interface MaquetteEvaluation {
   // Libelle detecte dans l'entete (ex: Epreuve Finale, CC1, TP2...).
   nom: string;
@@ -65,6 +67,9 @@ export interface MaquetteMatiereLine {
   cycleCode: string;
   cycleRaw: string;
   promotionCode: string;
+  specialiteCode: string | null;
+  specialiteLabel: string | null;
+  specialiteType: MaquetteSpecialiteType | null;
   ueNom: string;
   matiereNom: string;
   semestres: number[];
@@ -85,6 +90,11 @@ export interface MaquetteAnalyzeResult {
     cycleRaw: string;
     cycleCode: string;
     promotions: string[];
+    specialites: Array<{
+      code: string;
+      label: string | null;
+      type: MaquetteSpecialiteType;
+    }>;
     feuilles: string[];
   };
 }
