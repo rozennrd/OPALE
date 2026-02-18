@@ -169,7 +169,7 @@ describe("groupeController", () => {
             mockRequest.query = {};
 
             const mockError: any = new Error("Groupe non trouvé.");
-            mockError.statusCode = 404;
+            mockError.statusCode = 400;
             (groupeService.getGroupById as jest.Mock).mockRejectedValue(mockError);
 
             try {
