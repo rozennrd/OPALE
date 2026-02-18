@@ -32,9 +32,10 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-import dotenv from "dotenv";
+// import dotenv from "dotenv"; Pas nécessaire doublons
 import eventRoutes from "./api/routes/eventRoutes";
-dotenv.config();
+import localisationRoutes from "./api/routes/localisationRoutes";
+// dotenv.config(); Pas nécessaire triplons
 
 const dbConfig = getDBConfig();
 
@@ -74,6 +75,7 @@ app.use("/", matiereRoutes);
 app.use('/', profRoutes);
 app.use('/', specialiteRoutes);
 app.use('/', eventRoutes);
+app.use('/', localisationRoutes);
 
 // Swagger options
 const swaggerOptions = {
