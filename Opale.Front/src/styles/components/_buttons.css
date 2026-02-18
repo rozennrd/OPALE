@@ -17,6 +17,10 @@
                 white-space: nowrap;
         }
         .btn-primary:hover { background: var(--primary-hover); }
+        .btn-primary:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+        }
 
         /* Bouton tertiaire : flat */
         .btn-tertiary {
@@ -34,6 +38,10 @@
                 transition: background .2s, border-color .2s;
         }
         .btn-tertiary:hover { background: #e7edf7; }
+        .btn-tertiary:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+        }
 
         /* Bouton danger : flat */
         .btn-danger {
@@ -51,6 +59,10 @@
                 transition: background .2s, border-color .2s;
         }
         .btn-danger:hover { background: #ffcaca; }
+        .btn-danger:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+        }
 
         /* version icône-only en mobile */
         .btn-icon-responsive img { display: none; width: 26px; height: 26px; }

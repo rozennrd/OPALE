@@ -126,6 +126,57 @@ describe('maquette parser', () => {
     expect(matiere.heures.totalAvecProf).toBe(30);
   });
 
+  it('ignores enterprise period rows from module extraction', async () => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('AP');
+
+    sheet.addRow(['2025-2026']);
+    sheet.addRow(['Cycle : ISEN FISA']);
+    sheet.addRow(['SEMESTRE 9']);
+    sheet.addRow([
+      "Unite d'Enseignements (UE)",
+      "Modules constituant l'UE",
+      'Semestre / Periode',
+      'Nb Heures planifiees etudiant module',
+      'Nb Heures encadrees etudiant module',
+      'Cours interactif',
+      'TD',
+      'TP',
+      'Epreuve Finale',
+    ]);
+    sheet.addRow([]);
+    sheet.addRow([]);
+    sheet.addRow([
+      'UE Professionnalisation',
+      'Periodes entreprise',
+      'S9',
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+    ]);
+    sheet.addRow([
+      'UE Technique',
+      'Systemes embarques',
+      'S9',
+      28,
+      28,
+      14,
+      14,
+      0,
+      100,
+    ]);
+    sheet.addRow(['TOTAL SEMESTRE 9']);
+
+    const buffer = Buffer.from(await workbook.xlsx.writeBuffer());
+    const result = await parseMaquetteBuffer(buffer, { cycleHint: 'AP' });
+
+    expect(result.matieres).toHaveLength(1);
+    expect(result.matieres[0].matiereNom).toBe('Systemes embarques');
+  });
+
   it('detects option blocks and propagates option context to nested module rows', async () => {
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('ISEN5');

@@ -14,10 +14,26 @@ export interface MaquetteAnalyzeMetadata {
   }>
 }
 
+export interface MaquetteAnalyzeMatiere {
+  promotionCode: string
+  ueNom: string
+  matiereNom: string
+  semestres: number[]
+  specialiteCode?: string | null
+  specialiteLabel?: string | null
+  specialiteType?: 'OPTION' | 'SPECIALITE' | 'COMMUN' | null
+  evaluations?: Array<{
+    nom: string
+    type: 'INTERMEDIAIRE' | 'FINALE' | 'CONTROLE_CONTINU' | 'TRAVAUX_PRATIQUES' | 'PROJET' | 'AUTRE'
+    poids: number
+    ordre?: number | null
+  }>
+}
+
 export interface MaquetteAnalyzeResponse {
   warnings: string[]
   metadata: MaquetteAnalyzeMetadata
-  matieres: unknown[]
+  matieres: MaquetteAnalyzeMatiere[]
 }
 
 export interface MaquetteImportResponse {
