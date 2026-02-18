@@ -8,6 +8,9 @@ export const normalizeText = (value: string): string => {
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/\u00a0/g, ' ')
+    // Uniformise les separateurs frequents observes dans les entetes Excel.
+    .replace(/[\/\\_|-]/g, ' ')
+    .replace(/[\u2010-\u2015]/g, ' ')
     .replace(/[\u2019']/g, ' ')
     .replace(/[()[\]{}]/g, ' ')
     .replace(/[.,;:!?%]/g, ' ')

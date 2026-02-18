@@ -49,9 +49,7 @@ export interface MaquetteHeures {
   tp: number;
   projet: number;
   elearning: number;
-  autre: number;
   visitesConferences: number;
-  digitalise: number;
   autoGere: number;
 }
 

@@ -118,7 +118,7 @@ Champs:
 - `total`, `totalAvecProf`
 - `coursMagistral`, `coursInteractif`
 - `td`, `tp`, `projet`, `elearning`
-- `autre`, `visitesConferences`, `digitalise`, `autoGere`
+- `visitesConferences`, `autoGere`
 
 ### `MaquetteSourcePosition`
 
@@ -183,4 +183,3 @@ Champs:
 - versionner facilement le contrat de donnees;
 - rendre les changements de schema visibles en review;
 - eviter la duplication de types dans parser/services/controller.
-
