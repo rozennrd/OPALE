@@ -25,6 +25,7 @@ Le parser transforme des feuilles heterogenes (`xlsx/xlsm`) en donnees metier no
 - lignes matieres consolidees;
 - volumes horaires;
 - semestres/periodes;
+- options/specialites/tronc commun (quand presents);
 - evaluations normalisees;
 - brouillons d'evenements d'examen.
 
@@ -65,6 +66,7 @@ Le parser identifie aussi les lignes (pas seulement les colonnes):
 - ligne "cycle": regex `^Cycle: ...`;
 - ligne de section semestre: texte contenant `Semestre` + extraction `Sx`;
 - ligne entete bloc metier: contient `Unite d enseignements`;
+- marqueurs d'option/specialite (`Option 1`, `Specialite`, `Commun`, etc.) en colonne dediee, colonne voisine UE ou cellule UE;
 - ligne de fin bloc: `Total ...`, `ECTS entreprise`, etc.
 
 Les lignes matieres sont parsees uniquement quand un `headerMap` actif existe.
@@ -167,17 +169,18 @@ Comportement:
 Fonction centrale de parsing ligne:
 
 1. Lit `UE`, `module`, `semestre/periode`, heures, evaluations.
-2. Ignore les lignes non matiere (`module vide`, `total`, etc.).
-3. Determine semestres/periodes (cellule + fallback section).
-4. Resout `cycleCode/promotionCode` via `resolvePromotionCode`.
-5. Calcule les heures (`total`, `totalAvecProf`, details).
-6. Construit la `MaquetteMatiereLine` + `examEventDrafts`.
+2. Detecte/met a jour le contexte `option/specialite/commun`.
+3. Ignore les lignes non matiere (`module vide`, `total`, etc.).
+4. Determine semestres/periodes (cellule + fallback section).
+5. Resout `cycleCode/promotionCode` via `resolvePromotionCode`.
+6. Calcule les heures (`total`, `totalAvecProf`, details).
+7. Construit la `MaquetteMatiereLine` + `examEventDrafts`.
 
 ### `mergeLines(lines): MaquetteMatiereLine[]`
 
 Fusion finale des lignes parsees:
 
-- cle metier principale: `cycle|promotion|UE|matiere`;
+- cle metier principale: `cycle|promotion|specialite|UE|matiere`;
 - exception: si le nom matiere contient un chiffre (`Math1`, `Math2`), pas de fusion automatique;
 - fusionne semestres/periodes/sources/evaluations/heures;
 - regenere `examEventDrafts` apres fusion.

@@ -49,6 +49,7 @@ Le but est de:
 
 | Type | Role |
 |---|---|
+| `MaquetteSpecialiteType` | Typage normalise des blocs option/specialite/commun. |
 | `MaquetteEvaluationType` | Enumeration des categories d'evaluation normalisees. |
 | `MaquetteEvaluation` | Evaluation extraite d'une ligne matiere. |
 | `MaquetteExamEventDraft` | Brouillon minimal pour creation d'event examen. |
@@ -61,6 +62,14 @@ Le but est de:
 
 <details>
 <summary><strong>Voir le detail complet de chaque type</strong></summary>
+
+### `MaquetteSpecialiteType`
+
+Union litterale des typologies de bloc:
+
+- `OPTION`
+- `SPECIALITE`
+- `COMMUN`
 
 ### `MaquetteEvaluationType`
 
@@ -141,6 +150,7 @@ Type principal de sortie parser au niveau matiere.
 Champs principaux:
 
 - contexte: `anneeScolaire`, `cycleCode`, `cycleRaw`, `promotionCode`, `ueNom`;
+- specialite: `specialiteCode`, `specialiteLabel`, `specialiteType`;
 - identification: `matiereNom`;
 - temporalite: `semestres`, `periodes`, `nbSemestres`;
 - contenu: `heures`, `evaluations`, `examEventDrafts`;
@@ -154,7 +164,7 @@ Champs:
 
 - `matieres`: lignes matieres normalisees;
 - `warnings`: alertes fonctionnelles;
-- `metadata`: `anneeScolaire`, `cycleRaw`, `cycleCode`, `promotions`, `feuilles`.
+- `metadata`: `anneeScolaire`, `cycleRaw`, `cycleCode`, `promotions`, `specialites`, `feuilles`.
 
 ### `AnalyzeMaquetteOptions`
 
