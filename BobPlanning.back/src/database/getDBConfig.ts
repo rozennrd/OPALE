@@ -33,7 +33,11 @@ export default function getDBConfig(): DBConfig {
   if (missing.length > 0) {
     const dotenvInfo = envLoadResult.parsed ? 'found .env and parsed values' : `dotenv load error: ${envLoadResult.error ? envLoadResult.error.message : 'no .env found or parsed'}`;
     throw new Error(
+<<<<<<< tu-endpoint-prof-promo-salle-specialite
       `Une ou plusieurs variables d'environnement de configuration sont manquantes: ${missing.join(', ')}; ${dotenvInfo}`,
+=======
+        `Une ou plusieurs variables d'environnement de configuration sont manquantes: ${missing.join(', ')}; ${dotenvInfo}`,
+>>>>>>> develop
     );
   }
 
@@ -44,4 +48,8 @@ export default function getDBConfig(): DBConfig {
     DB_USER: config.DB_USER,
     DB_PASSWORD: config.DB_PASSWORD,
   };
+<<<<<<< tu-endpoint-prof-promo-salle-specialite
 }
+=======
+}
+>>>>>>> develop

@@ -7,11 +7,13 @@
 
     .teacher-card-name {
         /* typographie commune via .entity-card-title */
+        white-space: nowrap;
     }
 
     .teacher-card-phone {
         /* typographie commune via .entity-card-meta */
         /* on garde juste le layout spécifique si besoin */
+        white-space: nowrap;
     }
 
     .teacher-card-phone-icon {
@@ -28,6 +30,10 @@
     .teacher-card-mode {
         width: 90px;
         min-width: 90px;
+    }
+
+    .teacher-card {
+        width: fit-content;
     }
 
     @media (max-width: 640px) {

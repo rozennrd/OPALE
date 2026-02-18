@@ -57,14 +57,6 @@ services:
     networks:
       - app-network
 
-  python-api:
-    build: ./BobPlanning.microService
-    container_name: opale-python-api
-    networks:
-      - api-network
-    ports:
-      - "5001:5001"
-
   opale-new-frontend:
     build:
       context: ./Opale.Front

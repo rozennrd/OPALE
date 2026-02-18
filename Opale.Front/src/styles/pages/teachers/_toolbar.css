@@ -22,6 +22,96 @@
         flex-shrink: 0;
     }
 
+    .teachers-toolbar-subjects {
+        position: relative;
+    }
+
+    .teachers-toolbar-subjects-panel {
+        position: absolute;
+        top: calc(100% + 0.4rem);
+        right: 0;
+        z-index: 10;
+        width: 260px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 0.6rem;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .teachers-toolbar-subjects-input {
+        width: 100%;
+        border: 1px solid var(--border);
+        background: var(--input-bg);
+        color: var(--text);
+        border-radius: 0.6rem;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .teachers-toolbar-subjects-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        max-height: 240px;
+        overflow: auto;
+    }
+
+    .teachers-toolbar-subjects-item {
+        border: 1px solid var(--border-subtle, var(--border));
+        background: var(--panel-soft);
+        color: var(--text);
+        border-radius: 0.6rem;
+        padding: 0.35rem 0.6rem;
+        font-size: 0.85rem;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .teachers-toolbar-subjects-item:hover {
+        background: var(--surface-hover, var(--panel-soft));
+    }
+
+    .teachers-toolbar-subjects-item.is-selected {
+        border-color: var(--brand);
+        color: var(--brand);
+        font-weight: 600;
+    }
+
+    .teachers-toolbar-plus-btn {
+        border: none;
+        background: transparent;
+        padding: 0.25rem;
+        margin-left: 0.4rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 120ms ease, transform 120ms ease;
+    }
+
+    .teachers-toolbar-plus-btn:hover {
+        opacity: 0.7;
+        transform: translateY(-1px);
+    }
+
+    .teachers-toolbar-plus-btn:active {
+        transform: translateY(0);
+        opacity: 0.85;
+    }
+
+    .teachers-toolbar-plus-icon {
+        width: 22px;
+        height: 22px;
+        pointer-events: none;
+        display: block;
+    }
+
+    [data-theme="dark"] .teachers-toolbar-plus-icon {
+        filter: brightness(1.2);
+    }
+
     /* Sur mobile : on repasse en colonne */
     @media (max-width: 900px) {
         .teachers-toolbar-row {
@@ -41,6 +131,13 @@
 
         .teachers-toolbar-filters .toolbar-filter {
             width: 100%;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .teachers-toolbar-plus-icon {
+            width: 20px;
+            height: 20px;
         }
     }
 }
