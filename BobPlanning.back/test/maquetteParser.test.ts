@@ -72,6 +72,59 @@ describe('maquette parser', () => {
     expect(math1?.nbSemestres).toBe(1);
     expect(math2?.nbSemestres).toBe(1);
   });
+
+  it('uses module hour columns when UE and module hour headers are duplicated', async () => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('AP');
+
+    sheet.addRow(['2024-2025']);
+    sheet.addRow(['Cycle : ISEN FISA']);
+    sheet.addRow(['SEMESTRE 5']);
+    sheet.addRow([
+      "Unite d'Enseignements (UE)",
+      'Nb Heures etudiant UE',
+      'Nb heures planifiees etudiant UE',
+      'Nb Heures encadrees etudiant UE',
+      "Modules constituant l'UE",
+      'Semestre / Periode',
+      'Nb Heures etudiant module',
+      'Nb heures planifiees etudiant module',
+      'Nb Heures encadrees etudiant module',
+      'Cours magistral',
+      'Cours interactif',
+      'TD',
+      'TP',
+    ]);
+    // Respecte la structure observee: les en-tetes sont souvent suivies de lignes vides.
+    sheet.addRow([]);
+    sheet.addRow([]);
+    sheet.addRow([
+      'UE Systeme',
+      999, // UE
+      888, // UE
+      777, // UE
+      'Reseaux',
+      'S5',
+      10, // module
+      20, // module
+      30, // module
+      0,
+      0,
+      0,
+      0,
+    ]);
+    sheet.addRow(['TOTAL SEMESTRE 5']);
+
+    const buffer = Buffer.from(await workbook.xlsx.writeBuffer());
+    const result = await parseMaquetteBuffer(buffer, { cycleHint: 'AP' });
+
+    expect(result.matieres).toHaveLength(1);
+    const matiere = result.matieres[0];
+    // "total" priorise "nbHeuresPlanifiees*" -> doit venir de la zone module (20), pas UE (888).
+    expect(matiere.heures.total).toBe(20);
+    // "totalAvecProf" doit venir de "nbHeuresEncadrees*" module (30), pas UE (777).
+    expect(matiere.heures.totalAvecProf).toBe(30);
+  });
 });
 
 describe('promotion resolver', () => {

@@ -35,7 +35,6 @@ interface HeaderMap {
   projetCol: number | null;
   elearningCol: number | null;
   visitesConferencesCol: number | null;
-  digitaliseCol: number | null;
   autoGereCol: number | null;
   evaluationCols: Array<{ col: number; label: string }>;
 }
@@ -73,9 +72,9 @@ const HEADER_ALIAS = {
   td: ['td', 'cours td'],
   tp: ['tp'],
   projet: ['projet'],
-  elearning: ['e learning', 'e learning', 'elearning', 'digitalise'],
-  visitesConferences: ['visites conferences', 'visites conference'],
-  digitalise: ['digitalise'],
+  // "digitalise" est traite comme alias de e-learning, pas comme type horaire distinct.
+  elearning: ['e learning', 'e-learning', 'elearning', 'digitalise'],
+  visitesConferences: ['visites / conferences', 'visites conferences', 'visites conference'],
   autoGere: ['auto gere'],
 };
 
@@ -131,8 +130,10 @@ const buildHeaderByColumn = (
 const findColumnByAliases = (
   headers: string[],
   aliases: string[],
+  options: { fromCol?: number } = {},
 ): number | null => {
-  for (let col = 1; col < headers.length; col += 1) {
+  const startCol = Math.max(1, options.fromCol ?? 1);
+  for (let col = startCol; col < headers.length; col += 1) {
     const header = headers[col];
     if (!header) continue;
     if (aliases.some((alias) => header.includes(alias))) {
@@ -188,13 +189,31 @@ const buildHeaderMap = (
     }
   }
 
+  const ueCol = findColumnByAliases(headers.normalized, HEADER_ALIAS.ue);
+  const moduleCol = findColumnByAliases(headers.normalized, HEADER_ALIAS.module);
+  // Les colonnes "Nb Heures *" existent parfois en doublon (UE puis module).
+  // Regle metier: on selectionne celles situees apres la colonne module.
+  const moduleHoursStartCol = moduleCol ? moduleCol + 1 : 1;
+
   return {
-    ueCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.ue),
-    moduleCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.module),
+    ueCol,
+    moduleCol,
     semPeriodeCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.semPeriode),
-    nbHeuresEtudiantCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.nbHeuresEtudiant),
-    nbHeuresPlanifieesCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.nbHeuresPlanifiees),
-    nbHeuresEncadreesCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.nbHeuresEncadrees),
+    nbHeuresEtudiantCol: findColumnByAliases(
+      headers.normalized,
+      HEADER_ALIAS.nbHeuresEtudiant,
+      { fromCol: moduleHoursStartCol },
+    ),
+    nbHeuresPlanifieesCol: findColumnByAliases(
+      headers.normalized,
+      HEADER_ALIAS.nbHeuresPlanifiees,
+      { fromCol: moduleHoursStartCol },
+    ),
+    nbHeuresEncadreesCol: findColumnByAliases(
+      headers.normalized,
+      HEADER_ALIAS.nbHeuresEncadrees,
+      { fromCol: moduleHoursStartCol },
+    ),
     coursMagistralCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.coursMagistral),
     coursInteractifCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.coursInteractif),
     tdCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.td),
@@ -202,7 +221,6 @@ const buildHeaderMap = (
     projetCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.projet),
     elearningCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.elearning),
     visitesConferencesCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.visitesConferences),
-    digitaliseCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.digitalise),
     autoGereCol: findColumnByAliases(headers.normalized, HEADER_ALIAS.autoGere),
     evaluationCols,
   };
@@ -333,7 +351,6 @@ const parseDataRow = (
   const projet = readNumber(headerMap.projetCol);
   const elearning = readNumber(headerMap.elearningCol);
   const visitesConferences = readNumber(headerMap.visitesConferencesCol);
-  const digitalise = readNumber(headerMap.digitaliseCol);
   const autoGere = readNumber(headerMap.autoGereCol);
 
   const totalFromColumns = [
@@ -350,7 +367,6 @@ const parseDataRow = (
     projet +
     elearning +
     visitesConferences +
-    digitalise +
     autoGere;
 
   const evaluations: MaquetteEvaluation[] = [];
@@ -387,9 +403,7 @@ const parseDataRow = (
       tp,
       projet,
       elearning,
-      autre: visitesConferences + digitalise + autoGere,
       visitesConferences,
-      digitalise,
       autoGere,
     },
     evaluations,
@@ -441,10 +455,8 @@ const mergeLines = (lines: MaquetteMatiereLine[]): MaquetteMatiereLine[] => {
       tp: existing.heures.tp + line.heures.tp,
       projet: existing.heures.projet + line.heures.projet,
       elearning: existing.heures.elearning + line.heures.elearning,
-      autre: existing.heures.autre + line.heures.autre,
       visitesConferences:
         existing.heures.visitesConferences + line.heures.visitesConferences,
-      digitalise: existing.heures.digitalise + line.heures.digitalise,
       autoGere: existing.heures.autoGere + line.heures.autoGere,
     };
 
