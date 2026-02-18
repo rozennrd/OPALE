@@ -32,10 +32,10 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-import dotenv from "dotenv";
+// import dotenv from "dotenv"; Pas nécessaire doublons
 import eventRoutes from "./api/routes/eventRoutes";
 import localisationRoutes from "./api/routes/localisationRoutes";
-dotenv.config();
+// dotenv.config(); Pas nécessaire triplons
 
 const dbConfig = getDBConfig();
 

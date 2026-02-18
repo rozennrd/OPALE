@@ -25,7 +25,9 @@ export const localisationService = {
     async getLocalisationById(id: string): Promise<LocalisationDTO> {
         const dao = await localisationRepository.getById(id);
         if (!dao) {
-            throw new Error(`Localisation avec l'ID ${id} non trouvée`);
+            const err: any = new Error(`Localisation avec l'ID ${id} non trouvée`);
+            err.statusCode = 404;
+            throw err;
         }
         return localisationMapper.toDTO(dao);
     },
@@ -35,7 +37,9 @@ export const localisationService = {
         // Vérifie si la localisation existe déjà
         const exists = await localisationRepository.exists(dto.id_salle, dto.id_event);
         if (exists) {
-            throw new Error('Cette salle est déjà associée à cet événement');
+            const err: any = new Error("Cette salle est déjà associée à cet événement");
+            err.statusCode = 409;
+            throw err;
         }
 
         const id = await localisationRepository.insert(dto.id_salle, dto.id_event);
@@ -50,7 +54,9 @@ export const localisationService = {
     // Met à jour une localisation existante
     async updateLocalisation(dto: LocalisationDTO): Promise<void> {
         if (!dto.id) {
-            throw new Error("L'ID de la localisation est requis pour la mise à jour");
+            const err: any = new Error("L'ID de la localisation est requis pour la mise à jour");
+            err.statusCode = 400;
+            throw err;
         }
 
         // Vérifie que la localisation existe
@@ -65,7 +71,9 @@ export const localisationService = {
         if (existing.id_salle !== dto.id_salle || existing.id_event !== dto.id_event) {
             const exists = await localisationRepository.exists(dto.id_salle, dto.id_event);
             if (exists) {
-                throw new Error('Cette salle est déjà associée à cet événement');
+                const err: any = new Error("Cette salle est déjà associée à cet événement");
+                err.statusCode = 409;
+                throw err;
             }
         }
 
