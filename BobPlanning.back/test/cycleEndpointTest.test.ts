@@ -186,7 +186,7 @@ describe("cycleController", () => {
             mockRequest.query = {};
 
             const mockError: any = new Error("Cycle non trouvé");
-            mockError.statusCode = 404;
+            mockError.statusCode = 400;
             (cycleService.getCycleById as jest.Mock).mockRejectedValue(mockError);
 
             await cycleController.getCycleById(
