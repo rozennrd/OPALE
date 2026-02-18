@@ -1067,14 +1067,4 @@ app.get('/getCours', authJwt.verifyToken, (req, res) => {
   });
 });
 
-// Start the server when not running in test mode
-if (process.env.NODE_ENV !== 'test') {
-  const server = app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-    console.log(`Swagger docs available at http://localhost:${PORT}/docs`);
-  });
-
-  server.timeout = 0;
-}
-
 export default app;
