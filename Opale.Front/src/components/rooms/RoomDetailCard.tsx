@@ -40,6 +40,7 @@ const floorLabel = (floor: Room['floor']): string => {
 export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCardProps) {
     const [name, setName] = useState(room.name)
     const [fullName, setFullName] = useState(room.fullName ?? '')
+    const [floor, setFloor] = useState<Room['floor']>(room.floor)
     const [mainType, setMainType] = useState<RoomType>(room.mainType)
     const [types, setTypes] = useState<RoomType[]>(room.types)
     const [description, setDescription] = useState(room.description ?? '')
@@ -47,6 +48,7 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
     useEffect(() => {
         setName(room.name)
         setFullName(room.fullName ?? '')
+        setFloor(room.floor)
         setMainType(room.mainType)
         setTypes(room.types)
         setDescription(room.description ?? '')
@@ -57,6 +59,7 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
     const hasChanges =
         room.name !== name ||
         (room.fullName ?? '') !== fullName ||
+        room.floor !== floor ||
         (room.description ?? '') !== description ||
         room.mainType !== mainType ||
         room.types.length !== types.length ||
@@ -96,6 +99,7 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
             ...room,
             name: name.trim() || room.name,
             fullName: fullName.trim() || undefined,
+            floor,
             description: description.trim() || undefined,
             mainType,
             types: types.length ? types : [mainType],
@@ -170,6 +174,22 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
                                         onChange={(e) => setFullName(e.target.value)}
                                         placeholder="Ex. J001_Projet"
                                     />
+                                </div>
+
+                                <div className="room-detail-field">
+                                    <label className="room-detail-field-label" htmlFor="room-floor-input">
+                                        Etage
+                                    </label>
+                                    <select
+                                        id="room-floor-input"
+                                        className="room-detail-input"
+                                        value={floor}
+                                        onChange={(e) => setFloor(Number(e.target.value) as Room['floor'])}
+                                    >
+                                        <option value={0}>Rez-de-chaussee</option>
+                                        <option value={1}>1er etage</option>
+                                        <option value={2}>2e etage</option>
+                                    </select>
                                 </div>
                             </div>
 
