@@ -8,6 +8,7 @@ import { EditingPromotion } from "./usePromotionEditing.ts"
 import { eventsApi } from "../../services/api/eventsApi.ts"
 import { constraintEventTypes } from "../../constants/constraintEventTypes.ts"
 import { EventType } from "../../models/EventTypes.ts"
+import { getOutOfPeriodConstraintTypes } from "./usePromotionConstraints.ts"
 
 interface GroupSyncResult {
     tempId: string
@@ -33,16 +34,6 @@ const constraintToEventTypeMap: Record<string, EventType> = {
     international: 'Mobilite',
     partiels: 'Examen',
     rattrapages: 'Rattrapage'
-}
-
-// Map event types to constraint types
-const eventTypeToConstraintMap: Partial<Record<EventType, keyof Constraints>> = {
-    'Fermeture': 'vacances',
-    'Entreprise': 'entreprise',
-    'Stage': 'stages',
-    'Mobilite': 'international',
-    'Examen': 'partiels',
-    'Rattrapage': 'rattrapages'
 }
 
 export const usePromotionSync = () => {
@@ -125,6 +116,14 @@ export const usePromotionSync = () => {
             if (newEvents.length > 0) {
                 console.log(`Creating ${newEvents.length} new events`)
                 for (const newEvent of newEvents) {
+
+                    if (!newEvent.concerne) {newEvent.concerne = {}}
+                    newEvent.concerne.promotions = [promoId]; // Not optimized, creates one event per promo, but it's
+                    // the cost of having something that works simply. You'll refactor if the time comes, I believe in
+                    // you.
+                    newEvent.is_blocking = true; // when we have entreprise, holidays or whatever, we can't have
+                    // courses on that
+
                     await eventsApi.createEvent(newEvent)
                 }
             }
@@ -335,6 +334,20 @@ export const usePromotionSync = () => {
         originalEvents: Event[] = []
     ): Promise<EditingPromotion> => {
         try {
+            // Validate constraints are within promotion period
+            const outOfPeriodConstraints = getOutOfPeriodConstraintTypes(
+                promo.constraints,
+                promo.startDate,
+                promo.endDate
+            )
+            
+            if (outOfPeriodConstraints.length > 0) {
+                const constraintLabels = outOfPeriodConstraints.join(', ')
+                throw new Error(
+                    `Les contraintes suivantes sont en dehors de la période de la promotion (${promo.startDate} - ${promo.endDate}): ${constraintLabels}`
+                )
+            }
+
             // Sync groups
             const syncedGroups = await syncGroups(promo.promoId, promo.groups)
 

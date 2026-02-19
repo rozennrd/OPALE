@@ -96,7 +96,7 @@ export const eventRepository = {
         is_blocking: boolean,
         is_exceptional: boolean,
         is_external: boolean,
-        concerne?: string[],
+        concerne?: { promotions: string[], groups: string[], specialties: string[] },
     ): Promise<string> {
         const client = await pool.connect();
 
@@ -111,17 +111,33 @@ export const eventRepository = {
             RETURNING id
         `;
             const eventResult = await client.query(eventSql, [
-                type, nom, num_semaine, datetime_start, datetime_end,
+                type, nom, description, num_semaine, datetime_start, datetime_end,
                 show_macro, show_micro, is_blocking, is_exceptional, is_external
             ]);
             const eventId = eventResult.rows[0].id;
 
             // Insert into concerner table
-            if (concerne && concerne.length > 0) {
-                for (const promoId of concerne) {
+            if (concerne && concerne.promotions.length > 0) {
+                for (const promoId of concerne.promotions) {
                     await client.query(
                         'INSERT INTO concerner (id_event, id_promo) VALUES ($1, $2)',
                         [eventId, promoId]
+                    );
+                }
+            }
+            if (concerne && concerne.specialties && concerne.specialties.length > 0) {
+                for (const specId of concerne.specialties) {
+                    await client.query(
+                        'INSERT INTO concerner (id_event, id_specialite) VALUES ($1, $2)',
+                        [eventId, specId]
+                    );
+                }
+            }
+            if (concerne && concerne.groups.length > 0) {
+                for (const groupId of concerne.groups) {
+                    await client.query(
+                        'INSERT INTO concerner (id_event, id_groupe) VALUES ($1, $2)',
+                        [eventId, groupId]
                     );
                 }
             }

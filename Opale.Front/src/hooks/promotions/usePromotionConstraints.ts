@@ -9,6 +9,75 @@ import { EventType } from '../../models/EventTypes'
 import {Event} from '../../models/Event.ts'
 type ConstraintType = keyof Constraints
 
+// ============ VALIDATION FUNCTIONS ============
+
+/**
+ * Check if a date is within the promotion period
+ */
+export const isDateWithinPromotionPeriod = (
+    dateStr: string,
+    promoStart: string,
+    promoEnd: string
+): boolean => {
+    if (!dateStr || !promoStart || !promoEnd) return true // Allow empty dates
+    
+    const date = new Date(dateStr)
+    const start = new Date(promoStart)
+    const end = new Date(promoEnd)
+    
+    return date >= start && date <= end
+}
+
+/**
+ * Check if a constraint date range is within the promotion period
+ */
+export const isConstraintWithinPromotionPeriod = (
+    startDate: string,
+    endDate: string,
+    promoStart: string,
+    promoEnd: string
+): boolean => {
+    if (!startDate || !endDate || !promoStart || !promoEnd) return true
+    
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    const promoStartDate = new Date(promoStart)
+    const promoEndDate = new Date(promoEnd)
+    
+    // Both start and end must be within promotion period
+    return start >= promoStartDate && start <= promoEndDate &&
+           end >= promoStartDate && end <= promoEndDate
+}
+
+/**
+ * Get constraint types that have dates outside the promotion period
+ */
+export const getOutOfPeriodConstraintTypes = (
+    constraints: Constraints,
+    promoStart: string,
+    promoEnd: string
+): ConstraintType[] => {
+    if (!promoStart || !promoEnd) return []
+    
+    const outOfPeriod: ConstraintType[] = []
+    const constraintTypes = Object.keys(constraints) as ConstraintType[]
+    
+    for (const type of constraintTypes) {
+        const ranges = constraints[type] || []
+        for (const range of ranges) {
+            if (range.start && range.end) {
+                if (!isConstraintWithinPromotionPeriod(range.start, range.end, promoStart, promoEnd)) {
+                    if (!outOfPeriod.includes(type)) {
+                        outOfPeriod.push(type)
+                    }
+                }
+            }
+        }
+    }
+    
+    return outOfPeriod
+}
+
 export const createEmptyConstraints = (): Constraints => ({
     vacances: [],
     entreprise: [],
@@ -90,6 +159,14 @@ export function usePromotionConstraints(
         })
     }, [setEditingPromo]);
 
+    // Helper to format ISO datetime to YYYY-MM-DD for DateRange
+    const formatDate = (datetime: string | Date): string => {
+        if (!datetime) return ''
+        const date = new Date(datetime)
+        if (isNaN(date.getTime())) return ''
+        return date.toISOString().split('T')[0]
+    }
+
     const convertEventsToConstraints= (events :Event[] ) => {
 
         const constraints: Constraints = createEmptyConstraints()
@@ -97,10 +174,12 @@ export function usePromotionConstraints(
         for (const eventType of constraintEventTypes) {
             const constraintType = eventToConstraintMap[eventType]
             if (constraintType) {
-                constraints[constraintType] = events.map(event => ({
+                // Filter events by this specific type before mapping
+                const eventsOfType = events.filter(event => event.type === eventType)
+                constraints[constraintType] = eventsOfType.map(event => ({
                     id: event.id,
-                    start: event.datetime_start,
-                    end: event.datetime_end
+                    start: formatDate(event.datetime_start),
+                    end: formatDate(event.datetime_end)
                 }))
             }
         }
@@ -120,7 +199,10 @@ export function usePromotionConstraints(
             if (!response.data) {
                 return createEmptyConstraints()
             }
-            return convertEventsToConstraints(response.data)
+            
+            // Flatten the Record<string, Event[]> to Event[]
+            const allEvents = Object.values(response.data).flat()
+            return convertEventsToConstraints(allEvents)
         } catch (error) {
             console.error('Error fetching events as constraints:', error)
             return createEmptyConstraints()
