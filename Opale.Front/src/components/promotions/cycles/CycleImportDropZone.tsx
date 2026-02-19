@@ -50,14 +50,14 @@ const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
         const excelFiles = filterExcelFiles(files)
         if (excelFiles.length === 0) {
             console.warn(
-                '[CycleImportDropzone] Aucun fichier Excel detecte dans la selection',
+                '[CycleImportDropzone] Aucun fichier Excel détecté dans la sélection',
                 files,
             )
             return
         }
 
         console.log(
-            '[CycleImportDropzone] Fichiers Excel recus pour le cycle',
+            '[CycleImportDropzone] Fichiers Excel reçus pour le cycle',
             cycleId,
             excelFiles,
         )
@@ -125,7 +125,7 @@ const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
                     Importer des promotions depuis Excel
                 </span>
                 <span className="cycle-import-dropzone-hint">
-                    Glissez-deposez vos fichiers Excel ici ou cliquez pour parcourir
+                    Glissez-déposez vos fichiers Excel ici ou cliquez pour parcourir
                     (plusieurs fichiers possibles)
                 </span>
 
@@ -163,7 +163,7 @@ const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
 
                             {extraCount > 0 && (
                                 <div className="cycle-import-file-pill extra-count">
-                                    + {extraCount} fichier(s) supplementaire(s)...
+                                    + {extraCount} fichier(s) supplémentaire(s)...
                                 </div>
                             )}
                         </div>

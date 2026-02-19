@@ -13,10 +13,26 @@
 
 .login-logo {
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .login-logo img {
     max-width: 200px; /* Ajuster la taille du logo */
+    height: auto;
+}
+
+.login-logo .login-logo-dark {
+    display: none;
+}
+
+[data-theme='dark'] .login-logo .login-logo-light {
+    display: none;
+}
+
+[data-theme='dark'] .login-logo .login-logo-dark {
+    display: block;
 }
 
 h2 {

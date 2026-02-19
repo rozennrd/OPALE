@@ -18,7 +18,7 @@ export const TYPE_META: Record<EventType, { icon: string; label: string }> = {
     CONFERENCE: { icon: icEventConference, label: 'Conférence' },
     FORUM: { icon: icEventForum, label: 'Forum' },
     SALON: { icon: icEventSalon, label: 'Salon / Expo' },
-    AUTRE: { icon: icEventOther, label: 'Autre évènement' },
+    AUTRE: { icon: icEventOther, label: 'Autre événement' },
 }
 
 /**

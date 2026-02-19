@@ -21,6 +21,8 @@
     /* ✅ bordures & fond d’input */
     --border: #2a3442;
     --input-bg: #0f131a;
+    --scrollbar-thumb: rgba(229, 231, 235, 0.28);
+    --scrollbar-thumb-hover: rgba(229, 231, 235, 0.42);
 
     --shadow-sm: 0 2px 6px rgba(0,0,0,.4);
     --shadow-md: 0 4px 12px rgba(0,0,0,.45);

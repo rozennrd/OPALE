@@ -61,8 +61,8 @@ export default function TeacherDetailCard({
         const lower = value.toLowerCase()
         if (lower.includes('bordeaux')) return 'Bordeaux'
         if (lower.includes('lille')) return 'Lille'
-        if (lower.includes('chateauroux')) {
-            return 'Chateauroux'
+        if (lower.includes('châteauroux') || lower.includes('chateauroux')) {
+            return 'Châteauroux'
         }
         return value
     }
@@ -84,7 +84,7 @@ export default function TeacherDetailCard({
                     <TeacherModeBadge
                         mode={teacherDraft.mode}
                         variant="header"
-                        title="Detail enseignant"
+                        title="Détail de l'enseignant"
                         subtitle={`${teacherDraft.lastName.toUpperCase()} ${teacherDraft.firstName}`}
                         className="teacher-detail-header-badge"
                         sectionLabel={sectionLabel}
@@ -140,7 +140,7 @@ export default function TeacherDetailCard({
                         hasChanges={hasChanges}
                         confirmMessage={
                             <>
-                                Vous etes sur le point d&apos;enregistrer les
+                                Vous êtes sur le point d&apos;enregistrer les
                                 modifications pour{' '}
                                 <strong>
                                     {teacherDraft.firstName}{' '}
@@ -159,10 +159,10 @@ export default function TeacherDetailCard({
 
             <ConfirmDialog
                 open={isConfirmOpen}
-                title="Modifications non enregistrees"
+                title="Modifications non enregistrées"
                 message={
                     <>
-                        <p>Vous avez modifie cette fiche enseignant.</p>
+                        <p>Vous avez modifié cette fiche d'enseignant.</p>
                         <p>
                             Souhaitez-vous enregistrer les changements avant de
                             fermer ?

@@ -3,6 +3,7 @@ import '../styles/pages/login/login-page.css';
 import { useNavigate } from 'react-router-dom';
 
 import logoFull from '../assets/logo/logo-full.png';
+import logoFullDark from '../assets/logo/logo-full-dark.png';
 import ThemeToggle from '../components/ThemeToggle';
 import { LoginCredentials } from '../services/base/types';
 import { authService } from '../services/base/AuthService';
@@ -50,7 +51,8 @@ export default function Login(): React.ReactElement {
             </div>
 
             <div className="login-logo">
-                <p>OPALE LOGIN</p>
+                <img className="login-logo-light" src={logoFull} alt="OPALE" />
+                <img className="login-logo-dark" src={logoFullDark} alt="OPALE" />
             </div>
 
             <form onSubmit={handleSubmit} className="login-form">
@@ -79,7 +81,7 @@ export default function Login(): React.ReactElement {
                 <button type="submit" className="login-btn">
                     Se connecter
                 </button>
-                {hasError && <span className="error-message">Login ou mot de passe non reconnu</span>}
+                {hasError && <span className="error-message">Identifiant ou mot de passe non reconnu.</span>}
             </form>
         </div>
     );

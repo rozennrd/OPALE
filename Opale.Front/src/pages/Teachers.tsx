@@ -200,14 +200,14 @@ export default function Teachers() {
                             onSelectAll={() => selectAllTeachers(visibleTeacherIds)}
                             onClearSelection={clearTeacherSelection}
                             onDeleteSelected={handleDeleteSelected}
-                            confirmTitle="Supprimer les enseignants selectionnes"
+                            confirmTitle="Supprimer les enseignants sélectionnés"
                             confirmMessage={`Vous allez supprimer ${selectedTeacherIds.length} enseignant${selectedTeacherIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
                     />
                 )}
 
                 {filteredInternalBordeaux.length > 0 && (
                     <TeacherSection
-                        title="Interne Bordeaux"
+                        title="Internes Bordeaux"
                         teachers={filteredInternalBordeaux}
                         onSelectTeacher={setSelectedTeacher}
                         selectionMode={selectionMode}
@@ -218,7 +218,7 @@ export default function Teachers() {
 
                 {filteredInternalLilleChateauroux.length > 0 && (
                     <TeacherSection
-                        title="Interne Lille/Chateauroux"
+                        title="Internes Lille/Châteauroux"
                         teachers={filteredInternalLilleChateauroux}
                         onSelectTeacher={setSelectedTeacher}
                         selectionMode={selectionMode}

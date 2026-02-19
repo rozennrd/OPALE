@@ -40,6 +40,8 @@
     --surface-active: #e8f8f8;  /* actif sidebar (ex-#E8F8F8) */
     --border: #e5e7eb;          /* bordures légères */
     --input-bg: #ffffff;        /* fond d’input / petites surfaces */
+    --scrollbar-thumb: rgba(17, 24, 39, 0.22);
+    --scrollbar-thumb-hover: rgba(17, 24, 39, 0.34);
 
     --radius: 18px;
     --radius-sm: 10px;

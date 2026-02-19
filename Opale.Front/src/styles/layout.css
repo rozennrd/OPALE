@@ -9,13 +9,21 @@
     padding: 24px;
     height: 100%;
   }
-  .right-col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+  }
 
   /* Sidebar */
   .sidebar {
     padding: 22px;
     display: flex; flex-direction: column; gap: 24px;
     height: 100%;
+    min-height: 0;
     transition: all .3s ease;
   }
   .brand {
@@ -24,6 +32,10 @@
   }
   .brand .logo-full { width: 100%; height: auto; max-width: 280px; }
   .brand .logo-compact { display: none; width: 48px; height: auto; }
+  .brand .logo-full-dark { display: none; }
+
+  [data-theme='dark'] .brand .logo-full-light { display: none; }
+  [data-theme='dark'] .brand .logo-full-dark { display: block; }
 
   .nav { display: flex; flex-direction: column; gap: 8px; }
   .nav-btn {
@@ -69,6 +81,10 @@
   }
   .footer-icon-btn:hover { background: var(--surface-hover); }
   .footer-icon-btn img { width: 28px; height: 28px; }
+  .footer-icon-btn .footer-icon-dark { display: none; }
+
+  [data-theme='dark'] .footer-icon-btn .footer-icon-light { display: none; }
+  [data-theme='dark'] .footer-icon-btn .footer-icon-dark { display: block; }
 
   /* Sidebar compacte */
   @media (max-width: 860px) {
@@ -101,11 +117,36 @@
   .btn-disconnect img { width: 20px; height: 20px; }
 
   /* Main */
-  .main-card { padding: 24px; flex: 1; display: flex; flex-direction: column; }
+  .main-card {
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
   .main-inner {
-    position: relative; flex: 1; display: flex; flex-direction: column;
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
     padding: 8px; padding-bottom: 10px;
   }
+  .main-inner::-webkit-scrollbar { width: 8px; }
+  .main-inner::-webkit-scrollbar-track { background: transparent; }
+  .main-inner::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .main-inner::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
 
   .page-title {
     font-family: 'Nunito', sans-serif;
