@@ -20,7 +20,6 @@ export default function Promotions() {
     // Cycle management hooks
     const {
         cycles,
-        setCycles,
         loading,
         error,
         isCreateModalOpen,
@@ -105,12 +104,6 @@ export default function Promotions() {
                 subtitle="Gestion des cycles, promotions et contraintes académiques (mock front uniquement)."
             />
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
             <div className="promos-grid">
                 {cycles.map((cycle) => (
                     <CycleCard
@@ -123,39 +116,14 @@ export default function Promotions() {
                         addPromotion={addPromotionToCycle}
                     />
                 ))}
-=======
-=======
->>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
-=======
->>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
-=======
->>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
-=======
->>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
-=======
->>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
+
             {/* Error display */}
             {error && (
                 <div className="error-banner" role="alert">
                     Erreur : {error}
                 </div>
             )}
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
-=======
->>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
-=======
->>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
-=======
->>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
-=======
->>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
-=======
->>>>>>> 3950ecc (:bug: GROUPS OK DO NOT TOUCH GROUPS)
+
 
             {/* Cycles grid */}
             <div className="promos-grid">
@@ -227,6 +195,6 @@ export default function Promotions() {
                 onSubmit={createCycleWithPromotions}
                 onClose={closeCreateModal}
             />
-        </div>
+            </div></div>
     )
 }
