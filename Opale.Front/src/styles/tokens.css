@@ -1,8 +1,8 @@
-/* v1.1.4 — Design tokens (couleurs, espaces, ombres, rayons, breakpoints) */
+/* v1.1.4 - Design tokens (colors, spacing, shadows, radii, breakpoints) */
 
 @layer tokens {
   :root {
-    /* Palette brute */
+    /* Raw palette */
     --gray-0: #ffffff;
     --gray-1: #f7f7f7;
     --gray-2: #eef2f7;
@@ -21,46 +21,72 @@
     --primary-500: #93c7a6;
     --primary-600: #7db993;
 
-    /* Sémantique */
+    /* Semantic tokens */
     --bg: radial-gradient(circle at 30% 0%, var(--gray-3), var(--gray-4) 40%, var(--gray-5) 60%, var(--gray-6) 100%);
     --panel: var(--gray-0);
     --panel-soft: var(--gray-1);
     --text: var(--gray-8);
+    --text-strong: var(--text);
     --muted: #6b7280;
+    --muted-strong: color-mix(in srgb, var(--muted) 72%, var(--text));
 
     --brand: var(--brand-500);
     --brand-hover: var(--brand-600);
+    --brand-soft: color-mix(in srgb, var(--brand) 16%, transparent);
+    --brand-strong: var(--brand);
 
     --amber: var(--amber-400);
     --primary: var(--primary-500);
     --primary-hover: var(--primary-600);
+    --primary-soft: color-mix(in srgb, var(--primary) 16%, transparent);
+    --primary-strong-contrast: #0f172a;
 
-    /* ✅ nouveaux tokens pour harmoniser clair/sombre */
-    --surface-hover: #f2f2f2;   /* hover sidebar, etc. */
-    --surface-active: #e8f8f8;  /* actif sidebar (ex-#E8F8F8) */
-    --border: #e5e7eb;          /* bordures légères */
-    --input-bg: #ffffff;        /* fond d’input / petites surfaces */
+    --text-on-primary: #0b3b24;
+    --text-on-brand: #ffffff;
+    --text-on-amber: #111827;
+
+    /* Surface/border/input tokens */
+    --surface-hover: #f2f2f2;
+    --surface-active: #e8f8f8;
+    --border: #e5e7eb;
+    --border-soft: color-mix(in srgb, var(--border) 72%, transparent);
+    --border-subtle: var(--border-soft);
+    --input-bg: #ffffff;
     --scrollbar-thumb: rgba(17, 24, 39, 0.22);
     --scrollbar-thumb-hover: rgba(17, 24, 39, 0.34);
+
+    /* Compatibility aliases for component-level styles */
+    --color-surface: var(--panel);
+    --color-surface-subtle: var(--panel-soft);
+    --color-border-subtle: var(--border-soft);
+    --color-text-main: var(--text);
+    --color-text-muted: var(--muted);
 
     --radius: 18px;
     --radius-sm: 10px;
     --radius-lg: 24px;
 
-    --shadow-sm: 0 2px 6px rgba(0,0,0,0.08);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
-    --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.2);
 
-    /* Echelle d'espaces */
-    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
-    --space-5: 20px; --space-6: 24px; --space-7: 32px; --space-8: 40px;
+    /* Spacing scale */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 40px;
 
-    /* Breakpoints (utilisables dans les @media) */
+    /* Breakpoints */
     --bp-md: 860px;
     --bp-sm: 620px;
 
-    /* Tokens spécifiques "Add cycle" */
+    /* Add cycle */
     --add-cycle-border-width: 3px;
-    --add-cycle-border-color: #4F4F4F88;
+    --add-cycle-border-color: #4f4f4f88;
   }
 }

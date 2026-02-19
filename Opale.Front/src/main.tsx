@@ -15,6 +15,12 @@ import './styles/themes/dark.css'
 import './styles/pages/rooms/index.css'
 import './styles/pages/events/index.css'
 import './styles/pages/matieres/index.css'
+import './styles/themes/spock.css'
+import './styles/themes/cvd-protan-deutan.css'
+import './styles/themes/cvd-tritan.css'
+import './styles/themes/cvd-achromatopsia.css'
+import './styles/themes/reading-dyslexia.css'
+import './styles/themes/vision-low.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

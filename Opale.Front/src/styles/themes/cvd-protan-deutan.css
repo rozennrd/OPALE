@@ -1,0 +1,18 @@
+/* Daltonisme rouge-vert (protan/deutan) */
+
+@layer tokens {
+  :root[data-cvd="protan-deutan"] {
+    --brand: #0072b2;
+    --brand-hover: #005a8c;
+
+    --primary: #e69f00;
+    --primary-hover: #c88700;
+
+    --amber: #f0e442;
+    --surface-active: rgba(0, 114, 178, 0.2);
+
+    --danger-100: #f3e8ff;
+    --danger-200: #e9d5ff;
+    --danger-800: #6b217a;
+  }
+}

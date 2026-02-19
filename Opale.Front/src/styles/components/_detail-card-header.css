@@ -22,7 +22,7 @@
         font-size: 1.3rem;
         line-height: 1;
         cursor: pointer;
-        color: var(--muted-strong, #64748b);
+        color: var(--muted-strong);
         padding: 0;
     }
 
@@ -43,7 +43,7 @@
         margin-bottom: 0.1rem; /* petit espace interne avant le contenu */
     }
 
-    /* ========= Forme générale de la pill ========= */
+    /* ========= Forme gÃ©nÃ©rale de la pill ========= */
 
     .detail-card-header .event-detail-header-pill,
     .detail-card-header .room-type-badge.room-type-badge-header,
@@ -100,7 +100,7 @@
         text-overflow: ellipsis;
     }
 
-    /* ========= Colonne droite : icône + label ========= */
+    /* ========= Colonne droite : icÃ´ne + label ========= */
 
     .detail-card-header .event-header-right,
     .detail-card-header .room-header-right,
@@ -136,7 +136,7 @@
         white-space: nowrap;
     }
 
-    /* ========= Responsive : pill qui s’empile sur mobile ========= */
+    /* ========= Responsive : pill qui sâ€™empile sur mobile ========= */
 
     @media (max-width: 640px) {
         .detail-card-header .event-detail-header-pill,
@@ -157,20 +157,4 @@
         }
     }
 
-    /* ========= Thème sombre — base générique ========= */
-
-    [data-theme='dark'] .detail-card-header .event-detail-header-pill,
-    [data-theme='dark'] .detail-card-header .room-type-badge.room-type-badge-header,
-    [data-theme='dark'] .detail-card-header .teacher-mode-badge.teacher-mode-badge-header {
-        background: #1f2735;
-        border-color: rgba(255, 255, 255, 0.18);
-        color: var(--text);
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
-    }
-
-    [data-theme='dark'] .detail-card-header .event-header-subtitle,
-    [data-theme='dark'] .detail-card-header .room-header-subtitle,
-    [data-theme='dark'] .detail-card-header .teacher-mode-header-subtitle {
-        color: var(--muted);
-    }
 }

@@ -14,7 +14,9 @@
         border-radius: 999px;
         border: 1px solid var(--border-soft);
         background: var(--panel-soft);
+        color: var(--text);
         cursor: pointer;
+        transition: background-color 140ms ease, border-color 140ms ease;
     }
 
     .theme-toggle-icon {
@@ -43,11 +45,14 @@
         background: var(--panel);
     }
 
+    .theme-toggle-thumb,
     .theme-toggle-toggle-thumb {
         width: 16px;
         height: 16px;
         border-radius: 999px;
         background: var(--brand);
+        box-shadow: 0 0 0 1px var(--border-soft);
+        flex-shrink: 0;
     }
 
     .theme-toggle-text {

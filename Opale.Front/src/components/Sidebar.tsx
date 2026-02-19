@@ -22,15 +22,16 @@ interface NavItem {
     to: string
     label: string
     ic: string
+    code: string
 }
 
 const items: NavItem[] = [
-    { to: '/planning',    label: 'Planning',    ic: icPlanning },
-    { to: '/promotions',  label: 'Promotions',  ic: icPromotions },
-    { to: '/evenements',  label: 'Événements',  ic: icEvenements },
-    { to: '/teachers',    label: 'Enseignants', ic: icEnseignants },
-    { to: '/salles',      label: 'Salles',      ic: icSalles },
-    { to: '/matieres',    label: 'Matières',    ic: icMatieres },
+    { to: '/planning', label: 'Planning', ic: icPlanning, code: 'OPS-01' },
+    { to: '/promotions', label: 'Promotions', ic: icPromotions, code: 'CELL-03' },
+    { to: '/evenements', label: 'Evenements', ic: icEvenements, code: 'EVENT-12' },
+    { to: '/teachers', label: 'Enseignants', ic: icEnseignants, code: 'CREW-07' },
+    { to: '/salles', label: 'Salles', ic: icSalles, code: 'DECK-04' },
+    { to: '/matieres', label: 'Mati\u00e8res', ic: icMatieres, code: 'LAB-22' },
 ]
 
 export default function Sidebar(): JSX.Element | null {
@@ -41,7 +42,7 @@ export default function Sidebar(): JSX.Element | null {
     if (location.pathname === '/login') return null
 
     const handleDisconnect = () => {
-        console.log('[AUTH] Se déconnecter')
+        console.log('[AUTH] Se d\u00e9connecter')
         // Redirection vers la page login
         navigate('/login')
     }
@@ -70,7 +71,10 @@ export default function Sidebar(): JSX.Element | null {
                         className={({ isActive }) => `nav-btn ${isActive ? 'active' : ''}`}
                         onClick={() => console.log(`[NAV] ${it.label}`)}
                     >
-                        <span className="nav-label">{it.label}</span>
+                        <span className="nav-label-wrap">
+                            <span className="nav-label">{it.label}</span>
+                            <span className="nav-code" aria-hidden="true">{it.code}</span>
+                        </span>
                         <img className="nav-icon-right" src={it.ic} alt="" />
                     </NavLink>
                 ))}
@@ -82,8 +86,8 @@ export default function Sidebar(): JSX.Element | null {
                         type="button"
                         className="footer-icon-btn"
                         onClick={handleDisconnect}
-                        aria-label="Se déconnecter"
-                        title="Se déconnecter"
+                        aria-label="Se d\u00e9connecter"
+                        title="Se d\u00e9connecter"
                     >
                         <img className="footer-icon-light" src={icLogout} alt="" />
                         <img className="footer-icon-dark" src={icLogoutDark} alt="" />

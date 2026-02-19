@@ -1,0 +1,18 @@
+/* Daltonisme bleu-jaune (tritan) */
+
+@layer tokens {
+  :root[data-cvd="tritan"] {
+    --brand: #d55e00;
+    --brand-hover: #b94f00;
+
+    --primary: #009e73;
+    --primary-hover: #007a5a;
+
+    --amber: #cc79a7;
+    --surface-active: rgba(0, 158, 115, 0.24);
+
+    --danger-100: #fee2e2;
+    --danger-200: #fecaca;
+    --danger-800: #7f1d1d;
+  }
+}

@@ -112,16 +112,17 @@ h2 {
     font-size: 14px;
 }
 
-/* Ajuster les styles du bouton en mode sombre */
-body[data-theme="dark"] .theme-toggle-btn {
+/* Ajuster les styles du bouton en mode sombre/spock */
+:root:is([data-theme="dark"], [data-theme="spock"]) .login-theme-toggle .theme-toggle-btn {
     color: var(--text);
 }
 
-body[data-theme="dark"] .theme-toggle-thumb {
+:root:is([data-theme="dark"], [data-theme="spock"]) .login-theme-toggle .theme-toggle-thumb,
+:root:is([data-theme="dark"], [data-theme="spock"]) .login-theme-toggle .theme-toggle-toggle-thumb {
     background-color: var(--text);
 }
 
-body[data-theme="dark"] .theme-toggle-text {
+:root:is([data-theme="dark"], [data-theme="spock"]) .login-theme-toggle .theme-toggle-text {
     color: var(--text);
 }
 

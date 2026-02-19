@@ -45,10 +45,11 @@
         font-family: 'Nunito', sans-serif;
         font-size: clamp(18px, 2vw, 28px);
         font-weight: 700;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--border);
         border-radius: var(--radius-sm);
         padding: 10px 12px;
-        background: #fff;
+        background: var(--input-bg);
+        color: var(--text);
     }
 
     .cycle-actions {
