@@ -15,6 +15,7 @@ function validateEventDto(req: Request, res: Response): EventDTO | null {
     is_blocking,
     is_exceptional,
     is_external,
+    concerne,
   } = req.body;
 
   if (!type || !nom || !datetime_start || !datetime_end) {
@@ -65,6 +66,7 @@ function validateEventDto(req: Request, res: Response): EventDTO | null {
     is_blocking: is_blocking ?? false,
     is_exceptional: is_exceptional ?? false,
     is_external: is_external ?? false,
+    concerne,
   };
 }
 

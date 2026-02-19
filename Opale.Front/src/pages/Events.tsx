@@ -1,13 +1,16 @@
 // src/pages/Events.tsx
-import { useEffect, useMemo, useState, useRef } from 'react'
+import React, { useMemo, useState, useEffect, useRef } from 'react'
 import EventsToolbar, {
     TargetFilter,
     TypeFilter,
 } from '../components/events/EventsToolbar'
 import EventCard from '../components/events/EventCard'
 import EventDetailCard from '../components/events/EventDetailCard'
+import { eventsApi } from '../services/api/eventsApi'
 import { CampusEvent } from '../models/CampusEvent'
+import { Event } from '../models/Event'
 import SectionHeader from '../components/common/SectionHeader'
+//import SectionHeader from '../components/common/SectionHeader'
 import { useEvents } from '../hooks/events/useEvent'
 import SelectionToolbar from '../components/common/SelectionToolbar'
 import { useSelectionState } from '../hooks/common/useSelectionState'
@@ -19,10 +22,25 @@ interface MonthGroup {
     label: string
     events: CampusEvent[]
 }
-
 type SaveResult =
     | { success: true; error?: undefined }
     | { success: false; error: string }
+
+
+// Mapper pour convertir Event (backend) en CampusEvent (frontend)
+function mapEventToCampusEvent(event: Event): CampusEvent {
+    // Extraire la date de datetime_start (format: "2025-03-12T00:00:00")
+    const date = event.datetime_start ? event.datetime_start.split('T')[0] : ''
+
+    return {
+        id: event.id,
+        name: event.nom,
+        date: date,
+        location: '', // Le backend n'a pas de location pour l'instant
+        source: event.is_external ? 'EXTERNE' as const : 'JUNIA' as const,
+        type: event.type,
+    }
+}
 
 const DEFAULT_EVENT_FILTERS: {
     searchValue: string
@@ -104,6 +122,32 @@ export default function Events() {
     const [detailMode, setDetailMode] = useState<'edit' | 'create'>('edit')
     const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({})
 
+    // State pour les événements depuis l'API
+    const [events, setEvents] = useState<CampusEvent[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    // Charger les événements au montage du composant
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                setLoading(true)
+                const response = await eventsApi.getEventsMacro()
+                if (response.data) {
+                    // Mapper les événements du backend vers CampusEvent
+                    const mappedEvents = response.data.map(mapEventToCampusEvent)
+                    setEvents(mappedEvents)
+                }
+            } catch (err) {
+                console.error('Erreur lors du chargement des événements:', err)
+                setError('Erreur lors du chargement des événements')
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchEvents()
+    }, [])
+
     const { cycles: promotionCycles } = usePromotionCycles()
 
     const {
@@ -125,7 +169,8 @@ export default function Events() {
     })
 
     const filteredEvents = useMemo(() => {
-        let items = [...eventsState]
+        let items = [...events]
+        // let items = [...eventsState]
 
         items.sort(
             (a, b) =>
@@ -250,7 +295,7 @@ export default function Events() {
             startDate: start,
             endDate: end,
             location: '',
-            type: 'autre',
+            type: 'Autre',
             source: 'JUNIA',
             description: '',
             show_macro: true,

@@ -18,5 +18,9 @@ export interface EventDTO {
     is_blocking?: boolean;
     is_exceptional?: boolean;
     is_external?: boolean;
-    concerne?: { groupes: GroupeDTO[], specialites: SpecialiteDTO[], promotions: PromotionDTO[]}
+    concerne?: { // Id of the concerned groups, specialties and promotions
+        groups?: string[],
+        specialties?: string[],
+        promotions?: string[]
+    }
 }

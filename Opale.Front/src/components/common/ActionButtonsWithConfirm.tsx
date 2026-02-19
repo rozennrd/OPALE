@@ -30,6 +30,9 @@ interface ActionButtonsWithConfirmProps {
     onBeforeSaveClick?: () => boolean
     onAfterSaveConfirm?: () => void
 
+    // Disable the save button
+    disabled?: boolean
+
     onSave: () => void
     onCancel: () => void
 }
@@ -144,6 +147,8 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
                     type="button"
                     className="btn-primary"
                     onClick={() => setOpenSaveConfirm(true)}
+                    disabled={disabled}
+                    style={{ opacity: disabled ? 0.5 : 1, cursor: disabled ? 'not-allowed' : 'pointer' }}
                 >
                     {saveLabel}
                 </button>
