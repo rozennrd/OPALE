@@ -116,45 +116,21 @@ export default function Promotions() {
                         addPromotion={addPromotionToCycle}
                     />
                 ))}
-
+                <button
+                    type="button"
+                    className="card add-cycle-card"
+                    onClick={openCreateModal}
+                    aria-label="Ajouter un cycle"
+                    title="Ajouter un cycle"
+                >
+                    <img src={icPlus} alt="" />
+                </button>
             {/* Error display */}
             {error && (
                 <div className="error-banner" role="alert">
                     Erreur : {error}
                 </div>
             )}
-
-
-            {/* Cycles grid */}
-            <div className="promos-grid">
-                {loading ? (
-                    <div className="loading-spinner">Chargement...</div>
-                ) : (
-                    <>
-                        {cycles.map((cycle) => (
-                            <CycleCard
-                                key={cycle.id}
-                                cycle={cycle}
-                                renameCycle={renameCycle}
-                                removeCycle={removeCycle}
-                                openEditPromotion={openEditPromotion}
-                                removePromotion={removePromotion}
-                            />
-                        ))}
-
-                        {/* Add cycle card */}
-                        <button
-                            type="button"
-                            className="card add-cycle-card"
-                            onClick={openCreateModal}
-                            aria-label="Ajouter un cycle"
-                            title="Ajouter un cycle"
-                        >
-                            <img src={icPlus} alt="" />
-                        </button>
-                    </>
-                )}
-            </div>
 
             {/* Edit promotion modal */}
             {editingPromo && (

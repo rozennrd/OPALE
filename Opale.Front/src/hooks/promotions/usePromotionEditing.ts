@@ -202,7 +202,7 @@ export function usePromotionEditing(cycles: Cycle[]) {
     const markFormAsUntouched = (updatedPromo: EditingPromotion) => {
         setEditingPromo(updatedPromo)
         console.log("hello")
-        setSavedSnapshot(editingPromo)
+        setSavedSnapshot(updatedPromo)
         setHasChanges(false)
     }
 
