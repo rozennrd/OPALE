@@ -171,53 +171,109 @@ export default function MatiereDetailCard({
         })
     }
 
+    type HoursKey =
+        | 'tdHours'
+        | 'tpHours'
+        | 'projectHours'
+        | 'elearningHours'
+        | 'autresHours'
+
+    const hoursCaps = (): Record<HoursKey, number> => ({
+        tdHours: clamp0(tdHours),
+        tpHours: clamp0(tpHours),
+        projectHours: clamp0(projectHours),
+        elearningHours: clamp0(eLearningHours),
+        autresHours: clamp0(autresHours),
+    })
+
+    const sumRow = (r: TeacherAssignment) =>
+        clamp0(r.tdHours) +
+        clamp0(r.tpHours) +
+        clamp0(r.projectHours) +
+        clamp0(r.elearningHours) +
+        clamp0(r.autresHours)
+
+    const clampRowAgainstCaps = (
+        next: TeacherAssignment[],
+        rowId: string,
+        caps: Record<HoursKey, number>,
+        totalCap: number,
+        key: HoursKey, // ✅ on clamp uniquement ce champ
+    ): TeacherAssignment[] => {
+        const row = next.find((r) => r.rowId === rowId)
+        if (!row) return next
+
+        // 1) clamp par type (uniquement key)
+        const otherSumByType = next.reduce(
+            (acc, r) => acc + (r.rowId === rowId ? 0 : clamp0(r[key])),
+            0
+        )
+        const remainingByType = Math.max(0, caps[key] - otherSumByType)
+        row[key] = Math.min(clamp0(row[key]), remainingByType)
+
+        // 2) clamp global (volumeTotal) — uniquement en réduisant key
+        const totalOther = next.reduce((acc, r) => (r.rowId === rowId ? acc : acc + sumRow(r)), 0)
+        const remainingTotal = Math.max(0, clamp0(totalCap) - totalOther)
+
+        // on calcule combien la ligne courante peut avoir au total
+        const rowOtherKeysTotal = sumRow(row) - clamp0(row[key]) // total de la ligne sans key
+        const maxForKeyByTotal = Math.max(0, remainingTotal - rowOtherKeysTotal)
+
+        row[key] = Math.min(clamp0(row[key]), maxForKeyByTotal)
+
+        return next
+    }
+
+
+    const isHoursKey = (k: string): k is HoursKey =>
+        ['tdHours', 'tpHours', 'projectHours', 'elearningHours', 'autresHours'].includes(k)
+
     const handleAssignmentChange = (
         rowId: string,
-        patch: Partial<Pick<TeacherAssignment, 'teacherId' | 'tdHours' | 'tpHours' | 'projectHours' | 'elearningHours' | 'autresHours'>>,
+        patch: Partial<Pick<TeacherAssignment, 'teacherId' | HoursKey>>,
     ) => {
         setAssignments((prev) => {
             const next = prev.map((r) => (r.rowId === rowId ? { ...r, ...patch } : r))
 
-            const row = next.find((r) => r.rowId === rowId)
-            if (!row) return next
+            // ✅ si on ne change que teacherId, on ne touche pas aux heures
+            const changedHourKeys = Object.keys(patch).filter(isHoursKey) as HoursKey[]
+            if (changedHourKeys.length === 0) return next
 
-            const maxTD = Math.max(0, Number(tdHours) || 0)
-            const maxTP = Math.max(0, Number(tpHours) || 0)
+            const caps = hoursCaps()
 
-            // totaux sans la ligne courante (pour calculer le “reste” dispo)
-            const tdOther = next.reduce((acc, r) => acc + (r.rowId === rowId ? 0 : (Number(r.tdHours) || 0)), 0)
-            const tpOther = next.reduce((acc, r) => acc + (r.rowId === rowId ? 0 : (Number(r.tpHours) || 0)), 0)
-
-            const tdRemaining = Math.max(0, maxTD - tdOther)
-            const tpRemaining = Math.max(0, maxTP - tpOther)
-
-            // clamp la ligne courante
-            row.tdHours = Math.max(0, Math.min(Number(row.tdHours) || 0, tdRemaining))
-            row.tpHours = Math.max(0, Math.min(Number(row.tpHours) || 0, tpRemaining))
-
-            return next
+            // ✅ clamp uniquement les champs modifiés (souvent 1 seul)
+            let out = next
+            for (const k of changedHourKeys) {
+                out = clampRowAgainstCaps(out, rowId, caps, volumeTotal, k)
+            }
+            return out
         })
     }
 
+
     const handleToggleKind = (rowId: string, kind: TeachKind) => {
-        setAssignments((prev) =>
-            prev.map((r) => {
+        const mapKindToKey: Record<TeachKind, HoursKey> = {
+            TD: 'tdHours',
+            TP: 'tpHours',
+            PROJET: 'projectHours',
+            'E-LEARNING': 'elearningHours',
+            AUTRES: 'autresHours',
+        }
+
+        const key = mapKindToKey[kind]
+
+        setAssignments((prev) => {
+            const next = prev.map((r) => {
                 if (r.rowId !== rowId) return r
-                switch (kind) {
-                    case 'TD':
-                        return { ...r, tdHours: r.tdHours > 0 ? 0 : 1 }
-                    case 'TP':
-                        return { ...r, tpHours: r.tpHours > 0 ? 0 : 1 }
-                    case 'PROJET':
-                        return { ...r, projectHours: r.projectHours > 0 ? 0 : 1 }
-                    case 'E-LEARNING':
-                        return { ...r, elearningHours: r.elearningHours > 0 ? 0 : 1 }
-                    case 'AUTRES':
-                        return { ...r, autresHours: r.autresHours > 0 ? 0 : 1 }
-                }
-            }),
-        )
+                const current = clamp0(r[key])
+                return { ...r, [key]: current > 0 ? 0 : 1 } as TeacherAssignment
+            })
+
+            const caps = hoursCaps()
+            return clampRowAgainstCaps(next, rowId, caps, volumeTotal, key)
+        })
     }
+
 
     const assignmentsChanged = useMemo(() => {
         const norm = (a: TeacherAssignment) => ({
