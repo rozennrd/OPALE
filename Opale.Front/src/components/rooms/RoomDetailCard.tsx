@@ -295,9 +295,6 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                                                 >
                                                     <span className="room-type-chip-dot" aria-hidden="true" />
                                                     <span className="room-type-chip-label">{ROOM_TYPE_LABELS[type]}</span>
-                                                    {isSelected && (
-                                                        <span className="room-type-chip-main-tag">Principal</span>
-                                                    )}
                                                 </button>
                                             )
                                         })}
@@ -339,9 +336,6 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                                                 >
                                                     <span className={checkboxClassName} aria-hidden="true" />
                                                     <span className="room-type-chip-label">{ROOM_TYPE_LABELS[type]}</span>
-                                                    {isMain && (
-                                                        <span className="room-type-chip-main-lock">Principal</span>
-                                                    )}
                                                 </button>
                                             )
                                         })}

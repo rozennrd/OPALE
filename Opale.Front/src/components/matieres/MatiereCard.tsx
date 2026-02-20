@@ -44,7 +44,7 @@ export default function MatiereCard({
         >
             <div className="matiere-card-name">{matiere.nom}</div>
             <div className="matiere-card-meta">
-                {matiere.volume_horaire}h • TD {matiere.heures_td}h • TP {tp}h
+                {matiere.volume_horaire}h | TD {matiere.heures_td}h | TP {tp}h
             </div>
         </EntityCard>
     )
