@@ -55,17 +55,12 @@ export default function RoomsToolbar({
 }: RoomsToolbarProps) {
     return (
         <PageToolbar className="rooms-toolbar">
-            <ToolbarRow className="rooms-toolbar-row">
+            <ToolbarRow className="rooms-toolbar-row rooms-toolbar-row--primary">
                 <ToolbarSearch
                     value={searchValue}
                     onChange={onSearchChange}
                     placeholder="Rechercher une salle"
                     className="rooms-toolbar-search"
-                />
-
-                <ToolbarResetButton
-                    onClick={onResetFilters}
-                    disabled={!hasActiveFilters}
                 />
 
                 <button
@@ -90,7 +85,7 @@ export default function RoomsToolbar({
                 </button>
             </ToolbarRow>
 
-            <ToolbarRow className="page-toolbar-row--filters rooms-toolbar-filters">
+            <ToolbarRow className="rooms-toolbar-row rooms-toolbar-row--filters rooms-toolbar-filters">
                 <div className="toolbar-filter">
                     <label className="toolbar-filter-label">
                         Type
@@ -113,7 +108,9 @@ export default function RoomsToolbar({
                     <div className="rooms-toolbar-capacity-controls">
                         <select
                             value={capacityOperator}
-                            onChange={(e) => onCapacityOperatorChange(e.target.value as CapacityOperator)}
+                            onChange={(e) =>
+                                onCapacityOperatorChange(e.target.value as CapacityOperator)
+                            }
                             className="toolbar-filter-select rooms-toolbar-capacity-operator"
                         >
                             <option value="ALL">Tous</option>
@@ -158,6 +155,11 @@ export default function RoomsToolbar({
                         ))}
                     </div>
                 </div>
+
+                <ToolbarResetButton
+                    onClick={onResetFilters}
+                    disabled={!hasActiveFilters}
+                />
             </ToolbarRow>
         </PageToolbar>
     )

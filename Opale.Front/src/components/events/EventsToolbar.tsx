@@ -63,16 +63,11 @@ export default function EventsToolbar({
 }: EventsToolbarProps) {
     return (
         <PageToolbar className="events-toolbar">
-            <ToolbarRow>
+            <ToolbarRow className="events-toolbar-row events-toolbar-row--primary">
                 <ToolbarSearch
                     value={searchValue}
                     onChange={onSearchChange}
                     placeholder="Rechercher un événement..."
-                />
-
-                <ToolbarResetButton
-                    onClick={onResetFilters}
-                    disabled={!hasActiveFilters}
                 />
 
                 <button
@@ -107,7 +102,7 @@ export default function EventsToolbar({
                 </button>
             </ToolbarRow>
 
-            <ToolbarRow className="page-toolbar-row--filters events-toolbar-filters">
+            <ToolbarRow className="events-toolbar-row events-toolbar-row--filters events-toolbar-filters">
                 <div className="toolbar-filter">
                     <label className="toolbar-filter-label">
                         À partir du
@@ -122,7 +117,7 @@ export default function EventsToolbar({
 
                 <div className="toolbar-filter">
                     <label className="toolbar-filter-label">
-                        Jusqu&apos;au
+                        Jusqu'au
                         <input
                             type="date"
                             value={dateTo}
@@ -135,48 +130,49 @@ export default function EventsToolbar({
                 <div className="toolbar-filter">
                     <span className="toolbar-filter-label">Cible</span>
                     <div className="toolbar-toggle-chips">
-                        {(['ALL', 'JUNIA', 'EXTERNE'] as TargetFilter[]).map(
-                            (v) => (
-                                <button
-                                    key={v}
-                                    type="button"
-                                    className={
-                                        'toolbar-toggle-chip' +
-                                        (target === v
-                                            ? ' toolbar-toggle-chip--active'
-                                            : '')
-                                    }
-                                    onClick={() => onTargetChange(v)}
-                                >
-                                    {v === 'ALL'
-                                        ? 'Tous'
-                                        : v === 'JUNIA'
-                                          ? 'Junia'
-                                          : 'Externe'}
-                                </button>
-                            ),
-                        )}
+                        {(['ALL', 'JUNIA', 'EXTERNE'] as TargetFilter[]).map((value) => (
+                            <button
+                                key={value}
+                                type="button"
+                                className={
+                                    'toolbar-toggle-chip' +
+                                    (target === value
+                                        ? ' toolbar-toggle-chip--active'
+                                        : '')
+                                }
+                                onClick={() => onTargetChange(value)}
+                            >
+                                {value === 'ALL'
+                                    ? 'Tous'
+                                    : value === 'JUNIA'
+                                      ? 'Junia'
+                                      : 'Externe'}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
                 <div className="toolbar-filter">
                     <label className="toolbar-filter-label">
-                        Type d&apos;événement
+                        Type d'événement
                         <select
                             value={type}
-                            onChange={(e) =>
-                                onTypeChange(e.target.value as TypeFilter)
-                            }
+                            onChange={(e) => onTypeChange(e.target.value as TypeFilter)}
                             className="toolbar-filter-select"
                         >
-                            {EVENT_TYPE_OPTIONS.map((opt) => (
-                                <option key={opt.value} value={opt.value}>
-                                    {opt.label}
+                            {EVENT_TYPE_OPTIONS.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
                                 </option>
                             ))}
                         </select>
                     </label>
                 </div>
+
+                <ToolbarResetButton
+                    onClick={onResetFilters}
+                    disabled={!hasActiveFilters}
+                />
             </ToolbarRow>
         </PageToolbar>
     )

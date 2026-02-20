@@ -51,11 +51,11 @@ export default function TeachersToolbar({
     const filteredSubjectOptions = useMemo(() => {
         if (!subjectSearch.trim()) return subjectOptions
         const needle = subjectSearch.trim().toLowerCase()
-        return subjectOptions.filter((opt) => opt.toLowerCase().includes(needle))
+        return subjectOptions.filter((option) => option.toLowerCase().includes(needle))
     }, [subjectOptions, subjectSearch])
 
     const handleSubjectsToggle = () => {
-        setIsSubjectsOpen((prev) => !prev)
+        setIsSubjectsOpen((previous) => !previous)
     }
 
     const handleSubjectsClear = () => {
@@ -84,16 +84,11 @@ export default function TeachersToolbar({
                     className="teachers-toolbar-search"
                 />
 
-                <ToolbarResetButton
-                    onClick={handleResetFilters}
-                    disabled={!hasActiveFilters}
-                />
-
                 <div className="teachers-toolbar-filters">
                     <div className="teachers-toolbar-subjects">
                         <button
                             type="button"
-                            className="toolbar-filter-button"
+                            className="toolbar-filter-button teachers-toolbar-subjects-trigger"
                             onClick={handleSubjectsToggle}
                             aria-expanded={isSubjectsOpen}
                         >
@@ -103,16 +98,16 @@ export default function TeachersToolbar({
                                 aria-hidden="true"
                             />
                         </button>
+
                         {isSubjectsOpen && (
                             <div className="teachers-toolbar-subjects-panel">
                                 <input
                                     className="teachers-toolbar-subjects-input"
                                     value={subjectSearch}
-                                    onChange={(e) =>
-                                        setSubjectSearch(e.target.value)
-                                    }
+                                    onChange={(e) => setSubjectSearch(e.target.value)}
                                     placeholder="Rechercher une matière"
                                 />
+
                                 <div className="teachers-toolbar-subjects-list">
                                     <button
                                         type="button"
@@ -121,21 +116,20 @@ export default function TeachersToolbar({
                                     >
                                         Toutes les matières
                                     </button>
-                                    {filteredSubjectOptions.map((opt) => (
+
+                                    {filteredSubjectOptions.map((option) => (
                                         <button
-                                            key={opt}
+                                            key={option}
                                             type="button"
                                             className={
                                                 'teachers-toolbar-subjects-item' +
-                                                (opt === subjectFilter
+                                                (option === subjectFilter
                                                     ? ' is-selected'
                                                     : '')
                                             }
-                                            onClick={() =>
-                                                handleSubjectSelect(opt)
-                                            }
+                                            onClick={() => handleSubjectSelect(option)}
                                         >
-                                            {opt}
+                                            {option}
                                         </button>
                                     ))}
                                 </div>
@@ -143,22 +137,21 @@ export default function TeachersToolbar({
                         )}
                     </div>
 
-                    <div className="toolbar-filter">
-                        <span className="toolbar-filter-label"></span>
+                    <div className="teachers-toolbar-mode-filter">
                         <div className="toolbar-toggle-chips">
-                            {MODE_OPTIONS.map((opt) => (
+                            {MODE_OPTIONS.map((option) => (
                                 <button
-                                    key={opt.value}
+                                    key={option.value}
                                     type="button"
                                     className={
                                         'toolbar-toggle-chip' +
-                                        (modeFilter === opt.value
+                                        (modeFilter === option.value
                                             ? ' toolbar-toggle-chip--active'
                                             : '')
                                     }
-                                    onClick={() => onModeChange(opt.value)}
+                                    onClick={() => onModeChange(option.value)}
                                 >
-                                    {opt.label}
+                                    {option.label}
                                 </button>
                             ))}
                         </div>
@@ -185,6 +178,12 @@ export default function TeachersToolbar({
                         </span>
                     )}
                 </button>
+
+                <ToolbarResetButton
+                    className="teachers-toolbar-reset"
+                    onClick={handleResetFilters}
+                    disabled={!hasActiveFilters}
+                />
 
                 <button
                     type="button"
