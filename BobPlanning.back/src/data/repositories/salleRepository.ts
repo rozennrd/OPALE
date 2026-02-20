@@ -54,7 +54,7 @@ export const salleRepository = {
                 etage       = $4,
                 description = $5,
                 utilisable = $6
-            WHERE id = $6
+            WHERE id = $7
         `;
 
     const result = await pool.query(sql, [
