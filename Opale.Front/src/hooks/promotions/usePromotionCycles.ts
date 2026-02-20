@@ -181,36 +181,44 @@ export function usePromotionCycles() {
         }
     }
 
-    const addPromotionToCycle = (cycleId: string, label: string): void => {
+    const addPromotionToCycle = async (cycleId: string, label: string): Promise<void> => {
         const trimmedLabel = label.trim()
         if (!trimmedLabel) return
 
-        setCycles(prevCycles =>
-            prevCycles.map(cycle => {
-                if (cycle.id !== cycleId) return cycle
+        try {
+            setLoading(true)
+            setError('')
 
-                const newPromotion: Promotion = {
-                    id: uid('promo'),
-                    label: trimmedLabel,
-                    students: 0,
-                    startDate: '',
-                    endDate: '',
-                    groups: [],
-                    specialties: [],
-                    constraints: createEmptyConstraints(),
-                }
+            // Create promotion with default dates
+            const now = new Date()
+            const oneYearFromNow = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000)
 
-                console.log('[Promotions] Ajout promotion (front only):', {
-                    cycleId: cycle.id,
-                    promotion: newPromotion,
-                })
+            const promotionData = transformFrontendPromotionToBackendCreate({
+                id: '',
+                label: trimmedLabel,
+                students: 0,
+                startDate: now.toISOString(),
+                endDate: oneYearFromNow.toISOString(),
+                groups: [],
+                specialties: [],
+                constraints: createEmptyConstraints(),
+            }, cycleId)
 
-                return {
-                    ...cycle,
-                    promotions: [...(cycle.promotions || []), newPromotion],
-                }
+            await promotionsApi.addPromotion(promotionData)
+
+            // Refresh the data from backend
+            await loadCycles()
+
+            console.log('[Promotions] Promotion ajoutée avec succès:', {
+                cycleId,
+                label: trimmedLabel,
             })
-        )
+        } catch (err) {
+            console.error('Error adding promotion:', err)
+            setError('Erreur lors de l\'ajout de la promotion')
+        } finally {
+            setLoading(false)
+        }
     }
 
     // Flag global d'incohérence (stocké en localStorage)
