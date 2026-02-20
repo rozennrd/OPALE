@@ -191,7 +191,7 @@ export default function Matieres() {
 
     return (
         <>
-            <PageHeader title="Matieres" subtitle="Gestion des matieres par promotion" />
+            <PageHeader title="Matières" subtitle="Gestion des matières par promotion" />
 
             <div className="matieres-page">
                 <MatieresToolbar
@@ -222,8 +222,8 @@ export default function Matieres() {
                             onSelectAll={() => selectAllMatieres(visibleMatiereIds)}
                             onClearSelection={clearMatiereSelection}
                             onDeleteSelected={handleDeleteSelected}
-                            confirmTitle="Supprimer les matieres selectionnees"
-                            confirmMessage={`Vous allez supprimer ${selectedMatiereIds.length} matiere${selectedMatiereIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                            confirmTitle="Supprimer les matières sélectionnées"
+                            confirmMessage={`Vous allez supprimer ${selectedMatiereIds.length} matière${selectedMatiereIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
                     />
                 )}
 
@@ -242,7 +242,7 @@ export default function Matieres() {
 
                     {groupedByPromo.length === 0 && (
                         <div className="matieres-empty-state">
-                            Aucune matiere ne correspond a vos filtres.
+                            Aucune matière ne correspond à vos filtres.
                         </div>
                     )}
                 </div>

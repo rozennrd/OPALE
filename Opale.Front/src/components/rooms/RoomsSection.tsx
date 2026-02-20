@@ -16,9 +16,9 @@ interface RoomsSectionProps {
 }
 
 const FLOOR_LABELS: Record<number, string> = {
-    0: 'Rez-de-chaussee',
-    1: '1er etage',
-    2: '2e etage',
+    0: 'Rez-de-chaussée',
+    1: '1er étage',
+    2: '2e étage',
 }
 
 const FLOOR_CODES: Record<number, string> = {

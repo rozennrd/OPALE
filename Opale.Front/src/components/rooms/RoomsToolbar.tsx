@@ -30,8 +30,8 @@ interface RoomsToolbarProps {
 const ROOM_TYPE_OPTIONS: { value: RoomTypeFilter; label: string }[] = [
     { value: 'ALL', label: 'Tous les types' },
     { value: 'TD', label: 'TD' },
-    { value: 'TP_ELECTRONIQUE', label: 'TP electronique' },
-    { value: 'TP_NUMERIQUE', label: 'TP numerique' },
+    { value: 'TP_ELECTRONIQUE', label: 'TP électronique' },
+    { value: 'TP_NUMERIQUE', label: 'TP numérique' },
     { value: 'PROJET', label: 'Projet' },
     { value: 'AUTRE', label: 'Autre' },
 ]
@@ -80,7 +80,7 @@ export default function RoomsToolbar({
                     onClick={onToggleSelectionMode}
                 >
                     <span>
-                        {selectionMode ? 'Quitter selection' : 'Selectionner'}
+                        {selectionMode ? 'Quitter sélection' : 'Sélectionner'}
                     </span>
                     {selectedCount > 0 && (
                         <span className="toolbar-selection-count-pill">
@@ -109,7 +109,7 @@ export default function RoomsToolbar({
                 </div>
 
                 <div className="toolbar-filter rooms-toolbar-capacity-filter">
-                    <span className="toolbar-filter-label">Capacite</span>
+                    <span className="toolbar-filter-label">Capacité</span>
                     <div className="rooms-toolbar-capacity-controls">
                         <select
                             value={capacityOperator}
@@ -135,7 +135,7 @@ export default function RoomsToolbar({
                 </div>
 
                 <div className="toolbar-filter">
-                    <span className="toolbar-filter-label">Disponibilite</span>
+                    <span className="toolbar-filter-label">Disponibilité</span>
                     <div className="toolbar-toggle-chips">
                         {([
                             { value: 'ALL', label: 'Les deux' },

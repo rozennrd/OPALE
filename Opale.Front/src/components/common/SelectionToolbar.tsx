@@ -21,7 +21,7 @@ export default function SelectionToolbar({
     onClearSelection,
     onDeleteSelected,
     className = '',
-    confirmTitle = 'Supprimer la selection',
+    confirmTitle = 'Supprimer la sélection',
     confirmMessage,
     confirmLabel = 'Supprimer',
 }: SelectionToolbarProps) {
@@ -31,7 +31,7 @@ export default function SelectionToolbar({
 
     const effectiveConfirmMessage =
         confirmMessage ??
-        `Vous allez supprimer ${selectedCount} element${selectedCount > 1 ? 's' : ''}. Continuer ?`
+        `Vous allez supprimer ${selectedCount} élément${selectedCount > 1 ? 's' : ''}. Continuer ?`
 
     const handleDeleteRequest = () => {
         if (selectedCount <= 0) return
@@ -48,7 +48,7 @@ export default function SelectionToolbar({
             <div className={rootClassName}>
                 <div className="selection-toolbar-left">
                     <span className="selection-toolbar-count">
-                        {selectedCount} / {totalCount} selectionne{selectedCount > 1 ? 's' : ''}
+                        {selectedCount} / {totalCount} sélectionné{selectedCount > 1 ? 's' : ''}
                     </span>
                 </div>
 
@@ -59,7 +59,7 @@ export default function SelectionToolbar({
                         onClick={onSelectAll}
                         disabled={totalCount === 0 || selectedCount === totalCount}
                     >
-                        Tout selectionner
+                        Tout sélectionner
                     </button>
 
                     <button

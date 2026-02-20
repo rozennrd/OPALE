@@ -15,13 +15,13 @@ interface RoomCardProps {
 const floorLabel = (floor: 0 | 1 | 2): string => {
     switch (floor) {
         case 0:
-            return 'Rez-de-chaussee'
+            return 'Rez-de-chaussée'
         case 1:
-            return '1er etage'
+            return '1er étage'
         case 2:
-            return '2e etage'
+            return '2e étage'
         default:
-            return `Etage ${floor}`
+            return `Étage ${floor}`
     }
 }
 

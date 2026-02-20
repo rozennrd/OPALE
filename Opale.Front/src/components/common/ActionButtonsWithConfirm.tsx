@@ -41,10 +41,10 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
     confirmMessage = 'Souhaitez-vous enregistrer les modifications ?',
     confirmLabel = 'Confirmer',
     hasChanges = false,
-    cancelDirtyTitle = 'Modifications non enregistrees',
+    cancelDirtyTitle = 'Modifications non enregistrées',
     cancelDirtyMessage = (
         <>
-            <p>Vous avez modifie certaines informations.</p>
+            <p>Vous avez modifié certaines informations.</p>
             <p>Souhaitez-vous les enregistrer avant de quitter&nbsp;?</p>
         </>
     ),
@@ -53,7 +53,7 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
     onDelete,
     deleteLabel = 'Supprimer',
     deleteTitle = 'Confirmer la suppression',
-    deleteMessage = 'Souhaitez-vous supprimer cet element ?',
+    deleteMessage = 'Souhaitez-vous supprimer cet élément ?',
     deleteConfirmLabel = 'Supprimer',
     deleteCancelLabel = 'Annuler',
     onBeforeSaveClick,

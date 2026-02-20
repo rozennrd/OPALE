@@ -91,7 +91,7 @@ export default function Rooms() {
         <>
             <PageHeader
                 title="Salles"
-                subtitle="Liste des salles par etage avec types et commentaires (mock front uniquement)."
+                subtitle="Liste des salles par étage avec types et commentaires (mock front uniquement)."
             />
 
             <div className="rooms-page">
@@ -120,7 +120,7 @@ export default function Rooms() {
                         onSelectAll={handleSelectAllVisible}
                         onClearSelection={handleClearSelection}
                         onDeleteSelected={handleDeleteSelected}
-                        confirmTitle="Supprimer les salles selectionnees"
+                        confirmTitle="Supprimer les salles sélectionnées"
                         confirmMessage={`Vous allez supprimer ${selectedRoomIds.length} salle${selectedRoomIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
                     />
                 )}

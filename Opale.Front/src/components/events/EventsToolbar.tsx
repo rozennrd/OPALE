@@ -35,9 +35,9 @@ interface EventsToolbarProps {
 
 const EVENT_TYPE_OPTIONS = [
     { value: 'ALL', label: 'Tous les types' },
-    { value: 'JOURNEE_PO', label: 'Journee Portes Ouvertes' },
+    { value: 'JOURNEE_PO', label: 'Journée Portes Ouvertes' },
     { value: 'EXAMEN', label: 'Examen' },
-    { value: 'CONFERENCE', label: 'Conference' },
+    { value: 'CONFERENCE', label: 'Conférence' },
     { value: 'FORUM', label: 'Forum' },
     { value: 'SALON', label: 'Salon' },
     { value: 'AUTRE', label: 'Autre' },
@@ -67,7 +67,7 @@ export default function EventsToolbar({
                 <ToolbarSearch
                     value={searchValue}
                     onChange={onSearchChange}
-                    placeholder="Rechercher un evenement..."
+                    placeholder="Rechercher un événement..."
                 />
 
                 <ToolbarResetButton
@@ -87,7 +87,7 @@ export default function EventsToolbar({
                     onClick={onToggleSelectionMode}
                 >
                     <span>
-                        {selectionMode ? 'Quitter selection' : 'Selectionner'}
+                        {selectionMode ? 'Quitter sélection' : 'Sélectionner'}
                     </span>
                     {selectedCount > 0 && (
                         <span className="toolbar-selection-count-pill">
@@ -100,8 +100,8 @@ export default function EventsToolbar({
                     type="button"
                     className="events-toolbar-plus-btn"
                     onClick={onCreateRequested}
-                    aria-label="Creer un evenement"
-                    title="Creer un evenement"
+                    aria-label="Créer un événement"
+                    title="Créer un événement"
                 >
                     <img src={icPlus} alt="" className="events-toolbar-plus-icon" />
                 </button>
@@ -110,7 +110,7 @@ export default function EventsToolbar({
             <ToolbarRow className="page-toolbar-row--filters events-toolbar-filters">
                 <div className="toolbar-filter">
                     <label className="toolbar-filter-label">
-                        A partir du
+                        À partir du
                         <input
                             type="date"
                             value={dateFrom}
@@ -161,7 +161,7 @@ export default function EventsToolbar({
 
                 <div className="toolbar-filter">
                     <label className="toolbar-filter-label">
-                        Type d&apos;evenement
+                        Type d&apos;événement
                         <select
                             value={type}
                             onChange={(e) =>

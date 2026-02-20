@@ -1,4 +1,4 @@
-﻿// src/components/rooms/RoomDetailCard.tsx
+// src/components/rooms/RoomDetailCard.tsx
 
 import React, { useEffect, useState } from 'react'
 import { Room, RoomType } from '../../models/Room'
@@ -19,8 +19,8 @@ interface RoomDetailCardProps {
 
 const ROOM_TYPE_LABELS: Record<RoomType, string> = {
     TD: 'TD',
-    TP_ELECTRONIQUE: 'TP Ã©lectronique',
-    TP_NUMERIQUE: 'TP numÃ©rique',
+    TP_ELECTRONIQUE: 'TP électronique',
+    TP_NUMERIQUE: 'TP numérique',
     PROJET: 'Projet',
     AUTRE: 'Autre',
 }
@@ -28,13 +28,13 @@ const ROOM_TYPE_LABELS: Record<RoomType, string> = {
 const floorLabel = (floor: Room['floor']): string => {
     switch (floor) {
         case 0:
-            return 'Rez-de-chaussÃ©e'
+            return 'Rez-de-chaussée'
         case 1:
-            return '1er Ã©tage'
+            return '1er étage'
         case 2:
-            return '2e Ã©tage'
+            return '2e étage'
         default:
-            return `Ã‰tage ${floor}`
+            return `Étage ${floor}`
     }
 }
 
@@ -162,16 +162,16 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                         type={mainType}
                         variant="header"
                         title={headerTitle}
-                        subtitle={`${name || room.name} Â· ${floorLabel(floor)}`}
+                        subtitle={`${name || room.name} · ${floorLabel(floor)}`}
                     />
                 </DetailCardHeader>
 
-                {/* Layout 2 colonnes (gÃ©nÃ©rique) */}
+                {/* Layout 2 colonnes (générique) */}
                 <div className="detail-layout">
-                    {/* Colonne gauche : identitÃ© + types */}
+                    {/* Colonne gauche : identité + types */}
                     <div className="detail-main-column">
                         <section className="room-detail-section">
-                            <h3 className="room-detail-section-title">IdentitÃ© de la salle &amp; types</h3>
+                            <h3 className="room-detail-section-title">Identité de la salle &amp; types</h3>
 
                             <div className="room-detail-identity-grid">
                                 <div className="room-detail-field">
@@ -202,7 +202,7 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
 
                                 <div className="room-detail-field">
                                     <label className="room-detail-field-label" htmlFor="room-floor-input">
-                                        Etage
+                                        Étage
                                     </label>
                                     <select
                                         id="room-floor-input"
@@ -210,15 +210,15 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                                         value={floor}
                                         onChange={(e) => setFloor(Number(e.target.value) as Room['floor'])}
                                     >
-                                        <option value={0}>Rez-de-chaussee</option>
-                                        <option value={1}>1er etage</option>
-                                        <option value={2}>2e etage</option>
+                                        <option value={0}>Rez-de-chaussée</option>
+                                        <option value={1}>1er étage</option>
+                                        <option value={2}>2e étage</option>
                                     </select>
                                 </div>
 
                                 <div className="room-detail-field">
                                     <label className="room-detail-field-label" htmlFor="room-capacity-input">
-                                        Capacite (places)
+                                        Capacité (places)
                                     </label>
                                     <input
                                         id="room-capacity-input"
@@ -235,9 +235,9 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
 
                             <div className="room-detail-availability-row">
                                 <div className="room-detail-availability-copy">
-                                    <span className="room-detail-field-label">Disponibilite globale</span>
+                                    <span className="room-detail-field-label">Disponibilité globale</span>
                                     <span className="room-detail-hint-small">
-                                        Definit si la salle est entierement reservable.
+                                        Détermine si la salle est entièrement réservable.
                                     </span>
                                 </div>
                                 <button
@@ -269,7 +269,7 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                                 <div className="room-detail-types-column">
                                     <h3 className="room-detail-section-title">Type principal</h3>
                                     <p className="room-detail-hint-small">
-                                        UtilisÃ© pour lâ€™icÃ´ne, le filtrage et la planification.
+                                        Utilisé pour l’icône, le filtrage et la planification.
                                     </p>
 
                                     <div className="room-detail-types">
@@ -357,7 +357,7 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                             <h3 className="room-detail-section-title">Description / commentaires</h3>
                             <textarea
                                 className="room-detail-textarea"
-                                placeholder="Notes sur la salle, Ã©quipements, contraintes dâ€™utilisationâ€¦"
+                                placeholder="Notes sur la salle, équipements, contraintes d’utilisation…"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 rows={8}
@@ -370,13 +370,13 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                     saveLabel="Enregistrer"
                     cancelLabel="Annuler"
                     confirmTitle="Enregistrer les modifications"
-                    confirmMessage="Souhaites-tu enregistrer les modifications apportÃ©es Ã  cette salle ?"
+                    confirmMessage="Souhaites-tu enregistrer les modifications apportées à cette salle ?"
                     confirmLabel="Enregistrer"
                     hasChanges={hasChanges}
-                    cancelDirtyTitle="Modifications non enregistrÃ©es"
+                    cancelDirtyTitle="Modifications non enregistrées"
                     cancelDirtyMessage={
                         <>
-                            Tu as des modifications non enregistrÃ©es sur cette salle.
+                            Tu as des modifications non enregistrées sur cette salle.
                             <br />
                             Souhaites-tu les enregistrer avant de fermer ?
                         </>
@@ -396,10 +396,10 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
 
             <ConfirmDialog
                 open={isConfirmOpen}
-                title="Modifications non enregistrÃ©es"
+                title="Modifications non enregistrées"
                 message={
                     <>
-                        <p>Tu as des modifications non enregistrÃ©es sur cette salle.</p>
+                        <p>Tu as des modifications non enregistrées sur cette salle.</p>
                         <p>Souhaites-tu les enregistrer avant de fermer&nbsp;?</p>
                     </>
                 }

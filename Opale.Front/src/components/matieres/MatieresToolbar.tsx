@@ -66,7 +66,7 @@ export default function MatieresToolbar({
                 <ToolbarSearch
                     value={searchValue}
                     onChange={onSearchChange}
-                    placeholder="Rechercher une matiere"
+                    placeholder="Rechercher une matière"
                     className="matieres-toolbar-search"
                 />
 
@@ -168,7 +168,7 @@ export default function MatieresToolbar({
                     onClick={onToggleSelectionMode}
                 >
                     <span>
-                        {selectionMode ? 'Quitter selection' : 'Selectionner'}
+                        {selectionMode ? 'Quitter sélection' : 'Sélectionner'}
                     </span>
                     {selectedCount > 0 && (
                         <span className="toolbar-selection-count-pill">

@@ -9,7 +9,7 @@ export type ModeFilter = 'ALL' | TeachingMode
 
 const MODE_OPTIONS: { value: ModeFilter; label: string }[] = [
     { value: 'ALL', label: 'Tous' },
-    { value: 'PRESENTIEL', label: 'Presentiel' },
+    { value: 'PRESENTIEL', label: 'Présentiel' },
     { value: 'HYBRIDE', label: 'Hybride' },
     { value: 'DISTANCIEL', label: 'Distanciel' },
 ]
@@ -97,7 +97,7 @@ export default function TeachersToolbar({
                             onClick={handleSubjectsToggle}
                             aria-expanded={isSubjectsOpen}
                         >
-                            <span>{subjectFilter || 'Matieres'}</span>
+                            <span>{subjectFilter || 'Matières'}</span>
                             <span
                                 className="toolbar-filter-button-chevron"
                                 aria-hidden="true"
@@ -111,7 +111,7 @@ export default function TeachersToolbar({
                                     onChange={(e) =>
                                         setSubjectSearch(e.target.value)
                                     }
-                                    placeholder="Rechercher une matiere"
+                                    placeholder="Rechercher une matière"
                                 />
                                 <div className="teachers-toolbar-subjects-list">
                                     <button
@@ -119,7 +119,7 @@ export default function TeachersToolbar({
                                         className="teachers-toolbar-subjects-item"
                                         onClick={handleSubjectsClear}
                                     >
-                                        Toutes les matieres
+                                        Toutes les matières
                                     </button>
                                     {filteredSubjectOptions.map((opt) => (
                                         <button
@@ -177,7 +177,7 @@ export default function TeachersToolbar({
                     onClick={onToggleSelectionMode}
                 >
                     <span>
-                        {selectionMode ? 'Quitter selection' : 'Selectionner'}
+                        {selectionMode ? 'Quitter sélection' : 'Sélectionner'}
                     </span>
                     {selectedCount > 0 && (
                         <span className="toolbar-selection-count-pill">

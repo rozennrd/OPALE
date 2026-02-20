@@ -355,8 +355,8 @@ export default function MatiereDetailCard({ matiere, onClose, onDelete }: Matier
                     onAfterSaveConfirm={onClose}
                     onDelete={onDelete}
                     deleteLabel="Supprimer"
-                    deleteTitle="Supprimer cette matiere"
-                    deleteMessage="Souhaites-tu supprimer cette matiere ?"
+                    deleteTitle="Supprimer cette matière"
+                    deleteMessage="Souhaites-tu supprimer cette matière ?"
                     deleteConfirmLabel="Supprimer"
                 />
             </DetailCardBody>
