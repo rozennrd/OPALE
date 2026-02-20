@@ -67,6 +67,7 @@ export const salleRepository = {
       dto.id,
     ]);
 
+
     return (result.rowCount ?? 0) > 0; // true si une ligne a été modifiée
   },
 
