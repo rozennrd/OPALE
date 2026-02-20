@@ -1,11 +1,13 @@
 import React from 'react'
-import { RoomType } from '../../models/Room'
 import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
+import {
+    AvailabilityFilter,
+    CapacityOperator,
+    RoomTypeFilter,
+} from '../../models/RoomFilters'
 
-export type RoomTypeFilter = 'ALL' | RoomType
-export type CapacityOperator = 'ALL' | 'GT' | 'LT' | 'EQ'
-export type AvailabilityFilter = 'ALL' | 'AVAILABLE' | 'UNAVAILABLE'
+export type { RoomTypeFilter, CapacityOperator, AvailabilityFilter }
 
 interface RoomsToolbarProps {
     searchValue: string

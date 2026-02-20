@@ -12,11 +12,22 @@ import { MATIERES_MOCK } from '../mocks/matieres.mock'
 
 import { Teacher } from '../models/Teacher'
 import PageHeader from '../components/common/PageHeader'
+import { useSelectionState } from '../hooks/common/useSelectionState'
+import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
 
 const INITIAL_TEACHERS: Teacher[] = [
     ...INTERNAL_TEACHERS_MOCK,
     ...VACATAIRE_TEACHERS_MOCK,
 ]
+const DEFAULT_TEACHERS_FILTERS: {
+    searchValue: string
+    modeFilter: ModeFilter
+    subjectFilter: string
+} = {
+    searchValue: '',
+    modeFilter: 'ALL',
+    subjectFilter: '',
+}
 
 export default function Teachers() {
     const [teachers, setTeachers] = useState<Teacher[]>(() => [...INITIAL_TEACHERS])
@@ -25,13 +36,22 @@ export default function Teachers() {
     const [modeFilter, setModeFilter] = useState<ModeFilter>('ALL')
     const [subjectFilter, setSubjectFilter] = useState('')
 
-    const [selectionMode, setSelectionMode] = useState(false)
-    const [selectedTeacherIds, setSelectedTeacherIds] = useState<string[]>([])
-
-    const selectedTeacherIdsSet = useMemo(
-        () => new Set(selectedTeacherIds),
-        [selectedTeacherIds],
-    )
+    const {
+        selectionMode,
+        selectedIds: selectedTeacherIds,
+        selectedIdsSet: selectedTeacherIdsSet,
+        selectedCount: selectedTeacherCount,
+        toggleSelectionMode: toggleTeacherSelectionMode,
+        toggleSelection: toggleTeacherSelection,
+        selectAll: selectAllTeachers,
+        clearSelection: clearTeacherSelection,
+        disableSelectionMode: disableTeacherSelectionMode,
+        pruneSelection: pruneTeacherSelection,
+    } = useSelectionState({
+        onEnterSelectionMode: () => {
+            setSelectedTeacher(null)
+        },
+    })
 
     const internalBordeaux = useMemo(
         () =>
@@ -101,10 +121,18 @@ export default function Teachers() {
     const filteredInternalLilleChateauroux = filteredTeachers(internalLilleChateauroux)
     const filteredVacataires = filteredTeachers(vacataires)
 
-    const hasActiveFilters =
-        searchValue.trim().length > 0 ||
-        modeFilter !== 'ALL' ||
-        subjectFilter.trim().length > 0
+    const {
+        hasActiveFilters,
+        resetFilters: handleResetFilters,
+    } = useToolbarFilters({
+        values: { searchValue, modeFilter, subjectFilter },
+        defaults: DEFAULT_TEACHERS_FILTERS,
+        onReset: () => {
+            setSearchValue(DEFAULT_TEACHERS_FILTERS.searchValue)
+            setModeFilter(DEFAULT_TEACHERS_FILTERS.modeFilter)
+            setSubjectFilter(DEFAULT_TEACHERS_FILTERS.subjectFilter)
+        },
+    })
 
     const visibleTeacherIds = useMemo(
         () => [
@@ -124,7 +152,7 @@ export default function Teachers() {
         if (idsSet.size === 0) return
 
         setTeachers((prev) => prev.filter((teacher) => !idsSet.has(teacher.id)))
-        setSelectedTeacherIds((prev) => prev.filter((id) => !idsSet.has(id)))
+        pruneTeacherSelection(Array.from(idsSet))
         setSelectedTeacher((prev) => {
             if (!prev) return prev
             if (idsSet.has(prev.id)) return null
@@ -136,50 +164,9 @@ export default function Teachers() {
         removeTeachersByIds([teacherId])
     }
 
-    const handleToggleSelectionMode = () => {
-        setSelectionMode((prev) => {
-            const next = !prev
-
-            if (next) {
-                setSelectedTeacher(null)
-                setSelectedTeacherIds([])
-            } else {
-                setSelectedTeacherIds([])
-            }
-
-            return next
-        })
-    }
-
-    const handleToggleTeacherSelection = (teacherId: string) => {
-        if (!selectionMode) return
-
-        setSelectedTeacherIds((prev) => {
-            if (prev.includes(teacherId)) {
-                return prev.filter((id) => id !== teacherId)
-            }
-            return [...prev, teacherId]
-        })
-    }
-
-    const handleSelectAllVisible = () => {
-        setSelectedTeacherIds(visibleTeacherIds)
-    }
-
-    const handleClearSelection = () => {
-        setSelectedTeacherIds([])
-    }
-
     const handleDeleteSelected = () => {
         removeTeachersByIds(selectedTeacherIds)
-        setSelectionMode(false)
-        setSelectedTeacherIds([])
-    }
-
-    const handleResetFilters = () => {
-        setSearchValue('')
-        setModeFilter('ALL')
-        setSubjectFilter('')
+        disableTeacherSelectionMode()
     }
 
     return (
@@ -200,21 +187,21 @@ export default function Teachers() {
                     onSubjectChange={setSubjectFilter}
                     subjectOptions={subjectOptions}
                     selectionMode={selectionMode}
-                    selectedCount={selectedTeacherIds.length}
-                    onToggleSelectionMode={handleToggleSelectionMode}
+                    selectedCount={selectedTeacherCount}
+                    onToggleSelectionMode={toggleTeacherSelectionMode}
                     onResetFilters={handleResetFilters}
                     hasActiveFilters={hasActiveFilters}
                 />
 
                 {selectionMode && (
-                    <SelectionToolbar
-                        totalCount={visibleTeacherIds.length}
-                        selectedCount={selectedTeacherIds.length}
-                        onSelectAll={handleSelectAllVisible}
-                        onClearSelection={handleClearSelection}
-                        onDeleteSelected={handleDeleteSelected}
-                        confirmTitle="Supprimer les enseignants selectionnes"
-                        confirmMessage={`Vous allez supprimer ${selectedTeacherIds.length} enseignant${selectedTeacherIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                        <SelectionToolbar
+                            totalCount={visibleTeacherIds.length}
+                            selectedCount={selectedTeacherCount}
+                            onSelectAll={() => selectAllTeachers(visibleTeacherIds)}
+                            onClearSelection={clearTeacherSelection}
+                            onDeleteSelected={handleDeleteSelected}
+                            confirmTitle="Supprimer les enseignants selectionnes"
+                            confirmMessage={`Vous allez supprimer ${selectedTeacherIds.length} enseignant${selectedTeacherIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
                     />
                 )}
 
@@ -225,7 +212,7 @@ export default function Teachers() {
                         onSelectTeacher={setSelectedTeacher}
                         selectionMode={selectionMode}
                         selectedTeacherIds={selectedTeacherIdsSet}
-                        onToggleTeacherSelection={handleToggleTeacherSelection}
+                        onToggleTeacherSelection={toggleTeacherSelection}
                     />
                 )}
 
@@ -236,7 +223,7 @@ export default function Teachers() {
                         onSelectTeacher={setSelectedTeacher}
                         selectionMode={selectionMode}
                         selectedTeacherIds={selectedTeacherIdsSet}
-                        onToggleTeacherSelection={handleToggleTeacherSelection}
+                        onToggleTeacherSelection={toggleTeacherSelection}
                     />
                 )}
 
@@ -247,7 +234,7 @@ export default function Teachers() {
                         onSelectTeacher={setSelectedTeacher}
                         selectionMode={selectionMode}
                         selectedTeacherIds={selectedTeacherIdsSet}
-                        onToggleTeacherSelection={handleToggleTeacherSelection}
+                        onToggleTeacherSelection={toggleTeacherSelection}
                     />
                 )}
             </div>

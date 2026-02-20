@@ -13,8 +13,23 @@ import {
 import { CampusEvent } from '../models/CampusEvent'
 import SectionHeader from '../components/common/SectionHeader'
 import SelectionToolbar from '../components/common/SelectionToolbar'
+import { useSelectionState } from '../hooks/common/useSelectionState'
+import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
 
 const ALL_EVENTS = [...JUNIA_EVENTS_MOCK, ...EXTERNAL_EVENTS_MOCK]
+const DEFAULT_EVENT_FILTERS: {
+    searchValue: string
+    dateFrom: string
+    dateTo: string
+    target: TargetFilter
+    type: TypeFilter
+} = {
+    searchValue: '',
+    dateFrom: '',
+    dateTo: '',
+    target: 'ALL',
+    type: 'ALL',
+}
 
 function getMonthKey(dateStr: string): string {
     const d = new Date(dateStr)
@@ -45,13 +60,23 @@ export default function Events() {
     const [detailMode, setDetailMode] = useState<'edit' | 'create'>('edit')
     const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({})
 
-    const [selectionMode, setSelectionMode] = useState(false)
-    const [selectedEventIds, setSelectedEventIds] = useState<string[]>([])
-
-    const selectedEventIdsSet = useMemo(
-        () => new Set(selectedEventIds),
-        [selectedEventIds],
-    )
+    const {
+        selectionMode,
+        selectedIds: selectedEventIds,
+        selectedIdsSet: selectedEventIdsSet,
+        selectedCount: selectedEventCount,
+        toggleSelectionMode: toggleEventSelectionMode,
+        toggleSelection: toggleEventSelection,
+        selectAll: selectAllEvents,
+        clearSelection: clearEventSelection,
+        disableSelectionMode: disableEventSelectionMode,
+        pruneSelection: pruneEventSelection,
+    } = useSelectionState({
+        onEnterSelectionMode: () => {
+            setSelectedEvent(null)
+            setDetailMode('edit')
+        },
+    })
 
     const filteredEvents = useMemo(() => {
         let items = [...events]
@@ -97,12 +122,20 @@ export default function Events() {
         return items
     }, [events, searchValue, dateFrom, dateTo, target, type])
 
-    const hasActiveFilters =
-        searchValue.trim().length > 0 ||
-        dateFrom.length > 0 ||
-        dateTo.length > 0 ||
-        target !== 'ALL' ||
-        type !== 'ALL'
+    const {
+        hasActiveFilters,
+        resetFilters: handleResetFilters,
+    } = useToolbarFilters({
+        values: { searchValue, dateFrom, dateTo, target, type },
+        defaults: DEFAULT_EVENT_FILTERS,
+        onReset: () => {
+            setSearchValue(DEFAULT_EVENT_FILTERS.searchValue)
+            setDateFrom(DEFAULT_EVENT_FILTERS.dateFrom)
+            setDateTo(DEFAULT_EVENT_FILTERS.dateTo)
+            setTarget(DEFAULT_EVENT_FILTERS.target)
+            setType(DEFAULT_EVENT_FILTERS.type)
+        },
+    })
 
     const visibleEventIds = useMemo(
         () => filteredEvents.map((event) => event.id),
@@ -140,7 +173,7 @@ export default function Events() {
         if (idsSet.size === 0) return
 
         setEvents((prev) => prev.filter((event) => !idsSet.has(event.id)))
-        setSelectedEventIds((prev) => prev.filter((id) => !idsSet.has(id)))
+        pruneEventSelection(Array.from(idsSet))
         setSelectedEvent((prev) => {
             if (!prev) return prev
             if (idsSet.has(prev.id)) return null
@@ -180,53 +213,9 @@ export default function Events() {
         setDetailMode('edit')
     }
 
-    const handleToggleSelectionMode = () => {
-        setSelectionMode((prev) => {
-            const next = !prev
-
-            if (next) {
-                setSelectedEvent(null)
-                setDetailMode('edit')
-                setSelectedEventIds([])
-            } else {
-                setSelectedEventIds([])
-            }
-
-            return next
-        })
-    }
-
-    const handleToggleEventSelection = (eventId: string) => {
-        if (!selectionMode) return
-
-        setSelectedEventIds((prev) => {
-            if (prev.includes(eventId)) {
-                return prev.filter((id) => id !== eventId)
-            }
-            return [...prev, eventId]
-        })
-    }
-
-    const handleSelectAllVisible = () => {
-        setSelectedEventIds(visibleEventIds)
-    }
-
-    const handleClearSelection = () => {
-        setSelectedEventIds([])
-    }
-
     const handleDeleteSelected = () => {
         removeEventsByIds(selectedEventIds)
-        setSelectionMode(false)
-        setSelectedEventIds([])
-    }
-
-    const handleResetFilters = () => {
-        setSearchValue('')
-        setDateFrom('')
-        setDateTo('')
-        setTarget('ALL')
-        setType('ALL')
+        disableEventSelectionMode()
     }
 
     return (
@@ -251,8 +240,8 @@ export default function Events() {
                         onTypeChange={setType}
                         onCreateRequested={handleCreateRequested}
                         selectionMode={selectionMode}
-                        selectedCount={selectedEventIds.length}
-                        onToggleSelectionMode={handleToggleSelectionMode}
+                        selectedCount={selectedEventCount}
+                        onToggleSelectionMode={toggleEventSelectionMode}
                         onResetFilters={handleResetFilters}
                         hasActiveFilters={hasActiveFilters}
                     />
@@ -260,9 +249,9 @@ export default function Events() {
                     {selectionMode && (
                         <SelectionToolbar
                             totalCount={visibleEventIds.length}
-                            selectedCount={selectedEventIds.length}
-                            onSelectAll={handleSelectAllVisible}
-                            onClearSelection={handleClearSelection}
+                            selectedCount={selectedEventCount}
+                            onSelectAll={() => selectAllEvents(visibleEventIds)}
+                            onClearSelection={clearEventSelection}
                             onDeleteSelected={handleDeleteSelected}
                             confirmTitle="Supprimer les evenements selectionnes"
                             confirmMessage={`Vous allez supprimer ${selectedEventIds.length} evenement${selectedEventIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
@@ -302,7 +291,7 @@ export default function Events() {
                                                                 }
                                                                 selectionMode={selectionMode}
                                                                 selected={selectedEventIdsSet.has(event.id)}
-                                                                onToggleSelect={handleToggleEventSelection}
+                                                                onToggleSelect={toggleEventSelection}
                                                             />
                                                         ),
                                                     )}

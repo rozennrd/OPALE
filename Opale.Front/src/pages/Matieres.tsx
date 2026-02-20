@@ -14,9 +14,24 @@ import SelectionToolbar from '../components/common/SelectionToolbar'
 import { MATIERES_MOCK } from '../mocks/matieres.mock'
 import { INTERNAL_TEACHERS_MOCK } from '../mocks/teachers.mock'
 import { Matiere } from '../models/Matiere'
+import { useSelectionState } from '../hooks/common/useSelectionState'
+import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
 
 const getCycleFromPromoLabel = (promoLabel: string) => {
     return (promoLabel || '').trim().split(/\s+/)[0] || '-'
+}
+const DEFAULT_MATIERES_FILTERS: {
+    searchValue: string
+    semestreFilter: SemestreFilter
+    cycleFilter: CycleFilter
+    promotionFilter: PromotionFilter
+    teacherFilter: TeacherFilter
+} = {
+    searchValue: '',
+    semestreFilter: 'ALL',
+    cycleFilter: 'ALL',
+    promotionFilter: 'ALL',
+    teacherFilter: 'ALL',
 }
 
 export default function Matieres() {
@@ -31,13 +46,22 @@ export default function Matieres() {
 
     const [selected, setSelected] = useState<Matiere | null>(null)
 
-    const [selectionMode, setSelectionMode] = useState(false)
-    const [selectedMatiereIds, setSelectedMatiereIds] = useState<string[]>([])
-
-    const selectedMatiereIdsSet = useMemo(
-        () => new Set(selectedMatiereIds),
-        [selectedMatiereIds],
-    )
+    const {
+        selectionMode,
+        selectedIds: selectedMatiereIds,
+        selectedIdsSet: selectedMatiereIdsSet,
+        selectedCount: selectedMatiereCount,
+        toggleSelectionMode: toggleMatiereSelectionMode,
+        toggleSelection: toggleMatiereSelection,
+        selectAll: selectAllMatieres,
+        clearSelection: clearMatiereSelection,
+        disableSelectionMode: disableMatiereSelectionMode,
+        pruneSelection: pruneMatiereSelection,
+    } = useSelectionState({
+        onEnterSelectionMode: () => {
+            setSelected(null)
+        },
+    })
 
     const cycleOptions = useMemo(() => {
         const uniq = new Set<string>()
@@ -118,19 +142,33 @@ export default function Matieres() {
             }))
     }, [filtered])
 
-    const hasActiveFilters =
-        searchValue.trim().length > 0 ||
-        semestreFilter !== 'ALL' ||
-        cycleFilter !== 'ALL' ||
-        promotionFilter !== 'ALL' ||
-        teacherFilter !== 'ALL'
+    const {
+        hasActiveFilters,
+        resetFilters: handleResetFilters,
+    } = useToolbarFilters({
+        values: {
+            searchValue,
+            semestreFilter,
+            cycleFilter,
+            promotionFilter,
+            teacherFilter,
+        },
+        defaults: DEFAULT_MATIERES_FILTERS,
+        onReset: () => {
+            setSearchValue(DEFAULT_MATIERES_FILTERS.searchValue)
+            setSemestreFilter(DEFAULT_MATIERES_FILTERS.semestreFilter)
+            setCycleFilter(DEFAULT_MATIERES_FILTERS.cycleFilter)
+            setPromotionFilter(DEFAULT_MATIERES_FILTERS.promotionFilter)
+            setTeacherFilter(DEFAULT_MATIERES_FILTERS.teacherFilter)
+        },
+    })
 
     const removeMatieresByIds = (ids: string[]) => {
         const idsSet = new Set(ids)
         if (idsSet.size === 0) return
 
         setMatieres((prev) => prev.filter((matiere) => !idsSet.has(matiere.id)))
-        setSelectedMatiereIds((prev) => prev.filter((id) => !idsSet.has(id)))
+        pruneMatiereSelection(Array.from(idsSet))
         setSelected((prev) => {
             if (!prev) return prev
             if (idsSet.has(prev.id)) return null
@@ -142,56 +180,13 @@ export default function Matieres() {
         removeMatieresByIds([matiereId])
     }
 
-    const handleToggleSelectionMode = () => {
-        setSelectionMode((prev) => {
-            const next = !prev
-
-            if (next) {
-                setSelected(null)
-                setSelectedMatiereIds([])
-            } else {
-                setSelectedMatiereIds([])
-            }
-
-            return next
-        })
-    }
-
-    const handleToggleMatiereSelection = (matiereId: string) => {
-        if (!selectionMode) return
-
-        setSelectedMatiereIds((prev) => {
-            if (prev.includes(matiereId)) {
-                return prev.filter((id) => id !== matiereId)
-            }
-            return [...prev, matiereId]
-        })
-    }
-
-    const handleSelectAllVisible = () => {
-        setSelectedMatiereIds(visibleMatiereIds)
-    }
-
-    const handleClearSelection = () => {
-        setSelectedMatiereIds([])
-    }
-
     const handleDeleteSelected = () => {
         removeMatieresByIds(selectedMatiereIds)
-        setSelectionMode(false)
-        setSelectedMatiereIds([])
+        disableMatiereSelectionMode()
     }
 
     const handleSelectMatiere = (matiere: Matiere) => {
         setSelected(matiere)
-    }
-
-    const handleResetFilters = () => {
-        setSearchValue('')
-        setSemestreFilter('ALL')
-        setCycleFilter('ALL')
-        setPromotionFilter('ALL')
-        setTeacherFilter('ALL')
     }
 
     return (
@@ -214,21 +209,21 @@ export default function Matieres() {
                     promotionOptions={promotionOptions}
                     teacherOptions={teacherOptions}
                     selectionMode={selectionMode}
-                    selectedCount={selectedMatiereIds.length}
-                    onToggleSelectionMode={handleToggleSelectionMode}
+                    selectedCount={selectedMatiereCount}
+                    onToggleSelectionMode={toggleMatiereSelectionMode}
                     onResetFilters={handleResetFilters}
                     hasActiveFilters={hasActiveFilters}
                 />
 
                 {selectionMode && (
-                    <SelectionToolbar
-                        totalCount={visibleMatiereIds.length}
-                        selectedCount={selectedMatiereIds.length}
-                        onSelectAll={handleSelectAllVisible}
-                        onClearSelection={handleClearSelection}
-                        onDeleteSelected={handleDeleteSelected}
-                        confirmTitle="Supprimer les matieres selectionnees"
-                        confirmMessage={`Vous allez supprimer ${selectedMatiereIds.length} matiere${selectedMatiereIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                        <SelectionToolbar
+                            totalCount={visibleMatiereIds.length}
+                            selectedCount={selectedMatiereCount}
+                            onSelectAll={() => selectAllMatieres(visibleMatiereIds)}
+                            onClearSelection={clearMatiereSelection}
+                            onDeleteSelected={handleDeleteSelected}
+                            confirmTitle="Supprimer les matieres selectionnees"
+                            confirmMessage={`Vous allez supprimer ${selectedMatiereIds.length} matiere${selectedMatiereIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
                     />
                 )}
 
@@ -241,7 +236,7 @@ export default function Matieres() {
                             onSelectMatiere={handleSelectMatiere}
                             selectionMode={selectionMode}
                             selectedMatiereIds={selectedMatiereIdsSet}
-                            onToggleMatiereSelection={handleToggleMatiereSelection}
+                            onToggleMatiereSelection={toggleMatiereSelection}
                         />
                     ))}
 
