@@ -115,6 +115,85 @@
         .room-detail-identity-grid {
             grid-template-columns: minmax(0, 1fr);
         }
+
+        .room-detail-availability-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    .room-detail-availability-row {
+        margin-top: 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.55rem 0.7rem;
+        border: 1px solid var(--border-subtle);
+        border-radius: 0.8rem;
+        background: var(--panel-soft);
+    }
+
+    .room-detail-availability-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+
+    .room-availability-switch {
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--panel);
+        padding: 0.22rem 0.52rem 0.22rem 0.32rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        cursor: pointer;
+        transition:
+                border-color 140ms ease,
+                background-color 140ms ease;
+    }
+
+    .room-availability-switch-track {
+        width: 36px;
+        height: 20px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(148, 163, 184, 0.25);
+        position: relative;
+        transition:
+                border-color 140ms ease,
+                background-color 140ms ease;
+    }
+
+    .room-availability-switch-thumb {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 999px;
+        background: #64748b;
+        transition:
+                transform 140ms ease,
+                background-color 140ms ease;
+    }
+
+    .room-availability-switch-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text);
+        white-space: nowrap;
+    }
+
+    .room-availability-switch.is-on .room-availability-switch-track {
+        background: rgba(16, 185, 129, 0.2);
+        border-color: rgba(16, 185, 129, 0.55);
+    }
+
+    .room-availability-switch.is-on .room-availability-switch-thumb {
+        transform: translateX(16px);
+        background: #059669;
     }
 
     /* ============================
@@ -246,7 +325,8 @@
     /* Focus accentué uniquement sur Nom + Surnom de la salle */
 
     #room-name-input,
-    #room-fullname-input {
+    #room-fullname-input,
+    #room-capacity-input {
         transition:
                 border-color 140ms ease,
                 box-shadow 140ms ease,
@@ -254,7 +334,8 @@
     }
 
     #room-name-input:focus,
-    #room-fullname-input:focus {
+    #room-fullname-input:focus,
+    #room-capacity-input:focus {
         outline: none;
         border-color: var(--primary);
         box-shadow: 0 0 0 1px
@@ -265,7 +346,8 @@
     /* Variante dark cohérente avec les events */
 
     [data-theme='dark'] #room-name-input:focus,
-    [data-theme='dark'] #room-fullname-input:focus {
+    [data-theme='dark'] #room-fullname-input:focus,
+    [data-theme='dark'] #room-capacity-input:focus {
         background: #252f42;
     }
 
@@ -358,6 +440,21 @@
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.2);
         color: var(--text);
+    }
+
+    [data-theme='dark'] .room-detail-availability-row {
+        background: #1f2735;
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    [data-theme='dark'] .room-availability-switch {
+        background: #111827;
+        border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    [data-theme='dark'] .room-availability-switch-track {
+        background: rgba(148, 163, 184, 0.2);
+        border-color: rgba(255, 255, 255, 0.18);
     }
 
     /* ============================

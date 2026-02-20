@@ -1,0 +1,61 @@
+/* src/styles/pages/rooms/_toolbar.css */
+
+@layer pages {
+    .rooms-toolbar-row {
+        align-items: center;
+    }
+
+    .rooms-toolbar-search {
+        flex: 1;
+        min-width: 220px;
+    }
+
+    .rooms-toolbar-row .toolbar-selection-toggle {
+        flex: 0 0 auto;
+    }
+
+    .rooms-toolbar-filters {
+        align-items: flex-end;
+    }
+
+    .rooms-toolbar-capacity-filter {
+        min-width: 210px;
+    }
+
+    .rooms-toolbar-capacity-controls {
+        display: grid;
+        grid-template-columns: 86px minmax(0, 1fr);
+        gap: 0.45rem;
+        align-items: center;
+    }
+
+    .rooms-toolbar-capacity-operator {
+        min-width: 0;
+    }
+
+    .rooms-toolbar-capacity-input {
+        width: 100%;
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border);
+        background: var(--input-bg);
+        color: var(--text);
+        font-size: 0.85rem;
+    }
+
+    @media (max-width: 900px) {
+        .rooms-toolbar-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .rooms-toolbar-row .toolbar-selection-toggle {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .rooms-toolbar-capacity-filter {
+            min-width: 0;
+        }
+    }
+}
