@@ -24,6 +24,7 @@
         /* optionnel : affiner un peu par rapport au shell générique */
         width: min(920px, 96vw);
         max-height: min(640px, 96vh);
+        overflow-y: auto;
     }
 
     /* Le wrapper header commun doit occuper toute la largeur de la grille */

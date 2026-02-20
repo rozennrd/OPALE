@@ -24,7 +24,7 @@
         gap: 12px;
         padding: 16px;
         min-width: 0;
-        box-shadow: var(--shadow-lg);
+        box-shadow: none;
 
         background: var(--panel-soft);
         border-radius: var(--radius);
@@ -106,8 +106,8 @@
         border: var(--add-cycle-border-width) dashed var(--add-cycle-border-color);
 
         cursor: pointer;
-        transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
-        box-shadow: var(--shadow-md);
+        transition: transform .12s ease, background .12s ease;
+        box-shadow: none;
     }
 
     .add-cycle-card img {
@@ -120,6 +120,6 @@
     .add-cycle-card:hover {
         background: transparent;
         transform: translateY(-1px);
-        box-shadow: var(--shadow-lg);
+        box-shadow: none;
     }
 }

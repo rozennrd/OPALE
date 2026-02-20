@@ -205,38 +205,38 @@ export default function Teachers() {
                     />
                 )}
 
-                {filteredInternalBordeaux.length > 0 && (
-                    <TeacherSection
-                        title="Internes Bordeaux"
-                        teachers={filteredInternalBordeaux}
-                        onSelectTeacher={setSelectedTeacher}
-                        selectionMode={selectionMode}
-                        selectedTeacherIds={selectedTeacherIdsSet}
-                        onToggleTeacherSelection={toggleTeacherSelection}
-                    />
-                )}
-
-                {filteredInternalLilleChateauroux.length > 0 && (
-                    <TeacherSection
-                        title="Internes Lille/Châteauroux"
-                        teachers={filteredInternalLilleChateauroux}
-                        onSelectTeacher={setSelectedTeacher}
-                        selectionMode={selectionMode}
-                        selectedTeacherIds={selectedTeacherIdsSet}
-                        onToggleTeacherSelection={toggleTeacherSelection}
-                    />
-                )}
-
-                {filteredVacataires.length > 0 && (
-                    <TeacherSection
-                        title="Vacataires"
-                        teachers={filteredVacataires}
-                        onSelectTeacher={setSelectedTeacher}
-                        selectionMode={selectionMode}
-                        selectedTeacherIds={selectedTeacherIdsSet}
-                        onToggleTeacherSelection={toggleTeacherSelection}
-                    />
-                )}
+                <div className="teachers-sections">
+                    {filteredInternalBordeaux.length > 0 && (
+                        <TeacherSection
+                            title="Internes Bordeaux"
+                            teachers={filteredInternalBordeaux}
+                            onSelectTeacher={setSelectedTeacher}
+                            selectionMode={selectionMode}
+                            selectedTeacherIds={selectedTeacherIdsSet}
+                            onToggleTeacherSelection={toggleTeacherSelection}
+                        />
+                    )}
+                    {filteredInternalLilleChateauroux.length > 0 && (
+                        <TeacherSection
+                            title="Internes Lille/Châteauroux"
+                            teachers={filteredInternalLilleChateauroux}
+                            onSelectTeacher={setSelectedTeacher}
+                            selectionMode={selectionMode}
+                            selectedTeacherIds={selectedTeacherIdsSet}
+                            onToggleTeacherSelection={toggleTeacherSelection}
+                        />
+                    )}
+                    {filteredVacataires.length > 0 && (
+                        <TeacherSection
+                            title="Vacataires"
+                            teachers={filteredVacataires}
+                            onSelectTeacher={setSelectedTeacher}
+                            selectionMode={selectionMode}
+                            selectedTeacherIds={selectedTeacherIdsSet}
+                            onToggleTeacherSelection={toggleTeacherSelection}
+                        />
+                    )}
+                </div>
             </div>
 
             {selectedTeacher && (

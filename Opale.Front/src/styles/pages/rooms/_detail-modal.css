@@ -26,6 +26,7 @@
         max-height: min(720px, 96vh);
         display: flex;
         flex-direction: column;
+        overflow-y: auto;
     }
 
     /* ============================
