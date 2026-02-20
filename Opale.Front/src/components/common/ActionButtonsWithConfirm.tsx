@@ -33,7 +33,7 @@ interface ActionButtonsWithConfirmProps {
     // Disable the save button
     disabled?: boolean
 
-    onSave: () => void
+    onSave: () => void | Promise<void>
     onCancel: () => void
 }
 
@@ -102,11 +102,14 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
         setOpenCancelConfirm(true)
     }
 
-    const handleConfirmCancelWithSave = () => {
-        if (!canSave()) return
+    const closeCancelConfirmDialog = () => {
+        setOpenCancelConfirm(false)
+    }
 
+    const handleConfirmCancelWithSave = async () => {
+        if (!canSave()) return
         closeCancelConfirmDialog()
-        onSave()
+        await onSave()
         onCancel()
     }
 
