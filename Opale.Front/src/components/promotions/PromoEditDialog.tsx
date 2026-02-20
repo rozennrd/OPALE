@@ -114,13 +114,13 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
         constraints: editingPromo.constraints,
     })
 
-    const handleSave = () => {
-        props.onSubmit()
+    const handleSave = async () => {
+        await props.onSubmit()
     }
 
-    const handleConfirmSaveAndClose = () => {
+    const handleConfirmSaveAndClose = async () => {
         setOpenCloseConfirm(false)
-        handleSave()
+        await handleSave()
         props.onClose()
     }
 

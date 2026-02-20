@@ -110,6 +110,7 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
         if (saveResult === false) return
 
         closeCancelConfirmDialog()
+        onSave()
         onCancel()
     }
 
