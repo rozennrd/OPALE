@@ -1,7 +1,7 @@
 // src/components/events/EventsToolbar.tsx
 import React from 'react'
 import { EventType } from '../../models/CampusEvent'
-import { PageToolbar, ToolbarRow } from '../common/Toolbar'
+import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 import icPlus from '../../assets/ic-plus.png'
 
@@ -29,6 +29,8 @@ interface EventsToolbarProps {
     selectionMode: boolean
     selectedCount: number
     onToggleSelectionMode: () => void
+    onResetFilters: () => void
+    hasActiveFilters: boolean
 }
 
 const EVENT_TYPE_OPTIONS = [
@@ -56,6 +58,8 @@ export default function EventsToolbar({
     selectionMode,
     selectedCount,
     onToggleSelectionMode,
+    onResetFilters,
+    hasActiveFilters,
 }: EventsToolbarProps) {
     return (
         <PageToolbar className="events-toolbar">
@@ -64,6 +68,11 @@ export default function EventsToolbar({
                     value={searchValue}
                     onChange={onSearchChange}
                     placeholder="Rechercher un evenement..."
+                />
+
+                <ToolbarResetButton
+                    onClick={onResetFilters}
+                    disabled={!hasActiveFilters}
                 />
 
                 <button

@@ -1,6 +1,6 @@
 import React from 'react'
 import { RoomType } from '../../models/Room'
-import { PageToolbar, ToolbarRow } from '../common/Toolbar'
+import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 
 export type RoomTypeFilter = 'ALL' | RoomType
@@ -21,6 +21,8 @@ interface RoomsToolbarProps {
     selectionMode: boolean
     selectedCount: number
     onToggleSelectionMode: () => void
+    onResetFilters: () => void
+    hasActiveFilters: boolean
 }
 
 const ROOM_TYPE_OPTIONS: { value: RoomTypeFilter; label: string }[] = [
@@ -46,6 +48,8 @@ export default function RoomsToolbar({
     selectionMode,
     selectedCount,
     onToggleSelectionMode,
+    onResetFilters,
+    hasActiveFilters,
 }: RoomsToolbarProps) {
     return (
         <PageToolbar className="rooms-toolbar">
@@ -55,6 +59,11 @@ export default function RoomsToolbar({
                     onChange={onSearchChange}
                     placeholder="Rechercher une salle"
                     className="rooms-toolbar-search"
+                />
+
+                <ToolbarResetButton
+                    onClick={onResetFilters}
+                    disabled={!hasActiveFilters}
                 />
 
                 <button

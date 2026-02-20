@@ -101,6 +101,11 @@ export default function Teachers() {
     const filteredInternalLilleChateauroux = filteredTeachers(internalLilleChateauroux)
     const filteredVacataires = filteredTeachers(vacataires)
 
+    const hasActiveFilters =
+        searchValue.trim().length > 0 ||
+        modeFilter !== 'ALL' ||
+        subjectFilter.trim().length > 0
+
     const visibleTeacherIds = useMemo(
         () => [
             ...filteredInternalBordeaux,
@@ -171,6 +176,12 @@ export default function Teachers() {
         setSelectedTeacherIds([])
     }
 
+    const handleResetFilters = () => {
+        setSearchValue('')
+        setModeFilter('ALL')
+        setSubjectFilter('')
+    }
+
     return (
         <>
             <PageHeader
@@ -191,6 +202,8 @@ export default function Teachers() {
                     selectionMode={selectionMode}
                     selectedCount={selectedTeacherIds.length}
                     onToggleSelectionMode={handleToggleSelectionMode}
+                    onResetFilters={handleResetFilters}
+                    hasActiveFilters={hasActiveFilters}
                 />
 
                 {selectionMode && (

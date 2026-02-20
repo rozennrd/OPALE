@@ -118,6 +118,13 @@ export default function Matieres() {
             }))
     }, [filtered])
 
+    const hasActiveFilters =
+        searchValue.trim().length > 0 ||
+        semestreFilter !== 'ALL' ||
+        cycleFilter !== 'ALL' ||
+        promotionFilter !== 'ALL' ||
+        teacherFilter !== 'ALL'
+
     const removeMatieresByIds = (ids: string[]) => {
         const idsSet = new Set(ids)
         if (idsSet.size === 0) return
@@ -179,6 +186,14 @@ export default function Matieres() {
         setSelected(matiere)
     }
 
+    const handleResetFilters = () => {
+        setSearchValue('')
+        setSemestreFilter('ALL')
+        setCycleFilter('ALL')
+        setPromotionFilter('ALL')
+        setTeacherFilter('ALL')
+    }
+
     return (
         <>
             <PageHeader title="Matieres" subtitle="Gestion des matieres par promotion" />
@@ -201,6 +216,8 @@ export default function Matieres() {
                     selectionMode={selectionMode}
                     selectedCount={selectedMatiereIds.length}
                     onToggleSelectionMode={handleToggleSelectionMode}
+                    onResetFilters={handleResetFilters}
+                    hasActiveFilters={hasActiveFilters}
                 />
 
                 {selectionMode && (

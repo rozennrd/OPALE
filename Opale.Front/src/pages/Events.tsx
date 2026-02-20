@@ -97,6 +97,13 @@ export default function Events() {
         return items
     }, [events, searchValue, dateFrom, dateTo, target, type])
 
+    const hasActiveFilters =
+        searchValue.trim().length > 0 ||
+        dateFrom.length > 0 ||
+        dateTo.length > 0 ||
+        target !== 'ALL' ||
+        type !== 'ALL'
+
     const visibleEventIds = useMemo(
         () => filteredEvents.map((event) => event.id),
         [filteredEvents],
@@ -214,6 +221,14 @@ export default function Events() {
         setSelectedEventIds([])
     }
 
+    const handleResetFilters = () => {
+        setSearchValue('')
+        setDateFrom('')
+        setDateTo('')
+        setTarget('ALL')
+        setType('ALL')
+    }
+
     return (
         <>
             <h1 className="page-title">Evenements</h1>
@@ -238,6 +253,8 @@ export default function Events() {
                         selectionMode={selectionMode}
                         selectedCount={selectedEventIds.length}
                         onToggleSelectionMode={handleToggleSelectionMode}
+                        onResetFilters={handleResetFilters}
+                        hasActiveFilters={hasActiveFilters}
                     />
 
                     {selectionMode && (

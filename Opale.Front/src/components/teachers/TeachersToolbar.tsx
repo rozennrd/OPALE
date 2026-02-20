@@ -1,7 +1,7 @@
 // src/components/teachers/TeachersToolbar.tsx
 import React, { useMemo, useState } from 'react'
 import { TeachingMode } from '../../models/Teacher'
-import { PageToolbar, ToolbarRow } from '../common/Toolbar'
+import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 import icPlus from '../../assets/ic-plus.png'
 
@@ -26,6 +26,8 @@ interface TeachersToolbarProps {
     selectionMode: boolean
     selectedCount: number
     onToggleSelectionMode: () => void
+    onResetFilters: () => void
+    hasActiveFilters: boolean
 }
 
 export default function TeachersToolbar({
@@ -40,6 +42,8 @@ export default function TeachersToolbar({
     selectionMode,
     selectedCount,
     onToggleSelectionMode,
+    onResetFilters,
+    hasActiveFilters,
 }: TeachersToolbarProps) {
     const [isSubjectsOpen, setIsSubjectsOpen] = useState(false)
     const [subjectSearch, setSubjectSearch] = useState('')
@@ -64,6 +68,12 @@ export default function TeachersToolbar({
         setIsSubjectsOpen(false)
     }
 
+    const handleResetFilters = () => {
+        onResetFilters()
+        setIsSubjectsOpen(false)
+        setSubjectSearch('')
+    }
+
     return (
         <PageToolbar className="teachers-toolbar">
             <ToolbarRow className="teachers-toolbar-row">
@@ -72,6 +82,11 @@ export default function TeachersToolbar({
                     onChange={onSearchChange}
                     placeholder="Rechercher un enseignant"
                     className="teachers-toolbar-search"
+                />
+
+                <ToolbarResetButton
+                    onClick={handleResetFilters}
+                    disabled={!hasActiveFilters}
                 />
 
                 <div className="teachers-toolbar-filters">

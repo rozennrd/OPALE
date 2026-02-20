@@ -42,6 +42,13 @@ export default function Rooms() {
     const [selectionMode, setSelectionMode] = useState(false)
     const [selectedRoomIds, setSelectedRoomIds] = useState<string[]>([])
 
+    const hasActiveFilters =
+        searchValue.trim().length > 0 ||
+        typeFilter !== 'ALL' ||
+        capacityOperator !== 'ALL' ||
+        capacityValue.trim().length > 0 ||
+        availabilityFilter !== 'ALL'
+
     const selectedRoomIdsSet = useMemo(
         () => new Set(selectedRoomIds),
         [selectedRoomIds],
@@ -257,6 +264,15 @@ export default function Rooms() {
         setSelectedRoomIds([])
     }
 
+    const handleResetFilters = () => {
+        console.log('[ROOMS] Reset filters (mock)')
+        setSearchValue('')
+        setTypeFilter('ALL')
+        setCapacityOperator('ALL')
+        setCapacityValue('')
+        setAvailabilityFilter('ALL')
+    }
+
     return (
         <>
             <PageHeader
@@ -279,6 +295,8 @@ export default function Rooms() {
                     selectionMode={selectionMode}
                     selectedCount={selectedRoomIds.length}
                     onToggleSelectionMode={handleToggleSelectionMode}
+                    onResetFilters={handleResetFilters}
+                    hasActiveFilters={hasActiveFilters}
                 />
 
                 {selectionMode && (

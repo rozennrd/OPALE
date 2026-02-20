@@ -1,7 +1,7 @@
 // src/components/matieres/MatieresToolbar.tsx
 
 import React from 'react'
-import { PageToolbar, ToolbarRow } from '../common/Toolbar'
+import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 
 export type SemestreFilter = 'ALL' | 1 | 2
@@ -30,6 +30,8 @@ interface MatieresToolbarProps {
     selectionMode: boolean
     selectedCount: number
     onToggleSelectionMode: () => void
+    onResetFilters: () => void
+    hasActiveFilters: boolean
 }
 
 const SEMESTRE_OPTIONS: { value: SemestreFilter; label: string }[] = [
@@ -55,6 +57,8 @@ export default function MatieresToolbar({
     selectionMode,
     selectedCount,
     onToggleSelectionMode,
+    onResetFilters,
+    hasActiveFilters,
 }: MatieresToolbarProps) {
     return (
         <PageToolbar className="matieres-toolbar">
@@ -64,6 +68,11 @@ export default function MatieresToolbar({
                     onChange={onSearchChange}
                     placeholder="Rechercher une matiere"
                     className="matieres-toolbar-search"
+                />
+
+                <ToolbarResetButton
+                    onClick={onResetFilters}
+                    disabled={!hasActiveFilters}
                 />
 
                 <div className="matieres-toolbar-filters">
