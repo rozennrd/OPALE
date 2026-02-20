@@ -23,10 +23,13 @@ interface MatieresToolbarProps {
     teacherFilter: TeacherFilter
     onTeacherChange: (value: TeacherFilter) => void
 
-    // ✅ options injectées depuis la page
     cycleOptions: string[]
     promotionOptions: string[]
     teacherOptions: { id: string; label: string }[]
+
+    selectionMode: boolean
+    selectedCount: number
+    onToggleSelectionMode: () => void
 }
 
 const SEMESTRE_OPTIONS: { value: SemestreFilter; label: string }[] = [
@@ -36,32 +39,34 @@ const SEMESTRE_OPTIONS: { value: SemestreFilter; label: string }[] = [
 ]
 
 export default function MatieresToolbar({
-                                            searchValue,
-                                            onSearchChange,
-                                            semestreFilter,
-                                            onSemestreChange,
-                                            cycleFilter,
-                                            onCycleChange,
-                                            promotionFilter,
-                                            onPromotionChange,
-                                            teacherFilter,
-                                            onTeacherChange,
-                                            cycleOptions,
-                                            promotionOptions,
-                                            teacherOptions,
-                                        }: MatieresToolbarProps) {
+    searchValue,
+    onSearchChange,
+    semestreFilter,
+    onSemestreChange,
+    cycleFilter,
+    onCycleChange,
+    promotionFilter,
+    onPromotionChange,
+    teacherFilter,
+    onTeacherChange,
+    cycleOptions,
+    promotionOptions,
+    teacherOptions,
+    selectionMode,
+    selectedCount,
+    onToggleSelectionMode,
+}: MatieresToolbarProps) {
     return (
         <PageToolbar className="matieres-toolbar">
             <ToolbarRow className="matieres-toolbar-row">
                 <ToolbarSearch
                     value={searchValue}
                     onChange={onSearchChange}
-                    placeholder="Rechercher une matière"
+                    placeholder="Rechercher une matiere"
                     className="matieres-toolbar-search"
                 />
 
                 <div className="matieres-toolbar-filters">
-                    {/* Semestre (chips) */}
                     <div className="toolbar-filter">
                         <span className="toolbar-filter-label">Semestre</span>
                         <div className="toolbar-toggle-chips">
@@ -83,7 +88,6 @@ export default function MatieresToolbar({
                         </div>
                     </div>
 
-                    {/* Cycle (select) */}
                     <div className="toolbar-filter">
                         <label className="toolbar-filter-label">
                             Cycles
@@ -102,7 +106,6 @@ export default function MatieresToolbar({
                         </label>
                     </div>
 
-                    {/* Promotions (select) */}
                     <div className="toolbar-filter">
                         <label className="toolbar-filter-label">
                             Promotions
@@ -123,7 +126,6 @@ export default function MatieresToolbar({
                         </label>
                     </div>
 
-                    {/* Enseignants (select) */}
                     <div className="toolbar-filter">
                         <label className="toolbar-filter-label">
                             Enseignants
@@ -144,6 +146,27 @@ export default function MatieresToolbar({
                         </label>
                     </div>
                 </div>
+
+                <button
+                    type="button"
+                    className={[
+                        'toolbar-filter-button',
+                        'toolbar-selection-toggle',
+                        selectionMode ? 'is-active' : '',
+                    ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    onClick={onToggleSelectionMode}
+                >
+                    <span>
+                        {selectionMode ? 'Quitter selection' : 'Selectionner'}
+                    </span>
+                    {selectedCount > 0 && (
+                        <span className="toolbar-selection-count-pill">
+                            {selectedCount}
+                        </span>
+                    )}
+                </button>
             </ToolbarRow>
         </PageToolbar>
     )

@@ -13,6 +13,7 @@ import MatiereBadge from './MatiereBadge'
 interface MatiereDetailCardProps {
     matiere: Matiere
     onClose: () => void
+    onDelete?: () => void
 }
 
 type TeachKind = 'TD' | 'TP'
@@ -28,7 +29,7 @@ const makeRowId = () => `assign-${Math.random().toString(16).slice(2)}`
 
 const teacherLabel = (t: Teacher) => `${t.lastName.toUpperCase()} ${t.firstName}`
 
-export default function MatiereDetailCard({ matiere, onClose }: MatiereDetailCardProps) {
+export default function MatiereDetailCard({ matiere, onClose, onDelete }: MatiereDetailCardProps) {
     const teachers = useMemo(() => {
         const all = [...INTERNAL_TEACHERS_MOCK, ...VACATAIRE_TEACHERS_MOCK]
         return all.slice().sort((a, b) => teacherLabel(a).localeCompare(teacherLabel(b), 'fr'))
@@ -352,6 +353,11 @@ export default function MatiereDetailCard({ matiere, onClose }: MatiereDetailCar
                     onSave={handleSave}
                     onCancel={onClose}
                     onAfterSaveConfirm={onClose}
+                    onDelete={onDelete}
+                    deleteLabel="Supprimer"
+                    deleteTitle="Supprimer cette matiere"
+                    deleteMessage="Souhaites-tu supprimer cette matiere ?"
+                    deleteConfirmLabel="Supprimer"
                 />
             </DetailCardBody>
 

@@ -14,6 +14,7 @@ interface RoomDetailCardProps {
     room: Room
     onClose: () => void
     onChange: (room: Room) => void
+    onDelete?: () => void
 }
 
 const ROOM_TYPE_LABELS: Record<RoomType, string> = {
@@ -37,7 +38,7 @@ const floorLabel = (floor: Room['floor']): string => {
     }
 }
 
-export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCardProps) {
+export default function RoomDetailCard({ room, onClose, onChange, onDelete }: RoomDetailCardProps) {
     const [name, setName] = useState(room.name)
     const [fullName, setFullName] = useState(room.fullName ?? '')
     const [floor, setFloor] = useState<Room['floor']>(room.floor)
@@ -314,6 +315,11 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
                     onSave={handleSave}
                     onCancel={onClose}
                     onAfterSaveConfirm={onClose}
+                    onDelete={onDelete}
+                    deleteLabel="Supprimer"
+                    deleteTitle="Supprimer cette salle"
+                    deleteMessage="Souhaites-tu supprimer cette salle ?"
+                    deleteConfirmLabel="Supprimer"
                 />
             </DetailCardBody>
 

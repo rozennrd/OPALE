@@ -1,4 +1,8 @@
 @layer pages {
+    .events-toolbar .toolbar-selection-toggle {
+        margin-left: auto;
+    }
+
     /* bouton + minimaliste */
     .events-toolbar-plus-btn {
         border: none;
@@ -37,6 +41,11 @@
     }
 
     @media (max-width: 600px) {
+        .events-toolbar .toolbar-selection-toggle {
+            width: 100%;
+            margin-left: 0;
+        }
+
         .events-toolbar-plus-icon {
             width: 20px;
             height: 20px;

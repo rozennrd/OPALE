@@ -108,6 +108,10 @@
         display: block;
     }
 
+    .teachers-toolbar-row .toolbar-selection-toggle {
+        flex: 0 0 auto;
+    }
+
     [data-theme="dark"] .teachers-toolbar-plus-icon {
         filter: brightness(1.2);
     }
@@ -131,6 +135,11 @@
 
         .teachers-toolbar-filters .toolbar-filter {
             width: 100%;
+        }
+
+        .teachers-toolbar-row .toolbar-selection-toggle {
+            width: 100%;
+            justify-content: center;
         }
     }
 

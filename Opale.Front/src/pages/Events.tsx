@@ -11,11 +11,11 @@ import {
     EXTERNAL_EVENTS_MOCK,
 } from '../mocks/events.mock'
 import { CampusEvent } from '../models/CampusEvent'
-import SectionHeader from '../components/common/SectionHeader' // si tu l’utilises pour les mois
+import SectionHeader from '../components/common/SectionHeader'
+import SelectionToolbar from '../components/common/SelectionToolbar'
 
 const ALL_EVENTS = [...JUNIA_EVENTS_MOCK, ...EXTERNAL_EVENTS_MOCK]
 
-// helpers getMonthKey / getMonthLabel que tu as déjà ou qu’on avait ajoutés
 function getMonthKey(dateStr: string): string {
     const d = new Date(dateStr)
     if (Number.isNaN(d.getTime())) return dateStr
@@ -33,6 +33,8 @@ function getMonthLabel(dateStr: string): string {
 }
 
 export default function Events() {
+    const [events, setEvents] = useState<CampusEvent[]>(() => [...ALL_EVENTS])
+
     const [searchValue, setSearchValue] = useState('')
     const [dateFrom, setDateFrom] = useState('')
     const [dateTo, setDateTo] = useState('')
@@ -43,10 +45,17 @@ export default function Events() {
     const [detailMode, setDetailMode] = useState<'edit' | 'create'>('edit')
     const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({})
 
-    const filteredEvents = useMemo(() => {
-        let items = [...ALL_EVENTS]
+    const [selectionMode, setSelectionMode] = useState(false)
+    const [selectedEventIds, setSelectedEventIds] = useState<string[]>([])
 
-        // tri chronologique
+    const selectedEventIdsSet = useMemo(
+        () => new Set(selectedEventIds),
+        [selectedEventIds],
+    )
+
+    const filteredEvents = useMemo(() => {
+        let items = [...events]
+
         items.sort(
             (a, b) =>
                 new Date(a.date).getTime() - new Date(b.date).getTime(),
@@ -86,9 +95,13 @@ export default function Events() {
         }
 
         return items
-    }, [searchValue, dateFrom, dateTo, target, type])
+    }, [events, searchValue, dateFrom, dateTo, target, type])
 
-    // Regroupement par mois (comme on l’a déjà fait)
+    const visibleEventIds = useMemo(
+        () => filteredEvents.map((event) => event.id),
+        [filteredEvents],
+    )
+
     const monthGroups = useMemo(() => {
         const groups: {
             key: string
@@ -115,6 +128,19 @@ export default function Events() {
         return groups
     }, [filteredEvents])
 
+    const removeEventsByIds = (ids: string[]) => {
+        const idsSet = new Set(ids)
+        if (idsSet.size === 0) return
+
+        setEvents((prev) => prev.filter((event) => !idsSet.has(event.id)))
+        setSelectedEventIds((prev) => prev.filter((id) => !idsSet.has(id)))
+        setSelectedEvent((prev) => {
+            if (!prev) return prev
+            if (idsSet.has(prev.id)) return null
+            return prev
+        })
+    }
+
     const toggleMonth = (key: string) => {
         setOpenMonths((prev) => ({
             ...prev,
@@ -127,35 +153,72 @@ export default function Events() {
         setSelectedEvent(evt)
     }
 
-    // clic sur le bouton "+"
     const handleCreateRequested = () => {
-        const todayIso = new Date().toISOString().slice(0, 10)
-
-        const newEvent: CampusEvent = {
+        const newEvent = {
             id: 'new-event',
             name: '',
-            startDate: '',
-            endDate: '',
+            date: new Date().toISOString().slice(0, 10),
             location: '',
             type: 'AUTRE',
             source: 'JUNIA',
-            description: '',
-        }
+        } as CampusEvent
 
         setDetailMode('create')
         setSelectedEvent(newEvent)
         console.log('[EVENTS] Open create event form', newEvent)
     }
 
-    const handleCloseDetail = () => {
-        setSelectedEvent(null)
+    const handleDeleteSingleEvent = (eventId: string) => {
+        removeEventsByIds([eventId])
+        setDetailMode('edit')
+    }
+
+    const handleToggleSelectionMode = () => {
+        setSelectionMode((prev) => {
+            const next = !prev
+
+            if (next) {
+                setSelectedEvent(null)
+                setDetailMode('edit')
+                setSelectedEventIds([])
+            } else {
+                setSelectedEventIds([])
+            }
+
+            return next
+        })
+    }
+
+    const handleToggleEventSelection = (eventId: string) => {
+        if (!selectionMode) return
+
+        setSelectedEventIds((prev) => {
+            if (prev.includes(eventId)) {
+                return prev.filter((id) => id !== eventId)
+            }
+            return [...prev, eventId]
+        })
+    }
+
+    const handleSelectAllVisible = () => {
+        setSelectedEventIds(visibleEventIds)
+    }
+
+    const handleClearSelection = () => {
+        setSelectedEventIds([])
+    }
+
+    const handleDeleteSelected = () => {
+        removeEventsByIds(selectedEventIds)
+        setSelectionMode(false)
+        setSelectedEventIds([])
     }
 
     return (
         <>
-            <h1 className="page-title">Événements</h1>
+            <h1 className="page-title">Evenements</h1>
             <p className="page-sub">
-                Vue consolidée des événements Junia et externes.
+                Vue consolidee des evenements Junia et externes.
             </p>
 
             <div className="events-page">
@@ -172,7 +235,22 @@ export default function Events() {
                         type={type}
                         onTypeChange={setType}
                         onCreateRequested={handleCreateRequested}
+                        selectionMode={selectionMode}
+                        selectedCount={selectedEventIds.length}
+                        onToggleSelectionMode={handleToggleSelectionMode}
                     />
+
+                    {selectionMode && (
+                        <SelectionToolbar
+                            totalCount={visibleEventIds.length}
+                            selectedCount={selectedEventIds.length}
+                            onSelectAll={handleSelectAllVisible}
+                            onClearSelection={handleClearSelection}
+                            onDeleteSelected={handleDeleteSelected}
+                            confirmTitle="Supprimer les evenements selectionnes"
+                            confirmMessage={`Vous allez supprimer ${selectedEventIds.length} evenement${selectedEventIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                        />
+                    )}
 
                     <div className="events-list-wrapper">
                         {monthGroups.length > 0 ? (
@@ -205,6 +283,9 @@ export default function Events() {
                                                                 onSelect={
                                                                     handleSelectEvent
                                                                 }
+                                                                selectionMode={selectionMode}
+                                                                selected={selectedEventIdsSet.has(event.id)}
+                                                                onToggleSelect={handleToggleEventSelection}
                                                             />
                                                         ),
                                                     )}
@@ -216,15 +297,13 @@ export default function Events() {
                             </div>
                         ) : (
                             <div className="events-empty-state">
-                                Aucun événement ne correspond aux filtres
-                                sélectionnés.
+                                Aucun evenement ne correspond aux filtres selectionnes.
                             </div>
                         )}
                     </div>
                 </div>
             </div>
 
-            {/* Detail card (vue / création / édition) */}
             {selectedEvent && (
                 <EventDetailCard
                     event={selectedEvent}
@@ -233,6 +312,11 @@ export default function Events() {
                         setSelectedEvent(null)
                         setDetailMode('edit')
                     }}
+                    onDelete={
+                        detailMode === 'create'
+                            ? undefined
+                            : () => handleDeleteSingleEvent(selectedEvent.id)
+                    }
                 />
             )}
         </>

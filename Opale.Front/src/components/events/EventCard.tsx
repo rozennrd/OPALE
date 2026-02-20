@@ -7,6 +7,9 @@ import EntityCard from '../common/EntityCard'
 interface EventCardProps {
     event: CampusEvent
     onSelect?: (event: CampusEvent) => void
+    selectionMode?: boolean
+    selected?: boolean
+    onToggleSelect?: (eventId: string) => void
 }
 
 function formatEventDate(date: string): string {
@@ -19,8 +22,19 @@ function formatEventDate(date: string): string {
     })
 }
 
-export default function EventCard({ event, onSelect }: EventCardProps) {
+export default function EventCard({
+    event,
+    onSelect,
+    selectionMode = false,
+    selected = false,
+    onToggleSelect,
+}: EventCardProps) {
     const handleClick = () => {
+        if (selectionMode) {
+            if (onToggleSelect) onToggleSelect(event.id)
+            return
+        }
+
         console.log('[EVENTS] Click event card', event)
         if (onSelect) onSelect(event)
     }
@@ -31,6 +45,8 @@ export default function EventCard({ event, onSelect }: EventCardProps) {
             className="event-card"
             mainClassName="event-card-main"
             asideClassName="event-card-aside"
+            selectionMode={selectionMode}
+            selected={selected}
             badge={
                 <EventTypeBadge
                     type={event.type}

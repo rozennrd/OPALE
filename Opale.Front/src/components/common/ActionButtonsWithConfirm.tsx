@@ -15,50 +15,81 @@ interface ActionButtonsWithConfirmProps {
     hasChanges?: boolean
     cancelDirtyTitle?: string
     cancelDirtyMessage?: React.ReactNode
-    cancelDirtyConfirmLabel?: string   // bouton principal
-    cancelDirtyDiscardLabel?: string   // bouton rouge
+    cancelDirtyConfirmLabel?: string
+    cancelDirtyDiscardLabel?: string
+
+    // Suppression optionnelle
+    onDelete?: () => void
+    deleteLabel?: string
+    deleteTitle?: string
+    deleteMessage?: React.ReactNode
+    deleteConfirmLabel?: string
+    deleteCancelLabel?: string
+
+    // Hooks optionnels autour de la sauvegarde
+    onBeforeSaveClick?: () => boolean
+    onAfterSaveConfirm?: () => void
 
     onSave: () => void
     onCancel: () => void
 }
 
 const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
-                                                                               saveLabel = 'Enregistrer',
-                                                                               cancelLabel = 'Annuler',
-                                                                               confirmTitle = 'Confirmer les modifications',
-                                                                               confirmMessage = 'Souhaitez-vous enregistrer les modifications ?',
-                                                                               confirmLabel = 'Confirmer',
-                                                                               hasChanges = false,
-                                                                               cancelDirtyTitle = 'Modifications non enregistrées',
-                                                                               cancelDirtyMessage = (
-                                                                                   <>
-                                                                                       <p>Vous avez modifié certaines informations.</p>
-                                                                                       <p>Souhaitez-vous les enregistrer avant de quitter&nbsp;?</p>
-                                                                                   </>
-                                                                               ),
-                                                                               cancelDirtyConfirmLabel = 'Enregistrer et fermer',
-                                                                               cancelDirtyDiscardLabel = 'Fermer sans enregistrer',
-                                                                               onSave,
-                                                                               onCancel,
-                                                                           }) => {
+    saveLabel = 'Enregistrer',
+    cancelLabel = 'Annuler',
+    confirmTitle = 'Confirmer les modifications',
+    confirmMessage = 'Souhaitez-vous enregistrer les modifications ?',
+    confirmLabel = 'Confirmer',
+    hasChanges = false,
+    cancelDirtyTitle = 'Modifications non enregistrees',
+    cancelDirtyMessage = (
+        <>
+            <p>Vous avez modifie certaines informations.</p>
+            <p>Souhaitez-vous les enregistrer avant de quitter&nbsp;?</p>
+        </>
+    ),
+    cancelDirtyConfirmLabel = 'Enregistrer et fermer',
+    cancelDirtyDiscardLabel = 'Fermer sans enregistrer',
+    onDelete,
+    deleteLabel = 'Supprimer',
+    deleteTitle = 'Confirmer la suppression',
+    deleteMessage = 'Souhaitez-vous supprimer cet element ?',
+    deleteConfirmLabel = 'Supprimer',
+    deleteCancelLabel = 'Annuler',
+    onBeforeSaveClick,
+    onAfterSaveConfirm,
+    onSave,
+    onCancel,
+}) => {
     const [openSaveConfirm, setOpenSaveConfirm] = useState(false)
     const [openCancelConfirm, setOpenCancelConfirm] = useState(false)
-
-    /* -------- Bouton "Enregistrer" -------- */
-    const openSaveConfirmDialog = () => {
-        setOpenSaveConfirm(true)
-    }
+    const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false)
 
     const closeSaveConfirmDialog = () => {
         setOpenSaveConfirm(false)
     }
 
-    const handleConfirmSave = () => {
-        closeSaveConfirmDialog()
-        onSave()
+    const closeCancelConfirmDialog = () => {
+        setOpenCancelConfirm(false)
     }
 
-    /* -------- Bouton "Annuler" -------- */
+    const closeDeleteConfirmDialog = () => {
+        setOpenDeleteConfirm(false)
+    }
+
+    const canSave = () => {
+        if (!onBeforeSaveClick) return true
+        return onBeforeSaveClick()
+    }
+
+    const handleConfirmSave = () => {
+        if (!canSave()) return
+
+        closeSaveConfirmDialog()
+        onSave()
+        if (onAfterSaveConfirm) onAfterSaveConfirm()
+    }
+
     const handleCancelClick = () => {
         if (!hasChanges) {
             onCancel()
@@ -68,11 +99,9 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
         setOpenCancelConfirm(true)
     }
 
-    const closeCancelConfirmDialog = () => {
-        setOpenCancelConfirm(false)
-    }
-
     const handleConfirmCancelWithSave = () => {
+        if (!canSave()) return
+
         closeCancelConfirmDialog()
         onSave()
         onCancel()
@@ -83,9 +112,26 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
         onCancel()
     }
 
+    const handleConfirmDelete = () => {
+        if (!onDelete) return
+
+        closeDeleteConfirmDialog()
+        onDelete()
+    }
+
     return (
         <>
             <div className="action-buttons-row">
+                {onDelete && (
+                    <button
+                        type="button"
+                        className="btn-danger action-buttons-delete-btn"
+                        onClick={() => setOpenDeleteConfirm(true)}
+                    >
+                        {deleteLabel}
+                    </button>
+                )}
+
                 <button
                     type="button"
                     className="btn-tertiary"
@@ -97,41 +143,47 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
                 <button
                     type="button"
                     className="btn-primary"
-                    onClick={openSaveConfirmDialog}
+                    onClick={() => setOpenSaveConfirm(true)}
                 >
                     {saveLabel}
                 </button>
             </div>
 
-            {/* Pop-up du bouton "Enregistrer" */}
             <ConfirmDialog
                 open={openSaveConfirm}
                 title={confirmTitle}
                 message={confirmMessage}
                 confirmLabel={confirmLabel}
                 cancelLabel={cancelLabel}
-                // classes par défaut : confirm = btn-primary, cancel = btn-tertiary
                 onConfirm={handleConfirmSave}
                 onCancel={closeSaveConfirmDialog}
-                // ESC / croix / overlay → ferment juste ce popup
                 onRequestClose={closeSaveConfirmDialog}
             />
 
-            {/* Pop-up quand on clique sur "Annuler" avec des changements */}
             <ConfirmDialog
                 open={openCancelConfirm}
                 title={cancelDirtyTitle}
                 message={cancelDirtyMessage}
                 confirmLabel={cancelDirtyConfirmLabel}
                 cancelLabel={cancelDirtyDiscardLabel}
-                // "Enregistrer et fermer" = bouton principal
                 confirmClassName="btn-primary"
-                // "Fermer sans enregistrer" = bouton rouge
                 cancelClassName="btn-danger"
                 onConfirm={handleConfirmCancelWithSave}
                 onCancel={handleDiscardChangesAndClose}
-                // ESC / croix / overlay → ferment SEULEMENT le popup
                 onRequestClose={closeCancelConfirmDialog}
+            />
+
+            <ConfirmDialog
+                open={openDeleteConfirm}
+                title={deleteTitle}
+                message={deleteMessage}
+                confirmLabel={deleteConfirmLabel}
+                cancelLabel={deleteCancelLabel}
+                confirmClassName="btn-danger"
+                cancelClassName="btn-tertiary"
+                onConfirm={handleConfirmDelete}
+                onCancel={closeDeleteConfirmDialog}
+                onRequestClose={closeDeleteConfirmDialog}
             />
         </>
     )

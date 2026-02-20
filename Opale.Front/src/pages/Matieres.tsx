@@ -10,16 +10,18 @@ import MatieresToolbar, {
 } from '../components/matieres/MatieresToolbar'
 import MatiereSection from '../components/matieres/MatiereSection'
 import MatiereDetailCard from '../components/matieres/MatiereDetailCard'
+import SelectionToolbar from '../components/common/SelectionToolbar'
 import { MATIERES_MOCK } from '../mocks/matieres.mock'
 import { INTERNAL_TEACHERS_MOCK } from '../mocks/teachers.mock'
 import { Matiere } from '../models/Matiere'
 
 const getCycleFromPromoLabel = (promoLabel: string) => {
-    // "ADI 1" -> "ADI" | "CIR 2" -> "CIR" | "AP 3" -> "AP"
-    return (promoLabel || '').trim().split(/\s+/)[0] || '—'
+    return (promoLabel || '').trim().split(/\s+/)[0] || '-'
 }
 
 export default function Matieres() {
+    const [matieres, setMatieres] = useState<Matiere[]>(() => [...MATIERES_MOCK])
+
     const [searchValue, setSearchValue] = useState('')
     const [semestreFilter, setSemestreFilter] = useState<SemestreFilter>('ALL')
 
@@ -29,18 +31,25 @@ export default function Matieres() {
 
     const [selected, setSelected] = useState<Matiere | null>(null)
 
-    // Options toolbar
+    const [selectionMode, setSelectionMode] = useState(false)
+    const [selectedMatiereIds, setSelectedMatiereIds] = useState<string[]>([])
+
+    const selectedMatiereIdsSet = useMemo(
+        () => new Set(selectedMatiereIds),
+        [selectedMatiereIds],
+    )
+
     const cycleOptions = useMemo(() => {
         const uniq = new Set<string>()
-        for (const m of MATIERES_MOCK) uniq.add(getCycleFromPromoLabel(m.id_promo))
+        for (const m of matieres) uniq.add(getCycleFromPromoLabel(m.id_promo))
         return Array.from(uniq).sort((a, b) => a.localeCompare(b, 'fr'))
-    }, [])
+    }, [matieres])
 
     const promotionOptions = useMemo(() => {
         const uniq = new Set<string>()
-        for (const m of MATIERES_MOCK) uniq.add(m.id_promo)
+        for (const m of matieres) uniq.add(m.id_promo)
         return Array.from(uniq).sort((a, b) => a.localeCompare(b, 'fr'))
-    }, [])
+    }, [matieres])
 
     const teacherOptions = useMemo(() => {
         return INTERNAL_TEACHERS_MOCK
@@ -54,7 +63,7 @@ export default function Matieres() {
     const filtered = useMemo(() => {
         const q = searchValue.trim().toLowerCase()
 
-        return MATIERES_MOCK.filter((m) => {
+        return matieres.filter((m) => {
             const matchesQuery = q.length === 0 || m.nom.toLowerCase().includes(q)
 
             const matchesSemestre =
@@ -76,7 +85,19 @@ export default function Matieres() {
                 matchesTeacher
             )
         })
-    }, [searchValue, semestreFilter, cycleFilter, promotionFilter, teacherFilter])
+    }, [
+        matieres,
+        searchValue,
+        semestreFilter,
+        cycleFilter,
+        promotionFilter,
+        teacherFilter,
+    ])
+
+    const visibleMatiereIds = useMemo(
+        () => filtered.map((matiere) => matiere.id),
+        [filtered],
+    )
 
     const groupedByPromo = useMemo(() => {
         const map = new Map<string, Matiere[]>()
@@ -89,22 +110,78 @@ export default function Matieres() {
 
         return Array.from(map.entries())
             .sort(([a], [b]) => a.localeCompare(b, 'fr'))
-            .map(([promoLabel, matieres]) => ({
+            .map(([promoLabel, groupedMatieres]) => ({
                 promoLabel,
-                matieres: matieres
+                matieres: groupedMatieres
                     .slice()
                     .sort((a, b) => a.nom.localeCompare(b.nom, 'fr')),
             }))
     }, [filtered])
 
-    const handleSelectMatiere = (m: Matiere) => {
-        console.log('[MATIERES] Select', m)
-        setSelected(m)
+    const removeMatieresByIds = (ids: string[]) => {
+        const idsSet = new Set(ids)
+        if (idsSet.size === 0) return
+
+        setMatieres((prev) => prev.filter((matiere) => !idsSet.has(matiere.id)))
+        setSelectedMatiereIds((prev) => prev.filter((id) => !idsSet.has(id)))
+        setSelected((prev) => {
+            if (!prev) return prev
+            if (idsSet.has(prev.id)) return null
+            return prev
+        })
+    }
+
+    const handleDeleteSingleMatiere = (matiereId: string) => {
+        removeMatieresByIds([matiereId])
+    }
+
+    const handleToggleSelectionMode = () => {
+        setSelectionMode((prev) => {
+            const next = !prev
+
+            if (next) {
+                setSelected(null)
+                setSelectedMatiereIds([])
+            } else {
+                setSelectedMatiereIds([])
+            }
+
+            return next
+        })
+    }
+
+    const handleToggleMatiereSelection = (matiereId: string) => {
+        if (!selectionMode) return
+
+        setSelectedMatiereIds((prev) => {
+            if (prev.includes(matiereId)) {
+                return prev.filter((id) => id !== matiereId)
+            }
+            return [...prev, matiereId]
+        })
+    }
+
+    const handleSelectAllVisible = () => {
+        setSelectedMatiereIds(visibleMatiereIds)
+    }
+
+    const handleClearSelection = () => {
+        setSelectedMatiereIds([])
+    }
+
+    const handleDeleteSelected = () => {
+        removeMatieresByIds(selectedMatiereIds)
+        setSelectionMode(false)
+        setSelectedMatiereIds([])
+    }
+
+    const handleSelectMatiere = (matiere: Matiere) => {
+        setSelected(matiere)
     }
 
     return (
         <>
-            <PageHeader title="Matières" subtitle="Gestion des matières par promotion" />
+            <PageHeader title="Matieres" subtitle="Gestion des matieres par promotion" />
 
             <div className="matieres-page">
                 <MatieresToolbar
@@ -113,46 +190,58 @@ export default function Matieres() {
                     semestreFilter={semestreFilter}
                     onSemestreChange={setSemestreFilter}
                     cycleFilter={cycleFilter}
-                    onCycleChange={(v) => {
-                        console.log('[MATIERES] Filtre cycle :', v)
-                        setCycleFilter(v)
-                        // setPromotionFilter('ALL')
-                    }}
+                    onCycleChange={setCycleFilter}
                     promotionFilter={promotionFilter}
-                    onPromotionChange={(v) => {
-                        console.log('[MATIERES] Filtre promotion :', v)
-                        setPromotionFilter(v)
-                    }}
+                    onPromotionChange={setPromotionFilter}
                     teacherFilter={teacherFilter}
-                    onTeacherChange={(v) => {
-                        console.log('[MATIERES] Filtre enseignant :', v)
-                        setTeacherFilter(v)
-                    }}
+                    onTeacherChange={setTeacherFilter}
                     cycleOptions={cycleOptions}
                     promotionOptions={promotionOptions}
                     teacherOptions={teacherOptions}
+                    selectionMode={selectionMode}
+                    selectedCount={selectedMatiereIds.length}
+                    onToggleSelectionMode={handleToggleSelectionMode}
                 />
 
+                {selectionMode && (
+                    <SelectionToolbar
+                        totalCount={visibleMatiereIds.length}
+                        selectedCount={selectedMatiereIds.length}
+                        onSelectAll={handleSelectAllVisible}
+                        onClearSelection={handleClearSelection}
+                        onDeleteSelected={handleDeleteSelected}
+                        confirmTitle="Supprimer les matieres selectionnees"
+                        confirmMessage={`Vous allez supprimer ${selectedMatiereIds.length} matiere${selectedMatiereIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                    />
+                )}
+
                 <div className="matieres-sections">
-                    {groupedByPromo.map(({ promoLabel, matieres }) => (
+                    {groupedByPromo.map(({ promoLabel, matieres: groupedMatieres }) => (
                         <MatiereSection
                             key={promoLabel}
                             promoLabel={promoLabel}
-                            matieres={matieres}
+                            matieres={groupedMatieres}
                             onSelectMatiere={handleSelectMatiere}
+                            selectionMode={selectionMode}
+                            selectedMatiereIds={selectedMatiereIdsSet}
+                            onToggleMatiereSelection={handleToggleMatiereSelection}
                         />
                     ))}
 
                     {groupedByPromo.length === 0 && (
                         <div className="matieres-empty-state">
-                            Aucune matière ne correspond à vos filtres.
+                            Aucune matiere ne correspond a vos filtres.
                         </div>
                     )}
                 </div>
             </div>
 
             {selected && (
-                <MatiereDetailCard matiere={selected} onClose={() => setSelected(null)} />
+                <MatiereDetailCard
+                    matiere={selected}
+                    onClose={() => setSelected(null)}
+                    onDelete={() => handleDeleteSingleMatiere(selected.id)}
+                />
             )}
         </>
     )

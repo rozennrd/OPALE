@@ -1,4 +1,4 @@
-// src/components/rooms/RoomsSection.tsx
+﻿// src/components/rooms/RoomsSection.tsx
 import React, { useState } from 'react'
 import icPlus from '../../assets/ic-plus.png'
 import { Room } from '../../models/Room'
@@ -13,9 +13,9 @@ interface RoomsSectionProps {
 }
 
 const FLOOR_LABELS: Record<number, string> = {
-    0: 'Rez-de-chaussée',
-    1: '1er étage',
-    2: '2e étage',
+    0: 'Rez-de-chaussee',
+    1: '1er etage',
+    2: '2e etage',
 }
 
 const FLOOR_CODES: Record<number, string> = {

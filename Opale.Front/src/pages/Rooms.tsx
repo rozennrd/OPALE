@@ -1,4 +1,4 @@
-// src/pages/Rooms.tsx
+﻿// src/pages/Rooms.tsx
 import React, { useMemo, useState } from 'react'
 import { Room } from '../models/Room'
 import { ROOMS_MOCK } from '../mocks/rooms.mock'
@@ -23,7 +23,7 @@ const sortRoomsByCode = (a: Room, b: Room): number => {
 }
 
 export default function Rooms() {
-    const [rooms, setRooms] = useState<Room[]>(ROOMS_MOCK)
+    const [rooms, setRooms] = useState<Room[]>(() => [...ROOMS_MOCK])
     const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
     const [pendingNewRoomId, setPendingNewRoomId] = useState<string | null>(null)
 
@@ -93,15 +93,26 @@ export default function Rooms() {
         setSelectedRoom(null)
     }
 
+    const handleDeleteSingleRoom = (roomId: string) => {
+        setRooms((prev) => prev.filter((room) => room.id !== roomId))
+
+        setSelectedRoom((prev) => {
+            if (!prev) return prev
+            return prev.id === roomId ? null : prev
+        })
+
+        if (pendingNewRoomId === roomId) {
+            setPendingNewRoomId(null)
+        }
+    }
+
     return (
         <>
-            {/* TITRE & SOUS-TITRE */}
             <PageHeader
                 title="Salles"
-                subtitle="Liste des salles par étage avec types et commentaires (mock front uniquement)."
+                subtitle="Liste des salles par etage avec types et commentaires (mock front uniquement)."
             />
 
-            {/* CONTENU DE LA PAGE */}
             <div className="rooms-page">
                 <div className="rooms-sections">
                     {[0, 1, 2].map((floor) => (
@@ -121,6 +132,7 @@ export default function Rooms() {
                     room={selectedRoom}
                     onClose={handleCloseDetail}
                     onChange={handleRoomChange}
+                    onDelete={() => handleDeleteSingleRoom(selectedRoom.id)}
                 />
             )}
         </>

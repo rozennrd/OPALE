@@ -13,11 +13,12 @@ import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 interface EventDetailCardProps {
     event: CampusEvent
     onClose: () => void
+    onDelete?: () => void
     mode?: 'edit' | 'create'
 }
 
 function formatDate(date: string | undefined): string {
-    if (!date) return '—'
+    if (!date) return '-'
     const d = new Date(date)
     if (Number.isNaN(d.getTime())) return date
     return d.toLocaleDateString('fr-FR', {
@@ -28,10 +29,11 @@ function formatDate(date: string | undefined): string {
 }
 
 export default function EventDetailCard({
-                                            event,
-                                            onClose,
-                                            mode = 'edit',
-                                        }: EventDetailCardProps) {
+    event,
+    onClose,
+    onDelete,
+    mode = 'edit',
+}: EventDetailCardProps) {
     const isCreate = mode === 'create' || event.id === 'new-event'
     const { draft, hasChanges, updateField, handleSave } = useEventDetail(event)
 
@@ -51,7 +53,7 @@ export default function EventDetailCard({
     }
 
     const headerTitle =
-        draft.name || (isCreate ? 'Nouvel événement' : 'Événement sans titre')
+        draft.name || (isCreate ? 'Nouvel evenement' : 'Evenement sans titre')
 
     const headerSubtitle = (() => {
         const start = formatDate(draft.startDate)
@@ -59,9 +61,9 @@ export default function EventDetailCard({
             draft.startDate &&
             draft.endDate &&
             draft.startDate !== draft.endDate
-                ? ` → ${formatDate(draft.endDate)}`
+                ? ` -> ${formatDate(draft.endDate)}`
                 : ''
-        const location = draft.location ? ` · ${draft.location}` : ''
+        const location = draft.location ? ` � ${draft.location}` : ''
         return `${start}${end}${location}`
     })()
 
@@ -77,7 +79,7 @@ export default function EventDetailCard({
         onSaveAndClose: () => {
             if (isCreate && !isValid) {
                 window.alert(
-                    'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de créer l’événement.',
+                    'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de creer cet evenement.',
                 )
                 return
             }
@@ -92,7 +94,7 @@ export default function EventDetailCard({
             <DetailCardBody className="event-detail-card">
                 <DetailCardHeader
                     onClose={handleRequestClose}
-                    closeAriaLabel="Fermer la fiche événement"
+                    closeAriaLabel="Fermer la fiche evenement"
                     closeButtonClassName="event-detail-close"
                     headerClassName="event-detail-header-badge"
                 >
@@ -105,10 +107,9 @@ export default function EventDetailCard({
                     />
                 </DetailCardHeader>
 
-                {/* Colonne gauche : infos éditables */}
                 <section className="event-detail-section event-detail-section-left">
                     <h3 className="event-detail-section-title">
-                        Informations générales
+                        Informations generales
                     </h3>
 
                     <dl className="event-detail-info-list">
@@ -127,7 +128,7 @@ export default function EventDetailCard({
                         </div>
 
                         <div className="event-detail-info-row">
-                            <dt>Date de début</dt>
+                            <dt>Date de debut</dt>
                             <dd>
                                 <input
                                     type="date"
@@ -188,11 +189,11 @@ export default function EventDetailCard({
                                     }
                                 >
                                     <option value="JOURNEE_PO">
-                                        Journée Portes Ouvertes
+                                        Journee Portes Ouvertes
                                     </option>
                                     <option value="EXAMEN">Examen</option>
                                     <option value="CONFERENCE">
-                                        Conférence
+                                        Conference
                                     </option>
                                     <option value="FORUM">Forum</option>
                                     <option value="SALON">Salon</option>
@@ -239,14 +240,13 @@ export default function EventDetailCard({
                     </dl>
                 </section>
 
-                {/* Colonne droite : description */}
                 <section className="event-detail-section event-detail-section-right">
                     <h3 className="event-detail-section-title">
                         Description / commentaires
                     </h3>
                     <textarea
                         className="event-detail-textarea"
-                        placeholder="Notes sur l’événement, objectifs, intervenants, public visé…"
+                        placeholder="Notes sur l'evenement, objectifs, intervenants, public vise..."
                         value={draft.description}
                         onChange={(e) =>
                             updateField('description', e.target.value)
@@ -256,60 +256,71 @@ export default function EventDetailCard({
                     />
                 </section>
 
-                {/* Footer : boutons communs Annuler / Enregistrer ou Créer */}
                 <DetailCardFooter
                     onCancel={onClose}
                     onSave={handleSave}
                     onAfterSaveConfirm={isCreate ? onClose : undefined}
+                    onDelete={isCreate ? undefined : onDelete}
                     hasChanges={hasChanges}
-                    saveLabel={isCreate ? 'Créer' : 'Enregistrer'}
+                    saveLabel={isCreate ? 'Creer' : 'Enregistrer'}
+                    deleteLabel="Supprimer"
+                    deleteTitle="Supprimer cet evenement"
+                    deleteMessage={
+                        <>
+                            Vous allez supprimer{' '}
+                            <strong>{draft.name || 'cet evenement'}</strong>.
+                            <br />
+                            Confirmer ?
+                        </>
+                    }
+                    deleteConfirmLabel="Supprimer"
                     confirmTitle={
                         isCreate
-                            ? 'Créer cet événement'
+                            ? 'Creer cet evenement'
                             : 'Confirmer les modifications'
                     }
                     confirmMessage={
                         isCreate ? (
                             <>
-                                Vous êtes sur le point de créer
-                                l&apos;événement{' '}
+                                Vous etes sur le point de creer
+                                l&apos;evenement{' '}
                                 <strong>
                                     {draft.name || 'sans titre'}
                                 </strong>
                                 .
                                 <br />
-                                Confirmer&nbsp;?
+                                Confirmer ?
                             </>
                         ) : (
                             <>
-                                Vous êtes sur le point d’enregistrer les
+                                Vous etes sur le point d&apos;enregistrer les
                                 modifications pour{' '}
                                 <strong>{draft.name}</strong>.
                                 <br />
-                                Confirmer&nbsp;?
+                                Confirmer ?
                             </>
                         )
                     }
-                    confirmLabel={isCreate ? 'Créer' : 'Enregistrer'}
+                    confirmLabel={isCreate ? 'Creer' : 'Enregistrer'}
                     cancelLabel="Annuler"
-                    cancelDirtyTitle="Modifications non enregistrées"
+                    cancelDirtyTitle="Modifications non enregistrees"
                     cancelDirtyMessage={
                         <>
-                            <p>Vous avez modifié cette fiche événement.</p>
+                            <p>Vous avez modifie cette fiche evenement.</p>
                             <p>
                                 Souhaitez-vous enregistrer les changements
-                                avant de fermer&nbsp;?
+                                avant de fermer ?
                             </p>
                         </>
                     }
                     cancelDirtyConfirmLabel={
-                        isCreate ? 'Créer et fermer' : 'Enregistrer et fermer'
+                        isCreate ? 'Creer et fermer' : 'Enregistrer et fermer'
                     }
                     cancelDirtyDiscardLabel="Fermer sans enregistrer"
                     onBeforeSaveClick={() => {
                         if (isCreate && !isValid) {
                             window.alert(
-                                'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de créer l’événement.',
+                                'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de creer cet evenement.',
                             )
                             return false
                         }
@@ -318,21 +329,20 @@ export default function EventDetailCard({
                 />
             </DetailCardBody>
 
-            {/* Popup spécifique ESC / croix */}
             <ConfirmDialog
                 open={isConfirmOpen}
-                title="Modifications non enregistrées"
+                title="Modifications non enregistrees"
                 message={
                     <>
-                        <p>Vous avez modifié cette fiche événement.</p>
+                        <p>Vous avez modifie cette fiche evenement.</p>
                         <p>
                             Souhaitez-vous enregistrer les changements avant de
-                            fermer&nbsp;?
+                            fermer ?
                         </p>
                     </>
                 }
                 confirmLabel={
-                    isCreate ? 'Créer et fermer' : 'Enregistrer et fermer'
+                    isCreate ? 'Creer et fermer' : 'Enregistrer et fermer'
                 }
                 cancelLabel="Fermer sans enregistrer"
                 confirmClassName="btn-primary"
