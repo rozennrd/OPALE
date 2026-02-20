@@ -1,19 +1,20 @@
 // src/components/events/EventDetailCard.tsx
-
-import React from 'react'
-import { CampusEvent, EventType } from '../../models/CampusEvent'
-import { useEventDetail } from '../../hooks/events/useEventDetail'
+import {CampusEvent, EventType} from '../../models/CampusEvent'
+import {useEventDetail} from '../../hooks/events/useEventDetail'
 import DetailCardHeader from '../common/DetailCardHeader'
 import DetailCardFooter from '../common/DetailCardFooter'
 import DetailCardBody from '../common/DetailCardBody'
 import EventTypeBadge from './EventTypeBadge'
 import ConfirmDialog from '../common/ConfirmDialog'
-import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
+import {useDetailDirtyClose} from '../../hooks/common/useDetailDirtyClose'
+
+type SaveResult = { success: boolean; error?: string }
 
 interface EventDetailCardProps {
     event: CampusEvent
-    onClose: () => void
     mode?: 'edit' | 'create'
+    onClose: () => void
+    onSave: (event: Partial<CampusEvent>, salleIds: string[]) => Promise<SaveResult>
 }
 
 function formatDate(date: string | undefined): string {
@@ -27,13 +28,34 @@ function formatDate(date: string | undefined): string {
     })
 }
 
+function toDatetimeLocal(isoString: string): string {
+    if (!isoString) return ''
+    return isoString.slice(0, 16)
+}
+
+function getWeekNumber(isoDatetime: string): number | undefined {
+    const d = new Date(isoDatetime)
+    if (Number.isNaN(d.getTime())) return undefined
+
+    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
+    const dayOfWeek = date.getUTCDay() || 7
+    date.setUTCDate(date.getUTCDate() + 4 - dayOfWeek)
+    const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1))
+    return Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7)
+}
+
 export default function EventDetailCard({
                                             event,
-                                            onClose,
                                             mode = 'edit',
+                                            onClose,
+                                            onSave,
                                         }: EventDetailCardProps) {
     const isCreate = mode === 'create' || event.id === 'new-event'
-    const { draft, hasChanges, updateField, handleSave } = useEventDetail(event)
+
+    const {draft, hasChanges, updateField, handleSave} = useEventDetail(
+        event,
+        onSave,
+    )
 
     const isValid =
         draft.name.trim().length > 0 &&
@@ -44,7 +66,7 @@ export default function EventDetailCard({
         !!draft.source
 
     const handleDescriptionBlur = () => {
-        console.log('[EVENTS] Update description (mock onBlur)', {
+        console.log('[EVENTS] Update description (onBlur)', {
             eventId: draft.id,
             description: draft.description,
         })
@@ -65,6 +87,20 @@ export default function EventDetailCard({
         return `${start}${end}${location}`
     })()
 
+    // handleSave retourne { success } → on ferme si succès
+    const handleSaveAndClose = async () => {
+        if (isCreate && !isValid) {
+            window.alert(
+                'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de créer l\'événement.',
+            )
+            return
+        }
+        const result = await handleSave()
+        if (result.success) {
+            onClose()
+        }
+    }
+
     const {
         handleRequestClose,
         isConfirmOpen,
@@ -74,16 +110,7 @@ export default function EventDetailCard({
     } = useDetailDirtyClose({
         hasChanges,
         onClose,
-        onSaveAndClose: () => {
-            if (isCreate && !isValid) {
-                window.alert(
-                    'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de créer l’événement.',
-                )
-                return
-            }
-            handleSave()
-            onClose()
-        },
+        onSaveAndClose: handleSaveAndClose,
         ignoreWhenSelectorExists: '.modal-overlay',
     })
 
@@ -130,15 +157,18 @@ export default function EventDetailCard({
                             <dt>Date de début</dt>
                             <dd>
                                 <input
-                                    type="date"
+                                    type="datetime-local"
                                     className="event-detail-input"
-                                    value={draft.startDate}
-                                    onChange={(e) =>
-                                        updateField(
-                                            'startDate',
-                                            e.target.value,
-                                        )
-                                    }
+                                    value={toDatetimeLocal(draft.startDate)}
+                                    onChange={(e) => {
+                                        const newStartDate = e.target.value
+                                        updateField('startDate', newStartDate)
+                                        // Recalcul automatique du numéro de semaine
+                                        const weekNum = getWeekNumber(newStartDate)
+                                        if (weekNum !== undefined) {
+                                            updateField('num_semaine', weekNum)
+                                        }
+                                    }}
                                 />
                             </dd>
                         </div>
@@ -147,12 +177,10 @@ export default function EventDetailCard({
                             <dt>Date de fin</dt>
                             <dd>
                                 <input
-                                    type="date"
+                                    type="datetime-local"
                                     className="event-detail-input"
-                                    value={draft.endDate}
-                                    onChange={(e) =>
-                                        updateField('endDate', e.target.value)
-                                    }
+                                    value={toDatetimeLocal(draft.endDate)}
+                                    onChange={(e) => updateField('endDate', e.target.value)}
                                 />
                             </dd>
                         </div>
@@ -259,7 +287,7 @@ export default function EventDetailCard({
                 {/* Footer : boutons communs Annuler / Enregistrer ou Créer */}
                 <DetailCardFooter
                     onCancel={onClose}
-                    onSave={handleSave}
+                    onSave={handleSaveAndClose}
                     onAfterSaveConfirm={isCreate ? onClose : undefined}
                     hasChanges={hasChanges}
                     saveLabel={isCreate ? 'Créer' : 'Enregistrer'}
@@ -277,15 +305,15 @@ export default function EventDetailCard({
                                     {draft.name || 'sans titre'}
                                 </strong>
                                 .
-                                <br />
+                                <br/>
                                 Confirmer&nbsp;?
                             </>
                         ) : (
                             <>
-                                Vous êtes sur le point d’enregistrer les
+                                Vous êtes sur le point d&apos;enregistrer les
                                 modifications pour{' '}
                                 <strong>{draft.name}</strong>.
-                                <br />
+                                <br/>
                                 Confirmer&nbsp;?
                             </>
                         )
@@ -309,7 +337,7 @@ export default function EventDetailCard({
                     onBeforeSaveClick={() => {
                         if (isCreate && !isValid) {
                             window.alert(
-                                'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de créer l’événement.',
+                                'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de créer l\'événement.',
                             )
                             return false
                         }

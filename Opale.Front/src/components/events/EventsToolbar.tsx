@@ -1,5 +1,4 @@
 // src/components/events/EventsToolbar.tsx
-import React from 'react'
 import { EventType } from '../../models/CampusEvent'
 import { PageToolbar, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
@@ -24,7 +23,7 @@ interface EventsToolbarProps {
     type: TypeFilter
     onTypeChange: (value: TypeFilter) => void
 
-    // 👇 nouveau : clic sur "+"
+    // Clic sur "+"
     onCreateRequested: () => void
 }
 

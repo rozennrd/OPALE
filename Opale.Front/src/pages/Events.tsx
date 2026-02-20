@@ -1,21 +1,21 @@
 // src/pages/Events.tsx
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import EventsToolbar, {
     TargetFilter,
     TypeFilter,
 } from '../components/events/EventsToolbar'
 import EventCard from '../components/events/EventCard'
 import EventDetailCard from '../components/events/EventDetailCard'
-import {
-    JUNIA_EVENTS_MOCK,
-    EXTERNAL_EVENTS_MOCK,
-} from '../mocks/events.mock'
 import { CampusEvent } from '../models/CampusEvent'
-import SectionHeader from '../components/common/SectionHeader' // si tu l’utilises pour les mois
+import SectionHeader from '../components/common/SectionHeader'
+import { useEvents } from '../hooks/events/useEvent'
 
-const ALL_EVENTS = [...JUNIA_EVENTS_MOCK, ...EXTERNAL_EVENTS_MOCK]
+interface MonthGroup {
+    key: string
+    label: string
+    events: CampusEvent[]
+}
 
-// helpers getMonthKey / getMonthLabel que tu as déjà ou qu’on avait ajoutés
 function getMonthKey(dateStr: string): string {
     const d = new Date(dateStr)
     if (Number.isNaN(d.getTime())) return dateStr
@@ -33,6 +33,8 @@ function getMonthLabel(dateStr: string): string {
 }
 
 export default function Events() {
+    const { events, loading, error, createEvent, updateEvent } = useEvents()
+
     const [searchValue, setSearchValue] = useState('')
     const [dateFrom, setDateFrom] = useState('')
     const [dateTo, setDateTo] = useState('')
@@ -44,12 +46,11 @@ export default function Events() {
     const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({})
 
     const filteredEvents = useMemo(() => {
-        let items = [...ALL_EVENTS]
+        let items = [...events]
 
-        // tri chronologique
         items.sort(
             (a, b) =>
-                new Date(a.date).getTime() - new Date(b.date).getTime(),
+                new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
         )
 
         if (searchValue.trim()) {
@@ -57,21 +58,22 @@ export default function Events() {
             items = items.filter(
                 (evt) =>
                     evt.name.toLowerCase().includes(q) ||
-                    evt.location.toLowerCase().includes(q),
+                    evt.location.toLowerCase().includes(q) ||
+                    evt.description?.toLowerCase().includes(q)
             )
         }
 
         if (dateFrom) {
             const min = new Date(dateFrom).getTime()
             items = items.filter(
-                (evt) => new Date(evt.date).getTime() >= min,
+                (evt) => new Date(evt.startDate).getTime() >= min,
             )
         }
 
         if (dateTo) {
             const max = new Date(dateTo).getTime()
             items = items.filter(
-                (evt) => new Date(evt.date).getTime() <= max,
+                (evt) => new Date(evt.startDate).getTime() <= max,
             )
         }
 
@@ -86,26 +88,18 @@ export default function Events() {
         }
 
         return items
-    }, [searchValue, dateFrom, dateTo, target, type])
+    }, [events, searchValue, dateFrom, dateTo, target, type])
 
-    // Regroupement par mois (comme on l’a déjà fait)
     const monthGroups = useMemo(() => {
-        const groups: {
-            key: string
-            label: string
-            events: CampusEvent[]
-        }[] = []
-        const byKey = new Map<
-            string,
-            { key: string; label: string; events: CampusEvent[] }
-        >()
+        const groups: MonthGroup[] = []
+        const byKey = new Map<string, MonthGroup>()
 
         for (const evt of filteredEvents) {
-            const key = getMonthKey(evt.date)
-            const label = getMonthLabel(evt.date)
+            const key = getMonthKey(evt.startDate)
+            const label = getMonthLabel(evt.startDate)
 
             if (!byKey.has(key)) {
-                const group = { key, label, events: [] as CampusEvent[] }
+                const group: MonthGroup = { key, label, events: [] }
                 byKey.set(key, group)
                 groups.push(group)
             }
@@ -127,28 +121,51 @@ export default function Events() {
         setSelectedEvent(evt)
     }
 
-    // clic sur le bouton "+"
     const handleCreateRequested = () => {
-        const todayIso = new Date().toISOString().slice(0, 10)
+        const now = new Date()
 
         const newEvent: CampusEvent = {
             id: 'new-event',
             name: '',
-            startDate: '',
-            endDate: '',
+            startDate: now.toISOString(),
+            endDate: new Date(now.getTime() + 3600000).toISOString(),
             location: '',
             type: 'AUTRE',
             source: 'JUNIA',
             description: '',
+            show_macro: true,
+            show_micro: true,
+            is_blocking: false,
+            is_exceptional: true,
+            is_external: false,
         }
 
         setDetailMode('create')
         setSelectedEvent(newEvent)
-        console.log('[EVENTS] Open create event form', newEvent)
     }
 
-    const handleCloseDetail = () => {
-        setSelectedEvent(null)
+    const handleSaveEvent = async (event: Partial<CampusEvent>, salleIds: string[]) => {
+        if (detailMode === 'create') {
+            return await createEvent(event, salleIds)
+        } else {
+            return await updateEvent(event.id!, event, salleIds)
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className="page-loading">
+                <p>Chargement des événements...</p>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="page-error">
+                <p>Erreur: {error}</p>
+            </div>
+        )
     }
 
     return (
@@ -178,8 +195,7 @@ export default function Events() {
                         {monthGroups.length > 0 ? (
                             <div className="events-list">
                                 {monthGroups.map((group) => {
-                                    const isOpen =
-                                        openMonths[group.key] ?? true
+                                    const isOpen = openMonths[group.key] ?? true
 
                                     return (
                                         <section
@@ -189,25 +205,19 @@ export default function Events() {
                                             <SectionHeader
                                                 title={group.label}
                                                 isOpen={isOpen}
-                                                onToggle={() =>
-                                                    toggleMonth(group.key)
-                                                }
+                                                onToggle={() => toggleMonth(group.key)}
                                                 wrapperClassName="events-month-header"
                                             />
 
                                             {isOpen && (
                                                 <div className="events-month-group-cards">
-                                                    {group.events.map(
-                                                        (event) => (
-                                                            <EventCard
-                                                                key={event.id}
-                                                                event={event}
-                                                                onSelect={
-                                                                    handleSelectEvent
-                                                                }
-                                                            />
-                                                        ),
-                                                    )}
+                                                    {group.events.map((event) => (
+                                                        <EventCard
+                                                            key={event.id}
+                                                            event={event}
+                                                            onSelect={handleSelectEvent}
+                                                        />
+                                                    ))}
                                                 </div>
                                             )}
                                         </section>
@@ -216,23 +226,19 @@ export default function Events() {
                             </div>
                         ) : (
                             <div className="events-empty-state">
-                                Aucun événement ne correspond aux filtres
-                                sélectionnés.
+                                Aucun événement ne correspond aux filtres sélectionnés.
                             </div>
                         )}
                     </div>
                 </div>
             </div>
 
-            {/* Detail card (vue / création / édition) */}
             {selectedEvent && (
                 <EventDetailCard
                     event={selectedEvent}
                     mode={detailMode}
-                    onClose={() => {
-                        setSelectedEvent(null)
-                        setDetailMode('edit')
-                    }}
+                    onClose={() => setSelectedEvent(null)}
+                    onSave={handleSaveEvent}
                 />
             )}
         </>

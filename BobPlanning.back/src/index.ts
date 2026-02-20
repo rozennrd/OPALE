@@ -1055,7 +1055,7 @@ app.get('/getCours', authJwt.verifyToken, (req, res) => {
       return res.status(500).json({ error: err.message });
     }
 
-    const sql = 'SELECT * FROM Cours'; // Remplace `Cours` par le nom de ta table en base de données
+    const sql = 'SELECT * FROM Cours';
 
     connection.query(sql, (error: any, results: any) => {
       if (error) {
