@@ -15,8 +15,10 @@ import SectionHeader from '../components/common/SectionHeader'
 import SelectionToolbar from '../components/common/SelectionToolbar'
 import { useSelectionState } from '../hooks/common/useSelectionState'
 import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
+import { usePromotionCycles } from '../hooks/promotions/usePromotionCycles'
 
 const ALL_EVENTS = [...JUNIA_EVENTS_MOCK, ...EXTERNAL_EVENTS_MOCK]
+
 const DEFAULT_EVENT_FILTERS: {
     searchValue: string
     dateFrom: string
@@ -29,6 +31,26 @@ const DEFAULT_EVENT_FILTERS: {
     dateTo: '',
     target: 'ALL',
     type: 'ALL',
+}
+
+const createFrontendEventId = () =>
+    `evt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
+
+const normalizeEventForList = (event: CampusEvent): CampusEvent => {
+    const startDate = event.startDate ?? event.date ?? ''
+    const endDate = event.endDate ?? startDate
+    const date = startDate || endDate || event.date
+
+    return {
+        ...event,
+        startDate,
+        endDate,
+        date,
+        showMacro: event.showMacro ?? true,
+        showMicro: event.showMicro ?? false,
+        concernedCycleIds: [...(event.concernedCycleIds ?? [])],
+        concernedPromotionIds: [...(event.concernedPromotionIds ?? [])],
+    }
 }
 
 function getMonthKey(dateStr: string): string {
@@ -48,7 +70,9 @@ function getMonthLabel(dateStr: string): string {
 }
 
 export default function Events() {
-    const [events, setEvents] = useState<CampusEvent[]>(() => [...ALL_EVENTS])
+    const [events, setEvents] = useState<CampusEvent[]>(() =>
+        ALL_EVENTS.map((event) => normalizeEventForList(event)),
+    )
 
     const [searchValue, setSearchValue] = useState('')
     const [dateFrom, setDateFrom] = useState('')
@@ -59,6 +83,8 @@ export default function Events() {
     const [selectedEvent, setSelectedEvent] = useState<CampusEvent | null>(null)
     const [detailMode, setDetailMode] = useState<'edit' | 'create'>('edit')
     const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({})
+
+    const { cycles: promotionCycles } = usePromotionCycles()
 
     const {
         selectionMode,
@@ -81,10 +107,7 @@ export default function Events() {
     const filteredEvents = useMemo(() => {
         let items = [...events]
 
-        items.sort(
-            (a, b) =>
-                new Date(a.date).getTime() - new Date(b.date).getTime(),
-        )
+        items.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
         if (searchValue.trim()) {
             const q = searchValue.trim().toLowerCase()
@@ -97,16 +120,12 @@ export default function Events() {
 
         if (dateFrom) {
             const min = new Date(dateFrom).getTime()
-            items = items.filter(
-                (evt) => new Date(evt.date).getTime() >= min,
-            )
+            items = items.filter((evt) => new Date(evt.date).getTime() >= min)
         }
 
         if (dateTo) {
             const max = new Date(dateTo).getTime()
-            items = items.filter(
-                (evt) => new Date(evt.date).getTime() <= max,
-            )
+            items = items.filter((evt) => new Date(evt.date).getTime() <= max)
         }
 
         if (target === 'JUNIA') {
@@ -194,18 +213,49 @@ export default function Events() {
     }
 
     const handleCreateRequested = () => {
-        const newEvent = {
+        const today = new Date().toISOString().slice(0, 10)
+        const newEvent: CampusEvent = {
             id: 'new-event',
             name: '',
-            date: new Date().toISOString().slice(0, 10),
+            date: today,
+            startDate: today,
+            endDate: today,
             location: '',
             type: 'AUTRE',
             source: 'JUNIA',
-        } as CampusEvent
+            description: '',
+            showMacro: true,
+            showMicro: false,
+            concernedCycleIds: [],
+            concernedPromotionIds: [],
+        }
 
         setDetailMode('create')
         setSelectedEvent(newEvent)
-        console.log('[EVENTS] Open create event form', newEvent)
+    }
+
+    const handleSaveEvent = (savedEvent: CampusEvent) => {
+        const isCreateSave = detailMode === 'create' || savedEvent.id === 'new-event'
+        const previousEventId = savedEvent.id
+        const normalized = normalizeEventForList({
+            ...savedEvent,
+            id: isCreateSave ? createFrontendEventId() : savedEvent.id,
+        })
+
+        setEvents((prev) => {
+            if (isCreateSave) {
+                return [...prev, normalized]
+            }
+
+            return prev.map((event) =>
+                event.id === previousEventId ? normalized : event,
+            )
+        })
+
+        setSelectedEvent(normalized)
+        if (isCreateSave) {
+            setDetailMode('edit')
+        }
     }
 
     const handleDeleteSingleEvent = (eventId: string) => {
@@ -220,9 +270,9 @@ export default function Events() {
 
     return (
         <>
-            <h1 className="page-title">Événements</h1>
+            <h1 className="page-title">Evenements</h1>
             <p className="page-sub">
-                Vue consolidée des événements Junia et externes.
+                Vue consolidee des evenements Junia et externes.
             </p>
 
             <div className="events-page">
@@ -253,8 +303,8 @@ export default function Events() {
                             onSelectAll={() => selectAllEvents(visibleEventIds)}
                             onClearSelection={clearEventSelection}
                             onDeleteSelected={handleDeleteSelected}
-                            confirmTitle="Supprimer les événements sélectionnés"
-                            confirmMessage={`Vous allez supprimer ${selectedEventIds.length} événement${selectedEventIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                            confirmTitle="Supprimer les evenements selectionnes"
+                            confirmMessage={`Vous allez supprimer ${selectedEventIds.length} evenement${selectedEventIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
                         />
                     )}
 
@@ -262,8 +312,7 @@ export default function Events() {
                         {monthGroups.length > 0 ? (
                             <div className="events-list">
                                 {monthGroups.map((group) => {
-                                    const isOpen =
-                                        openMonths[group.key] ?? true
+                                    const isOpen = openMonths[group.key] ?? true
 
                                     return (
                                         <section
@@ -281,20 +330,22 @@ export default function Events() {
 
                                             {isOpen && (
                                                 <div className="events-month-group-cards">
-                                                    {group.events.map(
-                                                        (event) => (
-                                                            <EventCard
-                                                                key={event.id}
-                                                                event={event}
-                                                                onSelect={
-                                                                    handleSelectEvent
-                                                                }
-                                                                selectionMode={selectionMode}
-                                                                selected={selectedEventIdsSet.has(event.id)}
-                                                                onToggleSelect={toggleEventSelection}
-                                                            />
-                                                        ),
-                                                    )}
+                                                    {group.events.map((event) => (
+                                                        <EventCard
+                                                            key={event.id}
+                                                            event={event}
+                                                            onSelect={
+                                                                handleSelectEvent
+                                                            }
+                                                            selectionMode={selectionMode}
+                                                            selected={selectedEventIdsSet.has(
+                                                                event.id,
+                                                            )}
+                                                            onToggleSelect={
+                                                                toggleEventSelection
+                                                            }
+                                                        />
+                                                    ))}
                                                 </div>
                                             )}
                                         </section>
@@ -303,7 +354,8 @@ export default function Events() {
                             </div>
                         ) : (
                             <div className="events-empty-state">
-                                Aucun événement ne correspond aux filtres sélectionnés.
+                                Aucun evenement ne correspond aux filtres
+                                selectionnes.
                             </div>
                         )}
                     </div>
@@ -313,7 +365,9 @@ export default function Events() {
             {selectedEvent && (
                 <EventDetailCard
                     event={selectedEvent}
+                    cycles={promotionCycles}
                     mode={detailMode}
+                    onSave={handleSaveEvent}
                     onClose={() => {
                         setSelectedEvent(null)
                         setDetailMode('edit')

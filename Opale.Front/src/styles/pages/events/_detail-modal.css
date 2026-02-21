@@ -1,8 +1,6 @@
 /* src/styles/pages/events/_detail-modal.css */
 
 @layer pages {
-    /* ===== Overlay ===== */
-
     .event-detail-overlay {
         position: fixed;
         inset: 0;
@@ -10,24 +8,22 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow-y: auto;
+        padding: 1.2rem 1rem;
         z-index: 2000;
     }
-
-    /* ===== Card layout (par-dessus .detail-card commun) ===== */
 
     .event-detail-card {
         display: grid;
         grid-template-columns: 1.4fr 1.1fr;
         grid-auto-rows: auto;
         gap: 1.4rem 2rem;
-
-        /* optionnel : affiner un peu par rapport au shell générique */
         width: min(920px, 96vw);
-        max-height: min(640px, 96vh);
+        height: auto;
+        max-height: calc(100vh - 2.4rem);
         overflow-y: auto;
     }
 
-    /* Le wrapper header commun doit occuper toute la largeur de la grille */
     .event-detail-card > .detail-card-header {
         grid-column: 1 / -1;
     }
@@ -36,12 +32,9 @@
         width: 100%;
     }
 
-    /* Footer commun positionné sur toute la largeur */
     .detail-card-footer {
         grid-column: 1 / -1;
     }
-
-    /* ===== Variantes de couleur pour la pill événement (header) ===== */
 
     .event-detail-header-pill--junia {
         background: rgba(139, 92, 246, 0.18);
@@ -54,8 +47,6 @@
         border-color: rgba(59, 130, 246, 0.45);
         color: #1d4ed8;
     }
-
-    /* ===== Sections layout ===== */
 
     .event-detail-section {
         border-top: 1px solid var(--border-subtle, var(--border));
@@ -74,16 +65,9 @@
 
     .event-detail-section-right {
         grid-column: 2 / 3;
+        display: flex;
+        flex-direction: column;
     }
-
-    .event-detail-description {
-        font-size: 0.9rem;
-        line-height: 1.4;
-        color: var(--text);
-        white-space: pre-wrap;
-    }
-
-    /* ===== Infos / lignes ===== */
 
     .event-detail-info-list {
         display: flex;
@@ -116,37 +100,6 @@
         color: var(--text);
     }
 
-    .event-detail-pill {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.28rem 0.8rem;
-        border-radius: 999px;
-        border: 1px solid var(--border-subtle, var(--border));
-        background: var(--panel-soft);
-        font-size: 0.86rem;
-        line-height: 1.1;
-        color: var(--text);
-        max-width: 100%;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
-
-    .event-detail-pill--source-junia {
-        background: rgba(139, 92, 246, 0.12);
-        border-color: rgba(139, 92, 246, 0.4);
-        color: #6d28d9;
-    }
-
-    .event-detail-pill--source-external {
-        background: rgba(59, 130, 246, 0.12);
-        border-color: rgba(59, 130, 246, 0.4);
-        color: #1d4ed8;
-    }
-
-    /* ===== Inputs / selects ===== */
-
     .event-detail-input,
     .event-detail-select {
         width: 100%;
@@ -168,12 +121,10 @@
         padding-right: 2rem;
     }
 
-    /* ===== Textarea ===== */
-
     .event-detail-textarea {
         width: 100%;
-        height: 230px;
-        min-height: 0;
+        flex: 1;
+        min-height: 140px;
         resize: vertical;
         border-radius: 0.75rem;
         border: 1px solid var(--border);
@@ -184,12 +135,14 @@
         color: inherit;
     }
 
-    /* ===== Toggle Cible Junia / Externe ===== */
-
     .event-detail-source-toggle {
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
+    }
+
+    .event-detail-source-impact {
+        margin-top: 0.55rem;
     }
 
     .event-detail-source-pill {
@@ -227,45 +180,138 @@
         background: rgba(59, 130, 246, 1);
     }
 
-    /* ===== Responsive ===== */
+    .event-visibility-switch {
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--panel);
+        padding: 0.22rem 0.52rem 0.22rem 0.32rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        cursor: pointer;
+        transition:
+                border-color 140ms ease,
+                background-color 140ms ease;
+    }
+
+    .event-visibility-switch-track {
+        width: 36px;
+        height: 20px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(148, 163, 184, 0.25);
+        position: relative;
+        transition:
+                border-color 140ms ease,
+                background-color 140ms ease;
+    }
+
+    .event-visibility-switch-thumb {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 999px;
+        background: #64748b;
+        transition:
+                transform 140ms ease,
+                background-color 140ms ease;
+    }
+
+    .event-visibility-switch-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text);
+        white-space: nowrap;
+    }
+
+    .event-visibility-switch.is-on .event-visibility-switch-track {
+        background: rgba(59, 130, 246, 0.2);
+        border-color: rgba(59, 130, 246, 0.55);
+    }
+
+    .event-visibility-switch.is-on .event-visibility-switch-thumb {
+        transform: translateX(16px);
+        background: #1d4ed8;
+    }
+
+    .event-detail-impact-empty {
+        font-size: 0.82rem;
+        color: var(--muted);
+        padding: 0.35rem 0;
+    }
+
+    .event-detail-impact-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .event-detail-impact-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .event-detail-impact-sublist {
+        list-style: none;
+        margin: 0;
+        padding: 0 0 0 1.65rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .event-detail-impact-checkbox-row {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        cursor: pointer;
+        line-height: 1.2;
+        font-size: 0.88rem;
+    }
+
+    .event-detail-impact-checkbox-row--cycle {
+        font-weight: 600;
+    }
+
+    .event-detail-impact-checkbox {
+        width: 14px;
+        height: 14px;
+        accent-color: var(--primary);
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    .event-detail-impact-label {
+        line-height: 1.2;
+    }
 
     @media (max-width: 768px) {
         .event-detail-card {
             grid-template-columns: 1fr;
-            max-height: 96vh;
             width: min(96vw, 600px);
             gap: 1.1rem;
-            overflow-y: auto;
+            max-height: calc(100vh - 2.4rem);
         }
 
         .event-detail-section-left,
         .event-detail-section-right {
             grid-column: 1 / -1;
         }
-    }
 
-    /* ===== Dark theme (spécifique aux contenus) ===== */
+        .event-detail-textarea {
+            min-height: 180px;
+            flex: initial;
+        }
+    }
 
     [data-theme='dark'] .event-detail-info-row dt {
         color: #9ca3af;
-    }
-
-    [data-theme='dark'] .event-detail-pill {
-        background: #1f2735;
-        border-color: rgba(255, 255, 255, 0.18);
-        color: var(--text);
-    }
-
-    [data-theme='dark'] .event-detail-pill--source-junia {
-        background: rgba(139, 92, 246, 0.24);
-        border-color: rgba(139, 92, 246, 0.6);
-        color: #ddd6fe;
-    }
-
-    [data-theme='dark'] .event-detail-pill--source-external {
-        background: rgba(59, 130, 246, 0.24);
-        border-color: rgba(59, 130, 246, 0.6);
-        color: #bfdbfe;
     }
 
     [data-theme='dark'] .event-detail-input,
@@ -300,7 +346,20 @@
         border-color: var(--primary);
     }
 
-    /* Dark theme – variantes couleurs header (déjà présentes, gardées ici pour cohérence) */
+    [data-theme='dark'] .event-visibility-switch {
+        background: #111827;
+        border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    [data-theme='dark'] .event-visibility-switch-track {
+        background: rgba(148, 163, 184, 0.2);
+        border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    [data-theme='dark'] .event-detail-impact-checkbox-row {
+        color: var(--text);
+    }
+
     [data-theme='dark'] .event-detail-header-pill--junia {
         background: rgba(139, 92, 246, 0.24);
         border-color: rgba(139, 92, 246, 0.6);
