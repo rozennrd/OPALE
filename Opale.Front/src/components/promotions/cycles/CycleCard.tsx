@@ -599,7 +599,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                                         <strong>{previewData.matieres.length}</strong>
                                                     </div>
                                                     <div className="maquette-preview-summary-item">
-                                                        <span>Nombre d'avertissements</span>
+                                                        <span>Nombre d&apos;avertissements</span>
                                                         <strong>{previewData.warnings.length}</strong>
                                                     </div>
                                                 </div>
@@ -753,3 +753,4 @@ const CycleCard: React.FC<CycleCardProps> = ({
 }
 
 export default CycleCard
+

@@ -117,7 +117,7 @@ export default function EventsToolbar({
 
                 <div className="toolbar-filter">
                     <label className="toolbar-filter-label">
-                        Jusqu'au
+                        Jusqu&apos;au
                         <input
                             type="date"
                             value={dateTo}
@@ -154,7 +154,7 @@ export default function EventsToolbar({
 
                 <div className="toolbar-filter">
                     <label className="toolbar-filter-label">
-                        Type d'événement
+                        Type d&apos;événement
                         <select
                             value={type}
                             onChange={(e) => onTypeChange(e.target.value as TypeFilter)}
@@ -177,3 +177,4 @@ export default function EventsToolbar({
         </PageToolbar>
     )
 }
+

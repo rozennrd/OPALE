@@ -162,7 +162,7 @@ export default function TeacherDetailCard({
                 title="Modifications non enregistrées"
                 message={
                     <>
-                        <p>Vous avez modifié cette fiche d'enseignant.</p>
+                        <p>Vous avez modifié cette fiche d&apos;enseignant.</p>
                         <p>
                             Souhaitez-vous enregistrer les changements avant de
                             fermer ?
@@ -180,3 +180,4 @@ export default function TeacherDetailCard({
         </div>
     )
 }
+
