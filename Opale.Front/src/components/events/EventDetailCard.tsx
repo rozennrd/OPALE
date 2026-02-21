@@ -9,6 +9,7 @@ import DetailCardBody from '../common/DetailCardBody'
 import EventTypeBadge from './EventTypeBadge'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
+import { ROOMS_MOCK } from '../../mocks/rooms.mock'
 
 interface EventDetailCardProps {
     event: CampusEvent
@@ -27,6 +28,18 @@ function formatDate(date: string | undefined): string {
         year: 'numeric',
     })
 }
+
+const EVENT_LOCATION_DATALIST_ID = 'event-location-suggestions'
+const EVENT_ROOM_LOCATION_SUGGESTIONS = Array.from(
+    new Set(
+        ROOMS_MOCK.map((room) => room.fullName ?? room.name),
+    ),
+).sort((a, b) =>
+    a.localeCompare(b, 'fr', {
+        numeric: true,
+        sensitivity: 'base',
+    }),
+)
 
 export default function EventDetailCard({
     event,
@@ -164,6 +177,7 @@ export default function EventDetailCard({
                                 <input
                                     type="text"
                                     className="event-detail-input"
+                                    list={EVENT_LOCATION_DATALIST_ID}
                                     value={draft.location}
                                     onChange={(e) =>
                                         updateField(
@@ -172,6 +186,16 @@ export default function EventDetailCard({
                                         )
                                     }
                                 />
+                                <datalist id={EVENT_LOCATION_DATALIST_ID}>
+                                    {EVENT_ROOM_LOCATION_SUGGESTIONS.map(
+                                        (roomLabel) => (
+                                            <option
+                                                key={roomLabel}
+                                                value={roomLabel}
+                                            />
+                                        ),
+                                    )}
+                                </datalist>
                             </dd>
                         </div>
 
