@@ -2,17 +2,382 @@
 
 @layer tokens {
   :root[data-cvd="tritan"] {
-    --brand: #d55e00;
-    --brand-hover: #b94f00;
+    --brand: #c25708;
+    --brand-hover: #964307;
 
-    --primary: #009e73;
-    --primary-hover: #007a5a;
+    --primary: #0a7f66;
+    --primary-hover: #08614f;
 
-    --amber: #cc79a7;
-    --surface-active: rgba(0, 158, 115, 0.24);
+    --amber: #b75f92;
+    --surface-active: rgba(10, 127, 102, 0.24);
 
-    --danger-100: #fee2e2;
-    --danger-200: #fecaca;
-    --danger-800: #7f1d1d;
+    --danger-100: #f8e8f1;
+    --danger-200: #f0d1e5;
+    --danger-800: #6f2145;
+
+    --text-on-primary: #f8fafc;
+    --text-on-brand: #f8fafc;
+    --text-on-amber: #ffffff;
+
+    --cvd-success-bg: rgba(10, 127, 102, 0.16);
+    --cvd-success-border: rgba(8, 97, 79, 0.58);
+    --cvd-success-text: #0d4f41;
+
+    --cvd-info-bg: rgba(194, 87, 8, 0.18);
+    --cvd-info-border: rgba(124, 45, 8, 0.56);
+    --cvd-info-text: #7c2d12;
+
+    --cvd-warning-bg: rgba(183, 95, 146, 0.2);
+    --cvd-warning-border: rgba(131, 24, 67, 0.56);
+    --cvd-warning-text: #701a46;
+
+    --cvd-error-bg: rgba(111, 33, 69, 0.2);
+    --cvd-error-border: rgba(76, 5, 25, 0.6);
+    --cvd-error-text: #581c32;
+
+    --cvd-off-bg: rgba(107, 114, 128, 0.2);
+    --cvd-off-border: rgba(55, 65, 81, 0.62);
+    --cvd-off-text: #1f2937;
+  }
+}
+
+@layer components {
+  :root[data-cvd="tritan"] .btn-danger {
+    border: 2px solid var(--cvd-error-border);
+    background: var(--cvd-error-bg);
+    color: var(--cvd-error-text);
+    font-weight: 700;
+  }
+
+  :root[data-cvd="tritan"] .btn-danger:hover {
+    background: color-mix(in srgb, var(--cvd-error-bg) 72%, var(--panel));
+  }
+
+  :root[data-cvd="tritan"] .badge.ok {
+    background: var(--cvd-success-bg);
+    color: var(--cvd-success-text);
+    border: 2px solid var(--cvd-success-border);
+  }
+
+  :root[data-cvd="tritan"] .badge.alert {
+    background: var(--cvd-warning-bg);
+    color: var(--cvd-warning-text);
+    border: 2px dashed var(--cvd-warning-border);
+  }
+
+  :root[data-cvd="tritan"] .toolbar-toggle-chip--active,
+  :root[data-cvd="tritan"] .toolbar-selection-toggle.is-active {
+    border: 1.5px solid var(--primary);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 36%, transparent);
+  }
+}
+
+@layer pages {
+  :root[data-cvd="tritan"] .event-badge-type--junia,
+  :root[data-cvd="tritan"] .event-detail-header-pill--junia,
+  :root[data-cvd="tritan"] .event-detail-pill--source-junia {
+    background: var(--cvd-success-bg);
+    border: 1.5px solid var(--cvd-success-border);
+    color: var(--cvd-success-text);
+  }
+
+  :root[data-cvd="tritan"] .event-badge-type--external,
+  :root[data-cvd="tritan"] .event-detail-header-pill--external,
+  :root[data-cvd="tritan"] .event-detail-pill--source-external {
+    background: var(--cvd-info-bg);
+    border: 1.5px dashed var(--cvd-info-border);
+    color: var(--cvd-info-text);
+  }
+
+  :root[data-cvd="tritan"] .event-detail-source-pill {
+    border-width: 1.5px;
+  }
+
+  :root[data-cvd="tritan"] .event-detail-source-pill.is-active:first-of-type {
+    background: var(--brand);
+    border: 2px solid color-mix(in srgb, var(--brand) 60%, #000000);
+    color: var(--text-on-brand);
+  }
+
+  :root[data-cvd="tritan"] .event-detail-source-pill.is-active:last-of-type {
+    background: var(--primary);
+    border: 2px dashed color-mix(in srgb, var(--primary) 66%, #000000);
+    color: var(--text-on-primary);
+  }
+
+  :root[data-cvd="tritan"] .room-type-td {
+    background: var(--cvd-success-bg);
+    color: var(--cvd-success-text);
+    border: 1.5px solid var(--cvd-success-border);
+  }
+
+  :root[data-cvd="tritan"] .room-type-tp_electronique {
+    background: var(--cvd-warning-bg);
+    color: var(--cvd-warning-text);
+    border: 1.5px dashed var(--cvd-warning-border);
+  }
+
+  :root[data-cvd="tritan"] .room-type-tp_numerique {
+    background: var(--cvd-info-bg);
+    color: var(--cvd-info-text);
+    border: 1.5px dotted var(--cvd-info-border);
+  }
+
+  :root[data-cvd="tritan"] .room-type-projet {
+    background: var(--cvd-error-bg);
+    color: var(--cvd-error-text);
+    border: 2px double var(--cvd-error-border);
+  }
+
+  :root[data-cvd="tritan"] .room-type-autre {
+    background:
+      repeating-linear-gradient(
+        135deg,
+        rgba(107, 114, 128, 0.18) 0 6px,
+        rgba(107, 114, 128, 0.08) 6px 12px
+      );
+    color: var(--cvd-off-text);
+    border: 1.5px solid var(--cvd-off-border);
+  }
+
+  :root[data-cvd="tritan"] .teacher-mode-distanciel {
+    background: var(--cvd-success-bg);
+    color: var(--cvd-success-text);
+    border: 1.5px solid var(--cvd-success-border);
+  }
+
+  :root[data-cvd="tritan"] .teacher-mode-hybride {
+    background: var(--cvd-error-bg);
+    color: var(--cvd-error-text);
+    border: 2px double var(--cvd-error-border);
+  }
+
+  :root[data-cvd="tritan"] .teacher-mode-presentiel {
+    background: var(--cvd-warning-bg);
+    color: var(--cvd-warning-text);
+    border: 1.5px dashed var(--cvd-warning-border);
+  }
+
+  :root[data-cvd="tritan"] .ta-cell {
+    position: relative;
+    overflow: hidden;
+  }
+
+  :root[data-cvd="tritan"] .ta-cell.is-available {
+    background: var(--cvd-success-bg);
+    border-color: var(--cvd-success-border);
+  }
+
+  :root[data-cvd="tritan"] .ta-cell.is-unavailable {
+    background:
+      repeating-linear-gradient(
+        -45deg,
+        rgba(55, 65, 81, 0.15) 0 5px,
+        rgba(55, 65, 81, 0.03) 5px 10px
+      ),
+      var(--cvd-off-bg);
+    border-color: var(--cvd-off-border);
+  }
+
+  :root[data-cvd="tritan"] .ta-cell.is-available::after,
+  :root[data-cvd="tritan"] .ta-cell.is-unavailable::after {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.62rem;
+    font-weight: 800;
+    line-height: 1;
+    opacity: 0.9;
+  }
+
+  :root[data-cvd="tritan"] .ta-cell.is-available::after {
+    content: "D";
+    color: var(--cvd-success-text);
+  }
+
+  :root[data-cvd="tritan"] .ta-cell.is-unavailable::after {
+    content: "N";
+    color: var(--cvd-off-text);
+  }
+
+  :root[data-cvd="tritan"] .ta-legend-item .ta-cell.legend::after {
+    font-size: 0.56rem;
+  }
+
+  :root[data-cvd="tritan"] .room-availability-switch-track {
+    background: var(--cvd-off-bg);
+    border-color: var(--cvd-off-border);
+  }
+
+  :root[data-cvd="tritan"] .room-availability-switch-thumb {
+    background: var(--cvd-off-text);
+  }
+
+  :root[data-cvd="tritan"] .room-availability-switch.is-on .room-availability-switch-track {
+    background: var(--cvd-success-bg);
+    border-color: var(--cvd-success-border);
+  }
+
+  :root[data-cvd="tritan"] .room-availability-switch.is-on .room-availability-switch-thumb {
+    background: var(--cvd-success-text);
+  }
+
+  :root[data-cvd="tritan"] .btn-add-promo {
+    border-color: var(--cvd-success-border);
+    background: var(--cvd-success-bg);
+    color: var(--cvd-success-text);
+  }
+
+  :root[data-cvd="tritan"] .btn-add-promo:hover {
+    border-color: color-mix(in srgb, var(--cvd-success-border) 80%, #000000);
+    background: color-mix(in srgb, var(--cvd-success-bg) 65%, var(--panel));
+  }
+
+  :root[data-cvd="tritan"] .promo-mismatch {
+    color: var(--cvd-error-text);
+    font-weight: 700;
+  }
+
+  :root[data-cvd="tritan"] .cycle-import-dropzone-status {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  :root[data-cvd="tritan"] .cycle-import-dropzone-status::before {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+
+  :root[data-cvd="tritan"] .cycle-import-dropzone-status.is-success {
+    background: var(--cvd-success-bg);
+    border: 1.5px solid var(--cvd-success-border);
+    color: var(--cvd-success-text);
+  }
+
+  :root[data-cvd="tritan"] .cycle-import-dropzone-status.is-success::before {
+    content: "OK";
+  }
+
+  :root[data-cvd="tritan"] .cycle-import-dropzone-status.is-info {
+    background: var(--cvd-info-bg);
+    border: 1.5px dashed var(--cvd-info-border);
+    color: var(--cvd-info-text);
+  }
+
+  :root[data-cvd="tritan"] .cycle-import-dropzone-status.is-info::before {
+    content: "INFO";
+  }
+
+  :root[data-cvd="tritan"] .cycle-import-dropzone-status.is-error {
+    background: var(--cvd-error-bg);
+    border: 2px double var(--cvd-error-border);
+    color: var(--cvd-error-text);
+  }
+
+  :root[data-cvd="tritan"] .cycle-import-dropzone-status.is-error::before {
+    content: "ERREUR";
+  }
+
+  :root[data-cvd="tritan"] .maquette-preview-loading {
+    background: var(--cvd-info-bg);
+    border: 1.5px dashed var(--cvd-info-border);
+    color: var(--cvd-info-text);
+  }
+
+  :root[data-cvd="tritan"] .maquette-preview-error {
+    background: var(--cvd-error-bg);
+    border: 1.5px solid var(--cvd-error-border);
+    color: var(--cvd-error-text);
+  }
+
+  :root[data-cvd="tritan"] .maquette-preview-warning-list {
+    background: var(--cvd-warning-bg);
+    border: 1.5px dashed var(--cvd-warning-border);
+    color: var(--cvd-warning-text);
+  }
+
+  :root[data-cvd="tritan"] .maquette-preview-warning-close {
+    color: var(--cvd-warning-text);
+  }
+
+  :root[data-cvd="tritan"] .constraint-card {
+    border: 2px solid transparent;
+    box-shadow: var(--shadow-sm);
+  }
+
+  :root[data-cvd="tritan"] .constraint-vacances {
+    background: rgba(247, 226, 213, 0.9);
+    border-color: #8a3d05;
+    border-style: solid;
+  }
+
+  :root[data-cvd="tritan"] .constraint-entreprise {
+    background: rgba(215, 236, 229, 0.9);
+    border-color: #0a5f4d;
+    border-style: dashed;
+  }
+
+  :root[data-cvd="tritan"] .constraint-stages {
+    background: rgba(235, 219, 233, 0.9);
+    border-color: #7a2750;
+    border-style: dotted;
+  }
+
+  :root[data-cvd="tritan"] .constraint-international {
+    background: rgba(211, 226, 239, 0.9);
+    border-color: #334155;
+    border-style: double;
+  }
+
+  :root[data-cvd="tritan"] .constraint-partiels {
+    background: rgba(245, 214, 228, 0.9);
+    border-color: #831843;
+    border-style: solid;
+  }
+
+  :root[data-cvd="tritan"] .constraint-rattrapages {
+    background: rgba(223, 232, 235, 0.9);
+    border-color: #0f3d3a;
+    border-style: solid;
+  }
+
+  :root[data-cvd="tritan"] .constraint-pill {
+    border: 1.5px solid transparent;
+  }
+
+  :root[data-cvd="tritan"] .constraint-pill-vacances {
+    background: rgba(248, 219, 196, 0.95);
+    border-color: #8a3d05;
+  }
+
+  :root[data-cvd="tritan"] .constraint-pill-entreprise {
+    background: rgba(196, 225, 216, 0.95);
+    border-color: #0a5f4d;
+    border-style: dashed;
+  }
+
+  :root[data-cvd="tritan"] .constraint-pill-stages {
+    background: rgba(227, 201, 225, 0.95);
+    border-color: #7a2750;
+    border-style: dotted;
+  }
+
+  :root[data-cvd="tritan"] .constraint-pill-international {
+    background: rgba(198, 215, 229, 0.95);
+    border-color: #334155;
+    border-style: double;
+  }
+
+  :root[data-cvd="tritan"] .constraint-pill-partiels {
+    background: rgba(242, 194, 217, 0.96);
+    border-color: #831843;
+  }
+
+  :root[data-cvd="tritan"] .constraint-pill-rattrapages {
+    background: rgba(202, 219, 224, 0.95);
+    border-color: #0f3d3a;
   }
 }
