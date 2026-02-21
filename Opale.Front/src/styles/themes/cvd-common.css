@@ -1,0 +1,336 @@
+/* Shared accessibility overrides for CVD profiles */
+
+@layer components {
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .btn-danger {
+    border: 2px solid var(--cvd-error-border);
+    background: var(--cvd-error-bg);
+    color: var(--cvd-error-text);
+    font-weight: 700;
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .btn-danger:hover {
+    background: var(--cvd-error-hover-bg, color-mix(in srgb, var(--cvd-error-bg) 72%, var(--panel)));
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .badge.ok {
+    background: var(--cvd-success-bg);
+    color: var(--cvd-success-text);
+    border: 2px solid var(--cvd-success-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .badge.alert {
+    background: var(--cvd-warning-bg);
+    color: var(--cvd-warning-text);
+    border: 2px dashed var(--cvd-warning-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .toolbar-toggle-chip--active,
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .toolbar-selection-toggle.is-active {
+    border: 1.5px solid var(--primary);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 36%, transparent);
+  }
+}
+
+@layer pages {
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-badge-type--junia,
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-detail-header-pill--junia,
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-detail-pill--source-junia {
+    background: var(--cvd-source-junia-bg);
+    border: 1.5px solid var(--cvd-source-junia-border);
+    color: var(--cvd-source-junia-text);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-badge-type--external,
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-detail-header-pill--external,
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-detail-pill--source-external {
+    background: var(--cvd-source-external-bg);
+    border: 1.5px dashed var(--cvd-source-external-border);
+    color: var(--cvd-source-external-text);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-detail-source-pill {
+    border-width: 1.5px;
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-detail-source-pill.is-active:first-of-type {
+    background: var(--cvd-source-active-junia-bg);
+    border: 2px solid var(--cvd-source-active-junia-border);
+    color: var(--cvd-source-active-junia-text);
+    font-weight: var(--cvd-source-active-font-weight, 600);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-detail-source-pill.is-active:last-of-type {
+    background: var(--cvd-source-active-external-bg);
+    border: 2px dashed var(--cvd-source-active-external-border);
+    color: var(--cvd-source-active-external-text);
+    font-weight: var(--cvd-source-active-font-weight, 600);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .room-type-td {
+    background: var(--cvd-room-td-bg);
+    color: var(--cvd-room-td-text);
+    border: 1.5px solid var(--cvd-room-td-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .room-type-tp_electronique {
+    background: var(--cvd-room-tp-electronique-bg);
+    color: var(--cvd-room-tp-electronique-text);
+    border: 1.5px dashed var(--cvd-room-tp-electronique-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .room-type-tp_numerique {
+    background: var(--cvd-room-tp-numerique-bg);
+    color: var(--cvd-room-tp-numerique-text);
+    border: 1.5px dotted var(--cvd-room-tp-numerique-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .room-type-projet {
+    background: var(--cvd-room-projet-bg);
+    color: var(--cvd-room-projet-text);
+    border: 2px double var(--cvd-room-projet-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .room-type-autre {
+    background: var(--cvd-room-autre-bg);
+    color: var(--cvd-room-autre-text);
+    border: 1.5px solid var(--cvd-room-autre-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .teacher-mode-distanciel {
+    background: var(--cvd-teacher-distanciel-bg);
+    color: var(--cvd-teacher-distanciel-text);
+    border: 1.5px solid var(--cvd-teacher-distanciel-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .teacher-mode-hybride {
+    background: var(--cvd-teacher-hybride-bg);
+    color: var(--cvd-teacher-hybride-text);
+    border: 2px double var(--cvd-teacher-hybride-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .teacher-mode-presentiel {
+    background: var(--cvd-teacher-presentiel-bg);
+    color: var(--cvd-teacher-presentiel-text);
+    border: 1.5px dashed var(--cvd-teacher-presentiel-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .ta-cell {
+    position: relative;
+    overflow: hidden;
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .ta-cell.is-available {
+    background: var(--cvd-availability-available-bg);
+    border-color: var(--cvd-availability-available-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .ta-cell.is-unavailable {
+    background: var(--cvd-availability-unavailable-bg);
+    border-color: var(--cvd-availability-unavailable-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .ta-cell.is-available::after,
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .ta-cell.is-unavailable::after {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.62rem;
+    font-weight: 800;
+    line-height: 1;
+    opacity: 0.9;
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .ta-cell.is-available::after {
+    content: "D";
+    color: var(--cvd-availability-available-text);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .ta-cell.is-unavailable::after {
+    content: "N";
+    color: var(--cvd-availability-unavailable-text);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .ta-legend-item .ta-cell.legend::after {
+    font-size: 0.56rem;
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .room-availability-switch-track {
+    background: var(--cvd-switch-off-track-bg);
+    border-color: var(--cvd-switch-off-track-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .room-availability-switch-thumb {
+    background: var(--cvd-switch-off-thumb);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .room-availability-switch.is-on .room-availability-switch-track {
+    background: var(--cvd-switch-on-track-bg);
+    border-color: var(--cvd-switch-on-track-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .room-availability-switch.is-on .room-availability-switch-thumb {
+    background: var(--cvd-switch-on-thumb);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .btn-add-promo {
+    border-color: var(--cvd-add-promo-border);
+    background: var(--cvd-add-promo-bg);
+    color: var(--cvd-add-promo-text);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .btn-add-promo:hover {
+    border-color: var(--cvd-add-promo-hover-border);
+    background: var(--cvd-add-promo-hover-bg);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .promo-mismatch {
+    color: var(--cvd-promo-mismatch-color);
+    font-weight: 700;
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .cycle-import-dropzone-status {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .cycle-import-dropzone-status::before {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .cycle-import-dropzone-status.is-success {
+    background: var(--cvd-status-success-bg);
+    border: 1.5px solid var(--cvd-status-success-border);
+    color: var(--cvd-status-success-text);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .cycle-import-dropzone-status.is-success::before {
+    content: "OK";
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .cycle-import-dropzone-status.is-info {
+    background: var(--cvd-status-info-bg);
+    border: 1.5px dashed var(--cvd-status-info-border);
+    color: var(--cvd-status-info-text);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .cycle-import-dropzone-status.is-info::before {
+    content: "INFO";
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .cycle-import-dropzone-status.is-error {
+    background: var(--cvd-status-error-bg);
+    border: 2px double var(--cvd-status-error-border);
+    color: var(--cvd-status-error-text);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .cycle-import-dropzone-status.is-error::before {
+    content: "ERREUR";
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .maquette-preview-loading {
+    background: var(--cvd-status-info-bg);
+    border: 1.5px dashed var(--cvd-status-info-border);
+    color: var(--cvd-status-info-text);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .maquette-preview-error {
+    background: var(--cvd-status-error-bg);
+    border: 1.5px solid var(--cvd-status-error-border);
+    color: var(--cvd-status-error-text);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .maquette-preview-warning-list {
+    background: var(--cvd-status-warning-bg);
+    border: 1.5px dashed var(--cvd-status-warning-border);
+    color: var(--cvd-status-warning-text);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .maquette-preview-warning-close {
+    color: var(--cvd-status-warning-text);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-card {
+    border: 2px solid transparent;
+    box-shadow: var(--shadow-sm);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-vacances {
+    background: var(--cvd-constraint-vacances-bg);
+    border-color: var(--cvd-constraint-vacances-border);
+    border-style: var(--cvd-constraint-vacances-style, solid);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-entreprise {
+    background: var(--cvd-constraint-entreprise-bg);
+    border-color: var(--cvd-constraint-entreprise-border);
+    border-style: var(--cvd-constraint-entreprise-style, solid);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-stages {
+    background: var(--cvd-constraint-stages-bg);
+    border-color: var(--cvd-constraint-stages-border);
+    border-style: var(--cvd-constraint-stages-style, solid);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-international {
+    background: var(--cvd-constraint-international-bg);
+    border-color: var(--cvd-constraint-international-border);
+    border-style: var(--cvd-constraint-international-style, solid);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-partiels {
+    background: var(--cvd-constraint-partiels-bg);
+    border-color: var(--cvd-constraint-partiels-border);
+    border-style: var(--cvd-constraint-partiels-style, solid);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-rattrapages {
+    background: var(--cvd-constraint-rattrapages-bg);
+    border-color: var(--cvd-constraint-rattrapages-border);
+    border-style: var(--cvd-constraint-rattrapages-style, solid);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-pill {
+    border: 1.5px solid transparent;
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-pill-vacances {
+    background: var(--cvd-constraint-pill-vacances-bg);
+    border-color: var(--cvd-constraint-pill-vacances-border);
+    border-style: var(--cvd-constraint-pill-vacances-style, solid);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-pill-entreprise {
+    background: var(--cvd-constraint-pill-entreprise-bg);
+    border-color: var(--cvd-constraint-pill-entreprise-border);
+    border-style: var(--cvd-constraint-pill-entreprise-style, solid);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-pill-stages {
+    background: var(--cvd-constraint-pill-stages-bg);
+    border-color: var(--cvd-constraint-pill-stages-border);
+    border-style: var(--cvd-constraint-pill-stages-style, solid);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-pill-international {
+    background: var(--cvd-constraint-pill-international-bg);
+    border-color: var(--cvd-constraint-pill-international-border);
+    border-style: var(--cvd-constraint-pill-international-style, solid);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-pill-partiels {
+    background: var(--cvd-constraint-pill-partiels-bg);
+    border-color: var(--cvd-constraint-pill-partiels-border);
+    border-style: var(--cvd-constraint-pill-partiels-style, solid);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .constraint-pill-rattrapages {
+    background: var(--cvd-constraint-pill-rattrapages-bg);
+    border-color: var(--cvd-constraint-pill-rattrapages-border);
+    border-style: var(--cvd-constraint-pill-rattrapages-style, solid);
+  }
+}

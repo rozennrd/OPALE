@@ -1,5 +1,4 @@
 // src/components/ThemeToggle.tsx
-// @ts-ignore
 import React from 'react'
 import { useTheme } from '../hooks/useTheme'
 
@@ -12,14 +11,20 @@ const ThemeToggle: React.FC = () => {
     return (
         <button
             type="button"
-            className="theme-toggle-btn"
+            className={`theme-toggle-btn ${isDark ? 'is-dark' : 'is-light'}`}
             onClick={toggleTheme}
             aria-label={label}
             title={label}
+            aria-pressed={isDark}
         >
-            <span className="theme-toggle-thumb" aria-hidden="true" />
+            <span className="theme-toggle-icon" aria-hidden="true">
+                <span className="theme-toggle-icon-inner" />
+            </span>
             <span className="theme-toggle-text">{isDark ? 'Sombre' : 'Clair'}</span>
+            <span className="theme-toggle-toggle" aria-hidden="true">
+                <span className="theme-toggle-toggle-thumb" />
+            </span>
         </button>
     )
 }
-export default ThemeToggle;
+export default ThemeToggle

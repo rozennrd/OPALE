@@ -65,14 +65,14 @@
     }
 
     .btn-add-promo {
-        border-color: #9edcb7;
-        background: #e7f7ee;
-        color: #0f5132;
+        border-color: var(--success-soft-border);
+        background: var(--success-soft-bg);
+        color: var(--success-soft-text);
     }
 
     .btn-add-promo:hover {
-        background: #dcf2e4;
-        border-color: #86cfaa;
+        background: var(--success-soft-bg-hover);
+        border-color: var(--success-soft-border-hover);
     }
 
     .promo-add-dialog {

@@ -1,5 +1,4 @@
-// src/hooks/useTheme.ts
-import { useEffect, useRef, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { CvdProfile, ReadingProfile, Theme, VisionProfile } from '../models/Theme'
 
 const THEME_KEY = 'opale-theme'
@@ -17,6 +16,13 @@ type AppearanceState = {
     cvd: CvdProfile
     vision: VisionProfile
     reading: ReadingProfile
+}
+
+type AppearanceSetters = {
+    setTheme: Dispatch<SetStateAction<Theme>>
+    setCvd: Dispatch<SetStateAction<CvdProfile>>
+    setVision: Dispatch<SetStateAction<VisionProfile>>
+    setReading: Dispatch<SetStateAction<ReadingProfile>>
 }
 
 type AppearanceConsoleApi = {
@@ -60,7 +66,18 @@ function isLcarsInteractiveElement(target: EventTarget | null): target is Elemen
     )
 }
 
-export function useTheme() {
+function readStored<T>(
+    key: string,
+    guard: (value: string | null) => value is T,
+    fallback: T,
+): T {
+    if (typeof window === 'undefined') return fallback
+
+    const stored = window.localStorage.getItem(key)
+    return guard(stored) ? stored : fallback
+}
+
+function useAppearanceState(): AppearanceState & AppearanceSetters {
     const [theme, setTheme] = useState<Theme>(() => {
         if (typeof window === 'undefined') return 'light'
 
@@ -74,42 +91,49 @@ export function useTheme() {
         return prefersDark ? 'dark' : 'light'
     })
 
-    const [cvd, setCvd] = useState<CvdProfile>(() => {
-        if (typeof window === 'undefined') return 'none'
+    const [cvd, setCvd] = useState<CvdProfile>(() =>
+        readStored(CVD_KEY, isCvdProfile, 'none'),
+    )
 
-        const stored = window.localStorage.getItem(CVD_KEY)
-        return isCvdProfile(stored) ? stored : 'none'
-    })
+    const [vision, setVision] = useState<VisionProfile>(() =>
+        readStored(VISION_KEY, isVisionProfile, 'normal'),
+    )
 
-    const [vision, setVision] = useState<VisionProfile>(() => {
-        if (typeof window === 'undefined') return 'normal'
+    const [reading, setReading] = useState<ReadingProfile>(() =>
+        readStored(READING_KEY, isReadingProfile, 'normal'),
+    )
 
-        const stored = window.localStorage.getItem(VISION_KEY)
-        return isVisionProfile(stored) ? stored : 'normal'
-    })
+    return {
+        theme,
+        setTheme,
+        cvd,
+        setCvd,
+        vision,
+        setVision,
+        reading,
+        setReading,
+    }
+}
 
-    const [reading, setReading] = useState<ReadingProfile>(() => {
-        if (typeof window === 'undefined') return 'normal'
-
-        const stored = window.localStorage.getItem(READING_KEY)
-        return isReadingProfile(stored) ? stored : 'normal'
-    })
-
-    const audioContextRef = useRef<AudioContext | null>(null)
-    const lastBeepAtRef = useRef<number>(0)
-
+function useAppearanceDomSync(state: AppearanceState) {
     useEffect(() => {
-        if (typeof document === 'undefined') return
+        if (typeof document === 'undefined' || typeof window === 'undefined') return
 
-        document.documentElement.setAttribute('data-theme', theme)
-        document.documentElement.setAttribute('data-cvd', cvd)
-        document.documentElement.setAttribute('data-vision', vision)
-        document.documentElement.setAttribute('data-reading', reading)
-        window.localStorage.setItem(THEME_KEY, theme)
-        window.localStorage.setItem(CVD_KEY, cvd)
-        window.localStorage.setItem(VISION_KEY, vision)
-        window.localStorage.setItem(READING_KEY, reading)
-    }, [theme, cvd, vision, reading])
+        document.documentElement.setAttribute('data-theme', state.theme)
+        document.documentElement.setAttribute('data-cvd', state.cvd)
+        document.documentElement.setAttribute('data-vision', state.vision)
+        document.documentElement.setAttribute('data-reading', state.reading)
+
+        window.localStorage.setItem(THEME_KEY, state.theme)
+        window.localStorage.setItem(CVD_KEY, state.cvd)
+        window.localStorage.setItem(VISION_KEY, state.vision)
+        window.localStorage.setItem(READING_KEY, state.reading)
+    }, [state.theme, state.cvd, state.vision, state.reading])
+}
+
+function useAppearanceConsoleApi(state: AppearanceState, setters: AppearanceSetters) {
+    const { theme, cvd, vision, reading } = state
+    const { setTheme, setCvd, setVision, setReading } = setters
 
     useEffect(() => {
         if (typeof window === 'undefined') return
@@ -161,7 +185,18 @@ export function useTheme() {
             help: () =>
                 'window.opaleAppearance.setTheme("spock"), window.opaleAppearance.setCvd("protan-deutan"), window.opaleAppearance.setVision("low"), window.opaleAppearance.setReading("dyslexia"), window.opaleAppearance.getState(), window.opaleAppearance.reset()',
         }
-    }, [theme, cvd, vision, reading])
+
+        return () => {
+            if (typeof window !== 'undefined') {
+                delete window.opaleAppearance
+            }
+        }
+    }, [theme, cvd, vision, reading, setTheme, setCvd, setVision, setReading])
+}
+
+function useSpockAudioFx(theme: Theme) {
+    const audioContextRef = useRef<AudioContext | null>(null)
+    const lastBeepAtRef = useRef<number>(0)
 
     useEffect(() => {
         if (theme !== 'spock' || typeof document === 'undefined' || typeof window === 'undefined') {
@@ -178,7 +213,8 @@ export function useTheme() {
             lastBeepAtRef.current = nowMs
 
             const AudioContextCtor =
-                window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+                window.AudioContext ||
+                (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
             if (!AudioContextCtor) return
 
             if (!audioContextRef.current) {
@@ -226,8 +262,27 @@ export function useTheme() {
             document.removeEventListener('keydown', onKeyDown)
         }
     }, [theme])
+}
 
-    const toggleTheme = () => setTheme(t => (t === 'light' ? 'dark' : 'light'))
+export function useTheme() {
+    const appearance = useAppearanceState()
 
-    return { theme, setTheme, toggleTheme, cvd, setCvd, vision, setVision, reading, setReading }
+    useAppearanceDomSync(appearance)
+    useAppearanceConsoleApi(appearance, appearance)
+    useSpockAudioFx(appearance.theme)
+
+    const toggleTheme = () =>
+        appearance.setTheme((current) => (current === 'light' ? 'dark' : 'light'))
+
+    return {
+        theme: appearance.theme,
+        setTheme: appearance.setTheme,
+        toggleTheme,
+        cvd: appearance.cvd,
+        setCvd: appearance.setCvd,
+        vision: appearance.vision,
+        setVision: appearance.setVision,
+        reading: appearance.reading,
+        setReading: appearance.setReading,
+    }
 }

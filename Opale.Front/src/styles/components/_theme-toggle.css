@@ -16,21 +16,33 @@
         background: var(--panel-soft);
         color: var(--text);
         cursor: pointer;
-        transition: background-color 140ms ease, border-color 140ms ease;
+        transition:
+            background-color 140ms ease,
+            border-color 140ms ease,
+            box-shadow 140ms ease;
     }
 
     .theme-toggle-icon {
-        width: 28px;
-        height: 28px;
+        width: 24px;
+        height: 24px;
         border-radius: 999px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        background: color-mix(in srgb, var(--brand) 18%, transparent);
+        border: 1px solid var(--border-soft);
     }
 
     .theme-toggle-icon-inner {
-        width: 18px;
-        height: 18px;
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: var(--brand);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brand) 65%, #000000);
+        transition:
+            transform 140ms ease,
+            background-color 140ms ease,
+            box-shadow 140ms ease;
     }
 
     .theme-toggle-toggle {
@@ -43,9 +55,11 @@
         padding: 2px;
         margin-left: auto;
         background: var(--panel);
+        transition:
+            border-color 140ms ease,
+            background-color 140ms ease;
     }
 
-    .theme-toggle-thumb,
     .theme-toggle-toggle-thumb {
         width: 16px;
         height: 16px;
@@ -53,21 +67,50 @@
         background: var(--brand);
         box-shadow: 0 0 0 1px var(--border-soft);
         flex-shrink: 0;
+        transition:
+            transform 140ms ease,
+            background-color 140ms ease;
     }
 
     .theme-toggle-text {
         flex: 1;
         text-align: left;
+        font-weight: 600;
     }
 
-    /* En sidebar compacte (mobile), on garde juste l’icône ronde */
+    .theme-toggle-btn:hover {
+        background: var(--surface-hover);
+        border-color: var(--border);
+    }
+
+    .theme-toggle-btn:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 45%, transparent);
+    }
+
+    .theme-toggle-btn.is-dark .theme-toggle-icon-inner {
+        transform: translateX(2px) scale(0.96);
+        background: var(--text);
+        box-shadow: inset 3px -3px 0 0 color-mix(in srgb, var(--panel) 80%, transparent);
+    }
+
+    .theme-toggle-btn.is-dark .theme-toggle-toggle-thumb {
+        transform: translateX(14px);
+        background: var(--text);
+    }
+
     @media (max-width: 860px) {
         .theme-toggle-btn {
             justify-content: center;
             padding: 8px;
         }
+
         .theme-toggle-text {
             display: none;
+        }
+
+        .theme-toggle-toggle {
+            margin-left: 0;
         }
     }
 }

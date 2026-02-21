@@ -45,6 +45,12 @@
     --text-on-brand: #ffffff;
     --text-on-amber: #111827;
 
+    --success-soft-bg: #e7f7ee;
+    --success-soft-bg-hover: #dcf2e4;
+    --success-soft-border: #9edcb7;
+    --success-soft-border-hover: #86cfaa;
+    --success-soft-text: #0f5132;
+
     /* Surface/border/input tokens */
     --surface-hover: #f2f2f2;
     --surface-active: #e8f8f8;

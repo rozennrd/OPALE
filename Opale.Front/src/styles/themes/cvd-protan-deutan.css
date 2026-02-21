@@ -38,346 +38,150 @@
     --cvd-off-bg: rgba(107, 114, 128, 0.2);
     --cvd-off-border: rgba(55, 65, 81, 0.62);
     --cvd-off-text: #1f2937;
-  }
-}
 
-@layer components {
-  :root[data-cvd="protan-deutan"] .btn-danger {
-    border: 2px solid var(--cvd-error-border);
-    background: var(--cvd-error-bg);
-    color: var(--cvd-error-text);
-    font-weight: 700;
-  }
+    --cvd-source-junia-bg: var(--cvd-success-bg);
+    --cvd-source-junia-border: var(--cvd-success-border);
+    --cvd-source-junia-text: var(--cvd-success-text);
 
-  :root[data-cvd="protan-deutan"] .btn-danger:hover {
-    background: color-mix(in srgb, var(--cvd-error-bg) 72%, var(--panel));
-  }
+    --cvd-source-external-bg: var(--cvd-warning-bg);
+    --cvd-source-external-border: var(--cvd-warning-border);
+    --cvd-source-external-text: var(--cvd-warning-text);
 
-  :root[data-cvd="protan-deutan"] .badge.ok {
-    background: var(--cvd-success-bg);
-    color: var(--cvd-success-text);
-    border: 2px solid var(--cvd-success-border);
-  }
+    --cvd-source-active-junia-bg: var(--brand);
+    --cvd-source-active-junia-border: color-mix(in srgb, var(--brand) 60%, #000000);
+    --cvd-source-active-junia-text: var(--text-on-brand);
 
-  :root[data-cvd="protan-deutan"] .badge.alert {
-    background: var(--cvd-warning-bg);
-    color: var(--cvd-warning-text);
-    border: 2px dashed var(--cvd-warning-border);
-  }
+    --cvd-source-active-external-bg: var(--primary);
+    --cvd-source-active-external-border: color-mix(in srgb, var(--primary) 66%, #000000);
+    --cvd-source-active-external-text: var(--text-on-primary);
+    --cvd-source-active-font-weight: 600;
 
-  :root[data-cvd="protan-deutan"] .toolbar-toggle-chip--active,
-  :root[data-cvd="protan-deutan"] .toolbar-selection-toggle.is-active {
-    border: 1.5px solid var(--primary);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 36%, transparent);
-  }
-}
+    --cvd-room-td-bg: var(--cvd-success-bg);
+    --cvd-room-td-border: var(--cvd-success-border);
+    --cvd-room-td-text: var(--cvd-success-text);
 
-@layer pages {
-  :root[data-cvd="protan-deutan"] .event-badge-type--junia,
-  :root[data-cvd="protan-deutan"] .event-detail-header-pill--junia,
-  :root[data-cvd="protan-deutan"] .event-detail-pill--source-junia {
-    background: var(--cvd-success-bg);
-    border: 1.5px solid var(--cvd-success-border);
-    color: var(--cvd-success-text);
-  }
+    --cvd-room-tp-electronique-bg: var(--cvd-warning-bg);
+    --cvd-room-tp-electronique-border: var(--cvd-warning-border);
+    --cvd-room-tp-electronique-text: var(--cvd-warning-text);
 
-  :root[data-cvd="protan-deutan"] .event-badge-type--external,
-  :root[data-cvd="protan-deutan"] .event-detail-header-pill--external,
-  :root[data-cvd="protan-deutan"] .event-detail-pill--source-external {
-    background: var(--cvd-warning-bg);
-    border: 1.5px dashed var(--cvd-warning-border);
-    color: var(--cvd-warning-text);
-  }
+    --cvd-room-tp-numerique-bg: var(--cvd-info-bg);
+    --cvd-room-tp-numerique-border: var(--cvd-info-border);
+    --cvd-room-tp-numerique-text: var(--cvd-info-text);
 
-  :root[data-cvd="protan-deutan"] .event-detail-source-pill {
-    border-width: 1.5px;
-  }
+    --cvd-room-projet-bg: var(--cvd-error-bg);
+    --cvd-room-projet-border: var(--cvd-error-border);
+    --cvd-room-projet-text: var(--cvd-error-text);
 
-  :root[data-cvd="protan-deutan"] .event-detail-source-pill.is-active:first-of-type {
-    background: var(--brand);
-    border: 2px solid color-mix(in srgb, var(--brand) 60%, #000000);
-    color: var(--text-on-brand);
-  }
+    --cvd-room-autre-bg: repeating-linear-gradient(
+      135deg,
+      rgba(107, 114, 128, 0.18) 0 6px,
+      rgba(107, 114, 128, 0.08) 6px 12px
+    );
+    --cvd-room-autre-border: var(--cvd-off-border);
+    --cvd-room-autre-text: var(--cvd-off-text);
 
-  :root[data-cvd="protan-deutan"] .event-detail-source-pill.is-active:last-of-type {
-    background: var(--primary);
-    border: 2px dashed color-mix(in srgb, var(--primary) 66%, #000000);
-    color: var(--text-on-primary);
-  }
+    --cvd-teacher-distanciel-bg: var(--cvd-success-bg);
+    --cvd-teacher-distanciel-border: var(--cvd-success-border);
+    --cvd-teacher-distanciel-text: var(--cvd-success-text);
 
-  :root[data-cvd="protan-deutan"] .room-type-td {
-    background: var(--cvd-success-bg);
-    color: var(--cvd-success-text);
-    border: 1.5px solid var(--cvd-success-border);
-  }
+    --cvd-teacher-hybride-bg: var(--cvd-error-bg);
+    --cvd-teacher-hybride-border: var(--cvd-error-border);
+    --cvd-teacher-hybride-text: var(--cvd-error-text);
 
-  :root[data-cvd="protan-deutan"] .room-type-tp_electronique {
-    background: var(--cvd-warning-bg);
-    color: var(--cvd-warning-text);
-    border: 1.5px dashed var(--cvd-warning-border);
-  }
+    --cvd-teacher-presentiel-bg: var(--cvd-warning-bg);
+    --cvd-teacher-presentiel-border: var(--cvd-warning-border);
+    --cvd-teacher-presentiel-text: var(--cvd-warning-text);
 
-  :root[data-cvd="protan-deutan"] .room-type-tp_numerique {
-    background: var(--cvd-info-bg);
-    color: var(--cvd-info-text);
-    border: 1.5px dotted var(--cvd-info-border);
-  }
+    --cvd-availability-available-bg: var(--cvd-success-bg);
+    --cvd-availability-available-border: var(--cvd-success-border);
+    --cvd-availability-available-text: var(--cvd-success-text);
 
-  :root[data-cvd="protan-deutan"] .room-type-projet {
-    background: var(--cvd-error-bg);
-    color: var(--cvd-error-text);
-    border: 2px double var(--cvd-error-border);
-  }
+    --cvd-availability-unavailable-bg: repeating-linear-gradient(
+      -45deg,
+      rgba(55, 65, 81, 0.15) 0 5px,
+      rgba(55, 65, 81, 0.03) 5px 10px
+    ), var(--cvd-off-bg);
+    --cvd-availability-unavailable-border: var(--cvd-off-border);
+    --cvd-availability-unavailable-text: var(--cvd-off-text);
 
-  :root[data-cvd="protan-deutan"] .room-type-autre {
-    background:
-      repeating-linear-gradient(
-        135deg,
-        rgba(107, 114, 128, 0.18) 0 6px,
-        rgba(107, 114, 128, 0.08) 6px 12px
-      );
-    color: var(--cvd-off-text);
-    border: 1.5px solid var(--cvd-off-border);
-  }
+    --cvd-switch-off-track-bg: var(--cvd-off-bg);
+    --cvd-switch-off-track-border: var(--cvd-off-border);
+    --cvd-switch-off-thumb: var(--cvd-off-text);
 
-  :root[data-cvd="protan-deutan"] .teacher-mode-distanciel {
-    background: var(--cvd-success-bg);
-    color: var(--cvd-success-text);
-    border: 1.5px solid var(--cvd-success-border);
-  }
+    --cvd-switch-on-track-bg: var(--cvd-success-bg);
+    --cvd-switch-on-track-border: var(--cvd-success-border);
+    --cvd-switch-on-thumb: var(--cvd-success-text);
 
-  :root[data-cvd="protan-deutan"] .teacher-mode-hybride {
-    background: var(--cvd-error-bg);
-    color: var(--cvd-error-text);
-    border: 2px double var(--cvd-error-border);
-  }
+    --cvd-add-promo-bg: var(--cvd-success-bg);
+    --cvd-add-promo-border: var(--cvd-success-border);
+    --cvd-add-promo-text: var(--cvd-success-text);
+    --cvd-add-promo-hover-bg: color-mix(in srgb, var(--cvd-success-bg) 65%, var(--panel));
+    --cvd-add-promo-hover-border: color-mix(in srgb, var(--cvd-success-border) 80%, #000000);
 
-  :root[data-cvd="protan-deutan"] .teacher-mode-presentiel {
-    background: var(--cvd-warning-bg);
-    color: var(--cvd-warning-text);
-    border: 1.5px dashed var(--cvd-warning-border);
-  }
+    --cvd-promo-mismatch-color: var(--cvd-error-text);
 
-  :root[data-cvd="protan-deutan"] .ta-cell {
-    position: relative;
-    overflow: hidden;
-  }
+    --cvd-status-success-bg: var(--cvd-success-bg);
+    --cvd-status-success-border: var(--cvd-success-border);
+    --cvd-status-success-text: var(--cvd-success-text);
 
-  :root[data-cvd="protan-deutan"] .ta-cell.is-available {
-    background: var(--cvd-success-bg);
-    border-color: var(--cvd-success-border);
-  }
+    --cvd-status-info-bg: var(--cvd-info-bg);
+    --cvd-status-info-border: var(--cvd-info-border);
+    --cvd-status-info-text: var(--cvd-info-text);
 
-  :root[data-cvd="protan-deutan"] .ta-cell.is-unavailable {
-    background:
-      repeating-linear-gradient(
-        -45deg,
-        rgba(55, 65, 81, 0.15) 0 5px,
-        rgba(55, 65, 81, 0.03) 5px 10px
-      ),
-      var(--cvd-off-bg);
-    border-color: var(--cvd-off-border);
-  }
+    --cvd-status-error-bg: var(--cvd-error-bg);
+    --cvd-status-error-border: var(--cvd-error-border);
+    --cvd-status-error-text: var(--cvd-error-text);
 
-  :root[data-cvd="protan-deutan"] .ta-cell.is-available::after,
-  :root[data-cvd="protan-deutan"] .ta-cell.is-unavailable::after {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 0.62rem;
-    font-weight: 800;
-    line-height: 1;
-    opacity: 0.9;
-  }
+    --cvd-status-warning-bg: var(--cvd-warning-bg);
+    --cvd-status-warning-border: var(--cvd-warning-border);
+    --cvd-status-warning-text: var(--cvd-warning-text);
 
-  :root[data-cvd="protan-deutan"] .ta-cell.is-available::after {
-    content: "D";
-    color: var(--cvd-success-text);
-  }
+    --cvd-constraint-vacances-bg: rgba(255, 244, 204, 0.9);
+    --cvd-constraint-vacances-border: #9a6b00;
+    --cvd-constraint-vacances-style: solid;
 
-  :root[data-cvd="protan-deutan"] .ta-cell.is-unavailable::after {
-    content: "N";
-    color: var(--cvd-off-text);
-  }
+    --cvd-constraint-entreprise-bg: rgba(217, 237, 255, 0.9);
+    --cvd-constraint-entreprise-border: #0b4f7a;
+    --cvd-constraint-entreprise-style: dashed;
 
-  :root[data-cvd="protan-deutan"] .ta-legend-item .ta-cell.legend::after {
-    font-size: 0.56rem;
-  }
+    --cvd-constraint-stages-bg: rgba(238, 229, 255, 0.9);
+    --cvd-constraint-stages-border: #6d3f9d;
+    --cvd-constraint-stages-style: dotted;
 
-  :root[data-cvd="protan-deutan"] .room-availability-switch-track {
-    background: var(--cvd-off-bg);
-    border-color: var(--cvd-off-border);
-  }
+    --cvd-constraint-international-bg: rgba(210, 241, 247, 0.9);
+    --cvd-constraint-international-border: #0f766e;
+    --cvd-constraint-international-style: double;
 
-  :root[data-cvd="protan-deutan"] .room-availability-switch-thumb {
-    background: var(--cvd-off-text);
-  }
+    --cvd-constraint-partiels-bg: rgba(244, 223, 242, 0.9);
+    --cvd-constraint-partiels-border: #9f4379;
+    --cvd-constraint-partiels-style: solid;
 
-  :root[data-cvd="protan-deutan"] .room-availability-switch.is-on .room-availability-switch-track {
-    background: var(--cvd-success-bg);
-    border-color: var(--cvd-success-border);
-  }
+    --cvd-constraint-rattrapages-bg: rgba(225, 229, 239, 0.9);
+    --cvd-constraint-rattrapages-border: #374151;
+    --cvd-constraint-rattrapages-style: solid;
 
-  :root[data-cvd="protan-deutan"] .room-availability-switch.is-on .room-availability-switch-thumb {
-    background: var(--cvd-success-text);
-  }
+    --cvd-constraint-pill-vacances-bg: rgba(251, 234, 168, 0.95);
+    --cvd-constraint-pill-vacances-border: #9a6b00;
+    --cvd-constraint-pill-vacances-style: solid;
 
-  :root[data-cvd="protan-deutan"] .btn-add-promo {
-    border-color: var(--cvd-success-border);
-    background: var(--cvd-success-bg);
-    color: var(--cvd-success-text);
-  }
+    --cvd-constraint-pill-entreprise-bg: rgba(197, 223, 255, 0.95);
+    --cvd-constraint-pill-entreprise-border: #0b4f7a;
+    --cvd-constraint-pill-entreprise-style: dashed;
 
-  :root[data-cvd="protan-deutan"] .btn-add-promo:hover {
-    border-color: color-mix(in srgb, var(--cvd-success-border) 80%, #000000);
-    background: color-mix(in srgb, var(--cvd-success-bg) 65%, var(--panel));
-  }
+    --cvd-constraint-pill-stages-bg: rgba(222, 209, 255, 0.96);
+    --cvd-constraint-pill-stages-border: #6d3f9d;
+    --cvd-constraint-pill-stages-style: dotted;
 
-  :root[data-cvd="protan-deutan"] .promo-mismatch {
-    color: var(--cvd-error-text);
-    font-weight: 700;
-  }
+    --cvd-constraint-pill-international-bg: rgba(186, 232, 245, 0.95);
+    --cvd-constraint-pill-international-border: #0f766e;
+    --cvd-constraint-pill-international-style: double;
 
-  :root[data-cvd="protan-deutan"] .cycle-import-dropzone-status {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-  }
+    --cvd-constraint-pill-partiels-bg: rgba(240, 205, 234, 0.96);
+    --cvd-constraint-pill-partiels-border: #9f4379;
+    --cvd-constraint-pill-partiels-style: solid;
 
-  :root[data-cvd="protan-deutan"] .cycle-import-dropzone-status::before {
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-  }
-
-  :root[data-cvd="protan-deutan"] .cycle-import-dropzone-status.is-success {
-    background: var(--cvd-success-bg);
-    border: 1.5px solid var(--cvd-success-border);
-    color: var(--cvd-success-text);
-  }
-
-  :root[data-cvd="protan-deutan"] .cycle-import-dropzone-status.is-success::before {
-    content: "OK";
-  }
-
-  :root[data-cvd="protan-deutan"] .cycle-import-dropzone-status.is-info {
-    background: var(--cvd-info-bg);
-    border: 1.5px dashed var(--cvd-info-border);
-    color: var(--cvd-info-text);
-  }
-
-  :root[data-cvd="protan-deutan"] .cycle-import-dropzone-status.is-info::before {
-    content: "INFO";
-  }
-
-  :root[data-cvd="protan-deutan"] .cycle-import-dropzone-status.is-error {
-    background: var(--cvd-error-bg);
-    border: 2px double var(--cvd-error-border);
-    color: var(--cvd-error-text);
-  }
-
-  :root[data-cvd="protan-deutan"] .cycle-import-dropzone-status.is-error::before {
-    content: "ERREUR";
-  }
-
-  :root[data-cvd="protan-deutan"] .maquette-preview-loading {
-    background: var(--cvd-info-bg);
-    border: 1.5px dashed var(--cvd-info-border);
-    color: var(--cvd-info-text);
-  }
-
-  :root[data-cvd="protan-deutan"] .maquette-preview-error {
-    background: var(--cvd-error-bg);
-    border: 1.5px solid var(--cvd-error-border);
-    color: var(--cvd-error-text);
-  }
-
-  :root[data-cvd="protan-deutan"] .maquette-preview-warning-list {
-    background: var(--cvd-warning-bg);
-    border: 1.5px dashed var(--cvd-warning-border);
-    color: var(--cvd-warning-text);
-  }
-
-  :root[data-cvd="protan-deutan"] .maquette-preview-warning-close {
-    color: var(--cvd-warning-text);
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-card {
-    border: 2px solid transparent;
-    box-shadow: var(--shadow-sm);
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-vacances {
-    background: rgba(255, 244, 204, 0.9);
-    border-color: #9a6b00;
-    border-style: solid;
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-entreprise {
-    background: rgba(217, 237, 255, 0.9);
-    border-color: #0b4f7a;
-    border-style: dashed;
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-stages {
-    background: rgba(238, 229, 255, 0.9);
-    border-color: #6d3f9d;
-    border-style: dotted;
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-international {
-    background: rgba(210, 241, 247, 0.9);
-    border-color: #0f766e;
-    border-style: double;
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-partiels {
-    background: rgba(244, 223, 242, 0.9);
-    border-color: #9f4379;
-    border-style: solid;
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-rattrapages {
-    background: rgba(225, 229, 239, 0.9);
-    border-color: #374151;
-    border-style: solid;
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-pill {
-    border: 1.5px solid transparent;
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-pill-vacances {
-    background: rgba(251, 234, 168, 0.95);
-    border-color: #9a6b00;
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-pill-entreprise {
-    background: rgba(197, 223, 255, 0.95);
-    border-color: #0b4f7a;
-    border-style: dashed;
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-pill-stages {
-    background: rgba(222, 209, 255, 0.96);
-    border-color: #6d3f9d;
-    border-style: dotted;
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-pill-international {
-    background: rgba(186, 232, 245, 0.95);
-    border-color: #0f766e;
-    border-style: double;
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-pill-partiels {
-    background: rgba(240, 205, 234, 0.96);
-    border-color: #9f4379;
-  }
-
-  :root[data-cvd="protan-deutan"] .constraint-pill-rattrapages {
-    background: rgba(211, 222, 242, 0.95);
-    border-color: #374151;
+    --cvd-constraint-pill-rattrapages-bg: rgba(211, 222, 242, 0.95);
+    --cvd-constraint-pill-rattrapages-border: #374151;
+    --cvd-constraint-pill-rattrapages-style: solid;
   }
 }
