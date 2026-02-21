@@ -1,6 +1,10 @@
 /* src/styles/components/_theme-toggle.css */
 
 @layer components {
+    :root[data-theme='spock'] .theme-toggle-wrapper {
+        display: none;
+    }
+
     .theme-toggle-wrapper {
         margin-bottom: 8px;
     }
