@@ -40,6 +40,8 @@ const EVENT_ROOM_LOCATION_SUGGESTIONS = Array.from(
         sensitivity: 'base',
     }),
 )
+const CREATE_EVENT_REQUIRED_FIELDS_ALERT =
+    'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de créer cet événement.'
 
 export default function EventDetailCard({
     event,
@@ -91,9 +93,7 @@ export default function EventDetailCard({
         onClose,
         onSaveAndClose: () => {
             if (isCreate && !isValid) {
-                window.alert(
-                    'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de créer cet événement.',
-                )
+                window.alert(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
                 return
             }
             handleSave()
@@ -343,9 +343,7 @@ export default function EventDetailCard({
                     cancelDirtyDiscardLabel="Fermer sans enregistrer"
                     onBeforeSaveClick={() => {
                         if (isCreate && !isValid) {
-                            window.alert(
-                                'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de créer cet événement.',
-                            )
+                            window.alert(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
                             return false
                         }
                         return true

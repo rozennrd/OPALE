@@ -63,7 +63,7 @@ export default function EventsToolbar({
 }: EventsToolbarProps) {
     return (
         <PageToolbar className="events-toolbar">
-            <ToolbarRow className="events-toolbar-row events-toolbar-row--primary">
+            <ToolbarRow className="page-toolbar-row--primary events-toolbar-row events-toolbar-row--primary">
                 <ToolbarSearch
                     value={searchValue}
                     onChange={onSearchChange}
@@ -102,7 +102,7 @@ export default function EventsToolbar({
                 </button>
             </ToolbarRow>
 
-            <ToolbarRow className="events-toolbar-row events-toolbar-row--filters events-toolbar-filters">
+            <ToolbarRow className="page-toolbar-row--filters events-toolbar-row events-toolbar-row--filters events-toolbar-filters">
                 <div className="toolbar-filter">
                     <label className="toolbar-filter-label">
                         À partir du

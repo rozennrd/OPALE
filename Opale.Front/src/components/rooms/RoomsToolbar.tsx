@@ -55,7 +55,7 @@ export default function RoomsToolbar({
 }: RoomsToolbarProps) {
     return (
         <PageToolbar className="rooms-toolbar">
-            <ToolbarRow className="rooms-toolbar-row rooms-toolbar-row--primary">
+            <ToolbarRow className="page-toolbar-row--primary rooms-toolbar-row rooms-toolbar-row--primary">
                 <ToolbarSearch
                     value={searchValue}
                     onChange={onSearchChange}
@@ -85,7 +85,7 @@ export default function RoomsToolbar({
                 </button>
             </ToolbarRow>
 
-            <ToolbarRow className="rooms-toolbar-row rooms-toolbar-row--filters rooms-toolbar-filters">
+            <ToolbarRow className="page-toolbar-row--filters rooms-toolbar-row rooms-toolbar-row--filters rooms-toolbar-filters">
                 <div className="toolbar-filter">
                     <label className="toolbar-filter-label">
                         Type

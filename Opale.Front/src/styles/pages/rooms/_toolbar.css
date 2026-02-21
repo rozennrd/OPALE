@@ -1,24 +1,9 @@
 /* src/styles/pages/rooms/_toolbar.css */
 
 @layer pages {
-    .rooms-toolbar-row--primary {
-        align-items: center;
-    }
-
     .rooms-toolbar-search {
         flex: 1;
         min-width: 220px;
-    }
-
-    .rooms-toolbar-row--primary .toolbar-selection-toggle {
-        flex: 0 0 auto;
-    }
-
-    .rooms-toolbar-row--filters {
-        align-items: flex-end;
-        justify-content: space-between;
-        width: 100%;
-        flex-wrap: nowrap;
     }
 
     .rooms-toolbar-capacity-filter {
@@ -46,28 +31,9 @@
         font-size: 0.85rem;
     }
 
-    .rooms-toolbar-row--filters .toolbar-reset-button {
-        align-self: flex-end;
-    }
-
     @media (max-width: 900px) {
-        .rooms-toolbar-row {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .rooms-toolbar-row .toolbar-selection-toggle {
-            width: 100%;
-            justify-content: center;
-        }
-
         .rooms-toolbar-capacity-filter {
             min-width: 0;
-        }
-
-        .rooms-toolbar-row--filters .toolbar-reset-button {
-            width: 100%;
-            justify-content: center;
         }
     }
 }

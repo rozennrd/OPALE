@@ -275,15 +275,6 @@
         color: var(--text);
     }
 
-    [data-theme='dark'] .event-detail-input[type='date'] {
-        color-scheme: dark;
-    }
-
-    [data-theme='dark'] .event-detail-input[type='date']::-webkit-calendar-picker-indicator {
-        filter: brightness(0) invert(1);
-        opacity: 0.95;
-    }
-
     [data-theme='dark'] .event-detail-source-pill {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.18);

@@ -19,8 +19,23 @@
         align-items: center;
     }
 
+    .page-toolbar-row--primary {
+        align-items: center;
+    }
+
+    .page-toolbar-row--primary .toolbar-selection-toggle {
+        flex: 0 0 auto;
+    }
+
     .page-toolbar-row--filters {
+        align-items: flex-end;
         justify-content: space-between;
+        width: 100%;
+        flex-wrap: nowrap;
+    }
+
+    .page-toolbar-row--filters .toolbar-reset-button {
+        align-self: flex-end;
     }
 
     /* ============================
@@ -44,18 +59,6 @@
         height: 18px;
         flex-shrink: 0;
         opacity: 0.7;
-    }
-
-    .toolbar-search-icon-dark {
-        display: none;
-    }
-
-    [data-theme='dark'] .toolbar-search-icon-light {
-        display: none;
-    }
-
-    [data-theme='dark'] .toolbar-search-icon-dark {
-        display: block;
     }
 
     .toolbar-search-input {
@@ -99,15 +102,6 @@
         background: var(--input-bg);
         color: var(--text);
         font-size: 0.85rem;
-    }
-
-    [data-theme='dark'] .toolbar-filter-date {
-        color-scheme: dark;
-    }
-
-    [data-theme='dark'] .toolbar-filter-date::-webkit-calendar-picker-indicator {
-        filter: brightness(0) invert(1);
-        opacity: 0.95;
     }
 
     .toolbar-filter-select {
@@ -229,6 +223,16 @@
        ============================ */
 
     @media (max-width: 900px) {
+        .page-toolbar-row--primary {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .page-toolbar-row--primary .toolbar-selection-toggle {
+            width: 100%;
+            margin-left: 0;
+        }
+
         .page-toolbar-row--filters {
             flex-direction: column;
             align-items: stretch;
@@ -246,6 +250,11 @@
         .toolbar-toggle-chip {
             flex: 1;
             text-align: center;
+        }
+
+        .page-toolbar-row--filters .toolbar-reset-button {
+            width: 100%;
+            justify-content: center;
         }
     }
 }

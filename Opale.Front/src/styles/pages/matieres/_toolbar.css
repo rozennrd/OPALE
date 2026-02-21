@@ -17,44 +17,4 @@
         min-width: min(320px, 100%);
     }
 
-    .matieres-toolbar-row--primary .toolbar-selection-toggle {
-        flex: 0 0 auto;
-    }
-
-    .matieres-toolbar-row--filters {
-        align-items: flex-end;
-        justify-content: space-between;
-        width: 100%;
-        flex-wrap: nowrap;
-    }
-
-    .matieres-toolbar-row--filters .toolbar-reset-button {
-        align-self: flex-end;
-    }
-
-    @media (max-width: 900px) {
-        .matieres-toolbar-row--primary {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .matieres-toolbar-row--primary .toolbar-selection-toggle {
-            width: 100%;
-            justify-content: center;
-        }
-
-        .matieres-toolbar-row--filters {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .matieres-toolbar-row--filters .toolbar-filter {
-            width: 100%;
-        }
-
-        .matieres-toolbar-row--filters .toolbar-reset-button {
-            width: 100%;
-            justify-content: center;
-        }
-    }
 }

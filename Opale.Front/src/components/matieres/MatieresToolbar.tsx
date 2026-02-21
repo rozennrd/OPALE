@@ -62,7 +62,7 @@ export default function MatieresToolbar({
 }: MatieresToolbarProps) {
     return (
         <PageToolbar className="matieres-toolbar">
-            <ToolbarRow className="matieres-toolbar-row matieres-toolbar-row--primary">
+            <ToolbarRow className="page-toolbar-row--primary matieres-toolbar-row matieres-toolbar-row--primary">
                 <ToolbarSearch
                     value={searchValue}
                     onChange={onSearchChange}
@@ -92,7 +92,7 @@ export default function MatieresToolbar({
                 </button>
             </ToolbarRow>
 
-            <ToolbarRow className="matieres-toolbar-row matieres-toolbar-row--filters">
+            <ToolbarRow className="page-toolbar-row--filters matieres-toolbar-row matieres-toolbar-row--filters">
                 <div className="toolbar-filter">
                     <span className="toolbar-filter-label">Semestre</span>
                     <div className="toolbar-toggle-chips">

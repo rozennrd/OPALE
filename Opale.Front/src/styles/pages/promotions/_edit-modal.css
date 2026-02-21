@@ -117,15 +117,6 @@
         color: var(--text);
     }
 
-    [data-theme='dark'] .promo-edit-input[type='date'] {
-        color-scheme: dark;
-    }
-
-    [data-theme='dark'] .promo-edit-input[type='date']::-webkit-calendar-picker-indicator {
-        filter: brightness(0) invert(1);
-        opacity: 0.95;
-    }
-
     .promo-edit-actions {
         display: flex;
         justify-content: flex-end;
