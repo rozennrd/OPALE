@@ -1,5 +1,5 @@
 // src/components/Sidebar.tsx
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 
 import logoFull from '../assets/logo/logo-full.png'
@@ -11,10 +11,12 @@ import icEvenements from '../assets/sidebar/ic-events.png'
 import icEnseignants from '../assets/sidebar/ic-profs.png'
 import icSalles from '../assets/sidebar/ic-salles.png'
 import icMatieres from '../assets/sidebar/ic-matieres.png'
+import icParametres from '../assets/sidebar/ic-para.png'
 import icLogout from '../assets/sidebar/ic-logout.png'
 import icLogoutDark from '../assets/sidebar/ic-logout-dark.png'
 import icContact from '../assets/sidebar/ic-contact.png'
 import icContactDark from '../assets/sidebar/ic-contact-dark.png'
+import { readAndApplyIconVisibilityPreferences } from '../utils/iconPreferences'
 
 import ThemeToggle from './ThemeToggle'
 
@@ -32,11 +34,16 @@ const items: NavItem[] = [
     { to: '/teachers', label: 'Enseignants', ic: icEnseignants, code: 'CREW-07' },
     { to: '/salles', label: 'Salles', ic: icSalles, code: 'DECK-04' },
     { to: '/matieres', label: 'Mati\u00e8res', ic: icMatieres, code: 'LAB-22' },
+    { to: '/parametres', label: 'Param\u00e8tres', ic: icParametres, code: 'CFG-09' },
 ]
 
 export default function Sidebar(): JSX.Element | null {
     const navigate = useNavigate()
     const location = useLocation()
+
+    useEffect(() => {
+        readAndApplyIconVisibilityPreferences()
+    }, [])
 
     // Si la route est "login", on ne rend pas le sidebar
     if (location.pathname === '/login') return null
@@ -91,6 +98,9 @@ export default function Sidebar(): JSX.Element | null {
                     >
                         <img className="footer-icon-light" src={icLogout} alt="" />
                         <img className="footer-icon-dark" src={icLogoutDark} alt="" />
+                        <span className="footer-icon-fallback" aria-hidden="true">
+                            Sortie
+                        </span>
                     </button>
 
                     <button
@@ -102,6 +112,9 @@ export default function Sidebar(): JSX.Element | null {
                     >
                         <img className="footer-icon-light" src={icContact} alt="" />
                         <img className="footer-icon-dark" src={icContactDark} alt="" />
+                        <span className="footer-icon-fallback" aria-hidden="true">
+                            Contact
+                        </span>
                     </button>
                 </div>
             </div>

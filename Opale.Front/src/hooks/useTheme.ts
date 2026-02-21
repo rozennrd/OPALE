@@ -5,6 +5,8 @@ const THEME_KEY = 'opale-theme'
 const CVD_KEY = 'opale-cvd'
 const VISION_KEY = 'opale-vision'
 const READING_KEY = 'opale-reading'
+const SPOCK_AUDIO_KEY = 'opale-spock-audio'
+const APPEARANCE_EVENT = 'opale:appearance-change'
 
 const THEMES = ['light', 'dark', 'spock'] as const
 const CVD_PROFILES = ['none', 'protan-deutan', 'tritan', 'achromatopsia'] as const
@@ -16,6 +18,7 @@ type AppearanceState = {
     cvd: CvdProfile
     vision: VisionProfile
     reading: ReadingProfile
+    spockAudio: boolean
 }
 
 type AppearanceSetters = {
@@ -23,6 +26,7 @@ type AppearanceSetters = {
     setCvd: Dispatch<SetStateAction<CvdProfile>>
     setVision: Dispatch<SetStateAction<VisionProfile>>
     setReading: Dispatch<SetStateAction<ReadingProfile>>
+    setSpockAudio: Dispatch<SetStateAction<boolean>>
 }
 
 type AppearanceConsoleApi = {
@@ -31,6 +35,7 @@ type AppearanceConsoleApi = {
     setCvd: (cvd: string) => void
     setVision: (vision: string) => void
     setReading: (reading: string) => void
+    setSpockAudio: (enabled: string) => void
     reset: () => void
     help: () => string
 }
@@ -77,6 +82,26 @@ function readStored<T>(
     return guard(stored) ? stored : fallback
 }
 
+function readStoredBoolean(key: string, fallback: boolean): boolean {
+    if (typeof window === 'undefined') return fallback
+
+    const stored = window.localStorage.getItem(key)
+    if (stored === null) return fallback
+
+    const normalized = stored.trim().toLowerCase()
+    if (['1', 'true', 'on', 'yes'].includes(normalized)) return true
+    if (['0', 'false', 'off', 'no'].includes(normalized)) return false
+
+    return fallback
+}
+
+function parseBooleanString(value: string): boolean | null {
+    const normalized = value.trim().toLowerCase()
+    if (['1', 'true', 'on', 'yes'].includes(normalized)) return true
+    if (['0', 'false', 'off', 'no'].includes(normalized)) return false
+    return null
+}
+
 function useAppearanceState(): AppearanceState & AppearanceSetters {
     const [theme, setTheme] = useState<Theme>(() => {
         if (typeof window === 'undefined') return 'light'
@@ -102,6 +127,30 @@ function useAppearanceState(): AppearanceState & AppearanceSetters {
     const [reading, setReading] = useState<ReadingProfile>(() =>
         readStored(READING_KEY, isReadingProfile, 'normal'),
     )
+    const [spockAudio, setSpockAudio] = useState<boolean>(() =>
+        readStoredBoolean(SPOCK_AUDIO_KEY, true),
+    )
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return
+
+        const onAppearanceChange = (event: Event) => {
+            const detail = (event as CustomEvent<AppearanceState>).detail
+            if (!detail) return
+
+            setTheme(detail.theme)
+            setCvd(detail.cvd)
+            setVision(detail.vision)
+            setReading(detail.reading)
+            setSpockAudio(detail.spockAudio)
+        }
+
+        window.addEventListener(APPEARANCE_EVENT, onAppearanceChange as EventListener)
+
+        return () => {
+            window.removeEventListener(APPEARANCE_EVENT, onAppearanceChange as EventListener)
+        }
+    }, [])
 
     return {
         theme,
@@ -112,6 +161,8 @@ function useAppearanceState(): AppearanceState & AppearanceSetters {
         setVision,
         reading,
         setReading,
+        spockAudio,
+        setSpockAudio,
     }
 }
 
@@ -123,23 +174,34 @@ function useAppearanceDomSync(state: AppearanceState) {
         document.documentElement.setAttribute('data-cvd', state.cvd)
         document.documentElement.setAttribute('data-vision', state.vision)
         document.documentElement.setAttribute('data-reading', state.reading)
+        document.documentElement.setAttribute(
+            'data-spock-audio',
+            state.spockAudio ? 'on' : 'off',
+        )
 
         window.localStorage.setItem(THEME_KEY, state.theme)
         window.localStorage.setItem(CVD_KEY, state.cvd)
         window.localStorage.setItem(VISION_KEY, state.vision)
         window.localStorage.setItem(READING_KEY, state.reading)
-    }, [state.theme, state.cvd, state.vision, state.reading])
+        window.localStorage.setItem(SPOCK_AUDIO_KEY, state.spockAudio ? '1' : '0')
+
+        window.dispatchEvent(
+            new CustomEvent<AppearanceState>(APPEARANCE_EVENT, {
+                detail: state,
+            }),
+        )
+    }, [state.theme, state.cvd, state.vision, state.reading, state.spockAudio])
 }
 
 function useAppearanceConsoleApi(state: AppearanceState, setters: AppearanceSetters) {
-    const { theme, cvd, vision, reading } = state
-    const { setTheme, setCvd, setVision, setReading } = setters
+    const { theme, cvd, vision, reading, spockAudio } = state
+    const { setTheme, setCvd, setVision, setReading, setSpockAudio } = setters
 
     useEffect(() => {
         if (typeof window === 'undefined') return
 
         window.opaleAppearance = {
-            getState: () => ({ theme, cvd, vision, reading }),
+            getState: () => ({ theme, cvd, vision, reading, spockAudio }),
             setTheme: (value: string) => {
                 if (isTheme(value)) {
                     setTheme(value)
@@ -176,14 +238,25 @@ function useAppearanceConsoleApi(state: AppearanceState, setters: AppearanceSett
                     `[OPALE] Profil lecture invalide: "${value}". Valeurs possibles: ${READING_PROFILES.join(', ')}.`,
                 )
             },
+            setSpockAudio: (value: string) => {
+                const parsed = parseBooleanString(value)
+                if (parsed !== null) {
+                    setSpockAudio(parsed)
+                    return
+                }
+                console.warn(
+                    `[OPALE] Valeur audio Spock invalide: "${value}". Utiliser on/off, true/false ou 1/0.`,
+                )
+            },
             reset: () => {
                 setTheme('light')
                 setCvd('none')
                 setVision('normal')
                 setReading('normal')
+                setSpockAudio(true)
             },
             help: () =>
-                'window.opaleAppearance.setTheme("spock"), window.opaleAppearance.setCvd("protan-deutan"), window.opaleAppearance.setVision("low"), window.opaleAppearance.setReading("dyslexia"), window.opaleAppearance.getState(), window.opaleAppearance.reset()',
+                'window.opaleAppearance.setTheme("spock"), window.opaleAppearance.setCvd("protan-deutan"), window.opaleAppearance.setVision("low"), window.opaleAppearance.setReading("dyslexia"), window.opaleAppearance.setSpockAudio("off"), window.opaleAppearance.getState(), window.opaleAppearance.reset()',
         }
 
         return () => {
@@ -191,15 +264,31 @@ function useAppearanceConsoleApi(state: AppearanceState, setters: AppearanceSett
                 delete window.opaleAppearance
             }
         }
-    }, [theme, cvd, vision, reading, setTheme, setCvd, setVision, setReading])
+    }, [
+        theme,
+        cvd,
+        vision,
+        reading,
+        spockAudio,
+        setTheme,
+        setCvd,
+        setVision,
+        setReading,
+        setSpockAudio,
+    ])
 }
 
-function useSpockAudioFx(theme: Theme) {
+function useSpockAudioFx(theme: Theme, isSpockAudioEnabled: boolean) {
     const audioContextRef = useRef<AudioContext | null>(null)
     const lastBeepAtRef = useRef<number>(0)
 
     useEffect(() => {
-        if (theme !== 'spock' || typeof document === 'undefined' || typeof window === 'undefined') {
+        if (
+            theme !== 'spock' ||
+            !isSpockAudioEnabled ||
+            typeof document === 'undefined' ||
+            typeof window === 'undefined'
+        ) {
             if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
                 void audioContextRef.current.close()
                 audioContextRef.current = null
@@ -261,7 +350,7 @@ function useSpockAudioFx(theme: Theme) {
             document.removeEventListener('click', onClick)
             document.removeEventListener('keydown', onKeyDown)
         }
-    }, [theme])
+    }, [theme, isSpockAudioEnabled])
 }
 
 export function useTheme() {
@@ -269,7 +358,7 @@ export function useTheme() {
 
     useAppearanceDomSync(appearance)
     useAppearanceConsoleApi(appearance, appearance)
-    useSpockAudioFx(appearance.theme)
+    useSpockAudioFx(appearance.theme, appearance.spockAudio)
 
     const toggleTheme = () =>
         appearance.setTheme((current) => (current === 'light' ? 'dark' : 'light'))
@@ -284,5 +373,7 @@ export function useTheme() {
         setVision: appearance.setVision,
         reading: appearance.reading,
         setReading: appearance.setReading,
+        spockAudio: appearance.spockAudio,
+        setSpockAudio: appearance.setSpockAudio,
     }
 }

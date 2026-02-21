@@ -91,6 +91,14 @@
   .footer-icon-btn:hover { background: var(--surface-hover); }
   .footer-icon-btn img { width: 28px; height: 28px; }
   .footer-icon-btn .footer-icon-dark { display: none; }
+  .footer-icon-fallback {
+    display: none;
+    font-size: 0.67rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    line-height: 1;
+  }
 
   :root:is([data-theme='dark'], [data-theme='spock']) .footer-icon-btn .footer-icon-light { display: none; }
   :root:is([data-theme='dark'], [data-theme='spock']) .footer-icon-btn .footer-icon-dark { display: block; }
