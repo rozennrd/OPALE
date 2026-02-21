@@ -267,5 +267,12 @@
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.2);
         color: var(--text);
+        color-scheme: dark;
+    }
+
+    [data-theme='dark'] .constraint-date-input::-webkit-calendar-picker-indicator,
+    [data-theme='dark'] .teacher-period-range-pill input[type='date']::-webkit-calendar-picker-indicator {
+        filter: brightness(0) invert(1);
+        opacity: 0.95;
     }
 }

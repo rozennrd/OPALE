@@ -33,3 +33,14 @@
     --add-cycle-border-color: #F9F9F9;
   }
 }
+
+@layer base {
+  :root[data-theme="dark"] input[type="date"] {
+    color-scheme: dark;
+  }
+
+  :root[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+  }
+}

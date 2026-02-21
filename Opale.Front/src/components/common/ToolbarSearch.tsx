@@ -1,6 +1,7 @@
 // src/components/common/ToolbarSearch.tsx
 import React from 'react'
 import icSearch from '../../assets/ic-search.png'
+import icSearchDark from '../../assets/ic-search-dark.png'
 
 interface ToolbarSearchProps {
     value: string
@@ -19,7 +20,16 @@ const ToolbarSearch: React.FC<ToolbarSearchProps> = ({
 
     return (
         <div className={rootClassName}>
-            <img src={icSearch} alt="" className="toolbar-search-icon" />
+            <img
+                src={icSearch}
+                alt=""
+                className="toolbar-search-icon toolbar-search-icon-light"
+            />
+            <img
+                src={icSearchDark}
+                alt=""
+                className="toolbar-search-icon toolbar-search-icon-dark"
+            />
             <input
                 type="text"
                 value={value}
