@@ -173,6 +173,34 @@
     background: var(--cvd-switch-on-thumb);
   }
 
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-visibility-switch {
+    border-width: 1.5px;
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-visibility-switch-track {
+    background: var(--cvd-switch-off-track-bg);
+    border-color: var(--cvd-switch-off-track-border);
+    border-style: solid;
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-visibility-switch-thumb {
+    background: var(--cvd-switch-off-thumb);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-visibility-switch-label {
+    font-weight: 700;
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-visibility-switch.is-on .event-visibility-switch-track {
+    background: var(--cvd-switch-on-track-bg);
+    border-color: var(--cvd-switch-on-track-border);
+    border-style: dashed;
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .event-visibility-switch.is-on .event-visibility-switch-thumb {
+    background: var(--cvd-switch-on-thumb);
+  }
+
   :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .btn-add-promo {
     border-color: var(--cvd-add-promo-border);
     background: var(--cvd-add-promo-bg);
