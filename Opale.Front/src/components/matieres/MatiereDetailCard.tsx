@@ -1,5 +1,5 @@
 // src/components/matieres/MatiereDetailCard.tsx
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { Matiere } from '../../models/Matiere'
 import DetailCardBody from '../common/DetailCardBody'
 import DetailCardHeader from '../common/DetailCardHeader'
@@ -57,6 +57,7 @@ export default function MatiereDetailCard({
     const [projectHours, setProjectHours] = useState(matiere.heures_projet ?? 0)
     const [eLearningHours, setELearningHours] = useState(matiere.heures_elearning ?? 0)
     const [autresHours, setAutresHours] = useState(matiere.heures_autre ?? 0)
+    const [volumeIncreaseMessage, setVolumeIncreaseMessage] = useState<string | null>(null)
     const [assignments, setAssignments] = useState<TeacherAssignment[]>(() => [
         { rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 },
     ])
@@ -66,6 +67,71 @@ export default function MatiereDetailCard({
     const [assignments, setAssignments] = useState<TeacherAssignment[]>([])
     const [initialAssignments, setInitialAssignments] = useState<TeacherAssignment[]>([])
     const [removedEnseignementIds, setRemovedEnseignementIds] = useState<string[]>([])
+
+    const [volumeWarningMessage, setVolumeWarningMessage] = useState<string | null>(null)
+
+    type CategoryKey = 'tdHours' | 'tpHours' | 'projectHours' | 'eLearningHours' | 'autresHours'
+
+    const sumCategoriesExcept = (except: CategoryKey) => {
+        const td = clamp0(tdHours)
+        const tp = clamp0(tpHours)
+        const pj = clamp0(projectHours)
+        const el = clamp0(eLearningHours)
+        const au = clamp0(autresHours)
+
+        switch (except) {
+            case 'tdHours':
+                return tp + pj + el + au
+            case 'tpHours':
+                return td + pj + el + au
+            case 'projectHours':
+                return td + tp + el + au
+            case 'eLearningHours':
+                return td + tp + pj + au
+            case 'autresHours':
+                return td + tp + pj + el
+            default:
+                return td + tp + pj + el + au
+        }
+    }
+
+    const showTotalBlockWarning = () => {
+        setVolumeWarningMessage(
+            "Impossible de dépasser le volume horaire total. Modifiez-le manuellement avant."
+        )
+        const t = window.setTimeout(() => setVolumeWarningMessage(null), 3500)
+        return () => window.clearTimeout(t)
+    }
+
+    const setCategoryHours = (key: CategoryKey, rawValue: number) => {
+        const nextValue = clamp0(rawValue)
+        const total = clamp0(volumeTotal)
+
+        const otherSum = sumCategoriesExcept(key)
+        const remaining = Math.max(0, total - otherSum)
+
+        // Si on tente de dépasser le reste dispo => clamp + warning
+        if (nextValue > remaining) {
+            // set le max autorisé
+            const clamped = remaining
+
+            if (key === 'tdHours') setTdHours(clamped)
+            if (key === 'tpHours') setTpHours(clamped)
+            if (key === 'projectHours') setProjectHours(clamped)
+            if (key === 'eLearningHours') setELearningHours(clamped)
+            if (key === 'autresHours') setAutresHours(clamped)
+
+            showTotalBlockWarning()
+            return
+        }
+
+        // Sinon: ok
+        if (key === 'tdHours') setTdHours(nextValue)
+        if (key === 'tpHours') setTpHours(nextValue)
+        if (key === 'projectHours') setProjectHours(nextValue)
+        if (key === 'eLearningHours') setELearningHours(nextValue)
+        if (key === 'autresHours') setAutresHours(nextValue)
+    }
 
     // Reset local fields when matiere changes
     useEffect(() => {
@@ -186,40 +252,38 @@ export default function MatiereDetailCard({
         autresHours: clamp0(autresHours),
     })
 
-    const sumRow = (r: TeacherAssignment) =>
-        clamp0(r.tdHours) +
-        clamp0(r.tpHours) +
-        clamp0(r.projectHours) +
-        clamp0(r.elearningHours) +
-        clamp0(r.autresHours)
+    useEffect(() => {
+        const caps = hoursCaps()
 
-    const clampRowAgainstCaps = (
+        setAssignments((prev) =>
+            prev.map((r) => ({
+                ...r,
+                tdHours: caps.tdHours === 0 ? 0 : r.tdHours,
+                tpHours: caps.tpHours === 0 ? 0 : r.tpHours,
+                projectHours: caps.projectHours === 0 ? 0 : r.projectHours,
+                elearningHours: caps.elearningHours === 0 ? 0 : r.elearningHours,
+                autresHours: caps.autresHours === 0 ? 0 : r.autresHours,
+            })),
+        )
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [tdHours, tpHours, projectHours, eLearningHours, autresHours])
+
+    const clampRowAgainstTypeCap = (
         next: TeacherAssignment[],
         rowId: string,
         caps: Record<HoursKey, number>,
-        totalCap: number,
-        key: HoursKey, // ✅ on clamp uniquement ce champ
+        key: HoursKey,
     ): TeacherAssignment[] => {
         const row = next.find((r) => r.rowId === rowId)
         if (!row) return next
 
-        // 1) clamp par type (uniquement key)
-        const otherSumByType = next.reduce(
+        const otherSum = next.reduce(
             (acc, r) => acc + (r.rowId === rowId ? 0 : clamp0(r[key])),
             0
         )
-        const remainingByType = Math.max(0, caps[key] - otherSumByType)
-        row[key] = Math.min(clamp0(row[key]), remainingByType)
 
-        // 2) clamp global (volumeTotal) — uniquement en réduisant key
-        const totalOther = next.reduce((acc, r) => (r.rowId === rowId ? acc : acc + sumRow(r)), 0)
-        const remainingTotal = Math.max(0, clamp0(totalCap) - totalOther)
-
-        // on calcule combien la ligne courante peut avoir au total
-        const rowOtherKeysTotal = sumRow(row) - clamp0(row[key]) // total de la ligne sans key
-        const maxForKeyByTotal = Math.max(0, remainingTotal - rowOtherKeysTotal)
-
-        row[key] = Math.min(clamp0(row[key]), maxForKeyByTotal)
+        const remaining = Math.max(0, caps[key] - otherSum)
+        row[key] = Math.min(clamp0(row[key]), remaining)
 
         return next
     }
@@ -235,16 +299,14 @@ export default function MatiereDetailCard({
         setAssignments((prev) => {
             const next = prev.map((r) => (r.rowId === rowId ? { ...r, ...patch } : r))
 
-            // ✅ si on ne change que teacherId, on ne touche pas aux heures
             const changedHourKeys = Object.keys(patch).filter(isHoursKey) as HoursKey[]
             if (changedHourKeys.length === 0) return next
 
             const caps = hoursCaps()
 
-            // ✅ clamp uniquement les champs modifiés (souvent 1 seul)
             let out = next
             for (const k of changedHourKeys) {
-                out = clampRowAgainstCaps(out, rowId, caps, volumeTotal, k)
+                out = clampRowAgainstTypeCap(out, rowId, caps, k)
             }
             return out
         })
@@ -270,7 +332,7 @@ export default function MatiereDetailCard({
             })
 
             const caps = hoursCaps()
-            return clampRowAgainstCaps(next, rowId, caps, volumeTotal, key)
+            return clampRowAgainstTypeCap(next, rowId, caps, key)
         })
     }
 
@@ -408,6 +470,39 @@ export default function MatiereDetailCard({
         onClose()
     }
 
+    // garde la dernière valeur de volumeTotal
+    const volumeTotalRef = useRef(clamp0(volumeTotal))
+    useEffect(() => {
+        volumeTotalRef.current = clamp0(volumeTotal)
+    }, [volumeTotal])
+
+    useEffect(() => {
+        const sum =
+            clamp0(tdHours) +
+            clamp0(tpHours) +
+            clamp0(projectHours) +
+            clamp0(eLearningHours) +
+            clamp0(autresHours)
+
+        const total = clamp0(volumeTotal)
+
+        if (sum > total) {
+            const diff = sum - total
+
+            setVolumeTotal(sum) // on aligne le total sur la somme réelle
+
+            setVolumeIncreaseMessage(
+                `Votre dernier changement augmente le volume horaire de ${diff} heure${diff > 1 ? 's' : ''}.`
+            )
+
+            const t = window.setTimeout(() => {
+                setVolumeIncreaseMessage(null)
+            }, 3000)
+
+            return () => clearTimeout(t)
+        }
+    }, [tdHours, tpHours, projectHours, eLearningHours, autresHours])
+
     const {
         handleRequestClose,
         isConfirmOpen,
@@ -486,7 +581,7 @@ export default function MatiereDetailCard({
                                         type="number"
                                         min={0}
                                         value={tdHours}
-                                        onChange={(e) => setTdHours(Number(e.target.value))}
+                                        onChange={(e) => setCategoryHours('tdHours', Number(e.target.value))}
                                     />
                                 </div>
 
@@ -500,7 +595,7 @@ export default function MatiereDetailCard({
                                         type="number"
                                         min={0}
                                         value={tpHours}
-                                        onChange={(e) => setTpHours(Number(e.target.value))}
+                                        onChange={(e) => setCategoryHours('tpHours', Number(e.target.value))}
                                     />
                                 </div>
 
@@ -514,7 +609,7 @@ export default function MatiereDetailCard({
                                         type="number"
                                         min={0}
                                         value={projectHours}
-                                        onChange={(e) => setProjectHours(Number(e.target.value))}
+                                        onChange={(e) => setCategoryHours('projectHours', Number(e.target.value))}
                                     />
                                 </div>
 
@@ -523,12 +618,12 @@ export default function MatiereDetailCard({
                                         Volume E-Learning (h)
                                     </label>
                                     <input
-                                        id="matiere-projet"
+                                        id="matiere-elearning"
                                         className="room-detail-input"
                                         type="number"
                                         min={0}
                                         value={eLearningHours}
-                                        onChange={(e) => setELearningHours(Number(e.target.value))}
+                                        onChange={(e) => setCategoryHours('eLearningHours', Number(e.target.value))}
                                     />
                                 </div>
 
@@ -537,15 +632,21 @@ export default function MatiereDetailCard({
                                         Volume Autres (h)
                                     </label>
                                     <input
-                                        id="matiere-projet"
+                                        id="matiere-autres"
                                         className="room-detail-input"
                                         type="number"
                                         min={0}
                                         value={autresHours}
-                                        onChange={(e) => setAutresHours(Number(e.target.value))}
+                                        onChange={(e) => setCategoryHours('autresHours', Number(e.target.value))}
                                     />
                                 </div>
                             </div>
+                            {volumeWarningMessage && (
+                                <div className="volume-warning" role="status" aria-live="polite">
+                                    <span aria-hidden="true">⚠</span>
+                                    <span>{volumeWarningMessage}</span>
+                                </div>
+                            )}
                         </section>
                     </div>
 
