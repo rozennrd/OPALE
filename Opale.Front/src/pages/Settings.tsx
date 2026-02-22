@@ -1,5 +1,6 @@
-import React, { FormEvent, ReactNode, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import PageHeader from '../components/common/PageHeader'
+import SectionCard from '../components/common/SectionCard'
 import { useTheme } from '../hooks/useTheme'
 import { authService } from '../services/base/AuthService'
 import {
@@ -57,8 +58,8 @@ function ToggleRow({
     description,
     checked,
     onChange,
-    onLabel = 'Affiché',
-    offLabel = 'Masqué',
+    onLabel = 'Affich\u00e9',
+    offLabel = 'Masqu\u00e9',
     disabled = false,
 }: ToggleRowProps): JSX.Element {
     return (
@@ -82,60 +83,6 @@ function ToggleRow({
                 </span>
             </button>
         </div>
-    )
-}
-
-type SectionCardProps = {
-    id: string
-    title: string
-    isExpanded: boolean
-    onToggle: () => void
-    children: ReactNode
-    wide?: boolean
-}
-
-function SectionCard({
-    id,
-    title,
-    isExpanded,
-    onToggle,
-    children,
-    wide = false,
-}: SectionCardProps): JSX.Element {
-    return (
-        <section
-            className={[
-                'card',
-                'settings-section',
-                wide ? 'settings-section--wide' : '',
-                !isExpanded ? 'is-collapsed' : '',
-            ]
-                .filter(Boolean)
-                .join(' ')}
-        >
-            <div className="settings-section-header">
-                <h2 className="settings-section-title">{title}</h2>
-                <button
-                    type="button"
-                    className="settings-section-toggle"
-                    onClick={onToggle}
-                    aria-expanded={isExpanded}
-                    aria-controls={id}
-                    title={isExpanded ? 'Replier' : 'Déplier'}
-                >
-                    <span
-                        className={`settings-chevron ${isExpanded ? 'is-up' : 'is-down'}`}
-                        aria-hidden="true"
-                    />
-                </button>
-            </div>
-
-            {isExpanded && (
-                <div id={id} className="settings-section-content">
-                    {children}
-                </div>
-            )}
-        </section>
     )
 }
 
@@ -213,7 +160,7 @@ export default function Settings() {
                     })
                 }
             } catch (error) {
-                console.error('[SETTINGS] Impossible de récupérer le profil utilisateur', error)
+                console.error('[SETTINGS] Impossible de r\u00e9cup\u00e9rer le profil utilisateur', error)
             }
         }
 
@@ -237,7 +184,7 @@ export default function Settings() {
         if (!normalizedUserName) {
             setAccountFeedback({
                 kind: 'error',
-                message: "Le nom d'utilisateur ne peut pas être vide.",
+                message: "Le nom d'utilisateur ne peut pas \u00eatre vide.",
             })
             return
         }
@@ -249,7 +196,7 @@ export default function Settings() {
 
         setAccountFeedback({
             kind: 'success',
-            message: "Nom d'utilisateur enregistré.",
+            message: "Nom d'utilisateur enregistr\u00e9.",
         })
     }
 
@@ -276,7 +223,7 @@ export default function Settings() {
         if (newPassword.length < 8) {
             setPasswordFeedback({
                 kind: 'error',
-                message: 'Le nouveau mot de passe doit contenir au moins 8 caractères.',
+                message: 'Le nouveau mot de passe doit contenir au moins 8 caract\u00e8res.',
             })
             return
         }
@@ -284,7 +231,7 @@ export default function Settings() {
         if (newPassword === currentPassword) {
             setPasswordFeedback({
                 kind: 'error',
-                message: "Le nouveau mot de passe doit être différent de l'actuel.",
+                message: "Le nouveau mot de passe doit \u00eatre diff\u00e9rent de l'actuel.",
             })
             return
         }
@@ -300,7 +247,7 @@ export default function Settings() {
         setPasswordForm(INITIAL_PASSWORD_FORM)
         setPasswordFeedback({
             kind: 'success',
-            message: 'Validation OK. Le branchement API du changement de mot de passe reste à faire.',
+            message: 'Validation r\u00e9ussie. Le branchement API pour le changement de mot de passe reste \u00e0 faire.',
         })
     }
 
@@ -338,15 +285,15 @@ export default function Settings() {
     return (
         <>
             <PageHeader
-                title="Paramètres"
-                subtitle="Compte, sécurité, apparence et affichage des icônes"
+                title={'Param\u00e8tres'}
+                subtitle={'Compte, s\u00e9curit\u00e9, apparence et affichage des ic\u00f4nes.'}
             />
 
             <div className="settings-page">
                 <SectionCard
                     id="settings-section-account"
                     title="Compte"
-                    isExpanded={expandedSections.account}
+                    expanded={expandedSections.account}
                     onToggle={() => toggleSection('account')}
                 >
                     <form className="settings-form" onSubmit={handleAccountSubmit}>
@@ -366,7 +313,7 @@ export default function Settings() {
                         </label>
 
                         <label className="settings-field">
-                            <span className="settings-label">Mail</span>
+                            <span className="settings-label">{'Adresse e-mail'}</span>
                             <input
                                 type="email"
                                 className="settings-input"
@@ -376,7 +323,7 @@ export default function Settings() {
                                 placeholder="Mail indisponible"
                             />
                             <span className="settings-help">
-                                Champ verrouillé pour le moment.
+                                {'Champ verrouill\u00e9 pour le moment.'}
                             </span>
                         </label>
 
@@ -387,7 +334,7 @@ export default function Settings() {
                         </div>
 
                         <p className="settings-lock-note">
-                            Section verrouillée pour le moment.
+                            {'Section verrouill\u00e9e pour le moment.'}
                         </p>
 
                         {accountFeedback && (
@@ -403,8 +350,8 @@ export default function Settings() {
 
                 <SectionCard
                     id="settings-section-security"
-                    title="Sécurité"
-                    isExpanded={expandedSections.security}
+                    title={'S\u00e9curit\u00e9'}
+                    expanded={expandedSections.security}
                     onToggle={() => toggleSection('security')}
                 >
                     <form className="settings-form" onSubmit={handlePasswordSubmit}>
@@ -455,12 +402,12 @@ export default function Settings() {
 
                         <div className="settings-actions">
                             <button type="submit" className="btn-primary" disabled>
-                                Mettre à jour
+                                {'Mettre \u00e0 jour'}
                             </button>
                         </div>
 
                         <p className="settings-lock-note">
-                            Section verrouillée pour le moment.
+                            {'Section verrouill\u00e9e pour le moment.'}
                         </p>
 
                         {passwordFeedback && (
@@ -477,26 +424,26 @@ export default function Settings() {
                 <SectionCard
                     id="settings-section-appearance"
                     title="Apparence"
-                    isExpanded={expandedSections.appearance}
+                    expanded={expandedSections.appearance}
                     onToggle={() => toggleSection('appearance')}
                     wide
                 >
                     <p className="settings-note">
-                        Les thèmes clair/sombre restent gérés par le toggle de la sidebar.
+                        {'Les th\u00e8mes clair/sombre restent g\u00e9r\u00e9s par le bouton de la barre lat\u00e9rale.'}
                     </p>
 
                     <div className="settings-toggle-list">
                         <ToggleRow
-                            title="Thème Spock"
-                            description="Mode visuel alternatif avec style LCARS."
+                            title={'Th\u00e8me Spock'}
+                            description={'Mode visuel alternatif au style LCARS.'}
                             checked={theme === 'spock'}
                             onChange={handleSpockToggle}
-                            onLabel="Activé"
-                            offLabel="Désactivé"
+                            onLabel={'Activ\u00e9'}
+                            offLabel={'D\u00e9sactiv\u00e9'}
                         />
                         <ToggleRow
-                            title="Bips Spock"
-                            description="Son court à chaque clic/clavier interactif en mode Spock."
+                            title={'Bips du mode Spock'}
+                            description={'Un son court est jou\u00e9 \u00e0 chaque clic ou interaction clavier en mode Spock.'}
                             checked={spockAudio}
                             onChange={setSpockAudio}
                             onLabel="Actifs"
@@ -548,19 +495,19 @@ export default function Settings() {
 
                 <SectionCard
                     id="settings-section-icons"
-                    title="Icônes"
-                    isExpanded={expandedSections.icons}
+                    title={'Ic\u00f4nes'}
+                    expanded={expandedSections.icons}
                     onToggle={() => toggleSection('icons')}
                     wide
                 >
                     <p className="settings-note">
-                        Affichage des icônes par zone de l&apos;interface.
+                        {'Affichage des ic\u00f4nes par zone de l\'interface.'}
                     </p>
 
                     <div className="settings-toggle-list">
                         <ToggleRow
                             title="Sidebar"
-                            description="Liens de navigation et actions de pied de menu."
+                            description={'Liens de navigation et actions en bas du menu.'}
                             checked={iconVisibility.sidebar}
                             onChange={(checked) => updateIconVisibility('sidebar', checked)}
                         />
@@ -574,7 +521,7 @@ export default function Settings() {
 
                         <ToggleRow
                             title="Pages"
-                            description="Icônes utilitaires dans les barres d'outils et actions."
+                            description={'Ic\u00f4nes utilitaires dans les barres d\'outils et les actions.'}
                             checked={iconVisibility.pages}
                             onChange={(checked) => updateIconVisibility('pages', checked)}
                         />
