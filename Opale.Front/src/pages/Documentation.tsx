@@ -62,14 +62,14 @@ export default function Documentation() {
 
     const isStepSectionExpanded = (tutorialId: TutorialId, sectionIndex: number): boolean => {
         const key = `${tutorialId}-section-${sectionIndex}`
-        return expandedStepSections[key] ?? true
+        return expandedStepSections[key] ?? false
     }
 
     const toggleStepSection = (tutorialId: TutorialId, sectionIndex: number) => {
         const key = `${tutorialId}-section-${sectionIndex}`
         setExpandedStepSections((current) => ({
             ...current,
-            [key]: !(current[key] ?? true),
+            [key]: !(current[key] ?? false),
         }))
     }
 
@@ -189,6 +189,8 @@ export default function Documentation() {
                                                         tutorialId,
                                                         sectionIndex,
                                                     )
+                                                    const toggleStepSectionState = () =>
+                                                        toggleStepSection(tutorialId, sectionIndex)
                                                     const visibleSectionSteps = stepSection.steps.filter(
                                                         (step) => isStepVisible(step),
                                                     )
@@ -200,17 +202,25 @@ export default function Documentation() {
                                                         >
                                                             <div className="documentation-step-section-header">
                                                                 <h4 className="documentation-step-section-title">
-                                                                    {stepSection.title}
+                                                                    <button
+                                                                        type="button"
+                                                                        className="documentation-step-section-title-btn"
+                                                                        onClick={toggleStepSectionState}
+                                                                        aria-expanded={isExpanded}
+                                                                        aria-controls={sectionKey}
+                                                                        title={
+                                                                            isExpanded
+                                                                                ? 'Replier'
+                                                                                : 'Deplier'
+                                                                        }
+                                                                    >
+                                                                        {stepSection.title}
+                                                                    </button>
                                                                 </h4>
                                                                 <button
                                                                     type="button"
                                                                     className="documentation-step-section-toggle"
-                                                                    onClick={() =>
-                                                                        toggleStepSection(
-                                                                            tutorialId,
-                                                                            sectionIndex,
-                                                                        )
-                                                                    }
+                                                                    onClick={toggleStepSectionState}
                                                                     aria-expanded={isExpanded}
                                                                     aria-controls={sectionKey}
                                                                     title={

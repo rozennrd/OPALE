@@ -38,7 +38,18 @@ const SectionCard: React.FC<SectionCardProps> = ({
     return (
         <section className={rootClassName}>
             <div className="section-card-header">
-                <h2 className="section-card-title">{title}</h2>
+                <h2 className="section-card-title">
+                    <button
+                        type="button"
+                        className="section-card-title-btn"
+                        onClick={onToggle}
+                        aria-expanded={expanded}
+                        aria-controls={id}
+                        title={expanded ? 'Replier' : 'D\u00e9plier'}
+                    >
+                        {title}
+                    </button>
+                </h2>
                 <button
                     type="button"
                     className="section-card-toggle"

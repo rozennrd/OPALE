@@ -48,10 +48,4 @@ export const TUTORIAL_ITEMS: TutorialItem[] = [
         summary: 'Administrer les matieres et leurs parametres associes.',
         tab: 'pages',
     },
-    {
-        id: 'settings',
-        title: 'Tutoriel - Parametres',
-        summary: 'Utiliser les options de compte, apparence et accessibilite.',
-        tab: 'pages',
-    },
 ]
