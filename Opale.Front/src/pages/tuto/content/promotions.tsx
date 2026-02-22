@@ -1,12 +1,12 @@
-import promoPageScreenshot from '../../../assets/tuto/promo/screen-page-promo.png'
+﻿import promoPageScreenshot from '../../../assets/tuto/promo/screen-page-promo.png'
 import popupAddPromotionScreenshot from '../../../assets/tuto/promo/screen-pop-up-ajouter-promotion.png'
 import popupCreateCycleScreenshot from '../../../assets/tuto/promo/screen-pop-up-creer-cycle.png'
 import popupEditPromotionScreenshot from '../../../assets/tuto/promo/screen-pop-up-modifier-promo.png'
 import type { TutorialContent } from '../types'
 
 export const promotionsTutorialContent: TutorialContent = {
-    objective: 'Creer et maintenir les promotions avec leurs structures pedagogiques.',
-    expectedResult: 'La promotion est complete, structuree et exploitable par les modules de planning.',
+    objective: 'Créer et maintenir les promotions avec leurs structures pédagogiques.',
+    expectedResult: 'La promotion est complète, structurée et exploitable par les modules de planning.',
     steps: [],
     stepSections: [
         {
@@ -22,80 +22,80 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageSrc: promoPageScreenshot,
                     imageAlt: 'Capture de la page Promotions dans OPALE',
                     imageCaption:
-                        'Vue generale de la page Promotions avec cycles existants et zone de creation.',
+                        'Vue générale de la page Promotions avec cycles existants et zone de création.',
                 },
                 <>
-                    La page est structuree avec <strong>une carte par cycle</strong>. Chaque carte est
-                    independante des autres.
+                    La page est structurée avec <strong>une carte par cycle</strong>. Chaque carte est
+                    indépendante des autres.
                 </>,
                 <>
-                    Depuis une carte, vous pouvez <strong>supprimer le cycle</strong> via l icone corbeille
+                    Depuis une carte, vous pouvez <strong>supprimer le cycle</strong> via l'icône corbeille
                     du cycle.
                 </>,
                 <>
-                    Depuis cette meme carte, vous pouvez <strong>ajouter une promotion</strong>,{' '}
+                    Depuis cette même carte, vous pouvez <strong>ajouter une promotion</strong>,{' '}
                     <strong>supprimer une promotion</strong> et <strong>modifier les informations</strong>{' '}
-                    d une promotion.
+                    d'une promotion.
                 </>,
                 <>
-                    La carte permet aussi de <strong>deposer les maquettes pedagogiques</strong> du cycle
+                    La carte permet aussi de <strong>déposer les maquettes pédagogiques</strong> du cycle
                     et/ou des promotions du cycle.
                 </>,
                 <>
-                    Pour creer un nouveau cycle, cliquer sur le <strong>bouton +</strong> dans la{' '}
-                    <strong>zone pointillee</strong> a droite de la page.
+                    Pour créer un nouveau cycle, cliquer sur le <strong>bouton +</strong> dans la{' '}
+                    <strong>zone pointillée</strong> à droite de la page.
                 </>,
             ],
         },
         {
-            title: 'Creer un cycle',
+            title: 'Créer un cycle',
             steps: [
                 {
                     text: (
                         <>
-                            Cliquer dans <u>la zone pointillee avec le bouton +</u> pour ouvrir le pop-up de
-                            creation.
+                            Cliquer dans <u>la zone pointillée avec le bouton +</u> pour ouvrir le pop-up de
+                            création.
                         </>
                     ),
                     imageSrc: promoPageScreenshot,
-                    imageAlt: 'Zone pour ouvrir le pop-up de creation d un cycle sur la page Promotions',
-                    imageCaption: 'Cette zone ouvre le pop-up contenant les champs de creation du cycle.',
+                    imageAlt: "Zone pour ouvrir le pop-up de création d'un cycle sur la page Promotions",
+                    imageCaption: 'Cette zone ouvre le pop-up contenant les champs de création du cycle.',
                     imageHighlight: {
                         left: '71.4%',
                         top: '12.5%',
                         width: '25.6%',
                         height: '57.5%',
-                        label: 'Zone d ouverture du pop-up',
+                        label: "Zone d'ouverture du pop-up",
                     },
                 },
                 {
                     text: <>Dans le pop-up, renseigner les <strong>champs obligatoires</strong> du cycle.</>,
                     imageSrc: popupCreateCycleScreenshot,
-                    imageAlt: 'Pop-up de creation d un cycle dans OPALE',
-                    imageCaption: 'Le pop-up de creation contient les champs obligatoires du cycle.',
+                    imageAlt: "Pop-up de création d'un cycle dans OPALE",
+                    imageCaption: 'Le pop-up de création contient les champs obligatoires du cycle.',
                     subSteps: [
                         <>
                             Champ <strong>Nom du cycle</strong>: saisir un nom clair (ex: ADI, CIR).
                         </>,
                         <>
-                            Champ <strong>Type de formation</strong>: choisir via la liste deroulante{' '}
-                            <em>Formation Initiale</em> ou <em>Formation en Apprentisage</em>.
+                            Champ <strong>Type de formation</strong>: choisir via la liste déroulante{' '}
+                            <em>Formation Initiale</em> ou <em>Formation en apprentissage</em>.
                         </>,
                         <>
-                            Champ <strong>Nombre de promotions</strong>: saisir le nombre d annees du cycle
+                            Champ <strong>Nombre de promotions</strong>: saisir le nombre d'années du cycle
                             (ex: <strong>3</strong> pour un cycle en 3 ans).
                         </>,
                     ],
                 },
                 {
-                    text: <>Choisir le bouton adapte en bas du pop-up selon le resultat souhaite.</>,
+                    text: <>Choisir le bouton adapté en bas du pop-up selon le résultat souhaité.</>,
                     subSteps: [
                         <>
                             <strong>Annuler</strong>: ferme le pop-up <em>sans enregistrer</em> les
                             informations saisies.
                         </>,
                         <>
-                            <strong>Enregistrer</strong>: valide la creation du cycle et ajoute une nouvelle
+                            <strong>Enregistrer</strong>: valide la création du cycle et ajoute une nouvelle
                             carte sur la page Promotions.
                         </>,
                     ],
@@ -103,7 +103,7 @@ export const promotionsTutorialContent: TutorialContent = {
             ],
         },
         {
-            title: 'Ajouter une promotion au sein d un cycle',
+            title: 'Ajouter une promotion au sein d\'un cycle',
             steps: [
                 {
                     text: (
@@ -115,7 +115,7 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageSrc: promoPageScreenshot,
                     imageAlt: 'Bouton Ajouter une promotion sur une carte de cycle',
                     imageCaption:
-                        'Le bouton Ajouter une promotion ouvre le pop-up d ajout pour le cycle selectionne.',
+                        "Le bouton Ajouter une promotion ouvre le pop-up d'ajout pour le cycle sélectionné.",
                     imageHighlight: {
                         left: '21.0%',
                         top: '40.0%',
@@ -139,8 +139,8 @@ export const promotionsTutorialContent: TutorialContent = {
                             Saisir le <strong>nom de la promotion</strong> avec la convention choisie.
                         </>,
                         <>
-                            <em>Conseil</em>: garder un <strong>meme systeme de nommage</strong> au sein d
-                            un cycle (ex: AP4, AP5, AP6) pour faciliter la lecture des plannings.
+                            <em>Conseil</em>: garder un <strong>même système de nommage</strong> au sein d'un
+                            cycle (ex: AP4, AP5, AP6) pour faciliter la lecture des plannings.
                         </>,
                     ],
                 },
@@ -148,15 +148,15 @@ export const promotionsTutorialContent: TutorialContent = {
                     text: (
                         <>
                             Cliquer sur <strong>Annuler</strong> ou <strong>Ajouter</strong> selon le
-                            resultat souhaite.
+                            résultat souhaité.
                         </>
                     ),
                     subSteps: [
                         <>
-                            <strong>Annuler</strong>: ferme le pop-up sans creation de promotion.
+                            <strong>Annuler</strong>: ferme le pop-up sans création de promotion.
                         </>,
                         <>
-                            <strong>Ajouter</strong>: valide la creation et affiche la promotion dans la carte
+                            <strong>Ajouter</strong>: valide la création et affiche la promotion dans la carte
                             du cycle.
                         </>,
                     ],
@@ -164,13 +164,13 @@ export const promotionsTutorialContent: TutorialContent = {
             ],
         },
         {
-            title: 'Modifier les informations d une promotion',
+            title: 'Modifier les informations d\'une promotion',
             steps: [
                 {
                     text: (
                         <>
-                            Cliquer sur l icone <strong>stylo</strong> (ou le bouton <strong>Modifier</strong>{' '}
-                            si les icones sont desactivees) sur la ligne de la promotion a modifier. Cela
+                            Cliquer sur l'icône <strong>stylo</strong> (ou le bouton <strong>Modifier</strong>{' '}
+                            si les icônes sont désactivées) sur la ligne de la promotion à modifier. Cela
                             ouvre le pop-up de modification.
                         </>
                     ),
@@ -189,36 +189,36 @@ export const promotionsTutorialContent: TutorialContent = {
                     text: (
                         <>
                             Renseigner les informations du pop-up <strong>Modifier une promotion</strong>,
-                            organise en <strong>4 parties</strong>.
+                            organisé en <strong>4 parties</strong>.
                         </>
                     ),
                     imageSrc: popupEditPromotionScreenshot,
                     imageAlt: 'Pop-up Modifier une promotion dans OPALE',
-                    imageCaption: 'Le pop-up de modification est organise en 4 parties.',
+                    imageCaption: 'Le pop-up de modification est organisé en 4 parties.',
                     subSteps: [
                         <>
                             <strong>Partie 1 - Informations principales</strong>: nom de la promotion, nombre
-                            d etudiants, date de debut, date de fin.
+                            d'étudiants, date de début, date de fin.
                         </>,
                         <>
-                            <strong>Partie 2 - Groupes</strong>: creer autant de groupes que souhaite pour les
-                            matieres communes, puis definir le nombre d etudiants par groupe (ex: 40
-                            etudiants repartis en 2 groupes de 20).
+                            <strong>Partie 2 - Groupes</strong>: créer autant de groupes que souhaité pour les
+                            matières communes, puis définir le nombre d'étudiants par groupe (ex: 40
+                            étudiants répartis en 2 groupes de 20).
                         </>,
                         <>
-                            <strong>Partie 3 - Specialites</strong>: creer les specialites de la promotion
-                            (ex: cyber-securite, dev) et definir le nombre d eleves dans chaque specialite.
-                            Les specialites sont <strong>independantes</strong> des groupes.
+                            <strong>Partie 3 - Spécialités</strong>: créer les spécialités de la promotion
+                            (ex: cybersécurité, dev) et définir le nombre d'élèves dans chaque spécialité.
+                            Les spécialités sont <strong>indépendantes</strong> des groupes.
                         </>,
                         <>
-                            <strong>Partie 4 - Contraintes academiques</strong>: definir les plages de dates de{' '}
+                            <strong>Partie 4 - Contraintes académiques</strong>: définir les plages de dates de{' '}
                             <strong>Entreprise</strong> (ou <strong>Vacances</strong> pour un parcours
                             initial), <strong>Stages</strong>, <strong>International</strong>,{' '}
                             <strong>Partiels</strong> et <strong>Rattrapages</strong>.
                         </>,
                         <>
-                            Definir correctement ces periodes est essentiel pour afficher clairement le
-                            planning macro et eviter de poser des cours sur ces plages en planning micro.
+                            Définir correctement ces périodes est essentiel pour afficher clairement le
+                            planning macro et éviter de poser des cours sur ces plages en planning micro.
                         </>,
                     ],
                 },
@@ -237,7 +237,7 @@ export const promotionsTutorialContent: TutorialContent = {
                             <strong>Enregistrer</strong>: applique les modifications sur la promotion.
                         </>,
                         <>
-                            Ces informations sont tres importantes pour generer des plannings macro et micro
+                            Ces informations sont très importantes pour générer des plannings macro et micro
                             fiables.
                         </>,
                     ],
@@ -250,15 +250,15 @@ export const promotionsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Cliquer sur l icone <strong>poubelle</strong> (ou le bouton{' '}
-                            <strong>Supprimer</strong> si les icones sont desactivees), soit au niveau du{' '}
-                            <strong>cycle</strong>, soit au niveau d une <strong>promotion</strong>.
+                            Cliquer sur l'icône <strong>poubelle</strong> (ou le bouton{' '}
+                            <strong>Supprimer</strong> si les icônes sont désactivées), soit au niveau du{' '}
+                            <strong>cycle</strong>, soit au niveau d'une <strong>promotion</strong>.
                         </>
                     ),
                     imageSrc: promoPageScreenshot,
                     imageAlt: 'Zone des boutons de suppression cycle et promotion',
                     imageCaption:
-                        'Les boutons de suppression du cycle et d une promotion sont situes sur la meme colonne d actions.',
+                        "Les boutons de suppression du cycle et d'une promotion sont situés sur la même colonne d'actions.",
                     imageHighlights: [
                         {
                             left: '41.5%',
@@ -278,23 +278,25 @@ export const promotionsTutorialContent: TutorialContent = {
                     subSteps: [
                         <>
                             <strong>Corbeille du cycle</strong> (en haut de la carte): supprime le cycle
-                            complet et son contenu associe.
+                            complet et son contenu associé.
                         </>,
                         <>
-                            <strong>Corbeille d une promotion</strong> (sur la ligne promotion): supprime
+                            <strong>Corbeille d'une promotion</strong> (sur la ligne promotion): supprime
                             uniquement la promotion cible.
                         </>,
                     ],
                 },
                 <>
-                    <strong>Etape 2 (a venir)</strong>: un pop-up de confirmation apparaitra pour valider ou
+                    <strong>Étape 2 (à venir)</strong>: un pop-up de confirmation apparaîtra pour valider ou
                     annuler la suppression.
                 </>,
             ],
         },
     ],
     tips: [
-        'Nommer les groupes de facon stable pour faciliter les imports futurs.',
-        'Reverifier les contraintes avant de lancer une generation de planning.',
+        'Nommer les groupes de façon stable pour faciliter les imports futurs.',
+        'Revérifier les contraintes avant de lancer une génération de planning.',
     ],
 }
+
+

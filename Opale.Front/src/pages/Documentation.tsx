@@ -89,7 +89,7 @@ export default function Documentation() {
         <>
             <PageHeader
                 title="Documentation utilisateur"
-                subtitle="Selectionnez un parcours de tutoriel OPALE."
+                subtitle="Sélectionnez un parcours de tutoriel OPALE."
             />
 
             <div className="documentation-page">
@@ -147,7 +147,7 @@ export default function Documentation() {
                 >
                     <div className="documentation-viewer">
                         <p className="documentation-viewer-summary">
-                            {selectedTutorial?.summary ?? 'Tutoriel en preparation.'}
+                            {selectedTutorial?.summary ?? 'Tutoriel en préparation.'}
                         </p>
 
                         {selectedTutorialContent ? (
@@ -160,7 +160,7 @@ export default function Documentation() {
                                 </section>
 
                                 <section className="documentation-viewer-block">
-                                    <h3 className="documentation-viewer-title">Resultat attendu</h3>
+                                    <h3 className="documentation-viewer-title">Résultat attendu</h3>
                                     <p className="documentation-viewer-text">
                                         {selectedTutorialContent.expectedResult}
                                     </p>
@@ -168,7 +168,7 @@ export default function Documentation() {
 
                                 <section className="documentation-viewer-block">
                                     <h3 className="documentation-viewer-title">
-                                        Points d attention
+                                        Points d'attention
                                     </h3>
                                     <ul className="documentation-tip-list">
                                         {selectedTutorialContent.tips.map((tip, index) => (
@@ -186,8 +186,8 @@ export default function Documentation() {
                                     <h3 className="documentation-viewer-title">
                                         {selectedTutorialContent.stepSections &&
                                         selectedTutorialContent.stepSections.length > 0
-                                            ? 'Fonctionnalites'
-                                            : 'Etapes'}
+                                            ? 'Fonctionnalités'
+                                            : 'Étapes'}
                                     </h3>
                                     {selectedTutorialContent.stepSections &&
                                     selectedTutorialContent.stepSections.length > 0 ? (
@@ -300,7 +300,7 @@ export default function Documentation() {
                                                                                                     src={stepDetails.imageSrc}
                                                                                                     alt={
                                                                                                         stepDetails.imageAlt ??
-                                                                                                        'Capture d ecran du tutoriel'
+                                                                                                        "Capture d'écran du tutoriel"
                                                                                                     }
                                                                                                     className="documentation-step-image"
                                                                                                 />
@@ -462,7 +462,7 @@ export default function Documentation() {
                                                                                 src={stepDetails.imageSrc}
                                                                                 alt={
                                                                                     stepDetails.imageAlt ??
-                                                                                    'Capture d ecran du tutoriel'
+                                                                                    "Capture d'écran du tutoriel"
                                                                                 }
                                                                                 className="documentation-step-image"
                                                                             />
@@ -575,7 +575,7 @@ export default function Documentation() {
                             </div>
                         ) : (
                             <p className="documentation-viewer-placeholder">
-                                Le contenu detaille sera ajoute dans une prochaine etape.
+                                Le contenu détaillé sera ajouté dans une prochaine étape.
                             </p>
                         )}
                     </div>

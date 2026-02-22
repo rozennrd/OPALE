@@ -21,19 +21,19 @@ const DOC_LINKS = {
 
 export const microTutorialContent: TutorialContent = {
     objective:
-        'Suivre un flux complet pour generer un planning micro exploitable, avec toutes les ressources et contraintes correctement renseignees.',
+        'Suivre un flux complet pour générer un planning micro exploitable, avec toutes les ressources et contraintes correctement renseignées.',
     expectedResult:
-        'Le planning micro est genere avec des affectations coherentes (promotions, evenements, enseignants, salles, matieres).',
+        'Le planning micro est généré avec des affectations cohérentes (promotions, événements, enseignants, salles, matières).',
     steps: [
         {
             text: (
                 <>
-                    Creer chaque <strong>cycle</strong> et chaque <strong>promotion</strong>.
+                    Créer chaque <strong>cycle</strong> et chaque <strong>promotion</strong>.
                 </>
             ),
             imageSrc: promoPageScreenshot,
-            imageAlt: 'Page Promotions pour creer les cycles et promotions',
-            imageCaption: 'Creation de la structure de base avant le flux micro.',
+            imageAlt: 'Page Promotions pour créer les cycles et promotions',
+            imageCaption: 'Création de la structure de base avant le flux micro.',
             subSteps: [
                 <>
                     <a href={DOC_LINKS.promotions} target="_blank" rel="noreferrer">
@@ -50,27 +50,27 @@ export const microTutorialContent: TutorialContent = {
                 </>
             ),
             imageSrc: popupEditPromotionScreenshot,
-            imageAlt: 'Pop-up de modification d une promotion',
-            imageCaption: 'Le micro requiert une promotion completement renseignee.',
+            imageAlt: "Pop-up de modification d'une promotion",
+            imageCaption: 'Le micro requiert une promotion complètement renseignée.',
             subSteps: [
                 <>
-                    Completer les informations principales, groupes, specialites et contraintes academiques.
+                    Compléter les informations principales, groupes, spécialités et contraintes académiques.
                 </>,
             ],
         },
         {
             text: (
                 <>
-                    Creer tous les evenements connus a date.
+                    Créer tous les événements connus à date.
                 </>
             ),
             imageSrc: eventPageScreenshot,
-            imageAlt: 'Page Evenements pour creer les evenements',
-            imageCaption: 'Creation des evenements impactant le flux micro.',
+            imageAlt: 'Page Événements pour créer les événements',
+            imageCaption: 'Création des événements impactant le flux micro.',
             subSteps: [
                 <>
                     <a href={DOC_LINKS.events} target="_blank" rel="noreferrer">
-                        Ouvrir le tuto Evenements
+                        Ouvrir le tuto Événements
                     </a>
                     {' '}dans un nouvel onglet.
                 </>,
@@ -79,27 +79,27 @@ export const microTutorialContent: TutorialContent = {
         {
             text: (
                 <>
-                    Renseigner les evenements crees avec <strong>tous les champs</strong>.
+                    Renseigner les événements créés avec <strong>tous les champs</strong>.
                 </>
             ),
             imageSrc: popupEventModifScreenshot,
-            imageAlt: 'Pop-up de modification d evenement',
-            imageCaption: 'Le micro requiert des evenements completement qualifies.',
+            imageAlt: "Pop-up de modification d'événement",
+            imageCaption: 'Le micro requiert des événements complètement qualifiés.',
             subSteps: [
                 <>
-                    Verifier en particulier la cible, les promotions concernees, et les options macro/micro.
+                    Vérifier en particulier la cible, les promotions concernées, et les options macro/micro.
                 </>,
             ],
         },
         {
             text: (
                 <>
-                    Creer tous les enseignants necessaires.
+                    Créer tous les enseignants nécessaires.
                 </>
             ),
             imageSrc: teachersPageScreenshot,
-            imageAlt: 'Page Enseignants pour creer les enseignants',
-            imageCaption: 'Creation des fiches enseignants.',
+            imageAlt: 'Page Enseignants pour créer les enseignants',
+            imageCaption: 'Création des fiches enseignants.',
             subSteps: [
                 <>
                     <a href={DOC_LINKS.teachers} target="_blank" rel="noreferrer">
@@ -112,28 +112,28 @@ export const microTutorialContent: TutorialContent = {
         {
             text: (
                 <>
-                    Renseigner les enseignants crees avec <strong>tous les champs</strong>.
+                    Renseigner les enseignants créés avec <strong>tous les champs</strong>.
                 </>
             ),
             imageSrc: popupProfModifScreenshot,
-            imageAlt: 'Pop-up de modification d un enseignant',
-            imageCaption: 'Le micro depend fortement des disponibilites et matieres enseignees.',
+            imageAlt: "Pop-up de modification d'un enseignant",
+            imageCaption: 'Le micro dépend fortement des disponibilités et matières enseignées.',
             subSteps: [
                 <>
-                    Completer profil, rattachement, matieres et disponibilites detaillees.
+                    Compléter profil, rattachement, matières et disponibilités détaillées.
                 </>,
             ],
         },
         {
             text: (
                 <>
-                    Verifier que toutes les salles sont creees, que leur <strong>type principal</strong>,
-                    leurs <strong>types secondaires</strong> et leur <strong>disponibilite</strong> sont corrects.
+                    Vérifier que toutes les salles sont créées, que leur <strong>type principal</strong>,
+                    leurs <strong>types secondaires</strong> et leur <strong>disponibilité</strong> sont corrects.
                 </>
             ),
             imageSrc: roomsPageScreenshot,
-            imageAlt: 'Page Salles pour verifier les informations',
-            imageCaption: 'Verification des salles avant generation micro.',
+            imageAlt: 'Page Salles pour vérifier les informations',
+            imageCaption: 'Vérification des salles avant génération micro.',
             subSteps: [
                 <>
                     <a href={DOC_LINKS.rooms} target="_blank" rel="noreferrer">
@@ -146,32 +146,32 @@ export const microTutorialContent: TutorialContent = {
         {
             text: (
                 <>
-                    Si un point de verification salle n est pas valide, faire les modifications necessaires.
+                    Si un point de vérification salle n'est pas valide, faire les modifications nécessaires.
                 </>
             ),
             imageSrc: popupSalleModifScreenshot,
-            imageAlt: 'Pop-up de modification d une salle',
-            imageCaption: 'Correction des salles avant generation micro.',
+            imageAlt: "Pop-up de modification d'une salle",
+            imageCaption: 'Correction des salles avant génération micro.',
             subSteps: [
                 <>
-                    Corriger les types, la capacite ou la disponibilite globale selon le besoin.
+                    Corriger les types, la capacité ou la disponibilité globale selon le besoin.
                 </>,
             ],
         },
         {
             text: (
                 <>
-                    Verifier que les matieres ont bien ete importees, et que les volumes horaires et
-                    repartitions sont corrects.
+                    Vérifier que les matières ont bien été importées, et que les volumes horaires et
+                    répartitions sont corrects.
                 </>
             ),
             imageSrc: matieresPageScreenshot,
-            imageAlt: 'Page Matieres pour verifier les imports et volumes',
-            imageCaption: 'Controle des matieres par promotion.',
+            imageAlt: 'Page Matières pour vérifier les imports et volumes',
+            imageCaption: 'Contrôle des matières par promotion.',
             subSteps: [
                 <>
                     <a href={DOC_LINKS.matieres} target="_blank" rel="noreferrer">
-                        Ouvrir le tuto Matieres
+                        Ouvrir le tuto Matières
                     </a>
                     {' '}dans un nouvel onglet.
                 </>,
@@ -180,16 +180,16 @@ export const microTutorialContent: TutorialContent = {
         {
             text: (
                 <>
-                    Depuis la page Matieres, attribuer un ou plusieurs enseignants a chaque matiere et
+                    Depuis la page Matières, attribuer un ou plusieurs enseignants à chaque matière et
                     renseigner les volumes horaires par enseignant.
                 </>
             ),
             imageSrc: popupMatiereModifScreenshot,
-            imageAlt: 'Pop-up de modification d une matiere',
-            imageCaption: 'Affectation des enseignants et repartition des volumes TD/TP.',
+            imageAlt: "Pop-up de modification d'une matière",
+            imageCaption: 'Affectation des enseignants et répartition des volumes TD/TP.',
             subSteps: [
                 <>
-                    Verifier la coherence entre volumes de la matiere et volumes affectes aux enseignants.
+                    Vérifier la cohérence entre volumes de la matière et volumes affectés aux enseignants.
                 </>,
             ],
         },
@@ -197,7 +197,7 @@ export const microTutorialContent: TutorialContent = {
             text: (
                 <>
                     Aller sur la page <strong>Planning</strong> puis cliquer sur{' '}
-                    <strong>Generer le planning micro</strong>.
+                    <strong>Générer le planning micro</strong>.
                 </>
             ),
             subSteps: [
@@ -205,15 +205,15 @@ export const microTutorialContent: TutorialContent = {
                     Ouvrir la page planning: <a href="/planning" target="_blank" rel="noreferrer">/planning</a>
                 </>,
                 <>
-                    Si la generation bloque, reprendre la verification dans l ordre du flux ci-dessus.
+                    Si la génération bloque, reprendre la vérification dans l'ordre du flux ci-dessus.
                 </>,
             ],
         },
     ],
     tips: [
-        'Executer le flux dans l ordre pour limiter les incoherences de donnees.',
-        'Pour le micro, tout champ critique non renseigne peut impacter fortement la generation.',
-        'Verifier en priorite promotions, enseignants, salles et matieres avant de relancer un calcul.',
+        "Exécuter le flux dans l'ordre pour limiter les incohérences de données.",
+        'Pour le micro, tout champ critique non renseigné peut impacter fortement la génération.',
+        'Vérifier en priorité promotions, enseignants, salles et matières avant de relancer un calcul.',
     ],
 }
 

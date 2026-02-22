@@ -6,9 +6,9 @@ import screenPopupSalleModifScreenshot from '../../../assets/tuto/salle/screen-p
 
 export const roomsTutorialContent: TutorialContent = {
     objective:
-        'Administrer les salles de Junia Bordeaux avec leurs types, capacites et disponibilites pour fiabiliser la planification.',
+        'Administrer les salles de Junia Bordeaux avec leurs types, capacités et disponibilités pour fiabiliser la planification.',
     expectedResult:
-        'Chaque salle est correctement configuree (identite, types, disponibilite) et exploitable par les modules de planning.',
+        'Chaque salle est correctement configurée (identité, types, disponibilité) et exploitable par les modules de planning.',
     steps: [],
     stepSections: [
         {
@@ -18,49 +18,49 @@ export const roomsTutorialContent: TutorialContent = {
                     text: (
                         <>
                             La page Salles centralise les salles de <strong>Junia Bordeaux</strong> avec une
-                            organisation par <strong>etage</strong>.
+                            organisation par <strong>étage</strong>.
                         </>
                     ),
                     imageSrc: screenPageSalleScreenshot,
-                    imageAlt: 'Vue generale de la page Salles dans OPALE',
+                    imageAlt: 'Vue générale de la page Salles dans OPALE',
                     imageCaption:
-                        'Vue generale avec toolbar de recherche/filtres, categories par etage et cartes salles.',
+                        'Vue générale avec toolbar de recherche/filtres, catégories par étage et cartes salles.',
                 },
                 <>
-                    Les salles sont regroupees en <strong>3 categories</strong>: <em>Rez-de-chaussee</em>,{' '}
-                    <em>1er etage</em> et <em>2eme etage</em> (1 etage = 1 categorie).
+                    Les salles sont regroupées en <strong>3 catégories</strong>: <em>Rez-de-chaussée</em>,{' '}
+                    <em>1er étage</em> et <em>2ème étage</em> (1 étage = 1 catégorie).
                 </>,
                 <>
-                    Chaque carte salle affiche les informations essentielles (nom/code, etage) et le{' '}
+                    Chaque carte salle affiche les informations essentielles (nom/code, étage) et le{' '}
                     <strong>type principal</strong> de la salle.
                 </>,
                 <>
-                    Une salle possede <strong>un type principal</strong> et <strong>zero, un ou plusieurs
+                    Une salle possède <strong>un type principal</strong> et <strong>zéro, un ou plusieurs
                     types secondaires</strong> (types de cours possibles dans cette salle).
                 </>,
                 <>
-                    La disponibilite peut etre pilotee au niveau de la salle (ex: <strong>travaux</strong>),
+                    La disponibilité peut être pilotée au niveau de la salle (ex: <strong>travaux</strong>),
                     pour la rendre utilisable ou non dans la planification.
                 </>,
                 <>
-                    La page propose aussi une <strong>zone d ajout</strong> (carte pointillee avec bouton +)
-                    pour creer une nouvelle salle.
+                    La page propose aussi une <strong>zone d'ajout</strong> (carte pointillée avec bouton +)
+                    pour créer une nouvelle salle.
                 </>,
             ],
         },
         {
-            title: 'Creer une salle',
+            title: 'Créer une salle',
             steps: [
                 {
                     text: (
                         <>
-                            Cliquer sur la <u>zone pointillee avec le bouton +</u> pour ouvrir le pop-up de
-                            creation d une salle.
+                            Cliquer sur la <u>zone pointillée avec le bouton +</u> pour ouvrir le pop-up de
+                            création d'une salle.
                         </>
                     ),
                     imageSrc: screenPageSalleScreenshot,
-                    imageAlt: 'Zone de creation d une salle sur la page Salles',
-                    imageCaption: 'La zone pointillee ouvre le formulaire de creation d une nouvelle salle.',
+                    imageAlt: "Zone de création d'une salle sur la page Salles",
+                    imageCaption: "La zone pointillée ouvre le formulaire de création d'une nouvelle salle.",
                     imageHighlight: {
                         left: '36.6%',
                         top: '52.9%',
@@ -72,27 +72,27 @@ export const roomsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Renseigner les informations de la salle dans le pop-up (meme structure que
-                            l edition).
+                            Renseigner les informations de la salle dans le pop-up (même structure que
+                            l'édition).
                         </>
                     ),
                     imageSrc: screenPopupSalleScreenshot,
-                    imageAlt: 'Pop-up de creation d une salle',
+                    imageAlt: "Pop-up de création d'une salle",
                     imageCaption:
-                        'Le formulaire de creation definit identite, types, disponibilite et commentaire.',
+                        'Le formulaire de création définit identité, types, disponibilité et commentaire.',
                     subSteps: [
                         <>
-                            <strong>Identite de la salle & types</strong>: saisir le{' '}
+                            <strong>Identité de la salle & types</strong>: saisir le{' '}
                             <strong>Nom court (code salle)</strong>, le <strong>Surnom / nom complet</strong>,
-                            l <strong>Etage</strong> et la <strong>Capacite (places)</strong>.
+                            l'<strong>Étage</strong> et la <strong>Capacité (places)</strong>.
                         </>,
                         <>
-                            <strong>Disponibilite globale</strong>: activer/desactiver le statut reservable de
+                            <strong>Disponibilité globale</strong>: activer/désactiver le statut réservable de
                             la salle (ex: indisponible en cas de travaux).
                         </>,
                         <>
                             <strong>Type principal</strong>: choisir le type prioritaire de la salle pour
-                            l icone, le filtrage et la planification.
+                            l'icône, le filtrage et la planification.
                         </>,
                         <>
                             <strong>Types disponibles</strong>: cocher les types secondaires compatibles avec la
@@ -100,11 +100,11 @@ export const roomsTutorialContent: TutorialContent = {
                         </>,
                         <>
                             <strong>Description / commentaires</strong>: ajouter les informations utiles
-                            (equipements, contraintes d usage, remarques).
+                            (équipements, contraintes d'usage, remarques).
                         </>,
                         <>
-                            Le <strong>type principal</strong> reste la reference fonctionnelle de la salle;
-                            les types disponibles servent a etendre les usages possibles.
+                            Le <strong>type principal</strong> reste la référence fonctionnelle de la salle;
+                            les types disponibles servent à étendre les usages possibles.
                         </>,
                     ],
                 },
@@ -112,7 +112,7 @@ export const roomsTutorialContent: TutorialContent = {
                     text: (
                         <>
                             Cliquer sur <strong>Annuler</strong> ou <strong>Enregistrer</strong> selon le
-                            resultat souhaite.
+                            résultat souhaité.
                         </>
                     ),
                     subSteps: [
@@ -120,11 +120,11 @@ export const roomsTutorialContent: TutorialContent = {
                             <strong>Annuler</strong>: ferme le pop-up <em>sans sauvegarder</em>.
                         </>,
                         <>
-                            <strong>Enregistrer</strong>: cree/valide la salle et la rend visible dans la liste.
+                            <strong>Enregistrer</strong>: crée/valide la salle et la rend visible dans la liste.
                         </>,
                         <>
-                            En mode edition, un bouton <strong>Supprimer</strong> peut etre affiche selon les
-                            regles de la page.
+                            En mode édition, un bouton <strong>Supprimer</strong> peut être affiché selon les
+                            règles de la page.
                         </>,
                     ],
                 },
@@ -136,19 +136,19 @@ export const roomsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            <strong>Etape 1.1</strong>: depuis la toolbar, cliquer sur{' '}
-                            <strong>Selectionner</strong> pour activer le mode suppression.
+                            <strong>Étape 1.1</strong>: depuis la toolbar, cliquer sur{' '}
+                            <strong>Sélectionner</strong> pour activer le mode suppression.
                         </>
                     ),
                     imageSrc: screenPageSalleScreenshot,
                     imageAlt: 'Activation du mode suppression sur la page Salles',
-                    imageCaption: 'Le bouton Selectionner active les actions de suppression en lot.',
+                    imageCaption: 'Le bouton Sélectionner active les actions de suppression en lot.',
                     imageHighlight: {
                         left: '86.1%',
                         top: '20.7%',
                         width: '8.5%',
                         height: '3.8%',
-                        label: 'Mode selection',
+                        label: 'Mode sélection',
                     },
                 },
                 {
@@ -158,9 +158,9 @@ export const roomsTutorialContent: TutorialContent = {
                         </>
                     ),
                     imageSrc: screenPageSalleSuppressionScreenshot,
-                    imageAlt: 'Suppression de salles en mode selection',
+                    imageAlt: 'Suppression de salles en mode sélection',
                     imageCaption:
-                        'Le mode selection permet une suppression multiple avec compteur des elements selectionnes.',
+                        'Le mode sélection permet une suppression multiple avec compteur des éléments sélectionnés.',
                     imageHighlights: [
                         {
                             left: '85.3%',
@@ -181,16 +181,16 @@ export const roomsTutorialContent: TutorialContent = {
                     ],
                     subSteps: [
                         <>
-                            Le compteur <strong>(n)</strong> indique le nombre de salles selectionnees.
+                            Le compteur <strong>(n)</strong> indique le nombre de salles sélectionnées.
                         </>,
                         <>
-                            Utiliser <strong>Tout selectionner</strong> ou <strong>Effacer</strong> pour ajuster
-                            rapidement la selection avant suppression.
+                            Utiliser <strong>Tout sélectionner</strong> ou <strong>Effacer</strong> pour ajuster
+                            rapidement la sélection avant suppression.
                         </>,
                     ],
                 },
                 <>
-                    <strong>Etape 2 (a venir)</strong>: un pop-up de confirmation apparaitra pour valider ou
+                    <strong>Étape 2 (à venir)</strong>: un pop-up de confirmation apparaîtra pour valider ou
                     annuler la suppression.
                 </>,
             ],
@@ -201,57 +201,57 @@ export const roomsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Cliquer sur la <strong>carte</strong> de la salle a modifier pour ouvrir le pop-up
-                            de detail en mode edition.
+                            Cliquer sur la <strong>carte</strong> de la salle à modifier pour ouvrir le pop-up
+                            de détail en mode édition.
                         </>
                     ),
                     imageSrc: screenPageSalleScreenshot,
-                    imageAlt: 'Acces a la modification d une salle',
+                    imageAlt: "Accès à la modification d'une salle",
                     imageCaption: 'La carte salle ouvre le formulaire de modification.',
                     imageHighlight: {
                         left: '21.5%',
                         top: '42.7%',
                         width: '14.5%',
                         height: '9.6%',
-                        label: 'Salle a modifier',
+                        label: 'Salle à modifier',
                     },
                 },
                 {
                     text: (
                         <>
-                            Mettre a jour les informations de la salle dans le pop-up{' '}
-                            <strong>Identite de la salle & types</strong>.
+                            Mettre à jour les informations de la salle dans le pop-up{' '}
+                            <strong>Identité de la salle & types</strong>.
                         </>
                     ),
                     imageSrc: screenPopupSalleModifScreenshot,
-                    imageAlt: 'Pop-up de modification d une salle',
+                    imageAlt: "Pop-up de modification d'une salle",
                     imageCaption:
-                        'Le pop-up permet d ajuster identite, types, disponibilite et commentaires.',
+                        "Le pop-up permet d'ajuster identité, types, disponibilité et commentaires.",
                     subSteps: [
                         <>
                             <strong>Nom court (code salle)</strong>, <strong>Surnom / nom complet</strong>,{' '}
-                            <strong>Etage</strong> et <strong>Capacite (places)</strong>: corriger ces champs
-                            si l identite ou l usage de la salle evolue.
+                            <strong>Étage</strong> et <strong>Capacité (places)</strong>: corriger ces champs
+                            si l'identité ou l'usage de la salle évolue.
                         </>,
                         <>
-                            <strong>Disponibilite globale</strong>: basculer la salle en disponible/non
+                            <strong>Disponibilité globale</strong>: basculer la salle en disponible/non
                             disponible (ex: indisponible en cas de maintenance ou travaux).
                         </>,
                         <>
-                            <strong>Type principal</strong>: verifier qu il correspond toujours a l usage
+                            <strong>Type principal</strong>: vérifier qu'il correspond toujours à l'usage
                             prioritaire de la salle.
                         </>,
                         <>
                             <strong>Types disponibles</strong>: ajuster les types secondaires selon les usages
-                            reels autorises dans la salle.
+                            réels autorisés dans la salle.
                         </>,
                         <>
-                            <strong>Description / commentaires</strong>: mettre a jour les contraintes, les
-                            equipements et toute information utile a l exploitation.
+                            <strong>Description / commentaires</strong>: mettre à jour les contraintes, les
+                            équipements et toute information utile à l'exploitation.
                         </>,
                         <>
-                            Le bouton <strong>Supprimer</strong> peut etre disponible dans ce pop-up selon les
-                            regles de la page.
+                            Le bouton <strong>Supprimer</strong> peut être disponible dans ce pop-up selon les
+                            règles de la page.
                         </>,
                     ],
                 },
@@ -274,18 +274,18 @@ export const roomsTutorialContent: TutorialContent = {
             ],
         },
         {
-            title: 'Utiliser la barre d outil',
+            title: "Utiliser la barre d'outils",
             steps: [
                 {
                     text: (
                         <>
-                            La barre d outil regroupe la <strong>recherche</strong>, les{' '}
+                            La barre d'outils regroupe la <strong>recherche</strong>, les{' '}
                             <strong>filtres de salles</strong> et les <strong>actions rapides</strong>.
                         </>
                     ),
                     imageSrc: screenPageSalleScreenshot,
-                    imageAlt: 'Barre d outil de la page Salles',
-                    imageCaption: 'Toolbar de recherche, filtres, mode selection et reinitialisation.',
+                    imageAlt: "Barre d'outils de la page Salles",
+                    imageCaption: 'Toolbar de recherche, filtres, mode sélection et réinitialisation.',
                     imageHighlights: [
                         {
                             left: '22.7%',
@@ -308,7 +308,7 @@ export const roomsTutorialContent: TutorialContent = {
                             top: '28.6%',
                             width: '14.8%',
                             height: '3.6%',
-                            label: 'Filtre capacite',
+                            label: 'Filtre capacité',
                             labelTop: '2.4rem',
                         },
                         {
@@ -316,7 +316,7 @@ export const roomsTutorialContent: TutorialContent = {
                             top: '28.6%',
                             width: '13.2%',
                             height: '3.6%',
-                            label: 'Filtre disponibilite',
+                            label: 'Filtre disponibilité',
                             labelTop: '2.4rem',
                         },
                         {
@@ -324,7 +324,7 @@ export const roomsTutorialContent: TutorialContent = {
                             top: '20.7%',
                             width: '8.5%',
                             height: '3.8%',
-                            label: 'Selection',
+                            label: 'Sélection',
                             labelLeft: '-0.5rem',
                         },
                         {
@@ -345,18 +345,18 @@ export const roomsTutorialContent: TutorialContent = {
                             <strong>Type</strong>: filtrer selon le type de salle (type principal).
                         </>,
                         <>
-                            <strong>Capacite</strong>: combiner un comparateur et une valeur (ex: <em>&gt;= 24</em>)
-                            pour cibler les salles adaptees.
+                            <strong>Capacité</strong>: combiner un comparateur et une valeur (ex: <em>&gt;= 24</em>)
+                            pour cibler les salles adaptées.
                         </>,
                         <>
-                            <strong>Disponibilite</strong>: afficher les salles disponibles, non disponibles ou
+                            <strong>Disponibilité</strong>: afficher les salles disponibles, non disponibles ou
                             les deux.
                         </>,
                         <>
-                            <strong>Selectionner</strong>: activer la suppression multiple.
+                            <strong>Sélectionner</strong>: activer la suppression multiple.
                         </>,
                         <>
-                            <strong>Reset filtres</strong>: revenir rapidement a la vue complete.
+                            <strong>Reset filtres</strong>: revenir rapidement à la vue complète.
                         </>,
                     ],
                 },
@@ -364,10 +364,8 @@ export const roomsTutorialContent: TutorialContent = {
         },
     ],
     tips: [
-        'Maintenir la capacite et la disponibilite a jour pour eviter des affectations irrealisables.',
-        'Conserver un type principal coherent avec l usage prioritaire de la salle.',
-        'Documenter les contraintes de salle dans les commentaires (equipements, restrictions, travaux).',
+        'Maintenir la capacité et la disponibilité à jour pour éviter des affectations irréalisables.',
+        "Conserver un type principal cohérent avec l'usage prioritaire de la salle.",
+        'Documenter les contraintes de salle dans les commentaires (équipements, restrictions, travaux).',
     ],
 }
-
-

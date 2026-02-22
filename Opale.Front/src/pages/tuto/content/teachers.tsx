@@ -6,9 +6,9 @@ import screenPopupProfModifScreenshot from '../../../assets/tuto/prof/screen-pop
 
 export const teachersTutorialContent: TutorialContent = {
     objective:
-        'Gerer les fiches enseignants (internes et vacataires) pour fiabiliser la generation des plannings.',
+        'Gérer les fiches enseignants (internes et vacataires) pour fiabiliser la génération des plannings.',
     expectedResult:
-        'Chaque enseignant est correctement renseigne (profil, matieres, disponibilites) et exploitable dans la planification.',
+        'Chaque enseignant est correctement renseigné (profil, matières, disponibilités) et exploitable dans la planification.',
     steps: [],
     stepSections: [
         {
@@ -17,96 +17,96 @@ export const teachersTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            La page Enseignants affiche l ensemble des enseignants dans une <strong>vue unique</strong>,
-                            separee en <strong>3 categories</strong>.
+                            La page Enseignants affiche l'ensemble des enseignants dans une <strong>vue unique</strong>,
+                            séparée en <strong>3 catégories</strong>.
                         </>
                     ),
                     imageSrc: screenPageProfScreenshot,
-                    imageAlt: 'Vue generale de la page Enseignants dans OPALE',
+                    imageAlt: 'Vue générale de la page Enseignants dans OPALE',
                     imageCaption:
-                        'Vue generale avec categories d enseignants, toolbar de recherche/filtres et cartes enseignants.',
+                        "Vue générale avec catégories d'enseignants, toolbar de recherche/filtres et cartes enseignants.",
                 },
                 <>
-                    <strong>Internes Bordeaux</strong>: enseignants du campus local, mobilisables sans deplacement
+                    <strong>Internes Bordeaux</strong>: enseignants du campus local, mobilisables sans déplacement
                     inter-campus.
                 </>,
                 <>
-                    <strong>Internes Lille/Chateauroux</strong>: enseignants Junia d un autre campus; leur venue
-                    doit etre anticipee dans l organisation.
+                    <strong>Internes Lille/Châteauroux</strong>: enseignants Junia d'un autre campus; leur venue
+                    doit être anticipée dans l'organisation.
                 </>,
                 <>
-                    <strong>Vacataires</strong>: intervenants externes a Junia.
+                    <strong>Vacataires</strong>: intervenants externes à Junia.
                 </>,
                 <>
-                    Chaque carte enseignant contient les informations clefs (<strong>nom</strong>,{' '}
-                    <strong>telephone</strong>, <strong>mode d intervention</strong>) et sert de point d acces
-                    pour la consultation/detail.
+                    Chaque carte enseignant contient les informations clés (<strong>nom</strong>,{' '}
+                    <strong>téléphone</strong>, <strong>mode d'intervention</strong>) et sert de point d'accès
+                    pour la consultation/détail.
                 </>,
                 <>
                     La toolbar en haut centralise la <strong>recherche</strong>, les <strong>filtres</strong>, la{' '}
-                    <strong>creation</strong> et la <strong>suppression en mode selection</strong>.
+                    <strong>création</strong> et la <strong>suppression en mode sélection</strong>.
                 </>,
             ],
         },
         {
-            title: 'Creer un enseignant',
+            title: 'Créer un enseignant',
             steps: [
                 {
                     text: (
                         <>
-                            Cliquer sur l icone <strong>+</strong> dans la toolbar pour ouvrir le pop-up{' '}
-                            <u>Detail de l enseignant</u>.
+                            Cliquer sur l'icône <strong>+</strong> dans la toolbar pour ouvrir le pop-up{' '}
+                            <u>Détail de l'enseignant</u>.
                         </>
                     ),
                     imageSrc: screenPageProfScreenshot,
-                    imageAlt: 'Bouton + de creation d un enseignant',
-                    imageCaption: 'Le bouton + ouvre le pop-up de creation d un enseignant.',
+                    imageAlt: "Bouton + de création d'un enseignant",
+                    imageCaption: "Le bouton + ouvre le pop-up de création d'un enseignant.",
                     imageHighlight: {
                         left: '92.3%',
                         top: '19.7%',
                         width: '2.7%',
                         height: '5.4%',
-                        label: 'Creation enseignant',
+                        label: 'Création enseignant',
                         labelLeft: '-4rem',
                     },
                 },
                 {
                     text: (
                         <>
-                            Renseigner les champs du pop-up de creation en suivant les blocs fonctionnels.
+                            Renseigner les champs du pop-up de création en suivant les blocs fonctionnels.
                         </>
                     ),
                     imageSrc: screenPopupProfScreenshot,
-                    imageAlt: 'Pop-up de creation d un enseignant',
-                    imageCaption: 'Le pop-up permet de definir le profil, les matieres et les disponibilites.',
+                    imageAlt: "Pop-up de création d'un enseignant",
+                    imageCaption: 'Le pop-up permet de définir le profil, les matières et les disponibilités.',
                     subSteps: [
                         <>
-                            <strong>Informations</strong>: remplir <strong>Nom</strong>, <strong>Prenom</strong>,{' '}
-                            <strong>Telephone</strong>, <strong>Email Junia</strong> et{' '}
+                            <strong>Informations</strong>: remplir <strong>Nom</strong>, <strong>Prénom</strong>,{' '}
+                            <strong>Téléphone</strong>, <strong>Email Junia</strong> et{' '}
                             <strong>Email perso</strong>.
                         </>,
                         <>
-                            <strong>Type</strong>: choisir le mode d intervention de l enseignant ({' '}
-                            <em>Presentiel</em>, <em>Hybride</em> ou <em>Distanciel</em>).
+                            <strong>Type</strong>: choisir le mode d'intervention de l'enseignant ({' '}
+                            <em>Présentiel</em>, <em>Hybride</em> ou <em>Distanciel</em>).
                         </>,
                         <>
                             <strong>Rattachement</strong>: indiquer <em>Interne</em> ou <em>Vacataire</em>.
                         </>,
                         <>
-                            <strong>Campus d origine</strong>: preciser le campus de reference (ex: Bordeaux,
-                            Lille, Chateauroux) pour faciliter l organisation inter-campus.
+                            <strong>Campus d'origine</strong>: préciser le campus de référence (ex: Bordeaux,
+                            Lille, Châteauroux) pour faciliter l'organisation inter-campus.
                         </>,
                         <>
-                            <strong>Matieres enseignees</strong>: ajouter les matieres enseignees puis associer,
-                            si necessaire, les promotions cibles.
+                            <strong>Matières enseignées</strong>: ajouter les matières enseignées puis associer,
+                            si nécessaire, les promotions cibles.
                         </>,
                         <>
-                            <strong>Disponibilites</strong>: creer une ou plusieurs periodes, definir la plage de
-                            dates, puis renseigner la grille <strong>Matin / Apres-midi</strong> du{' '}
+                            <strong>Disponibilités</strong>: créer une ou plusieurs périodes, définir la plage de
+                            dates, puis renseigner la grille <strong>Matin / Après-midi</strong> du{' '}
                             <strong>Lundi au Vendredi</strong>.
                         </>,
                         <>
-                            Verifier la legende <em>Disponible</em> / <em>Non disponible</em> pour eviter les
+                            Vérifier la légende <em>Disponible</em> / <em>Non disponible</em> pour éviter les
                             inversions lors de la saisie.
                         </>,
                     ],
@@ -135,52 +135,52 @@ export const teachersTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Cliquer sur la <strong>carte</strong> de l enseignant a modifier pour ouvrir le
-                            pop-up de detail en mode edition.
+                            Cliquer sur la <strong>carte</strong> de l'enseignant à modifier pour ouvrir le
+                            pop-up de détail en mode édition.
                         </>
                     ),
                     imageSrc: screenPageProfScreenshot,
-                    imageAlt: 'Acces a la modification d un enseignant',
+                    imageAlt: "Accès à la modification d'un enseignant",
                     imageCaption: 'La carte enseignant ouvre le formulaire de modification.',
                     imageHighlight: {
                         left: '21.4%',
                         top: '48.9%',
                         width: '13.4%',
                         height: '10.5%',
-                        label: 'Enseignant a modifier',
+                        label: 'Enseignant à modifier',
                     },
                 },
                 {
                     text: (
                         <>
-                            Le pop-up de modification reprend les <strong>memes champs</strong> que la creation,
-                            avec des valeurs deja pre-remplies.
+                            Le pop-up de modification reprend les <strong>mêmes champs</strong> que la création,
+                            avec des valeurs déjà pré-remplies.
                         </>
                     ),
                     imageSrc: screenPopupProfModifScreenshot,
-                    imageAlt: 'Pop-up de modification d un enseignant',
+                    imageAlt: "Pop-up de modification d'un enseignant",
                     imageCaption:
-                        'En modification, les informations existantes peuvent etre corrigees et completees.',
+                        'En modification, les informations existantes peuvent être corrigées et complétées.',
                     subSteps: [
                         <>
-                            Mettre a jour les <strong>informations personnelles</strong>: Nom, Prenom, Telephone,
+                            Mettre à jour les <strong>informations personnelles</strong>: Nom, Prénom, Téléphone,
                             Email Junia, Email perso.
                         </>,
                         <>
-                            Verifier la coherence de <strong>Type</strong>, <strong>Rattachement</strong> et{' '}
-                            <strong>Campus d origine</strong>.
+                            Vérifier la cohérence de <strong>Type</strong>, <strong>Rattachement</strong> et{' '}
+                            <strong>Campus d'origine</strong>.
                         </>,
                         <>
-                            Ajuster les <strong>matieres enseignees</strong> et les promotions associees selon
-                            la charge pedagogique reelle.
+                            Ajuster les <strong>matières enseignées</strong> et les promotions associées selon
+                            la charge pédagogique réelle.
                         </>,
                         <>
-                            Actualiser les <strong>disponibilites</strong> (periodes, grille hebdomadaire) pour
+                            Actualiser les <strong>disponibilités</strong> (périodes, grille hebdomadaire) pour
                             garantir des plannings fiables.
                         </>,
                         <>
-                            En mode edition, le bouton <strong>Supprimer</strong> peut etre affiche selon les
-                            regles de la page.
+                            En mode édition, le bouton <strong>Supprimer</strong> peut être affiché selon les
+                            règles de la page.
                         </>,
                     ],
                 },
@@ -188,7 +188,7 @@ export const teachersTutorialContent: TutorialContent = {
                     text: (
                         <>
                             Cliquer sur <strong>Annuler</strong> ou <strong>Enregistrer</strong> pour valider
-                            l edition.
+                            l'édition.
                         </>
                     ),
                     subSteps: [
@@ -208,19 +208,19 @@ export const teachersTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            <strong>Etape 1.1</strong>: cliquer sur <strong>Selectionner</strong> depuis la toolbar
+                            <strong>Étape 1.1</strong>: cliquer sur <strong>Sélectionner</strong> depuis la toolbar
                             pour activer le mode suppression.
                         </>
                     ),
                     imageSrc: screenPageProfScreenshot,
                     imageAlt: 'Activation du mode suppression enseignant',
-                    imageCaption: 'Le bouton Selectionner active les actions de suppression en lot.',
+                    imageCaption: 'Le bouton Sélectionner active les actions de suppression en lot.',
                     imageHighlight: {
                         left: '76.7%',
                         top: '19.8%',
                         width: '9.7%',
                         height: '5.9%',
-                        label: 'Mode selection',
+                        label: 'Mode sélection',
                     },
                 },
                 {
@@ -230,16 +230,16 @@ export const teachersTutorialContent: TutorialContent = {
                         </>
                     ),
                     imageSrc: screenPageProfSuppressionScreenshot,
-                    imageAlt: 'Suppression d enseignants en mode selection',
+                    imageAlt: "Suppression d'enseignants en mode sélection",
                     imageCaption:
-                        'Le mode selection permet une suppression unitaire ou multiple des enseignants.',
+                        'Le mode sélection permet une suppression unitaire ou multiple des enseignants.',
                     imageHighlights: [
                         {
                             left: '76.7%',
                             top: '19.8%',
                             width: '9.7%',
                             height: '5.9%',
-                            label: 'Selection active',
+                            label: 'Sélection active',
                         },
                         {
                             left: '86.6%',
@@ -251,33 +251,33 @@ export const teachersTutorialContent: TutorialContent = {
                     ],
                     subSteps: [
                         <>
-                            Le compteur <strong>(n)</strong> indique le nombre d enseignants selectionnes.
+                            Le compteur <strong>(n)</strong> indique le nombre d'enseignants sélectionnés.
                         </>,
                         <>
-                            Les actions <strong>Tout selectionner</strong> et <strong>Effacer</strong> facilitent
-                            l ajustement de la selection avant suppression.
+                            Les actions <strong>Tout sélectionner</strong> et <strong>Effacer</strong> facilitent
+                            l'ajustement de la sélection avant suppression.
                         </>,
                     ],
                 },
                 <>
-                    <strong>Etape 2 (a venir)</strong>: un pop-up de confirmation apparaitra pour valider ou
+                    <strong>Étape 2 (à venir)</strong>: un pop-up de confirmation apparaîtra pour valider ou
                     annuler la suppression.
                 </>,
             ],
         },
         {
-            title: 'Utiliser la barre d outil',
+            title: "Utiliser la barre d'outils",
             steps: [
                 {
                     text: (
                         <>
-                            La barre d outil regroupe les fonctions de <strong>recherche</strong>,{' '}
+                            La barre d'outils regroupe les fonctions de <strong>recherche</strong>,{' '}
                             <strong>filtrage</strong> et <strong>actions rapides</strong>.
                         </>
                     ),
                     imageSrc: screenPageProfScreenshot,
-                    imageAlt: 'Barre d outil de la page Enseignants',
-                    imageCaption: 'Toolbar de recherche, filtres, selection et creation.',
+                    imageAlt: "Barre d'outils de la page Enseignants",
+                    imageCaption: 'Toolbar de recherche, filtres, sélection et création.',
                     imageHighlights: [
                         {
                             left: '22.1%',
@@ -291,7 +291,7 @@ export const teachersTutorialContent: TutorialContent = {
                             top: '19.8%',
                             width: '9.0%',
                             height: '5.8%',
-                            label: 'Filtre matieres',
+                            label: 'Filtre matières',
                             labelLeft: '-0.4rem',
                         },
                         {
@@ -307,7 +307,7 @@ export const teachersTutorialContent: TutorialContent = {
                             top: '19.8%',
                             width: '8.9%',
                             height: '5.8%',
-                            label: 'Selection',
+                            label: 'Sélection',
                             labelLeft: '-0.4rem',
                         },
                         {
@@ -324,31 +324,31 @@ export const teachersTutorialContent: TutorialContent = {
                             top: '19.7%',
                             width: '2.7%',
                             height: '5.4%',
-                            label: 'Creation',
+                            label: 'Création',
                             labelLeft: '-1.8rem',
                         },
                     ],
                     subSteps: [
                         <>
                             <strong>Recherche textuelle</strong>: filtrer rapidement un enseignant par nom ou
-                            prenom.
+                            prénom.
                         </>,
                         <>
-                            <strong>Filtre Matieres</strong>: afficher uniquement les enseignants rattaches a une
-                            matiere donnee.
+                            <strong>Filtre Matières</strong>: afficher uniquement les enseignants rattachés à une
+                            matière donnée.
                         </>,
                         <>
-                            <strong>Filtres de mode</strong>: <em>Tous</em>, <em>Presentiel</em>,{' '}
+                            <strong>Filtres de mode</strong>: <em>Tous</em>, <em>Présentiel</em>,{' '}
                             <em>Hybride</em>, <em>Distanciel</em>.
                         </>,
                         <>
-                            <strong>Selectionner</strong>: activer le mode de suppression multiple.
+                            <strong>Sélectionner</strong>: activer le mode de suppression multiple.
                         </>,
                         <>
-                            <strong>Reset filtres</strong>: revenir rapidement a la vue complete.
+                            <strong>Reset filtres</strong>: revenir rapidement à la vue complète.
                         </>,
                         <>
-                            Le bouton <strong>+</strong> ouvre le pop-up de creation d un enseignant.
+                            Le bouton <strong>+</strong> ouvre le pop-up de création d'un enseignant.
                         </>,
                     ],
                 },
@@ -356,8 +356,9 @@ export const teachersTutorialContent: TutorialContent = {
         },
     ],
     tips: [
-        'Utiliser un format de nommage stable (Nom Prenom) pour eviter les doublons.',
-        'Maintenir a jour les disponibilites avant toute generation de planning.',
-        'Verifier le rattachement et le campus d origine pour anticiper les contraintes logistiques.',
+        'Utiliser un format de nommage stable (Nom Prénom) pour éviter les doublons.',
+        'Maintenir à jour les disponibilités avant toute génération de planning.',
+        "Vérifier le rattachement et le campus d'origine pour anticiper les contraintes logistiques.",
     ],
 }
+
