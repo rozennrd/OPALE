@@ -88,7 +88,7 @@ export const useEventDetail = (
         const current = JSON.stringify(draft)
         const base = JSON.stringify(snapshot)
         setHasChanges(current !== base)
-        console.log("event has changes " + event)
+
     }, [draft, snapshot])
 
     const updateField = <K extends keyof EventDraft>(

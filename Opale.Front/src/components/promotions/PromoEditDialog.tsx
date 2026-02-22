@@ -82,7 +82,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
         setOpenCloseConfirm(true)
     }, [hasChanges, onClose])
 
-    // ESC au niveau de la card : ne ferme la card QUE si aucun popup de confirmation n’est ouvert
+    // ESC au niveau de la card : ne ferme la card QUE si aucun popup de confirmation n'est ouvert
     useEffect(() => {
         if (!editingPromo) return
 
@@ -109,6 +109,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
         students: editingPromo.students,
         startDate: '',
         endDate: '',
+        isApprentissage: editingPromo.isApprentissage,
         groups: editingPromo.groups,
         specialties: editingPromo.specialties,
         constraints: editingPromo.constraints,
@@ -174,9 +175,8 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                             onRemoveSpecialty={props.onRemoveSpecialty}
                         />
                     </div>
-
                     <ConstraintsSection
-                        promoIsApprentissage={false} // Default value, should be passed from parent
+                        promoIsApprentissage={props.editingPromo.isApprentissage}
                         constraints={props.constraints}
                         onAddConstraint={props.onAddConstraint}
                         onRemoveConstraint={props.onRemoveConstraint}
@@ -231,7 +231,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                         disabled={isSaveDisabled}
                         confirmMessage={
                             <>
-                                Vous êtes sur le point d’enregistrer les modifications
+                                Vous êtes sur le point d'enregistrer les modifications
                                 apportées à la promotion{' '}
                                 <strong>{editingPromo.name}</strong>.
                                 <br />

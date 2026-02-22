@@ -19,6 +19,7 @@ export const makePromotions = (name: string, years: number): Promotion[] =>
         students: 0,
         startDate: '',
         endDate: '',
+        isApprentissage: false,
         groups: [],
         specialties: [],
         constraints: {

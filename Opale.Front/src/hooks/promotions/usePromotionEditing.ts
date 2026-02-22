@@ -1,6 +1,6 @@
 // hooks/promotions/usePromotionEditing.ts
 import { useState, useEffect } from 'react'
-import {Constraints, Cycle, GroupSpecialtyItem, Promotion} from '../../models'
+import {Constraints, Cycle, GroupSpecialtyItem} from '../../models'
 import { distributeEvenly } from '../../utils/promoUtils'
 import { createEmptyConstraints } from './usePromotionConstraints'
 import { usePromotionSync } from './usePromotionSync'
@@ -12,6 +12,7 @@ export interface EditingPromotion {
     promoId: string
     name: string
     students: number
+    isApprentissage: boolean
     startDate: string
     endDate: string
     groups: GroupSpecialtyItem[]
@@ -49,16 +50,20 @@ export function usePromotionEditing(cycles: Cycle[]) {
         setIsLoading(true)
         try {
             const { promotion, events } = await fetchPromotionDetails(promoId)
+            if (!promotion) {
+                throw new Error('Promotion not found')
+            }
             const frontendPromo = transformBackendPromotionToFrontend(promotion)
             const eventsAsConstraints = convertEventsToConstraints(events)
 
             const normalized: EditingPromotion = {
                 cycleId,
-                promoId: promotion!.id,
+                promoId: promotion.id,
                 name: frontendPromo.label || '',
                 students: frontendPromo.students ?? 0,
                 startDate: frontendPromo.startDate || '',
                 endDate: frontendPromo.endDate || '',
+                isApprentissage: frontendPromo.isApprentissage,
                 groups: frontendPromo.groups || [],
                 specialties: frontendPromo.specialties || [],
                 constraints: {

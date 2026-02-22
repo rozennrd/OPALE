@@ -628,8 +628,6 @@ app.post(
           });
         });
 
-        console.log("Promotions récupérées :", promotions);
-
         // ========================================
         // 2. Fetch Macro Events
         // ========================================
@@ -671,7 +669,6 @@ app.post(
           });
         });
 
-        console.log("Événements récupérés :", eventsMacro);
 
         // ========================================
         // 3. Build Promotions with Periods
