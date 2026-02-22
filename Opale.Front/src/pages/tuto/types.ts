@@ -25,6 +25,8 @@ export type TutorialImageHighlight = {
     width: string
     height: string
     label?: string
+    labelLeft?: string
+    labelTop?: string
 }
 
 export type TutorialStep = {

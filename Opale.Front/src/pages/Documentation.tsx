@@ -351,7 +351,26 @@ export default function Documentation() {
                                                                                                             }}
                                                                                                         >
                                                                                                             {highlight.label && (
-                                                                                                                <span className="documentation-step-highlight-label">
+                                                                                                                <span
+                                                                                                                    className="documentation-step-highlight-label"
+                                                                                                                    style={
+                                                                                                                        highlight.labelLeft ||
+                                                                                                                        highlight.labelTop
+                                                                                                                            ? {
+                                                                                                                                  ...(highlight.labelLeft
+                                                                                                                                      ? {
+                                                                                                                                            left: highlight.labelLeft,
+                                                                                                                                        }
+                                                                                                                                      : {}),
+                                                                                                                                  ...(highlight.labelTop
+                                                                                                                                      ? {
+                                                                                                                                            top: highlight.labelTop,
+                                                                                                                                        }
+                                                                                                                                      : {}),
+                                                                                                                              }
+                                                                                                                            : undefined
+                                                                                                                    }
+                                                                                                                >
                                                                                                                     {highlight.label}
                                                                                                                 </span>
                                                                                                             )}
@@ -491,7 +510,26 @@ export default function Documentation() {
                                                                                         }}
                                                                                     >
                                                                                         {highlight.label && (
-                                                                                            <span className="documentation-step-highlight-label">
+                                                                                            <span
+                                                                                                className="documentation-step-highlight-label"
+                                                                                                style={
+                                                                                                    highlight.labelLeft ||
+                                                                                                    highlight.labelTop
+                                                                                                        ? {
+                                                                                                              ...(highlight.labelLeft
+                                                                                                                  ? {
+                                                                                                                        left: highlight.labelLeft,
+                                                                                                                    }
+                                                                                                                  : {}),
+                                                                                                              ...(highlight.labelTop
+                                                                                                                  ? {
+                                                                                                                        top: highlight.labelTop,
+                                                                                                                    }
+                                                                                                                  : {}),
+                                                                                                          }
+                                                                                                        : undefined
+                                                                                                }
+                                                                                            >
                                                                                                 {highlight.label}
                                                                                             </span>
                                                                                         )}
