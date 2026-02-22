@@ -14,24 +14,27 @@ interface EntityCardProps {
 
     variant?: EntityCardVariant        // spacing global
     selected?: boolean                 // surbrillance possible
-    disabled?: boolean                 // clic désactivé
+    selectionMode?: boolean            // affiche le marqueur de selection
+    disabled?: boolean                 // clic desactive
 }
 
 export default function EntityCard({
-                                       children,
-                                       badge,
-                                       onClick,
-                                       className = '',
-                                       mainClassName = '',
-                                       asideClassName = '',
-                                       variant = 'default',
-                                       selected = false,
-                                       disabled = false,
-                                   }: EntityCardProps) {
+    children,
+    badge,
+    onClick,
+    className = '',
+    mainClassName = '',
+    asideClassName = '',
+    variant = 'default',
+    selected = false,
+    selectionMode = false,
+    disabled = false,
+}: EntityCardProps) {
     const rootClassName = [
         'entity-card',
         `entity-card--${variant}`,
         selected && 'entity-card--selected',
+        selectionMode && 'entity-card--selection-mode',
         disabled && 'entity-card--disabled',
         className,
     ]
@@ -45,6 +48,20 @@ export default function EntityCard({
 
     return (
         <article className={rootClassName} onClick={handleClick}>
+            {selectionMode && (
+                <span
+                    className={[
+                        'entity-card-selection-dot',
+                        selected ? 'is-selected' : '',
+                    ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    aria-hidden="true"
+                >
+                    {selected ? '?' : ''}
+                </span>
+            )}
+
             <div className={['entity-card-main', mainClassName].filter(Boolean).join(' ')}>
                 {children}
             </div>

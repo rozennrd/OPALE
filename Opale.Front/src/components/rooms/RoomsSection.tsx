@@ -1,4 +1,4 @@
-// src/components/rooms/RoomsSection.tsx
+﻿// src/components/rooms/RoomsSection.tsx
 import React, { useState } from 'react'
 import icPlus from '../../assets/ic-plus.png'
 import { Room } from '../../models/Room'
@@ -10,6 +10,9 @@ interface RoomsSectionProps {
     rooms: Room[]
     onSelectRoom: (room: Room) => void
     onAddRoom: (floor: 0 | 1 | 2) => void
+    selectionMode?: boolean
+    selectedRoomIds?: Set<string>
+    onToggleRoomSelection?: (roomId: string) => void
 }
 
 const FLOOR_LABELS: Record<number, string> = {
@@ -24,7 +27,15 @@ const FLOOR_CODES: Record<number, string> = {
     2: 'Codes J2xx',
 }
 
-export default function RoomsSection({ floor, rooms, onSelectRoom, onAddRoom }: RoomsSectionProps) {
+export default function RoomsSection({
+    floor,
+    rooms,
+    onSelectRoom,
+    onAddRoom,
+    selectionMode = false,
+    selectedRoomIds,
+    onToggleRoomSelection,
+}: RoomsSectionProps) {
     const [isOpen, setIsOpen] = useState(true)
 
     const handleToggle = () => setIsOpen((prev) => !prev)
@@ -52,6 +63,13 @@ export default function RoomsSection({ floor, rooms, onSelectRoom, onAddRoom }: 
                             key={room.id}
                             room={room}
                             onSelect={() => onSelectRoom(room)}
+                            selectionMode={selectionMode}
+                            selected={selectedRoomIds?.has(room.id) ?? false}
+                            onToggleSelect={() => {
+                                if (onToggleRoomSelection) {
+                                    onToggleRoomSelection(room.id)
+                                }
+                            }}
                         />
                     ))}
                     <button

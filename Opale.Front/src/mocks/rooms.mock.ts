@@ -1,4 +1,4 @@
-// src/mocks/rooms.mock.ts
+﻿// src/mocks/rooms.mock.ts
 import { Room, RoomType } from '../models/Room'
 
 export const ROOM_TYPES: RoomType[] = [
@@ -17,6 +17,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 0,
         mainType: 'PROJET',
         types: ['PROJET'],
+        capacity: 35,
+        isAvailable: true,
     },
     {
         id: 'room-j005',
@@ -25,6 +27,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 0,
         mainType: 'PROJET',
         types: ['PROJET'],
+        capacity: 28,
+        isAvailable: true,
     },
     {
         id: 'room-j004',
@@ -32,6 +36,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 0,
         mainType: 'TD',
         types: ['TD'],
+        capacity: 30,
+        isAvailable: false,
     },
     {
         id: 'room-j003',
@@ -39,6 +45,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 0,
         mainType: 'TP_ELECTRONIQUE',
         types: ['TP_ELECTRONIQUE'],
+        capacity: 22,
+        isAvailable: true,
     },
     {
         id: 'room-j002',
@@ -46,6 +54,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 0,
         mainType: 'TP_NUMERIQUE',
         types: ['TP_NUMERIQUE'],
+        capacity: 24,
+        isAvailable: false,
     },
     {
         id: 'room-j001',
@@ -54,6 +64,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 0,
         mainType: 'PROJET',
         types: ['PROJET'],
+        capacity: 32,
+        isAvailable: true,
     },
 
     // Etage 1
@@ -63,6 +75,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 1,
         mainType: 'TD',
         types: ['TD'],
+        capacity: 26,
+        isAvailable: true,
     },
     {
         id: 'room-j102',
@@ -70,6 +84,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 1,
         mainType: 'TP_ELECTRONIQUE',
         types: ['TP_ELECTRONIQUE'],
+        capacity: 20,
+        isAvailable: true,
     },
     {
         id: 'room-j103',
@@ -77,6 +93,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 1,
         mainType: 'TP_NUMERIQUE',
         types: ['TP_NUMERIQUE'],
+        capacity: 21,
+        isAvailable: false,
     },
     {
         id: 'room-j104',
@@ -84,6 +102,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 1,
         mainType: 'TD',
         types: ['TD'],
+        capacity: 27,
+        isAvailable: true,
     },
     {
         id: 'room-j105',
@@ -91,6 +111,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 1,
         mainType: 'TP_ELECTRONIQUE',
         types: ['TP_ELECTRONIQUE'],
+        capacity: 19,
+        isAvailable: false,
     },
     {
         id: 'room-j106',
@@ -98,6 +120,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 1,
         mainType: 'TP_NUMERIQUE',
         types: ['TP_NUMERIQUE'],
+        capacity: 23,
+        isAvailable: true,
     },
     {
         id: 'room-j107',
@@ -105,6 +129,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 1,
         mainType: 'TD',
         types: ['TD'],
+        capacity: 25,
+        isAvailable: true,
     },
     {
         id: 'room-j109',
@@ -113,6 +139,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 1,
         mainType: 'PROJET',
         types: ['PROJET'],
+        capacity: 29,
+        isAvailable: true,
     },
     {
         id: 'room-j110',
@@ -121,22 +149,28 @@ export const ROOMS_MOCK: Room[] = [
         floor: 1,
         mainType: 'PROJET',
         types: ['PROJET'],
+        capacity: 31,
+        isAvailable: false,
     },
     {
         id: 'room-j111',
         name: 'J111',
-        fullName: 'J111_Cuisine Pédagogique',
+        fullName: 'J111_Cuisine Pedagogique',
         floor: 1,
         mainType: 'PROJET',
         types: ['PROJET'],
+        capacity: 18,
+        isAvailable: true,
     },
     {
         id: 'room-j112',
         name: 'J112',
-        fullName: 'J112_Salle de réunion',
+        fullName: 'J112_Salle de reunion',
         floor: 1,
         mainType: 'AUTRE',
         types: ['AUTRE'],
+        capacity: 16,
+        isAvailable: true,
     },
 
     // Etage 2
@@ -147,6 +181,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 2,
         mainType: 'AUTRE',
         types: ['AUTRE'],
+        capacity: 15,
+        isAvailable: false,
     },
     {
         id: 'room-j210',
@@ -155,6 +191,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 2,
         mainType: 'AUTRE',
         types: ['AUTRE'],
+        capacity: 14,
+        isAvailable: true,
     },
     {
         id: 'room-j208',
@@ -163,6 +201,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 2,
         mainType: 'AUTRE',
         types: ['AUTRE'],
+        capacity: 17,
+        isAvailable: true,
     },
     {
         id: 'room-j201',
@@ -171,14 +211,18 @@ export const ROOMS_MOCK: Room[] = [
         floor: 2,
         mainType: 'AUTRE',
         types: ['AUTRE'],
+        capacity: 33,
+        isAvailable: false,
     },
     {
         id: 'room-j202',
         name: 'J202',
-        fullName: 'J202_Salle de réunion',
+        fullName: 'J202_Salle de reunion',
         floor: 2,
         mainType: 'AUTRE',
         types: ['AUTRE'],
+        capacity: 34,
+        isAvailable: true,
     },
     {
         id: 'room-j207',
@@ -187,6 +231,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 2,
         mainType: 'AUTRE',
         types: ['AUTRE'],
+        capacity: 28,
+        isAvailable: true,
     },
     {
         id: 'room-j203',
@@ -194,6 +240,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 2,
         mainType: 'TP_ELECTRONIQUE',
         types: ['TP_ELECTRONIQUE'],
+        capacity: 24,
+        isAvailable: true,
     },
     {
         id: 'room-j204',
@@ -201,6 +249,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 2,
         mainType: 'TP_NUMERIQUE',
         types: ['TP_NUMERIQUE'],
+        capacity: 22,
+        isAvailable: false,
     },
     {
         id: 'room-j205',
@@ -208,6 +258,8 @@ export const ROOMS_MOCK: Room[] = [
         floor: 2,
         mainType: 'TD',
         types: ['TD'],
+        capacity: 35,
+        isAvailable: true,
     },
     {
         id: 'room-j206',
@@ -215,5 +267,7 @@ export const ROOMS_MOCK: Room[] = [
         floor: 2,
         mainType: 'TP_ELECTRONIQUE',
         types: ['TP_ELECTRONIQUE'],
+        capacity: 30,
+        isAvailable: true,
     },
 ]

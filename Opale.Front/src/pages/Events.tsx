@@ -11,11 +11,48 @@ import {
     EXTERNAL_EVENTS_MOCK,
 } from '../mocks/events.mock'
 import { CampusEvent } from '../models/CampusEvent'
-import SectionHeader from '../components/common/SectionHeader' // si tu l’utilises pour les mois
+import SectionHeader from '../components/common/SectionHeader'
+import SelectionToolbar from '../components/common/SelectionToolbar'
+import { useSelectionState } from '../hooks/common/useSelectionState'
+import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
+import { usePromotionCycles } from '../hooks/promotions/usePromotionCycles'
 
 const ALL_EVENTS = [...JUNIA_EVENTS_MOCK, ...EXTERNAL_EVENTS_MOCK]
 
-// helpers getMonthKey / getMonthLabel que tu as déjà ou qu’on avait ajoutés
+const DEFAULT_EVENT_FILTERS: {
+    searchValue: string
+    dateFrom: string
+    dateTo: string
+    target: TargetFilter
+    type: TypeFilter
+} = {
+    searchValue: '',
+    dateFrom: '',
+    dateTo: '',
+    target: 'ALL',
+    type: 'ALL',
+}
+
+const createFrontendEventId = () =>
+    `evt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
+
+const normalizeEventForList = (event: CampusEvent): CampusEvent => {
+    const startDate = event.startDate ?? event.date ?? ''
+    const endDate = event.endDate ?? startDate
+    const date = startDate || endDate || event.date
+
+    return {
+        ...event,
+        startDate,
+        endDate,
+        date,
+        showMacro: event.showMacro ?? true,
+        showMicro: event.showMicro ?? false,
+        concernedCycleIds: [...(event.concernedCycleIds ?? [])],
+        concernedPromotionIds: [...(event.concernedPromotionIds ?? [])],
+    }
+}
+
 function getMonthKey(dateStr: string): string {
     const d = new Date(dateStr)
     if (Number.isNaN(d.getTime())) return dateStr
@@ -33,6 +70,10 @@ function getMonthLabel(dateStr: string): string {
 }
 
 export default function Events() {
+    const [events, setEvents] = useState<CampusEvent[]>(() =>
+        ALL_EVENTS.map((event) => normalizeEventForList(event)),
+    )
+
     const [searchValue, setSearchValue] = useState('')
     const [dateFrom, setDateFrom] = useState('')
     const [dateTo, setDateTo] = useState('')
@@ -43,14 +84,30 @@ export default function Events() {
     const [detailMode, setDetailMode] = useState<'edit' | 'create'>('edit')
     const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({})
 
-    const filteredEvents = useMemo(() => {
-        let items = [...ALL_EVENTS]
+    const { cycles: promotionCycles } = usePromotionCycles()
 
-        // tri chronologique
-        items.sort(
-            (a, b) =>
-                new Date(a.date).getTime() - new Date(b.date).getTime(),
-        )
+    const {
+        selectionMode,
+        selectedIds: selectedEventIds,
+        selectedIdsSet: selectedEventIdsSet,
+        selectedCount: selectedEventCount,
+        toggleSelectionMode: toggleEventSelectionMode,
+        toggleSelection: toggleEventSelection,
+        selectAll: selectAllEvents,
+        clearSelection: clearEventSelection,
+        disableSelectionMode: disableEventSelectionMode,
+        pruneSelection: pruneEventSelection,
+    } = useSelectionState({
+        onEnterSelectionMode: () => {
+            setSelectedEvent(null)
+            setDetailMode('edit')
+        },
+    })
+
+    const filteredEvents = useMemo(() => {
+        let items = [...events]
+
+        items.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
         if (searchValue.trim()) {
             const q = searchValue.trim().toLowerCase()
@@ -63,16 +120,12 @@ export default function Events() {
 
         if (dateFrom) {
             const min = new Date(dateFrom).getTime()
-            items = items.filter(
-                (evt) => new Date(evt.date).getTime() >= min,
-            )
+            items = items.filter((evt) => new Date(evt.date).getTime() >= min)
         }
 
         if (dateTo) {
             const max = new Date(dateTo).getTime()
-            items = items.filter(
-                (evt) => new Date(evt.date).getTime() <= max,
-            )
+            items = items.filter((evt) => new Date(evt.date).getTime() <= max)
         }
 
         if (target === 'JUNIA') {
@@ -86,9 +139,28 @@ export default function Events() {
         }
 
         return items
-    }, [searchValue, dateFrom, dateTo, target, type])
+    }, [events, searchValue, dateFrom, dateTo, target, type])
 
-    // Regroupement par mois (comme on l’a déjà fait)
+    const {
+        hasActiveFilters,
+        resetFilters: handleResetFilters,
+    } = useToolbarFilters({
+        values: { searchValue, dateFrom, dateTo, target, type },
+        defaults: DEFAULT_EVENT_FILTERS,
+        onReset: () => {
+            setSearchValue(DEFAULT_EVENT_FILTERS.searchValue)
+            setDateFrom(DEFAULT_EVENT_FILTERS.dateFrom)
+            setDateTo(DEFAULT_EVENT_FILTERS.dateTo)
+            setTarget(DEFAULT_EVENT_FILTERS.target)
+            setType(DEFAULT_EVENT_FILTERS.type)
+        },
+    })
+
+    const visibleEventIds = useMemo(
+        () => filteredEvents.map((event) => event.id),
+        [filteredEvents],
+    )
+
     const monthGroups = useMemo(() => {
         const groups: {
             key: string
@@ -115,6 +187,19 @@ export default function Events() {
         return groups
     }, [filteredEvents])
 
+    const removeEventsByIds = (ids: string[]) => {
+        const idsSet = new Set(ids)
+        if (idsSet.size === 0) return
+
+        setEvents((prev) => prev.filter((event) => !idsSet.has(event.id)))
+        pruneEventSelection(Array.from(idsSet))
+        setSelectedEvent((prev) => {
+            if (!prev) return prev
+            if (idsSet.has(prev.id)) return null
+            return prev
+        })
+    }
+
     const toggleMonth = (key: string) => {
         setOpenMonths((prev) => ({
             ...prev,
@@ -127,35 +212,67 @@ export default function Events() {
         setSelectedEvent(evt)
     }
 
-    // clic sur le bouton "+"
     const handleCreateRequested = () => {
-        const todayIso = new Date().toISOString().slice(0, 10)
-
+        const today = new Date().toISOString().slice(0, 10)
         const newEvent: CampusEvent = {
             id: 'new-event',
             name: '',
-            startDate: '',
-            endDate: '',
+            date: today,
+            startDate: today,
+            endDate: today,
             location: '',
             type: 'AUTRE',
             source: 'JUNIA',
             description: '',
+            showMacro: true,
+            showMicro: false,
+            concernedCycleIds: [],
+            concernedPromotionIds: [],
         }
 
         setDetailMode('create')
         setSelectedEvent(newEvent)
-        console.log('[EVENTS] Open create event form', newEvent)
     }
 
-    const handleCloseDetail = () => {
-        setSelectedEvent(null)
+    const handleSaveEvent = (savedEvent: CampusEvent) => {
+        const isCreateSave = detailMode === 'create' || savedEvent.id === 'new-event'
+        const previousEventId = savedEvent.id
+        const normalized = normalizeEventForList({
+            ...savedEvent,
+            id: isCreateSave ? createFrontendEventId() : savedEvent.id,
+        })
+
+        setEvents((prev) => {
+            if (isCreateSave) {
+                return [...prev, normalized]
+            }
+
+            return prev.map((event) =>
+                event.id === previousEventId ? normalized : event,
+            )
+        })
+
+        setSelectedEvent(normalized)
+        if (isCreateSave) {
+            setDetailMode('edit')
+        }
+    }
+
+    const handleDeleteSingleEvent = (eventId: string) => {
+        removeEventsByIds([eventId])
+        setDetailMode('edit')
+    }
+
+    const handleDeleteSelected = () => {
+        removeEventsByIds(selectedEventIds)
+        disableEventSelectionMode()
     }
 
     return (
         <>
-            <h1 className="page-title">Événements</h1>
+            <h1 className="page-title">Evenements</h1>
             <p className="page-sub">
-                Vue consolidée des événements Junia et externes.
+                Vue consolidee des evenements Junia et externes.
             </p>
 
             <div className="events-page">
@@ -172,14 +289,30 @@ export default function Events() {
                         type={type}
                         onTypeChange={setType}
                         onCreateRequested={handleCreateRequested}
+                        selectionMode={selectionMode}
+                        selectedCount={selectedEventCount}
+                        onToggleSelectionMode={toggleEventSelectionMode}
+                        onResetFilters={handleResetFilters}
+                        hasActiveFilters={hasActiveFilters}
                     />
+
+                    {selectionMode && (
+                        <SelectionToolbar
+                            totalCount={visibleEventIds.length}
+                            selectedCount={selectedEventCount}
+                            onSelectAll={() => selectAllEvents(visibleEventIds)}
+                            onClearSelection={clearEventSelection}
+                            onDeleteSelected={handleDeleteSelected}
+                            confirmTitle="Supprimer les evenements selectionnes"
+                            confirmMessage={`Vous allez supprimer ${selectedEventIds.length} evenement${selectedEventIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                        />
+                    )}
 
                     <div className="events-list-wrapper">
                         {monthGroups.length > 0 ? (
                             <div className="events-list">
                                 {monthGroups.map((group) => {
-                                    const isOpen =
-                                        openMonths[group.key] ?? true
+                                    const isOpen = openMonths[group.key] ?? true
 
                                     return (
                                         <section
@@ -197,17 +330,22 @@ export default function Events() {
 
                                             {isOpen && (
                                                 <div className="events-month-group-cards">
-                                                    {group.events.map(
-                                                        (event) => (
-                                                            <EventCard
-                                                                key={event.id}
-                                                                event={event}
-                                                                onSelect={
-                                                                    handleSelectEvent
-                                                                }
-                                                            />
-                                                        ),
-                                                    )}
+                                                    {group.events.map((event) => (
+                                                        <EventCard
+                                                            key={event.id}
+                                                            event={event}
+                                                            onSelect={
+                                                                handleSelectEvent
+                                                            }
+                                                            selectionMode={selectionMode}
+                                                            selected={selectedEventIdsSet.has(
+                                                                event.id,
+                                                            )}
+                                                            onToggleSelect={
+                                                                toggleEventSelection
+                                                            }
+                                                        />
+                                                    ))}
                                                 </div>
                                             )}
                                         </section>
@@ -216,23 +354,29 @@ export default function Events() {
                             </div>
                         ) : (
                             <div className="events-empty-state">
-                                Aucun événement ne correspond aux filtres
-                                sélectionnés.
+                                Aucun evenement ne correspond aux filtres
+                                selectionnes.
                             </div>
                         )}
                     </div>
                 </div>
             </div>
 
-            {/* Detail card (vue / création / édition) */}
             {selectedEvent && (
                 <EventDetailCard
                     event={selectedEvent}
+                    cycles={promotionCycles}
                     mode={detailMode}
+                    onSave={handleSaveEvent}
                     onClose={() => {
                         setSelectedEvent(null)
                         setDetailMode('edit')
                     }}
+                    onDelete={
+                        detailMode === 'create'
+                            ? undefined
+                            : () => handleDeleteSingleEvent(selectedEvent.id)
+                    }
                 />
             )}
         </>

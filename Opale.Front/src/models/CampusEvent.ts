@@ -12,14 +12,17 @@ export type EventType =
 
 export interface CampusEvent {
     id: string
-    /** Nom de l’événement */
     name: string
-    /** Date au format ISO (ex: "2025-03-12") */
+    /** Date utilisee pour le tri/affichage liste (ISO) */
     date: string
-    /** Lieu / campus / ville */
+    startDate?: string
+    endDate?: string
     location: string
-    /** Origine de l’événement : JUNIA ou externe */
     source: EventSource
-    /** Type d’événement (pour le filtre + badge) */
     type: EventType
+    description?: string
+    showMacro?: boolean
+    showMicro?: boolean
+    concernedCycleIds?: string[]
+    concernedPromotionIds?: string[]
 }

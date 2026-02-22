@@ -1,16 +1,18 @@
 @layer pages {
-    /* bouton + minimaliste */
+    .events-toolbar-row--primary .toolbar-search {
+        flex: 1 1 260px;
+        min-width: 220px;
+    }
+
     .events-toolbar-plus-btn {
         border: none;
         background: transparent;
-        padding: 0.25rem;      /* hitbox confortable */
+        padding: 0.25rem;
         margin-left: 0.4rem;
         cursor: pointer;
-
         display: inline-flex;
         align-items: center;
         justify-content: center;
-
         transition: opacity 120ms ease, transform 120ms ease;
     }
 
@@ -31,7 +33,6 @@
         display: block;
     }
 
-    /* DARK THEME */
     [data-theme="dark"] .events-toolbar-plus-icon {
         filter: brightness(1.2);
     }

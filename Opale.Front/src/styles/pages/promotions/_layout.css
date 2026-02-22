@@ -24,7 +24,7 @@
         gap: 12px;
         padding: 16px;
         min-width: 0;
-        box-shadow: var(--shadow-lg);
+        box-shadow: none;
 
         background: var(--panel-soft);
         border-radius: var(--radius);
@@ -45,10 +45,11 @@
         font-family: 'Nunito', sans-serif;
         font-size: clamp(18px, 2vw, 28px);
         font-weight: 700;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--border);
         border-radius: var(--radius-sm);
         padding: 10px 12px;
-        background: #fff;
+        background: var(--input-bg);
+        color: var(--text);
     }
 
     .cycle-actions {
@@ -64,14 +65,14 @@
     }
 
     .btn-add-promo {
-        border-color: #9edcb7;
-        background: #e7f7ee;
-        color: #0f5132;
+        border-color: var(--success-soft-border);
+        background: var(--success-soft-bg);
+        color: var(--success-soft-text);
     }
 
     .btn-add-promo:hover {
-        background: #dcf2e4;
-        border-color: #86cfaa;
+        background: var(--success-soft-bg-hover);
+        border-color: var(--success-soft-border-hover);
     }
 
     .promo-add-dialog {
@@ -106,8 +107,8 @@
         border: var(--add-cycle-border-width) dashed var(--add-cycle-border-color);
 
         cursor: pointer;
-        transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
-        box-shadow: var(--shadow-md);
+        transition: transform .12s ease, background .12s ease;
+        box-shadow: none;
     }
 
     .add-cycle-card img {
@@ -120,6 +121,6 @@
     .add-cycle-card:hover {
         background: transparent;
         transform: translateY(-1px);
-        box-shadow: var(--shadow-lg);
+        box-shadow: none;
     }
 }
