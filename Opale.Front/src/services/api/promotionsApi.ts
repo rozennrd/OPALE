@@ -11,7 +11,7 @@ export interface BackendPromotion {
   id_cycle: string
   date_start: string
   date_end: string
-  type: string
+  cycle_type?: string
   groups: Array<{ id?: string, id_promo: string; nom: string; effectifs: number }>
   specialties: Array<{ id?: string, id_promo: string; nom: string; effectifs: number }>
 }

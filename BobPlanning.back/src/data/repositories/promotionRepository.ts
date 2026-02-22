@@ -14,7 +14,12 @@ export const promotionRepository = {
   },
 
   async getById(id: string): Promise<PromotionDAO | null> {
-    const sql = "SELECT * FROM promotion WHERE id = $1";
+    const sql = `
+      SELECT p.id, p.nom, p.effectifs, p.id_cycle, p.date_start, p.date_end, c.type
+      FROM promotion p
+      JOIN cycle c ON p.id_cycle = c.id
+      WHERE p.id = $1
+    `;
     const result = await pool.query(sql, [id]);
     return result.rows[0] ?? null;
   },

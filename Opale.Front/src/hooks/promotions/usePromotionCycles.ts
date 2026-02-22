@@ -42,7 +42,6 @@ export function usePromotionCycles() {
                 const backendCycles = cyclesResponse.data
                 const backendPromotions = promotionsResponse.data
                 const promotionsByCycle: { [key: string]: Promotion[] } = {}
-
                 backendPromotions.forEach(bp => {
                     const promo = transformBackendPromotionToFrontend(bp)
                     if (bp.id_cycle) {
@@ -107,6 +106,7 @@ export function usePromotionCycles() {
                     id: '',
                     label: `${formData.name} ${i}`,
                     students: 0,
+                    isApprentissage: formData.type === "apprentissage",
                     startDate: now.toISOString(),
                     endDate: oneYearFromNow.toISOString(),
                     groups: [],
@@ -199,6 +199,7 @@ export function usePromotionCycles() {
                 students: 0,
                 startDate: now.toISOString(),
                 endDate: oneYearFromNow.toISOString(),
+                isApprentissage: false,
                 groups: [],
                 specialties: [],
                 constraints: createEmptyConstraints(),

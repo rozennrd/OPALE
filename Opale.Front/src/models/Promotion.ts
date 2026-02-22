@@ -7,6 +7,7 @@ export interface Promotion {
     students: number;
     startDate: string;
     endDate: string;
+    isApprentissage: boolean;
     groups: GroupSpecialtyItem[];
     specialties: GroupSpecialtyItem[];
     constraints: Constraints;
