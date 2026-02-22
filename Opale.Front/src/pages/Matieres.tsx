@@ -1,6 +1,6 @@
 // src/pages/Matieres.tsx
 
-import React, { useMemo, useState } from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import PageHeader from '../components/common/PageHeader'
 import MatieresToolbar, {
     CycleFilter,
@@ -11,15 +11,33 @@ import MatieresToolbar, {
 import MatiereSection from '../components/matieres/MatiereSection'
 import MatiereDetailCard from '../components/matieres/MatiereDetailCard'
 import SelectionToolbar from '../components/common/SelectionToolbar'
-import { MATIERES_MOCK } from '../mocks/matieres.mock'
-import { INTERNAL_TEACHERS_MOCK } from '../mocks/teachers.mock'
+import { getMatieres } from '../services/api/matieresApi'
+import { TeacherApi } from '../services/api/professorsApi'
+import { promotionsApi } from '../services/api/promotionsApi'
 import { Matiere } from '../models/Matiere'
 import { useSelectionState } from '../hooks/common/useSelectionState'
 import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
+import { cyclesApi } from '../services/api/cyclesApi'
+import { getEnseignements } from '../services/api/enseignementsApi'
+import {transformBackendMatiereToFrontend} from "../services/api/matieresApiTransformers.ts";
 
-const getCycleFromPromoLabel = (promoLabel: string) => {
-    return (promoLabel || '').trim().split(/\s+/)[0] || '-'
+type ApiResponse<T> = {
+    success: boolean
+    data?: T
+    error?: { message?: string }
 }
+
+type BackendEnseignement = {
+    id_matiere?: string | number
+    id_prof?: string | number
+}
+
+function unwrapApiArray<T>(res: ApiResponse<T[]> | T[]): T[] {
+    if (Array.isArray(res)) return res
+    return res.data ?? []
+}
+
+
 const DEFAULT_MATIERES_FILTERS: {
     searchValue: string
     semestreFilter: SemestreFilter
@@ -35,14 +53,124 @@ const DEFAULT_MATIERES_FILTERS: {
 }
 
 export default function Matieres() {
-    const [matieres, setMatieres] = useState<Matiere[]>(() => [...MATIERES_MOCK])
-
     const [searchValue, setSearchValue] = useState('')
     const [semestreFilter, setSemestreFilter] = useState<SemestreFilter>('ALL')
 
     const [cycleFilter, setCycleFilter] = useState<CycleFilter>('ALL')
     const [promotionFilter, setPromotionFilter] = useState<PromotionFilter>('ALL')
     const [teacherFilter, setTeacherFilter] = useState<TeacherFilter>('ALL')
+
+    const [matieres, setMatieres] = useState<Matiere[]>([])
+    const [teachers, setTeachers] = useState<TeacherApi[]>([])
+    const [promoById, setPromoById] = useState<Map<string, { id: string; nom: string; id_cycle: string }>>(new Map())
+    const [cycleNameById, setCycleNameById] = useState<Map<string, string>>(new Map())
+    const [teacherIdsByMatiereId, setTeacherIdsByMatiereId] = useState<Map<string, Set<string>>>(new Map())
+
+    const [allPromotionOptions, setAllPromotionOptions] = useState<{ id: string; nom: string }[]>([])
+    const [allCycleOptions, setAllCycleOptions] = useState<{ id: string; nom: string }[]>([])
+
+
+    useEffect(() => {
+        let mounted = true
+
+        ;(async () => {
+            try {
+                console.log('[MATIERES] fetching matieres + promotions + cycles + profs')
+
+                const [backendMatieres, promosRes, cyclesRes, enseignementsRes] = await Promise.all([
+                    getMatieres(),                 // Array backend matieres
+                    promotionsApi.getPromotions(), // ApiResponse<BackendPromotion[]>
+                    cyclesApi.getCycles(),         // ApiResponse<BackendCycle[]>
+                    getEnseignements(),            // ApiResponse<BackendEnseignement[]>
+                ])
+
+                console.log('[MATIERES] backendMatieres length:', backendMatieres?.length)
+                console.log('[MATIERES] backendMatieres first:', backendMatieres?.[0])
+
+                if (!promosRes.success) throw new Error(promosRes.error?.message ?? 'Promotions fetch failed')
+                if (!cyclesRes.success) throw new Error(cyclesRes.error?.message ?? 'Cycles fetch failed')
+
+                const enseignements: BackendEnseignement[] = unwrapApiArray<BackendEnseignement>(enseignementsRes)
+
+                const map = new Map<string, Set<string>>()
+
+                for (const e of enseignements) {
+                    const matiereId = e.id_matiere
+
+                    const teacherId = e.id_prof
+
+                    if (!matiereId || !teacherId) continue
+
+                    const key = String(matiereId)
+                    const tId = String(teacherId)
+
+                    const set = map.get(key) ?? new Set<string>()
+                    set.add(tId)
+                    map.set(key, set)
+                }
+
+                if (!mounted) return
+                setTeacherIdsByMatiereId(map)
+                const backendPromos = promosRes.data ?? []
+                const backendCycles = cyclesRes.data ?? []
+
+                console.log('[MATIERES] backendPromos length:', backendPromos.length)
+                console.log('[MATIERES] backendCycles length:', backendCycles.length)
+
+                console.log('[MATIERES] example matiere id:', matieres?.[0]?.id)
+                console.log('[MATIERES] example enseignement matiereId:', enseignements?.[0]?.id_matiere)
+
+                const promotionOptions = backendPromos
+                    .map((p) => ({ id: p.id, nom: p.nom }))
+                    .filter((p) => p.nom)
+                    .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
+
+                const cycleOptions = backendCycles
+                    .map((c) => ({ id: c.id, nom: c.nom }))
+                    .filter((c) => c.nom)
+                    .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
+
+                // promoId -> { id, nom, id_cycle }
+                const promoMap = new Map<string, { id: string; nom: string; id_cycle: string }>()
+                for (const p of backendPromos) promoMap.set(p.id, { id: p.id, nom: p.nom, id_cycle: p.id_cycle })
+
+                // cycleId -> cycleName
+                const cycleMap = new Map<string, string>()
+                for (const c of backendCycles) cycleMap.set(c.id, c.nom)
+
+                // promoId -> promo label (affichage dans Matiere.id_promo)
+                const promoLabelById = new Map<string, string>()
+                for (const p of backendPromos) promoLabelById.set(p.id, p.nom)
+
+                const frontMatieres = (backendMatieres ?? []).map((m) =>
+                    transformBackendMatiereToFrontend(m, promoLabelById)
+                )
+
+                if (!mounted) return
+
+                setMatieres(frontMatieres)
+                setPromoById(promoMap)
+                setCycleNameById(cycleMap)
+                setAllPromotionOptions(promotionOptions)
+                setAllCycleOptions(cycleOptions)
+
+            } catch (e) {
+                console.error('[MATIERES] load failed:', e)
+                if (!mounted) return
+                setMatieres([])
+                setPromoById(new Map())
+                setCycleNameById(new Map())
+                setTeachers([])
+                setAllPromotionOptions([])
+                setAllCycleOptions([])
+                setTeacherIdsByMatiereId(new Map())
+            }
+        })()
+
+        return () => {
+            mounted = false
+        }
+    }, [])
 
     const [selected, setSelected] = useState<Matiere | null>(null)
 
@@ -64,42 +192,53 @@ export default function Matieres() {
     })
 
     const cycleOptions = useMemo(() => {
-        const uniq = new Set<string>()
-        for (const m of matieres) uniq.add(getCycleFromPromoLabel(m.id_promo))
-        return Array.from(uniq).sort((a, b) => a.localeCompare(b, 'fr'))
-    }, [matieres])
+        return allCycleOptions
+    }, [allCycleOptions])
 
     const promotionOptions = useMemo(() => {
-        const uniq = new Set<string>()
-        for (const m of matieres) uniq.add(m.id_promo)
-        return Array.from(uniq).sort((a, b) => a.localeCompare(b, 'fr'))
-    }, [matieres])
+        return allPromotionOptions
+    }, [allPromotionOptions])
 
     const teacherOptions = useMemo(() => {
-        return INTERNAL_TEACHERS_MOCK
+        return (teachers ?? [])
             .map((t) => ({
-                id: t.id,
-                label: `${t.firstName} ${t.lastName}`.trim(),
+                id: String(t.id),
+                label: `${t.prenom ?? ''} ${t.nom ?? ''}`.trim(),
             }))
+            .filter((o) => o.label.length > 0)
             .sort((a, b) => a.label.localeCompare(b.label, 'fr'))
-    }, [])
+    }, [teachers])
+
 
     const filtered = useMemo(() => {
         const q = searchValue.trim().toLowerCase()
 
         return matieres.filter((m) => {
+            // Search
             const matchesQuery = q.length === 0 || m.nom.toLowerCase().includes(q)
 
+            // Semestre (UI: 'S1'/'S2' | data: number)
+            const semestreValue = Number(m.semestre) // au cas où ça arrive en string "1"/"2"
             const matchesSemestre =
-                semestreFilter === 'ALL' || m.semestre === semestreFilter
+                semestreFilter === 'ALL' ||
+                (semestreFilter === 1 && semestreValue === 1) ||
+                (semestreFilter === 2 && semestreValue === 2)
 
-            const matiereCycle = getCycleFromPromoLabel(m.id_promo)
-            const matchesCycle = cycleFilter === 'ALL' || matiereCycle === cycleFilter
+            // Cycle (API: via promo_id -> promotion.id_cycle -> cycleNameById)
+            const promoId = m.promo_id ?? ''
+            const promo = promoById.get(promoId)
+            const matiereCycleName = promo ? (cycleNameById.get(promo.id_cycle) ?? '—') : '—'
+            const matchesCycle = cycleFilter === 'ALL' || matiereCycleName === cycleFilter
 
+            // Promotion (front stores label in m.id_promo)
             const matchesPromotion =
                 promotionFilter === 'ALL' || m.id_promo === promotionFilter
 
-            const matchesTeacher = teacherFilter === 'ALL' ? true : true
+            // Teacher (not wired yet -> keep existing behavior)
+            const matchesTeacher =
+                teacherFilter === 'ALL'
+                    ? true
+                    : (teacherIdsByMatiereId.get(String(m.id))?.has(String(teacherFilter)) ?? false)
 
             return (
                 matchesQuery &&
@@ -116,6 +255,9 @@ export default function Matieres() {
         cycleFilter,
         promotionFilter,
         teacherFilter,
+        promoById,
+        cycleNameById,
+        teacherIdsByMatiereId,
     ])
 
     const visibleMatiereIds = useMemo(
@@ -189,6 +331,24 @@ export default function Matieres() {
         setSelected(matiere)
     }
 
+    const reloadMatieres = async () => {
+        console.log('[MATIERES] reloadMatieres()')
+        const backendMatieres = await getMatieres()
+        const promosRes = await promotionsApi.getPromotions()
+        if (!promosRes.success) return
+
+        const promoLabelById = new Map<string, string>()
+        for (const p of promosRes.data ?? []) promoLabelById.set(p.id, p.nom)
+
+        const frontMatieres = (backendMatieres ?? []).map((m) =>
+            transformBackendMatiereToFrontend(m, promoLabelById)
+        )
+
+        setMatieres(frontMatieres)
+    }
+
+    console.log('Teacher option :', teacherOptions)
+
     return (
         <>
             <PageHeader title="Matières" subtitle="Gestion des matières par promotion" />
@@ -252,9 +412,12 @@ export default function Matieres() {
                 <MatiereDetailCard
                     matiere={selected}
                     onClose={() => setSelected(null)}
+                    onAfterSave={reloadMatieres}
+                    teacherOptions={teacherOptions}
                     onDelete={() => handleDeleteSingleMatiere(selected.id)}
                 />
             )}
+
         </>
     )
 }

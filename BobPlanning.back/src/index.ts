@@ -21,6 +21,7 @@ import promotionRoutes from './api/routes/promotionRoutes';
 import matiereRoutes from "./api/routes/matiereRoutes";
 import profRoutes from "./api/routes/profRoutes";
 import specialiteRoutes from "./api/routes/specialiteRoutes";
+import enseignementRoutes from "./api/routes/enseignementRoutes";
 import maquetteRoutes from './api/routes/maquetteRoutes';
 
 require('dotenv').config();
@@ -72,10 +73,11 @@ app.use('/', salleRoutes);
 app.use('/', cycleRoutes);
 app.use('/', groupeRoutes);
 app.use('/', promotionRoutes);
-app.use("/", matiereRoutes);
+app.use('/', matiereRoutes);
 app.use('/', profRoutes);
 app.use('/', specialiteRoutes);
 app.use('/', eventRoutes);
+app.use('/', enseignementRoutes);
 app.use('/', localisationRoutes);
 app.use('/', maquetteRoutes);
 
@@ -1071,8 +1073,12 @@ app.get('/getCours', authJwt.verifyToken, (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Start the server
+const server = app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Swagger docs available at http://localhost:${PORT}/docs`);
 });
+
+server.timeout = 0;
 
 export default app;
