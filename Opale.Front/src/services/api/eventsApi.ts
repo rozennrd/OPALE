@@ -73,7 +73,7 @@ export interface EventUpdateRequest {
 }
 
 export interface EventsByPromoAndTypesRequest {
-    nomPromo: string
+    idPromo: string
     types: TypeEvent[]
 }
 
@@ -111,15 +111,26 @@ class EventsApi {
     }
 
     /**
-     * Get events by promotion and types
+     * Get events by promotion ID and types
      */
     async getEventsByPromoAndTypes(
         request: EventsByPromoAndTypesRequest
     ): Promise<ApiResponse<EventsByPromoAndTypesResponse>> {
         return apiClient.post<EventsByPromoAndTypesResponse>(
-            '/getEventsByPromoAndTypes',
+            '/getEventByPromo',
             request
         )
+    }
+
+    /**
+     * Get events by promotion ID and types (alias for getEventsByPromoAndTypes)
+     * Convenience method used by promotion editing hooks
+     */
+    async getEventPromo(
+        idPromo: string,
+        types: TypeEvent[]
+    ): Promise<ApiResponse<EventsByPromoAndTypesResponse>> {
+        return this.getEventsByPromoAndTypes({ idPromo, types })
     }
 
     /**
