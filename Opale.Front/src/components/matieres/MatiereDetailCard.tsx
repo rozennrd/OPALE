@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { Matiere } from '../../models/Matiere'
 import DetailCardBody from '../common/DetailCardBody'
 import DetailCardHeader from '../common/DetailCardHeader'
-import DetailCardFooter from '../common/DetailCardFooter'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 import MatiereBadge from './MatiereBadge'
@@ -28,19 +27,28 @@ interface MatiereDetailCardProps {
 
 type TeachKind = 'TD' | 'TP' | 'PROJET' | 'E-LEARNING' | 'AUTRES'
 
+type HoursValue = number | ''
+
 interface TeacherAssignment {
     rowId: string
     enseignementId?: string
     teacherId: string
-    tdHours: number
-    tpHours: number
-    projectHours: number
-    elearningHours: number
-    autresHours: number
+
+    tdHours: HoursValue
+    tpHours: HoursValue
+    projectHours: HoursValue
+    elearningHours: HoursValue
+    autresHours: HoursValue
+
+    tdEnabled: boolean
+    tpEnabled: boolean
+    projectEnabled: boolean
+    elearningEnabled: boolean
+    autresEnabled: boolean
 }
 
 const makeRowId = () => `assign-${Math.random().toString(16).slice(2)}`
-const clamp0 = (v: number) => Math.max(0, Number(v) || 0)
+const clamp0 = (v: HoursValue) => Math.max(0, Number(v) || 0)
 
 export default function MatiereDetailCard({
                                               matiere,
@@ -51,12 +59,12 @@ export default function MatiereDetailCard({
     // --- left column (matière)
 
     const [name, setName] = useState(matiere.nom)
-    const [volumeTotal, setVolumeTotal] = useState(matiere.volume_horaire)
-    const [tdHours, setTdHours] = useState(matiere.heures_td)
-    const [tpHours, setTpHours] = useState(matiere.heures_tp ?? 0)
-    const [projectHours, setProjectHours] = useState(matiere.heures_projet ?? 0)
-    const [eLearningHours, setELearningHours] = useState(matiere.heures_elearning ?? 0)
-    const [autresHours, setAutresHours] = useState(matiere.heures_autre ?? 0)
+    const [volumeTotal, setVolumeTotal] = useState<HoursValue>(matiere.volume_horaire)
+    const [tdHours, setTdHours] = useState<HoursValue>(matiere.heures_td)
+    const [tpHours, setTpHours] = useState<HoursValue>(matiere.heures_tp ?? 0)
+    const [projectHours, setProjectHours] = useState<HoursValue>(matiere.heures_projet ?? 0)
+    const [eLearningHours, setELearningHours] = useState<HoursValue>(matiere.heures_elearning ?? 0)
+    const [autresHours, setAutresHours] = useState<HoursValue>(matiere.heures_autre ?? 0)
     const [volumeIncreaseMessage, setVolumeIncreaseMessage] = useState<string | null>(null)
     const [assignments, setAssignments] = useState<TeacherAssignment[]>(() => [
         { rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 },
@@ -67,7 +75,6 @@ export default function MatiereDetailCard({
     const [assignments, setAssignments] = useState<TeacherAssignment[]>([])
     const [initialAssignments, setInitialAssignments] = useState<TeacherAssignment[]>([])
     const [removedEnseignementIds, setRemovedEnseignementIds] = useState<string[]>([])
-
     const [volumeWarningMessage, setVolumeWarningMessage] = useState<string | null>(null)
 
     type CategoryKey = 'tdHours' | 'tpHours' | 'projectHours' | 'eLearningHours' | 'autresHours'
@@ -103,16 +110,25 @@ export default function MatiereDetailCard({
         return () => window.clearTimeout(t)
     }
 
-    const setCategoryHours = (key: CategoryKey, rawValue: number) => {
+    const setCategoryHours = (key: CategoryKey, rawValue: HoursValue) => {
+
+        // Autoriser champ vide pendant la saisie
+        if (rawValue === '') {
+            if (key === 'tdHours') setTdHours('')
+            if (key === 'tpHours') setTpHours('')
+            if (key === 'projectHours') setProjectHours('')
+            if (key === 'eLearningHours') setELearningHours('')
+            if (key === 'autresHours') setAutresHours('')
+            return
+        }
+
         const nextValue = clamp0(rawValue)
         const total = clamp0(volumeTotal)
-
         const otherSum = sumCategoriesExcept(key)
         const remaining = Math.max(0, total - otherSum)
 
-        // Si on tente de dépasser le reste dispo => clamp + warning
+        // 🚨 Tentative de dépassement
         if (nextValue > remaining) {
-            // set le max autorisé
             const clamped = remaining
 
             if (key === 'tdHours') setTdHours(clamped)
@@ -125,7 +141,7 @@ export default function MatiereDetailCard({
             return
         }
 
-        // Sinon: ok
+        // OK
         if (key === 'tdHours') setTdHours(nextValue)
         if (key === 'tpHours') setTpHours(nextValue)
         if (key === 'projectHours') setProjectHours(nextValue)
@@ -153,32 +169,57 @@ export default function MatiereDetailCard({
             setRemovedEnseignementIds([])
 
             try {
-                console.log('[MATIERE_DETAIL] loading enseignements for matiere:', matiere.id)
-
                 const res = await getEnseignements()
-                console.log('[MATIERE_DETAIL] getEnseignements response ->', res)
-
                 if (!res.success) throw new Error(res.error?.message ?? 'getEnseignements failed')
 
                 const all = res.data ?? []
-
                 const mine = all.filter((e) => String(e.id_matiere) === String(matiere.id))
-
-                console.log('[MATIERE_DETAIL] enseignements filtered ->', mine)
 
                 const rows: TeacherAssignment[] =
                     mine.length > 0
-                        ? mine.map((e) => ({
-                            rowId: makeRowId(),
-                            enseignementId: String(e.id),
-                            teacherId: String(e.id_prof ?? ''),
-                            tdHours: clamp0(e.heures_td),
-                            tpHours: clamp0(e.heures_tp),
-                            projectHours: clamp0(e.heures_projet ?? 0),
-                            elearningHours: clamp0(e.heures_elearning ?? 0),
-                            autresHours: clamp0(e.heures_autre ?? 0),
-                        }))
-                        : [{ rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 , projectHours: 0, elearningHours: 0, autresHours: 0 }]
+                        ? mine.map((e) => {
+                            const td = clamp0(e.heures_td)
+                            const tp = clamp0(e.heures_tp)
+                            const pj = clamp0(e.heures_projet ?? 0)
+                            const el = clamp0(e.heures_elearning ?? 0)
+                            const au = clamp0(e.heures_autre ?? 0)
+
+                            return {
+                                rowId: makeRowId(),
+                                enseignementId: String(e.id),
+                                teacherId: String(e.id_prof ?? ''),
+
+                                tdHours: td,
+                                tpHours: tp,
+                                projectHours: pj,
+                                elearningHours: el,
+                                autresHours: au,
+
+                                tdEnabled: td > 0,
+                                tpEnabled: tp > 0,
+                                projectEnabled: pj > 0,
+                                elearningEnabled: el > 0,
+                                autresEnabled: au > 0,
+                            }
+                        })
+                        : [
+                            {
+                                rowId: makeRowId(),
+                                teacherId: '',
+
+                                tdHours: 0,
+                                tpHours: 0,
+                                projectHours: 0,
+                                elearningHours: 0,
+                                autresHours: 0,
+
+                                tdEnabled: false,
+                                tpEnabled: false,
+                                projectEnabled: false,
+                                elearningEnabled: false,
+                                autresEnabled: false,
+                            },
+                        ]
 
                 if (!mounted) return
                 setAssignments(rows)
@@ -186,7 +227,24 @@ export default function MatiereDetailCard({
             } catch (err) {
                 console.error('[MATIERE_DETAIL] load enseignements failed:', err)
                 if (!mounted) return
-                setAssignments([{ rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0, projectHours: 0, elearningHours: 0, autresHours: 0 }])
+                setAssignments([
+                    {
+                        rowId: makeRowId(),
+                        teacherId: '',
+
+                        tdHours: 0,
+                        tpHours: 0,
+                        projectHours: 0,
+                        elearningHours: 0,
+                        autresHours: 0,
+
+                        tdEnabled: false,
+                        tpEnabled: false,
+                        projectEnabled: false,
+                        elearningEnabled: false,
+                        autresEnabled: false,
+                    },
+                ])
                 setInitialAssignments([])
             } finally {
                 if (mounted) setLoadingEns(false)
@@ -198,33 +256,48 @@ export default function MatiereDetailCard({
         }
     }, [matiere.id])
 
-    // Cours assignés par type (TD/TP/Projet/E-learning/Autres)
+    // Cours assignés par type
     const assignedTD = useMemo(
-        () => assignments.reduce((acc, r) => acc + (Number.isFinite(r.tdHours) ? r.tdHours : 0), 0),
+        () => assignments.reduce((acc, r) => acc + (Number.isFinite(Number(r.tdHours)) ? Number(r.tdHours) : 0), 0),
         [assignments],
     )
     const assignedTP = useMemo(
-        () => assignments.reduce((acc, r) => acc + (Number.isFinite(r.tpHours) ? r.tpHours : 0), 0),
+        () => assignments.reduce((acc, r) => acc + (Number.isFinite(Number(r.tpHours)) ? Number(r.tpHours) : 0), 0),
         [assignments],
     )
-
     const assignedProject = useMemo(
-        () => assignments.reduce((acc, r) => acc + (Number.isFinite(r.projectHours) ? r.projectHours : 0), 0),
+        () => assignments.reduce((acc, r) => acc + (Number.isFinite(Number(r.projectHours)) ? Number(r.projectHours) : 0), 0),
         [assignments],
     )
-
     const assignedELearning = useMemo(
-        () => assignments.reduce((acc, r) => acc + (Number.isFinite(r.elearningHours) ? r.elearningHours : 0), 0),
+        () => assignments.reduce((acc, r) => acc + (Number.isFinite(Number(r.elearningHours)) ? Number(r.elearningHours) : 0), 0),
         [assignments],
     )
-
     const assignedAutres = useMemo(
-        () => assignments.reduce((acc, r) => acc + (Number.isFinite(r.autresHours) ? r.autresHours : 0), 0),
+        () => assignments.reduce((acc, r) => acc + (Number.isFinite(Number(r.autresHours)) ? Number(r.autresHours) : 0), 0),
         [assignments],
     )
 
     const handleAddAssignment = () => {
-        setAssignments((prev) => [...prev, { rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 , projectHours:0, elearningHours:0, autresHours:0}])
+        setAssignments((prev) => [
+            ...prev,
+            {
+                rowId: makeRowId(),
+                teacherId: '',
+
+                tdHours: 0,
+                tpHours: 0,
+                projectHours: 0,
+                elearningHours: 0,
+                autresHours: 0,
+
+                tdEnabled: false,
+                tpEnabled: false,
+                projectEnabled: false,
+                elearningEnabled: false,
+                autresEnabled: false,
+            },
+        ])
     }
 
     const handleRemoveAssignment = (rowId: string) => {
@@ -237,12 +310,7 @@ export default function MatiereDetailCard({
         })
     }
 
-    type HoursKey =
-        | 'tdHours'
-        | 'tpHours'
-        | 'projectHours'
-        | 'elearningHours'
-        | 'autresHours'
+    type HoursKey = 'tdHours' | 'tpHours' | 'projectHours' | 'elearningHours' | 'autresHours'
 
     const hoursCaps = (): Record<HoursKey, number> => ({
         tdHours: clamp0(tdHours),
@@ -252,9 +320,9 @@ export default function MatiereDetailCard({
         autresHours: clamp0(autresHours),
     })
 
+    // Si une catégorie passe à 0, on remet toutes les heures de cette catégorie à 0
     useEffect(() => {
         const caps = hoursCaps()
-
         setAssignments((prev) =>
             prev.map((r) => ({
                 ...r,
@@ -279,15 +347,17 @@ export default function MatiereDetailCard({
 
         const otherSum = next.reduce(
             (acc, r) => acc + (r.rowId === rowId ? 0 : clamp0(r[key])),
-            0
+            0,
         )
 
         const remaining = Math.max(0, caps[key] - otherSum)
-        row[key] = Math.min(clamp0(row[key]), remaining)
 
+        // Si l'utilisateur est en train d'effacer l'input, on ne force pas à 0 tout de suite
+        if (row[key] === '') return next
+
+        row[key] = Math.min(clamp0(row[key]), remaining)
         return next
     }
-
 
     const isHoursKey = (k: string): k is HoursKey =>
         ['tdHours', 'tpHours', 'projectHours', 'elearningHours', 'autresHours'].includes(k)
@@ -302,8 +372,10 @@ export default function MatiereDetailCard({
             const changedHourKeys = Object.keys(patch).filter(isHoursKey) as HoursKey[]
             if (changedHourKeys.length === 0) return next
 
-            const caps = hoursCaps()
+            const hasEmpty = changedHourKeys.some((k) => (patch as  Partial<Pick<TeacherAssignment, HoursKey | "teacherId">>)[k] === '')
+            if (hasEmpty) return next
 
+            const caps = hoursCaps()
             let out = next
             for (const k of changedHourKeys) {
                 out = clampRowAgainstTypeCap(out, rowId, caps, k)
@@ -312,30 +384,33 @@ export default function MatiereDetailCard({
         })
     }
 
-
     const handleToggleKind = (rowId: string, kind: TeachKind) => {
-        const mapKindToKey: Record<TeachKind, HoursKey> = {
-            TD: 'tdHours',
-            TP: 'tpHours',
-            PROJET: 'projectHours',
-            'E-LEARNING': 'elearningHours',
-            AUTRES: 'autresHours',
-        }
+        const map = {
+            TD: { enabled: 'tdEnabled', hours: 'tdHours' },
+            TP: { enabled: 'tpEnabled', hours: 'tpHours' },
+            PROJET: { enabled: 'projectEnabled', hours: 'projectHours' },
+            'E-LEARNING': { enabled: 'elearningEnabled', hours: 'elearningHours' },
+            AUTRES: { enabled: 'autresEnabled', hours: 'autresHours' },
+        } as const
 
-        const key = mapKindToKey[kind]
+        const { enabled, hours } = map[kind]
 
         setAssignments((prev) => {
             const next = prev.map((r) => {
                 if (r.rowId !== rowId) return r
-                const current = clamp0(r[key])
-                return { ...r, [key]: current > 0 ? 0 : 1 } as TeacherAssignment
+                const nowEnabled = !(r as TeacherAssignment)[enabled]
+                return {
+                    ...r,
+                    [enabled]: nowEnabled,
+                    [hours]: nowEnabled ? Math.max(1, clamp0((r as TeacherAssignment)[hours])) : 0,
+                } as TeacherAssignment
             })
 
+            const key = map[kind].hours as HoursKey
             const caps = hoursCaps()
             return clampRowAgainstTypeCap(next, rowId, caps, key)
         })
     }
-
 
     const assignmentsChanged = useMemo(() => {
         const norm = (a: TeacherAssignment) => ({
@@ -347,6 +422,7 @@ export default function MatiereDetailCard({
             elearning: clamp0(a.elearningHours),
             autres: clamp0(a.autresHours),
         })
+
         return (
             JSON.stringify(assignments.map(norm)) !== JSON.stringify(initialAssignments.map(norm)) ||
             removedEnseignementIds.length > 0
@@ -364,23 +440,22 @@ export default function MatiereDetailCard({
         assignmentsChanged
 
     const handleSave = async () => {
-        const promoUuid = (matiere).promo_id as string | undefined
+        const promoUuid = (matiere as Matiere).promo_id as string | undefined
         if (!promoUuid) {
             console.error('[MATIERES][update] Missing matiere.promo_id (UUID). matiere=', matiere)
             alert("Impossible d'enregistrer : promo_id (UUID) manquant sur la matière.")
             return
         }
 
-        // 1) Update matière
         const matierePayload = {
             id: matiere.id,
             nom: name.trim() || matiere.nom,
             volume_horaire: clamp0(volumeTotal),
             id_promo: promoUuid,
-            id_specialite: (matiere).id_specialite ?? null,
+            id_specialite: (matiere as Matiere).id_specialite ?? null,
             semestre: Number(matiere.semestre) || 0,
-            nb_partiels: Number((matiere).nb_partiels) || 0,
-            nb_eval_intermediaire: (matiere).nb_eval_intermediaire ?? null,
+            nb_partiels: Number((matiere as Matiere).nb_partiels) || 0,
+            nb_eval_intermediaire: (matiere as Matiere).nb_eval_intermediaire ?? null,
             heures_td: clamp0(tdHours),
             heures_tp: clamp0(tpHours),
             heures_projet: clamp0(projectHours),
@@ -388,16 +463,12 @@ export default function MatiereDetailCard({
             heures_autre: clamp0(autresHours),
         }
 
-        console.log('[MATIERE_DETAIL][save] updateMatiere payload ->', matierePayload)
         const matRes = await updateMatiere(matierePayload)
-        console.log('[MATIERE_DETAIL][save] updateMatiere response ->', matRes)
-
         if (!matRes.success) {
             alert(matRes.error?.message ?? 'Erreur lors de la sauvegarde matière')
             return
         }
 
-        // 2) Enseignements: delete + upsert
         const rows = assignments
             .map((r) => ({
                 ...r,
@@ -408,23 +479,24 @@ export default function MatiereDetailCard({
                 elearningHours: clamp0(r.elearningHours),
                 autresHours: clamp0(r.autresHours),
             }))
-            // on ignore les lignes vides
-            .filter((r) => r.teacherId.length > 0 && (r.tdHours > 0 || r.tpHours > 0 || r.projectHours > 0 || r.elearningHours > 0 || r.autresHours > 0))
+            .filter(
+                (r) =>
+                    r.teacherId.length > 0 &&
+                    (r.tdHours > 0 ||
+                        r.tpHours > 0 ||
+                        r.projectHours > 0 ||
+                        r.elearningHours > 0 ||
+                        r.autresHours > 0),
+            )
 
-        console.log('[MATIERE_DETAIL][save] rows upsert ->', rows)
-        console.log('[MATIERE_DETAIL][save] rows removed ->', removedEnseignementIds)
-
-        // deletes
         for (const id of removedEnseignementIds) {
             const delRes = await deleteEnseignement(id)
-            console.log('[MATIERE_DETAIL][save] deleteEnseignement', id, '->', delRes)
             if (!delRes.success) {
                 alert(delRes.error?.message ?? `Erreur suppression enseignement ${id}`)
                 return
             }
         }
 
-        // upserts
         for (const r of rows) {
             if (r.enseignementId) {
                 const upRes = await updateEnseignement({
@@ -437,7 +509,6 @@ export default function MatiereDetailCard({
                     heures_elearning: r.elearningHours,
                     heures_autre: r.autresHours,
                 })
-                console.log('[MATIERE_DETAIL][save] updateEnseignement ->', upRes)
                 if (!upRes.success) {
                     alert(upRes.error?.message ?? 'Erreur update enseignement')
                     return
@@ -452,7 +523,6 @@ export default function MatiereDetailCard({
                     heures_elearning: r.elearningHours,
                     heures_autre: r.autresHours,
                 })
-                console.log('[MATIERE_DETAIL][save] addEnseignement ->', addRes)
                 if (!addRes.success) {
                     alert(addRes.error?.message ?? 'Erreur add enseignement')
                     return
@@ -460,7 +530,6 @@ export default function MatiereDetailCard({
             }
         }
 
-        // 3) Refresh parent list + close
         try {
             await onAfterSave?.()
         } catch (e) {
@@ -488,11 +557,10 @@ export default function MatiereDetailCard({
 
         if (sum > total) {
             const diff = sum - total
-
-            setVolumeTotal(sum) // on aligne le total sur la somme réelle
+            setVolumeTotal(sum)
 
             setVolumeIncreaseMessage(
-                `Votre dernier changement augmente le volume horaire de ${diff} heure${diff > 1 ? 's' : ''}.`
+                `Votre dernier changement augmente le volume horaire de ${diff} heure${diff > 1 ? 's' : ''}.`,
             )
 
             const t = window.setTimeout(() => {
@@ -541,7 +609,9 @@ export default function MatiereDetailCard({
                     <div className="detail-main-column">
                         <section className="room-detail-section">
                             <h3 className="room-detail-section-title">Informations</h3>
-                            <p className="room-detail-hint-small">Ajuste les volumes puis répartis les heures par enseignant.</p>
+                            <p className="room-detail-hint-small">
+                                Ajuste les volumes puis répartis les heures par enseignant.
+                            </p>
 
                             <div className="room-detail-identity-grid">
                                 <div className="room-detail-field">
@@ -567,7 +637,10 @@ export default function MatiereDetailCard({
                                         type="number"
                                         min={0}
                                         value={volumeTotal}
-                                        onChange={(e) => setVolumeTotal(Number(e.target.value))}
+                                        onChange={(e) => {
+                                            const v = e.target.value
+                                            setVolumeTotal(v === '' ? '' : Number(v))
+                                        }}
                                     />
                                 </div>
 
@@ -581,7 +654,10 @@ export default function MatiereDetailCard({
                                         type="number"
                                         min={0}
                                         value={tdHours}
-                                        onChange={(e) => setCategoryHours('tdHours', Number(e.target.value))}
+                                        onChange={(e) => {
+                                            const v = e.target.value
+                                            setCategoryHours('tdHours', v === '' ? '' : Number(v))
+                                        }}
                                     />
                                 </div>
 
@@ -595,7 +671,10 @@ export default function MatiereDetailCard({
                                         type="number"
                                         min={0}
                                         value={tpHours}
-                                        onChange={(e) => setCategoryHours('tpHours', Number(e.target.value))}
+                                        onChange={(e) => {
+                                            const v = e.target.value
+                                            setCategoryHours('tpHours', v === '' ? '' : Number(v))
+                                        }}
                                     />
                                 </div>
 
@@ -609,12 +688,15 @@ export default function MatiereDetailCard({
                                         type="number"
                                         min={0}
                                         value={projectHours}
-                                        onChange={(e) => setCategoryHours('projectHours', Number(e.target.value))}
+                                        onChange={(e) => {
+                                            const v = e.target.value
+                                            setCategoryHours('projectHours', v === '' ? '' : Number(v))
+                                        }}
                                     />
                                 </div>
 
                                 <div className="room-detail-field">
-                                    <label className="room-detail-field-label" htmlFor="matiere-projet">
+                                    <label className="room-detail-field-label" htmlFor="matiere-elearning">
                                         Volume E-Learning (h)
                                     </label>
                                     <input
@@ -623,12 +705,14 @@ export default function MatiereDetailCard({
                                         type="number"
                                         min={0}
                                         value={eLearningHours}
-                                        onChange={(e) => setCategoryHours('eLearningHours', Number(e.target.value))}
-                                    />
+                                        onChange={(e) => {
+                                            const v = e.target.value
+                                            setCategoryHours('eLearningHours', v === '' ? '' : Number(v))
+                                        }}                                  />
                                 </div>
 
                                 <div className="room-detail-field">
-                                    <label className="room-detail-field-label" htmlFor="matiere-projet">
+                                    <label className="room-detail-field-label" htmlFor="matiere-autres">
                                         Volume Autres (h)
                                     </label>
                                     <input
@@ -637,10 +721,13 @@ export default function MatiereDetailCard({
                                         type="number"
                                         min={0}
                                         value={autresHours}
-                                        onChange={(e) => setCategoryHours('autresHours', Number(e.target.value))}
-                                    />
+                                        onChange={(e) => {
+                                            const v = e.target.value
+                                            setCategoryHours('autresHours', v === '' ? '' : Number(v))
+                                        }}                                   />
                                 </div>
                             </div>
+
                             {volumeWarningMessage && (
                                 <div className="volume-warning" role="status" aria-live="polite">
                                     <span aria-hidden="true">⚠</span>
@@ -651,28 +738,41 @@ export default function MatiereDetailCard({
                     </div>
 
                     {/* Colonne droite : affectations enseignants */}
-                    <aside className="detail-aside-column">
-                        <section className="room-detail-section">
+                    <aside className="detail-aside-column matiere-aside">
+                        <section className="room-detail-section matiere-aside-content">
                             <div className="matiere-detail-aside-header">
                                 <div>
                                     <h3 className="room-detail-section-title">Enseignants</h3>
                                     <p className="room-detail-hint-xsmall">
-                                        TD assigné : <strong>{assignedTD}h</strong> · TP assigné : <strong>{assignedTP}h</strong> · Projet assigné : <strong>{assignedProject}h</strong> · E-learning assigné : <strong>{assignedELearning}h</strong> · Autres assigné : <strong>{assignedAutres}h</strong>
+                                        TD assigné : <strong>{assignedTD}h</strong> · TP assigné :{' '}
+                                        <strong>{assignedTP}h</strong> · Projet assigné :{' '}
+                                        <strong>{assignedProject}h</strong> · E-learning assigné :{' '}
+                                        <strong>{assignedELearning}h</strong> · Autres assigné :{' '}
+                                        <strong>{assignedAutres}h</strong>
                                         {loadingEns ? ' · Chargement…' : ''}
                                     </p>
                                 </div>
 
-                                <button type="button" className="btn-tertiary matiere-assign-add" onClick={handleAddAssignment}>
+                                <button
+                                    type="button"
+                                    className="btn-tertiary matiere-assign-add"
+                                    onClick={handleAddAssignment}
+                                >
                                     + Ajouter
                                 </button>
                             </div>
 
                             <div className="matiere-assign-list">
-                                {assignments.length === 0 && <div className="matieres-empty-state">Aucun enseignant sélectionné.</div>}
+                                {assignments.length === 0 && (
+                                    <div className="matieres-empty-state">Aucun enseignant sélectionné.</div>
+                                )}
 
                                 {assignments.map((row) => {
-                                    const tdChecked = row.tdHours > 0
-                                    const tpChecked = row.tpHours > 0
+                                    const tdChecked = row.tdEnabled
+                                    const tpChecked = row.tpEnabled
+                                    const projectChecked = row.projectEnabled
+                                    const elearningChecked = row.elearningEnabled
+                                    const autresChecked = row.autresEnabled
 
                                     return (
                                         <div key={row.rowId} className="matiere-assign-row">
@@ -680,7 +780,9 @@ export default function MatiereDetailCard({
                                                 <select
                                                     className="room-detail-input matiere-assign-select"
                                                     value={row.teacherId}
-                                                    onChange={(e) => handleAssignmentChange(row.rowId, { teacherId: e.target.value })}
+                                                    onChange={(e) =>
+                                                        handleAssignmentChange(row.rowId, { teacherId: e.target.value })
+                                                    }
                                                 >
                                                     <option value="">— Choisir un enseignant —</option>
                                                     {teacherOptions.map((t) => (
@@ -701,6 +803,7 @@ export default function MatiereDetailCard({
                                             </div>
 
                                             <div className="matiere-assign-hours">
+                                                {/* TD */}
                                                 <button
                                                     type="button"
                                                     className={tdChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
@@ -715,10 +818,14 @@ export default function MatiereDetailCard({
                                                     min={0}
                                                     value={row.tdHours}
                                                     disabled={!tdChecked}
-                                                    onChange={(e) => handleAssignmentChange(row.rowId, { tdHours: Number(e.target.value) })}
+                                                    onChange={(e) => {
+                                                        const v = e.target.value
+                                                        handleAssignmentChange(row.rowId, { tdHours: v === '' ? '' : Number(v) })
+                                                    }}
                                                     aria-label="Heures TD"
                                                 />
 
+                                                {/* TP */}
                                                 <button
                                                     type="button"
                                                     className={tpChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
@@ -733,16 +840,21 @@ export default function MatiereDetailCard({
                                                     min={0}
                                                     value={row.tpHours}
                                                     disabled={!tpChecked}
-                                                    onChange={(e) => handleAssignmentChange(row.rowId, { tpHours: Number(e.target.value) })}
+                                                    onChange={(e) => {
+                                                        const v = e.target.value
+                                                        handleAssignmentChange(row.rowId, { tpHours: v === '' ? '' : Number(v) })
+                                                    }}
                                                     aria-label="Heures TP"
                                                 />
 
                                                 {/* PROJET */}
                                                 <button
                                                     type="button"
-                                                    className={row.projectHours > 0 ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
+                                                    className={
+                                                        projectChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'
+                                                    }
                                                     onClick={() => handleToggleKind(row.rowId, 'PROJET')}
-                                                    aria-pressed={row.projectHours > 0}
+                                                    aria-pressed={projectChecked}
                                                 >
                                                     PROJET
                                                 </button>
@@ -751,17 +863,24 @@ export default function MatiereDetailCard({
                                                     type="number"
                                                     min={0}
                                                     value={row.projectHours}
-                                                    disabled={row.projectHours <= 0}
-                                                    onChange={(e) => handleAssignmentChange(row.rowId, { projectHours: Number(e.target.value) })}
+                                                    disabled={!projectChecked}
+                                                    onChange={(e) => {
+                                                        const v = e.target.value
+                                                        handleAssignmentChange(row.rowId, {
+                                                            projectHours: v === '' ? '' : Number(v),
+                                                        })
+                                                    }}
                                                     aria-label="Heures projet"
                                                 />
 
                                                 {/* E-LEARNING */}
                                                 <button
                                                     type="button"
-                                                    className={row.elearningHours > 0 ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
+                                                    className={
+                                                        elearningChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'
+                                                    }
                                                     onClick={() => handleToggleKind(row.rowId, 'E-LEARNING')}
-                                                    aria-pressed={row.elearningHours > 0}
+                                                    aria-pressed={elearningChecked}
                                                 >
                                                     E-LEARNING
                                                 </button>
@@ -770,17 +889,24 @@ export default function MatiereDetailCard({
                                                     type="number"
                                                     min={0}
                                                     value={row.elearningHours}
-                                                    disabled={row.elearningHours <= 0}
-                                                    onChange={(e) => handleAssignmentChange(row.rowId, { elearningHours: Number(e.target.value) })}
+                                                    disabled={!elearningChecked}
+                                                    onChange={(e) => {
+                                                        const v = e.target.value
+                                                        handleAssignmentChange(row.rowId, {
+                                                            elearningHours: v === '' ? '' : Number(v),
+                                                        })
+                                                    }}
                                                     aria-label="Heures e-learning"
                                                 />
 
                                                 {/* AUTRES */}
                                                 <button
                                                     type="button"
-                                                    className={row.autresHours > 0 ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
+                                                    className={
+                                                        autresChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'
+                                                    }
                                                     onClick={() => handleToggleKind(row.rowId, 'AUTRES')}
-                                                    aria-pressed={row.autresHours > 0}
+                                                    aria-pressed={autresChecked}
                                                 >
                                                     AUTRES
                                                 </button>
@@ -789,11 +915,15 @@ export default function MatiereDetailCard({
                                                     type="number"
                                                     min={0}
                                                     value={row.autresHours}
-                                                    disabled={row.autresHours <= 0}
-                                                    onChange={(e) => handleAssignmentChange(row.rowId, { autresHours: Number(e.target.value) })}
+                                                    disabled={!autresChecked}
+                                                    onChange={(e) => {
+                                                        const v = e.target.value
+                                                        handleAssignmentChange(row.rowId, {
+                                                            autresHours: v === '' ? '' : Number(v),
+                                                        })
+                                                    }}
                                                     aria-label="Heures autres"
                                                 />
-
                                             </div>
                                         </div>
                                     )
