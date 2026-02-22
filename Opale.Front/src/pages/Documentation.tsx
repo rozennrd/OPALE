@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import PageHeader from '../components/common/PageHeader'
 import SectionCard from '../components/common/SectionCard'
 import { TUTORIAL_CONTENT } from './tuto/content'
@@ -18,8 +19,19 @@ import {
 type DocumentationSectionKey = 'selector' | 'viewer'
 
 export default function Documentation() {
-    const [activeTab, setActiveTab] = useState<TutorialTab>('planning')
-    const [selectedTutorialId, setSelectedTutorialId] = useState<TutorialId>('macro')
+    const [searchParams] = useSearchParams()
+    const tabParam = searchParams.get('tab')
+    const tutorialParam = searchParams.get('tutorial')
+    const initialTab: TutorialTab = tabParam === 'pages' || tabParam === 'planning' ? tabParam : 'planning'
+    const tutorialParamIsValid =
+        tutorialParam !== null && TUTORIAL_ITEMS.some((item) => item.id === tutorialParam)
+    const initialTutorialId =
+        tutorialParamIsValid && tutorialParam
+            ? (tutorialParam as TutorialId)
+            : firstTutorialForTab(initialTab)
+
+    const [activeTab, setActiveTab] = useState<TutorialTab>(initialTab)
+    const [selectedTutorialId, setSelectedTutorialId] = useState<TutorialId>(initialTutorialId)
     const [expandedSections, setExpandedSections] = useState<
         Record<DocumentationSectionKey, boolean>
     >({
