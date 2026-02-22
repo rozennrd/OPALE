@@ -28,8 +28,8 @@ export function useEventBatch() {
         setProgress(null)
         return null
       }
-    } catch (err: any) {
-      setError(err.message || 'Erreur lors de la création des événements')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Erreur lors de la création des événements')
       setProgress(null)
       return null
     } finally {

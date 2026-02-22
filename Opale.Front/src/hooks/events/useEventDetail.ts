@@ -64,7 +64,7 @@ function getWeekNumber(isoDatetime: string): number | undefined {
 
 export const useEventDetail = (
     event: CampusEvent,
-    onSave?: (
+    onSave: (
         event: Partial<CampusEvent>,
         salleIds: string[],
     ) => Promise<{ success: boolean; error?: string }>,

@@ -35,3 +35,6 @@ db.conf
 BobPlanning.back/dist
 sonar-project.properties
 .vite
+*/.vite
+Opale.micro-planning/target
+Opale.micro-planning/.idea

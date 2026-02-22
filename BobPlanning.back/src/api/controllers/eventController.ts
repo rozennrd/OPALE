@@ -118,15 +118,15 @@ export const eventController = {
 
   async getEventsByPromoAndTypes(req: Request, res: Response): Promise<void> {
     try {
-      const { promo, types } = req.body;
+      const { idPromo, types } = req.body;
 
-      if (!promo || !Array.isArray(types) || types.length === 0) {
+      if (!idPromo || !Array.isArray(types) || types.length === 0) {
         res.status(400).json({
-          message: "Les champs 'promo' et 'types[]' sont obligatoires.",
+          message: "Les champs 'idPromo' et 'types[]' sont obligatoires.",
         });
         return;
       }
-      const events = await eventService.getEventsByPromoAndTypes(promo, types);
+      const events = await eventService.getEventsByPromoAndTypes(idPromo, types);
 
       const nothingFound = Object.values(events).every(
         (list) => list.length === 0,
@@ -134,7 +134,7 @@ export const eventController = {
 
       if (nothingFound) {
         res.status(404).json({
-          message: `Aucun évènement trouvé pour la promo ${promo}.`,
+          message: `Aucun évènement trouvé pour la promo ${idPromo}.`,
         });
         return;
       }
