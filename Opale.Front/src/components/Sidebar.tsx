@@ -14,8 +14,8 @@ import icMatieres from '../assets/sidebar/ic-matieres.png'
 import icParametres from '../assets/sidebar/ic-para.png'
 import icLogout from '../assets/sidebar/ic-logout.png'
 import icLogoutDark from '../assets/sidebar/ic-logout-dark.png'
-import icContact from '../assets/sidebar/ic-contact.png'
-import icContactDark from '../assets/sidebar/ic-contact-dark.png'
+import icTuto from '../assets/sidebar/ic-tuto.png'
+import icTutoDark from '../assets/sidebar/ic-tuto-dark.png'
 import { readAndApplyIconVisibilityPreferences } from '../utils/iconPreferences'
 
 import ThemeToggle from './ThemeToggle'
@@ -54,8 +54,9 @@ export default function Sidebar(): JSX.Element | null {
         navigate('/login')
     }
 
-    const handleContact = () => {
-        console.log('[AUTH] Page contact')
+    const handleTutorial = () => {
+        console.log('[NAV] Documentation utilisateur')
+        navigate('/documentation')
     }
 
     return (
@@ -106,14 +107,14 @@ export default function Sidebar(): JSX.Element | null {
                     <button
                         type="button"
                         className="footer-icon-btn"
-                        onClick={handleContact}
-                        aria-label="Contact"
-                        title="Contact"
+                        onClick={handleTutorial}
+                        aria-label="Documentation utilisateur"
+                        title="Documentation utilisateur"
                     >
-                        <img className="footer-icon-light" src={icContact} alt="" />
-                        <img className="footer-icon-dark" src={icContactDark} alt="" />
+                        <img className="footer-icon-light" src={icTuto} alt="" />
+                        <img className="footer-icon-dark" src={icTutoDark} alt="" />
                         <span className="footer-icon-fallback" aria-hidden="true">
-                            Contact
+                            Tuto
                         </span>
                     </button>
                 </div>

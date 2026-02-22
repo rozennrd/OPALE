@@ -6,87 +6,6 @@
         align-items: stretch;
     }
 
-    .settings-section {
-        display: flex;
-        flex-direction: column;
-        gap: 0.9rem;
-        padding: 1rem 1.1rem;
-        border: 1px solid var(--border-subtle, var(--border));
-        height: 100%;
-    }
-
-    .settings-section--wide {
-        grid-column: 1 / -1;
-    }
-
-    .settings-section.is-collapsed {
-        align-self: start;
-        height: auto;
-    }
-
-    .settings-section-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 0.7rem;
-    }
-
-    .settings-section-title {
-        margin: 0;
-        font-size: 1.1rem;
-        font-weight: 700;
-    }
-
-    .settings-section-toggle {
-        border: 1px solid var(--border);
-        background: var(--panel-soft);
-        width: 2rem;
-        height: 2rem;
-        border-radius: 999px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        cursor: pointer;
-        transition:
-            background-color 140ms ease,
-            border-color 140ms ease;
-    }
-
-    .settings-section-toggle:hover {
-        border-color: var(--primary-soft, var(--primary));
-        background: var(--surface-hover, var(--panel-soft));
-    }
-
-    .settings-section-toggle:focus-visible {
-        outline: 2px solid color-mix(in srgb, var(--primary) 40%, transparent);
-        outline-offset: 2px;
-    }
-
-    .settings-chevron {
-        width: 0.55rem;
-        height: 0.55rem;
-        border-right: 2px solid currentColor;
-        border-bottom: 2px solid currentColor;
-        display: inline-block;
-    }
-
-    .settings-chevron.is-down {
-        transform: rotate(45deg);
-        margin-top: -0.2rem;
-    }
-
-    .settings-chevron.is-up {
-        transform: rotate(-135deg);
-        margin-top: 0.2rem;
-    }
-
-    .settings-section-content {
-        display: flex;
-        flex-direction: column;
-        gap: 0.9rem;
-    }
-
     .settings-note {
         margin: 0;
         font-size: 0.86rem;
@@ -279,7 +198,7 @@
             grid-template-columns: 1fr;
         }
 
-        .settings-section--wide {
+        .section-card--wide {
             grid-column: auto;
         }
     }

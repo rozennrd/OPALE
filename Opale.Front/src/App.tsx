@@ -9,6 +9,7 @@ import Rooms from './pages/Rooms'
 import Events from './pages/Events'
 import Matieres from './pages/Matieres'
 import Settings from './pages/Settings'
+import Documentation from './pages/Documentation'
 import { authService } from './services/base/AuthService'
 
 
@@ -65,6 +66,7 @@ export default function App() {
                 <Route path="/salles" element={<Rooms />} />
                 <Route path="/matieres" element={<Matieres />} />
                 <Route path="/parametres" element={<Settings />} />
+                <Route path="/documentation" element={<Documentation />} />
                 <Route path="*" element={<Placeholder title="Page introuvable" notFound />} />
             </Route>
             <Route path="/login" element={<Login/>} />
