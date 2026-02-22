@@ -11,6 +11,7 @@ export const transformBackendPromotionToFrontend = (backend: BackendPromotion): 
   students: backend.effectifs,
   startDate: backend.date_start,
   endDate: backend.date_end,
+  isApprentissage: backend.cycle_type === 'Apprentissage',
   groups: (backend.groups || []).map(g => ({
     id: g.id,
     idPromo: g.id_promo,

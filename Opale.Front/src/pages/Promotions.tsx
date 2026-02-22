@@ -20,7 +20,6 @@ export default function Promotions() {
     // Cycle management hooks
     const {
         cycles,
-        loading,
         error,
         isCreateModalOpen,
         openCreateModal,
@@ -71,7 +70,6 @@ export default function Promotions() {
 
     // Debug log cycles (can be removed in production)
     useEffect(() => {
-        console.log('Cycles updated:', cycles)
     }, [cycles])
 
     /**
