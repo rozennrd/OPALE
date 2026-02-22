@@ -218,7 +218,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                             <strong>{constraintValidation.outOfPeriodTypes.join(', ')}</strong>
                         </p>
                         <p style={{ color: '#856404', fontSize: '0.9em', marginTop: '4px' }}>
-                            Veuillez corriger les dates ou supprimer ces contraintes avant d'enregistrer.
+                            Veuillez corriger les dates ou supprimer ces contraintes avant d&apos;enregistrer.
                         </p>
                     </div>
                 )}
@@ -231,7 +231,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                         disabled={isSaveDisabled}
                         confirmMessage={
                             <>
-                                Vous êtes sur le point d'enregistrer les modifications
+                                Vous êtes sur le point d&apos;enregistrer les modifications
                                 apportées à la promotion{' '}
                                 <strong>{editingPromo.name}</strong>.
                                 <br />

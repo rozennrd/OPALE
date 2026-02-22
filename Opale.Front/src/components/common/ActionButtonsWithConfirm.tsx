@@ -72,10 +72,6 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
         setOpenSaveConfirm(false)
     }
 
-    const closeCancelConfirmDialog = () => {
-        setOpenCancelConfirm(false)
-    }
-
     const closeDeleteConfirmDialog = () => {
         setOpenDeleteConfirm(false)
     }

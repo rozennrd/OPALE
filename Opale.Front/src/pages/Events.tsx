@@ -96,9 +96,6 @@ const normalizeEventForList = (event: CampusEvent): CampusEvent => {
 
 export default function Events() {
     const {
-        events,
-        loading,
-        error,
         createEvent,
         updateEvent,
     } = useEvents()
