@@ -69,8 +69,8 @@ export default function Matieres() {
     const [cycleNameById, setCycleNameById] = useState<Map<string, string>>(new Map())
     const [teacherIdsByMatiereId, setTeacherIdsByMatiereId] = useState<Map<string, Set<string>>>(new Map())
 
-    const [allPromotionLabels, setAllPromotionLabels] = useState<string[]>([])
-    const [allCycleNames, setAllCycleNames] = useState<string[]>([])
+    const [allPromotionOptions, setAllPromotionOptions] = useState<{ id: string; nom: string }[]>([])
+    const [allCycleOptions, setAllCycleOptions] = useState<{ id: string; nom: string }[]>([])
 
 
     useEffect(() => {
@@ -124,15 +124,15 @@ export default function Matieres() {
                 console.log('[MATIERES] example matiere id:', matieres?.[0]?.id)
                 console.log('[MATIERES] example enseignement matiereId:', enseignements?.[0]?.id_matiere)
 
-                const promotionLabels = backendPromos
-                    .map((p) => p.nom)
-                    .filter(Boolean)
-                    .sort((a, b) => a.localeCompare(b, 'fr'))
+                const promotionOptions = backendPromos
+                    .map((p) => ({ id: p.id, nom: p.nom }))
+                    .filter((p) => p.nom)
+                    .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
 
-                const cycleNames = backendCycles
-                    .map((c) => c.nom)
-                    .filter(Boolean)
-                    .sort((a, b) => a.localeCompare(b, 'fr'))
+                const cycleOptions = backendCycles
+                    .map((c) => ({ id: c.id, nom: c.nom }))
+                    .filter((c) => c.nom)
+                    .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
 
                 // promoId -> { id, nom, id_cycle }
                 const promoMap = new Map<string, { id: string; nom: string; id_cycle: string }>()
@@ -156,8 +156,8 @@ export default function Matieres() {
                 setPromoById(promoMap)
                 setCycleNameById(cycleMap)
                 setTeachers(profs ?? [])
-                setAllPromotionLabels(promotionLabels)
-                setAllCycleNames(cycleNames)
+                setAllPromotionOptions(promotionOptions)
+                setAllCycleOptions(cycleOptions)
 
             } catch (e) {
                 console.error('[MATIERES] load failed:', e)
@@ -166,8 +166,8 @@ export default function Matieres() {
                 setPromoById(new Map())
                 setCycleNameById(new Map())
                 setTeachers([])
-                setAllPromotionLabels([])
-                setAllCycleNames([])
+                setAllPromotionOptions([])
+                setAllCycleOptions([])
                 setTeacherIdsByMatiereId(new Map())
             }
         })()
@@ -197,12 +197,12 @@ export default function Matieres() {
     })
 
     const cycleOptions = useMemo(() => {
-        return allCycleNames
-    }, [allCycleNames])
+        return allCycleOptions
+    }, [allCycleOptions])
 
     const promotionOptions = useMemo(() => {
-        return allPromotionLabels
-    }, [allPromotionLabels])
+        return allPromotionOptions
+    }, [allPromotionOptions])
 
     const teacherOptions = useMemo(() => {
         return (teachers ?? [])
