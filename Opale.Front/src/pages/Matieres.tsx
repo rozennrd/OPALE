@@ -17,7 +17,6 @@ import { promotionsApi } from '../services/api/promotionsApi'
 import { Matiere } from '../models/Matiere'
 import { useSelectionState } from '../hooks/common/useSelectionState'
 import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
-import {transformBackendPromotionToFrontend} from "../services/api/promotionsApiTransformers.ts";
 import { cyclesApi } from '../services/api/cyclesApi'
 import { getEnseignements } from '../services/api/enseignementsApi'
 import {transformBackendMatiereToFrontend} from "../services/api/matieresApiTransformers.ts";
@@ -38,9 +37,7 @@ function unwrapApiArray<T>(res: ApiResponse<T[]> | T[]): T[] {
     return res.data ?? []
 }
 
-const getCycleFromPromoLabel = (promoLabel: string) => {
-    return (promoLabel || '').trim().split(/\s+/)[0] || '-'
-}
+
 const DEFAULT_MATIERES_FILTERS: {
     searchValue: string
     semestreFilter: SemestreFilter
@@ -80,11 +77,10 @@ export default function Matieres() {
             try {
                 console.log('[MATIERES] fetching matieres + promotions + cycles + profs')
 
-                const [backendMatieres, promosRes, cyclesRes, profs, enseignementsRes] = await Promise.all([
+                const [backendMatieres, promosRes, cyclesRes, enseignementsRes] = await Promise.all([
                     getMatieres(),                 // Array backend matieres
                     promotionsApi.getPromotions(), // ApiResponse<BackendPromotion[]>
                     cyclesApi.getCycles(),         // ApiResponse<BackendCycle[]>
-                    getProfsData(),                // ApiResponse<BackendTeacher[]>
                     getEnseignements(),            // ApiResponse<BackendEnseignement[]>
                 ])
 
@@ -155,7 +151,6 @@ export default function Matieres() {
                 setMatieres(frontMatieres)
                 setPromoById(promoMap)
                 setCycleNameById(cycleMap)
-                setTeachers(profs ?? [])
                 setAllPromotionOptions(promotionOptions)
                 setAllCycleOptions(cycleOptions)
 

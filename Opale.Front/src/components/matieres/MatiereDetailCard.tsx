@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { Matiere } from '../../models/Matiere'
 import DetailCardBody from '../common/DetailCardBody'
 import DetailCardHeader from '../common/DetailCardHeader'
+import DetailCardFooter from '../common/DetailCardFooter'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 import MatiereBadge from './MatiereBadge'
@@ -54,6 +55,7 @@ export default function MatiereDetailCard({
                                               matiere,
                                               onClose,
                                               onAfterSave,
+                                              onDelete,
                                               teacherOptions,
                                           }: MatiereDetailCardProps) {
     // --- left column (matière)
@@ -66,9 +68,6 @@ export default function MatiereDetailCard({
     const [eLearningHours, setELearningHours] = useState<HoursValue>(matiere.heures_elearning ?? 0)
     const [autresHours, setAutresHours] = useState<HoursValue>(matiere.heures_autre ?? 0)
     const [volumeIncreaseMessage, setVolumeIncreaseMessage] = useState<string | null>(null)
-    const [assignments, setAssignments] = useState<TeacherAssignment[]>(() => [
-        { rowId: makeRowId(), teacherId: '', tdHours: 0, tpHours: 0 },
-    ])
 
     // --- right column (enseignements)
     const [loadingEns, setLoadingEns] = useState(false)

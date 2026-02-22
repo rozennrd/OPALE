@@ -310,7 +310,6 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                                     <div className="room-detail-types">
                                         {ROOM_TYPES.map((type) => {
                                             const isChecked = types.includes(type)
-                                            const isMain = type === mainType
 
                                             const chipClassName = [
                                                 'room-type-chip',
