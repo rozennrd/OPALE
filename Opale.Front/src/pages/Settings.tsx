@@ -351,7 +351,7 @@ export default function Settings() {
                 >
                     <form className="settings-form" onSubmit={handleAccountSubmit}>
                         <label className="settings-field">
-                            <span className="settings-label">Nom d'utilisateur</span>
+                            <span className="settings-label">Nom d&apos;utilisateur</span>
                             <input
                                 type="text"
                                 className="settings-input"
@@ -554,7 +554,7 @@ export default function Settings() {
                     wide
                 >
                     <p className="settings-note">
-                        Affichage des icônes par zone de l'interface.
+                        Affichage des icônes par zone de l&apos;interface.
                     </p>
 
                     <div className="settings-toggle-list">

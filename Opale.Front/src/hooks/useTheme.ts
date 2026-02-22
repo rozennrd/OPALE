@@ -187,7 +187,13 @@ function useAppearanceDomSync(state: AppearanceState) {
 
         window.dispatchEvent(
             new CustomEvent<AppearanceState>(APPEARANCE_EVENT, {
-                detail: state,
+                detail: {
+                    theme: state.theme,
+                    cvd: state.cvd,
+                    vision: state.vision,
+                    reading: state.reading,
+                    spockAudio: state.spockAudio,
+                },
             }),
         )
     }, [state.theme, state.cvd, state.vision, state.reading, state.spockAudio])
