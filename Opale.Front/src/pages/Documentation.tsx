@@ -1,236 +1,21 @@
 import React, { useMemo, useState } from 'react'
 import PageHeader from '../components/common/PageHeader'
 import SectionCard from '../components/common/SectionCard'
-
-type TutorialTab = 'planning' | 'pages'
-
-type TutorialId =
-    | 'macro'
-    | 'micro'
-    | 'promotions'
-    | 'events'
-    | 'teachers'
-    | 'rooms'
-    | 'matieres'
-    | 'settings'
-
-type TutorialItem = {
-    id: TutorialId
-    title: string
-    summary: string
-    tab: TutorialTab
-}
-
-type TutorialContent = {
-    objective: string
-    expectedResult: string
-    steps: string[]
-    tips: string[]
-}
+import { TUTORIAL_CONTENT } from './tuto/content'
+import { TAB_ITEMS, TUTORIAL_ITEMS } from './tuto/items'
+import type { TutorialId, TutorialTab } from './tuto/types'
+import {
+    firstTutorialForTab,
+    getStepHighlights,
+    getStepText,
+    getVisibleSubSteps,
+    hasRenderableNode,
+    isStepVisible,
+    isTutorialInTab,
+    isTutorialStepObject,
+} from './tuto/utils'
 
 type DocumentationSectionKey = 'selector' | 'viewer'
-
-const TAB_ITEMS: Array<{ key: TutorialTab; label: string }> = [
-    { key: 'planning', label: 'Flux planning' },
-    { key: 'pages', label: 'Par page' },
-]
-
-const TUTORIAL_ITEMS: TutorialItem[] = [
-    {
-        id: 'macro',
-        title: 'Generer un planning macro',
-        summary: 'Flux global de generation et validation du planning macro.',
-        tab: 'planning',
-    },
-    {
-        id: 'micro',
-        title: 'Generer un planning micro',
-        summary: 'Etapes de construction du planning micro a partir du macro.',
-        tab: 'planning',
-    },
-    {
-        id: 'promotions',
-        title: 'Tutoriel - Promotions',
-        summary: 'Creer, modifier et organiser les promotions et leurs groupes.',
-        tab: 'pages',
-    },
-    {
-        id: 'events',
-        title: 'Tutoriel - Evenements',
-        summary: 'Ajouter, ajuster et suivre les evenements planifies.',
-        tab: 'pages',
-    },
-    {
-        id: 'teachers',
-        title: 'Tutoriel - Enseignants',
-        summary: 'Gerer les profils enseignants et leur mode d intervention.',
-        tab: 'pages',
-    },
-    {
-        id: 'rooms',
-        title: 'Tutoriel - Salles',
-        summary: 'Configurer les salles et leurs caracteristiques pedagogiques.',
-        tab: 'pages',
-    },
-    {
-        id: 'matieres',
-        title: 'Tutoriel - Matieres',
-        summary: 'Administrer les matieres et leurs parametres associes.',
-        tab: 'pages',
-    },
-    {
-        id: 'settings',
-        title: 'Tutoriel - Parametres',
-        summary: 'Utiliser les options de compte, apparence et accessibilite.',
-        tab: 'pages',
-    },
-]
-
-const TUTORIAL_CONTENT: Record<TutorialId, TutorialContent> = {
-    macro: {
-        objective: 'Construire un planning macro realiste sur la periode cible.',
-        expectedResult:
-            'Un planning macro coherent est genere et pret a servir de base pour le micro.',
-        steps: [
-            'Verifier que les promotions, matieres, enseignants et salles sont a jour.',
-            'Definir ou controler les contraintes globales de planning.',
-            'Lancer la generation macro depuis le module de planification.',
-            'Relire les alertes et ajuster les donnees si des conflits sont signales.',
-            'Valider le scenario retenu et enregistrer la version de reference.',
-        ],
-        tips: [
-            'Travailler d abord sur un perimetre reduit avant de lancer un calcul complet.',
-            'Conserver une version valide avant chaque regeneration importante.',
-        ],
-    },
-    micro: {
-        objective:
-            'Decliner le planning macro en planification fine exploitable au quotidien.',
-        expectedResult:
-            'Le planning micro est renseigne avec des affectations detaillees et controlables.',
-        steps: [
-            'Charger la base macro validee comme point de depart.',
-            'Affecter precisement les ressources sur les seances a planifier.',
-            'Verifier les collisions horaires et les indisponibilites.',
-            'Ajuster les evenements ponctuels qui impactent la semaine.',
-            'Valider puis publier la version micro finalisee.',
-        ],
-        tips: [
-            'Appliquer les corrections en lots courts pour limiter les effets de bord.',
-            'Verifier les sections les plus contraintes en priorite.',
-        ],
-    },
-    promotions: {
-        objective:
-            'Creer et maintenir les promotions avec leurs structures pedagogiques.',
-        expectedResult:
-            'La promotion est complete, structuree et exploitable par les modules de planning.',
-        steps: [
-            'Ouvrir la page Promotions puis selectionner le cycle concerne.',
-            'Ajouter ou editer la promotion avec son identite principale.',
-            'Renseigner les groupes et sous-groupes necessaires.',
-            'Completer les specialites et contraintes associees.',
-            'Valider les modifications et controler le rendu dans la liste.',
-        ],
-        tips: [
-            'Nommer les groupes de facon stable pour faciliter les imports futurs.',
-            'Reverifier les contraintes avant de lancer une generation de planning.',
-        ],
-    },
-    events: {
-        objective:
-            'Gerer les evenements planifies ou exceptionnels qui impactent la planification.',
-        expectedResult:
-            'Les evenements sont correctement enregistres et pris en compte dans les emplois du temps.',
-        steps: [
-            'Acceder a la page Evenements et filtrer la periode de travail.',
-            'Creer un evenement en choisissant le bon type et les bonnes dates.',
-            'Associer la promotion ou les ressources impactees.',
-            'Verifier les chevauchements signales et corriger si besoin.',
-            'Confirmer la creation puis suivre l evenement dans la vue de liste.',
-        ],
-        tips: [
-            'Utiliser des libelles explicites pour distinguer rapidement les evenements.',
-            'En cas de doute, verifier les conflits avant validation finale.',
-        ],
-    },
-    teachers: {
-        objective:
-            'Administrer les profils enseignants et leurs disponibilites pour la planification.',
-        expectedResult:
-            'Les fiches enseignants sont fiables et permettent des affectations sans incoherence.',
-        steps: [
-            'Ouvrir la page Enseignants et utiliser la recherche pour cibler une fiche.',
-            'Creer ou editer les informations de profil de l enseignant.',
-            'Renseigner le mode d intervention et les matieres associees.',
-            'Verifier les informations de contact et les disponibilites.',
-            'Enregistrer et controler la coherence de la carte enseignant.',
-        ],
-        tips: [
-            'Uniformiser les noms et prenoms pour eviter les doublons.',
-            'Mettre a jour les matieres avant les periodes de generation.',
-        ],
-    },
-    rooms: {
-        objective:
-            'Configurer les salles et leurs caracteristiques pour des affectations precises.',
-        expectedResult:
-            'Chaque salle est correctement typee et disponible pour les besoins de planification.',
-        steps: [
-            'Entrer sur la page Salles puis afficher la zone a mettre a jour.',
-            'Ajouter ou modifier une salle avec ses informations principales.',
-            'Renseigner le type de salle et les attributs utiles.',
-            'Controler les conflits de disponibilite ou de compatibilite.',
-            'Sauvegarder puis valider la presence de la salle dans la grille.',
-        ],
-        tips: [
-            'Utiliser une convention de nommage claire par batiment et numero.',
-            'Verifier regulierement les types de salles critiques pour les TP.',
-        ],
-    },
-    matieres: {
-        objective:
-            'Maintenir le catalogue des matieres utilisees dans les maquettes et plannings.',
-        expectedResult:
-            'Les matieres sont a jour et directement reutilisables dans les affectations.',
-        steps: [
-            'Acceder a la page Matieres puis filtrer le perimetre cible.',
-            'Creer ou editer une matiere avec ses attributs essentiels.',
-            'Associer les informations utiles a la planification.',
-            'Verifier la coherence des libelles et des donnees saisies.',
-            'Valider les changements et controler la disponibilite en liste.',
-        ],
-        tips: [
-            'Eviter les doublons de nom en definissant une nomenclature commune.',
-            'Revoir les matieres inactives avant chaque nouveau semestre.',
-        ],
-    },
-    settings: {
-        objective:
-            'Ajuster les preferences utilisateur et d affichage pour un usage confortable.',
-        expectedResult:
-            'Le poste est configure avec les bons parametres visuels et d accessibilite.',
-        steps: [
-            'Ouvrir la page Parametres puis identifier la section a modifier.',
-            'Ajuster les options d apparence selon le besoin utilisateur.',
-            'Configurer les options d accessibilite disponibles.',
-            'Verifier les preferences d affichage des icones si necessaire.',
-            'Confirmer que les regles sont bien appliquees sur l interface.',
-        ],
-        tips: [
-            'Tester les changements de theme sur plusieurs pages pour valider la lisibilite.',
-            'Conserver des reglages simples et stables pour limiter les erreurs de manipulation.',
-        ],
-    },
-}
-
-const firstTutorialForTab = (tab: TutorialTab): TutorialId => {
-    const match = TUTORIAL_ITEMS.find((item) => item.tab === tab)
-    return match ? match.id : 'macro'
-}
-
-const isTutorialInTab = (tutorialId: TutorialId, tab: TutorialTab): boolean =>
-    TUTORIAL_ITEMS.some((item) => item.id === tutorialId && item.tab === tab)
 
 export default function Documentation() {
     const [activeTab, setActiveTab] = useState<TutorialTab>('planning')
@@ -241,6 +26,9 @@ export default function Documentation() {
         selector: true,
         viewer: true,
     })
+    const [expandedStepSections, setExpandedStepSections] = useState<
+        Record<string, boolean>
+    >({})
 
     const tutorialsForActiveTab = useMemo(
         () => TUTORIAL_ITEMS.filter((item) => item.tab === activeTab),
@@ -269,6 +57,19 @@ export default function Documentation() {
         setExpandedSections((current) => ({
             ...current,
             [section]: !current[section],
+        }))
+    }
+
+    const isStepSectionExpanded = (tutorialId: TutorialId, sectionIndex: number): boolean => {
+        const key = `${tutorialId}-section-${sectionIndex}`
+        return expandedStepSections[key] ?? true
+    }
+
+    const toggleStepSection = (tutorialId: TutorialId, sectionIndex: number) => {
+        const key = `${tutorialId}-section-${sectionIndex}`
+        setExpandedStepSections((current) => ({
+            ...current,
+            [key]: !(current[key] ?? true),
         }))
     }
 
@@ -370,17 +171,346 @@ export default function Documentation() {
                                 </section>
 
                                 <section className="documentation-viewer-block">
-                                    <h3 className="documentation-viewer-title">Etapes</h3>
-                                    <ol className="documentation-step-list">
-                                        {selectedTutorialContent.steps.map((step, index) => (
-                                            <li
-                                                key={`${selectedTutorial.id}-step-${index}`}
-                                                className="documentation-step-item"
-                                            >
-                                                {step}
-                                            </li>
-                                        ))}
-                                    </ol>
+                                    <h3 className="documentation-viewer-title">
+                                        {selectedTutorialContent.stepSections &&
+                                        selectedTutorialContent.stepSections.length > 0
+                                            ? 'Fonctionnalites'
+                                            : 'Etapes'}
+                                    </h3>
+                                    {selectedTutorialContent.stepSections &&
+                                    selectedTutorialContent.stepSections.length > 0 ? (
+                                        <div className="documentation-step-sections">
+                                            {selectedTutorialContent.stepSections.map(
+                                                (stepSection, sectionIndex) => {
+                                                    const tutorialId =
+                                                        selectedTutorial?.id ?? selectedTutorialId
+                                                    const sectionKey = `${tutorialId}-section-${sectionIndex}`
+                                                    const isExpanded = isStepSectionExpanded(
+                                                        tutorialId,
+                                                        sectionIndex,
+                                                    )
+                                                    const visibleSectionSteps = stepSection.steps.filter(
+                                                        (step) => isStepVisible(step),
+                                                    )
+
+                                                    return (
+                                                        <section
+                                                            key={sectionKey}
+                                                            className={`documentation-step-section ${!isExpanded ? 'is-collapsed' : ''}`}
+                                                        >
+                                                            <div className="documentation-step-section-header">
+                                                                <h4 className="documentation-step-section-title">
+                                                                    {stepSection.title}
+                                                                </h4>
+                                                                <button
+                                                                    type="button"
+                                                                    className="documentation-step-section-toggle"
+                                                                    onClick={() =>
+                                                                        toggleStepSection(
+                                                                            tutorialId,
+                                                                            sectionIndex,
+                                                                        )
+                                                                    }
+                                                                    aria-expanded={isExpanded}
+                                                                    aria-controls={sectionKey}
+                                                                    title={
+                                                                        isExpanded
+                                                                            ? 'Replier'
+                                                                            : 'Deplier'
+                                                                    }
+                                                                >
+                                                                    <span
+                                                                        className={`documentation-step-section-chevron ${isExpanded ? 'is-up' : 'is-down'}`}
+                                                                        aria-hidden="true"
+                                                                    />
+                                                                </button>
+                                                            </div>
+
+                                                            {isExpanded && (
+                                                                <ol
+                                                                    id={sectionKey}
+                                                                    className="documentation-step-list documentation-step-sublist"
+                                                                >
+                                                                    {visibleSectionSteps.map((step, stepIndex) => {
+                                                                        const stepText = getStepText(step)
+                                                                        const hasStepText = hasRenderableNode(stepText)
+                                                                        const visibleSubSteps =
+                                                                            getVisibleSubSteps(step)
+                                                                        const stepHighlights =
+                                                                            getStepHighlights(step)
+                                                                        const highlightMaskId = `${tutorialId}-section-${sectionIndex}-step-${stepIndex}-highlight-mask`
+                                                                        const stepDetails =
+                                                                            isTutorialStepObject(step) ? step : null
+
+                                                                        return (
+                                                                            <li
+                                                                                key={`${tutorialId}-section-${sectionIndex}-step-${stepIndex}`}
+                                                                                className="documentation-step-item"
+                                                                            >
+                                                                                {hasStepText && (
+                                                                                    <span className="documentation-step-text">
+                                                                                        {stepText}
+                                                                                    </span>
+                                                                                )}
+
+                                                                                {visibleSubSteps.length > 0 && (
+                                                                                    <ol className="documentation-substep-list">
+                                                                                        {visibleSubSteps.map(
+                                                                                            (
+                                                                                                subStep,
+                                                                                                subStepIndex,
+                                                                                            ) => (
+                                                                                                <li
+                                                                                                    key={`${tutorialId}-section-${sectionIndex}-step-${stepIndex}-substep-${subStepIndex}`}
+                                                                                                    className="documentation-substep-item"
+                                                                                                >
+                                                                                                    {subStep}
+                                                                                                </li>
+                                                                                            ),
+                                                                                        )}
+                                                                                    </ol>
+                                                                                )}
+
+                                                                                {stepDetails?.imageSrc && (
+                                                                                        <figure className="documentation-step-figure">
+                                                                                            <div className="documentation-step-image-wrapper">
+                                                                                                <img
+                                                                                                    src={stepDetails.imageSrc}
+                                                                                                    alt={
+                                                                                                        stepDetails.imageAlt ??
+                                                                                                        'Capture d ecran du tutoriel'
+                                                                                                    }
+                                                                                                    className="documentation-step-image"
+                                                                                                />
+                                                                                                {stepHighlights.length > 0 && (
+                                                                                                    <svg
+                                                                                                        className="documentation-step-dim-overlay"
+                                                                                                        viewBox="0 0 100 100"
+                                                                                                        preserveAspectRatio="none"
+                                                                                                        aria-hidden="true"
+                                                                                                    >
+                                                                                                        <defs>
+                                                                                                            <mask id={highlightMaskId}>
+                                                                                                                <rect
+                                                                                                                    x="0"
+                                                                                                                    y="0"
+                                                                                                                    width="100%"
+                                                                                                                    height="100%"
+                                                                                                                    fill="white"
+                                                                                                                />
+                                                                                                                {stepHighlights.map(
+                                                                                                                    (
+                                                                                                                        highlight,
+                                                                                                                        highlightIndex,
+                                                                                                                    ) => (
+                                                                                                                        <rect
+                                                                                                                            key={`${highlightMaskId}-cutout-${highlightIndex}`}
+                                                                                                                            x={
+                                                                                                                                highlight.left
+                                                                                                                            }
+                                                                                                                            y={
+                                                                                                                                highlight.top
+                                                                                                                            }
+                                                                                                                            width={
+                                                                                                                                highlight.width
+                                                                                                                            }
+                                                                                                                            height={
+                                                                                                                                highlight.height
+                                                                                                                            }
+                                                                                                                            rx="1.2"
+                                                                                                                            ry="1.2"
+                                                                                                                            fill="black"
+                                                                                                                        />
+                                                                                                                    ),
+                                                                                                                )}
+                                                                                                            </mask>
+                                                                                                        </defs>
+                                                                                                        <rect
+                                                                                                            x="0"
+                                                                                                            y="0"
+                                                                                                            width="100%"
+                                                                                                            height="100%"
+                                                                                                            fill="rgba(9, 17, 31, 0.42)"
+                                                                                                            mask={`url(#${highlightMaskId})`}
+                                                                                                        />
+                                                                                                    </svg>
+                                                                                                )}
+                                                                                                {stepHighlights.map(
+                                                                                                    (
+                                                                                                        highlight,
+                                                                                                        highlightIndex,
+                                                                                                    ) => (
+                                                                                                        <div
+                                                                                                            key={`${tutorialId}-section-${sectionIndex}-step-${stepIndex}-highlight-${highlightIndex}`}
+                                                                                                            className="documentation-step-highlight"
+                                                                                                            style={{
+                                                                                                                left: highlight.left,
+                                                                                                                top: highlight.top,
+                                                                                                                width: highlight.width,
+                                                                                                                height: highlight.height,
+                                                                                                            }}
+                                                                                                        >
+                                                                                                            {highlight.label && (
+                                                                                                                <span className="documentation-step-highlight-label">
+                                                                                                                    {highlight.label}
+                                                                                                                </span>
+                                                                                                            )}
+                                                                                                        </div>
+                                                                                                    ),
+                                                                                                )}
+                                                                                            </div>
+                                                                                            {stepDetails.imageCaption && (
+                                                                                                <figcaption className="documentation-step-caption">
+                                                                                                    {stepDetails.imageCaption}
+                                                                                                </figcaption>
+                                                                                            )}
+                                                                                        </figure>
+                                                                                    )}
+                                                                            </li>
+                                                                        )
+                                                                    })}
+                                                                </ol>
+                                                            )}
+                                                        </section>
+                                                    )
+                                                },
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <ol className="documentation-step-list">
+                                            {selectedTutorialContent.steps
+                                                .filter((step) => isStepVisible(step))
+                                                .map((step, index) => {
+                                                    const stepText = getStepText(step)
+                                                    const hasStepText = hasRenderableNode(stepText)
+                                                    const visibleSubSteps = getVisibleSubSteps(step)
+                                                    const stepHighlights = getStepHighlights(step)
+                                                    const highlightMaskId = `${selectedTutorial.id}-step-${index}-highlight-mask`
+                                                    const stepDetails = isTutorialStepObject(step) ? step : null
+
+                                                    return (
+                                                        <li
+                                                            key={`${selectedTutorial.id}-step-${index}`}
+                                                            className="documentation-step-item"
+                                                        >
+                                                            {hasStepText && (
+                                                                <span className="documentation-step-text">
+                                                                    {stepText}
+                                                                </span>
+                                                            )}
+
+                                                            {visibleSubSteps.length > 0 && (
+                                                                <ol className="documentation-substep-list">
+                                                                    {visibleSubSteps.map(
+                                                                        (subStep, subStepIndex) => (
+                                                                            <li
+                                                                                key={`${selectedTutorial.id}-step-${index}-substep-${subStepIndex}`}
+                                                                                className="documentation-substep-item"
+                                                                            >
+                                                                                {subStep}
+                                                                            </li>
+                                                                        ),
+                                                                    )}
+                                                                </ol>
+                                                            )}
+
+                                                            {stepDetails?.imageSrc && (
+                                                                    <figure className="documentation-step-figure">
+                                                                        <div className="documentation-step-image-wrapper">
+                                                                            <img
+                                                                                src={stepDetails.imageSrc}
+                                                                                alt={
+                                                                                    stepDetails.imageAlt ??
+                                                                                    'Capture d ecran du tutoriel'
+                                                                                }
+                                                                                className="documentation-step-image"
+                                                                            />
+                                                                            {stepHighlights.length > 0 && (
+                                                                                <svg
+                                                                                    className="documentation-step-dim-overlay"
+                                                                                    viewBox="0 0 100 100"
+                                                                                    preserveAspectRatio="none"
+                                                                                    aria-hidden="true"
+                                                                                >
+                                                                                    <defs>
+                                                                                        <mask id={highlightMaskId}>
+                                                                                            <rect
+                                                                                                x="0"
+                                                                                                y="0"
+                                                                                                width="100%"
+                                                                                                height="100%"
+                                                                                                fill="white"
+                                                                                            />
+                                                                                            {stepHighlights.map(
+                                                                                                (
+                                                                                                    highlight,
+                                                                                                    highlightIndex,
+                                                                                                ) => (
+                                                                                                    <rect
+                                                                                                        key={`${highlightMaskId}-cutout-${highlightIndex}`}
+                                                                                                        x={
+                                                                                                            highlight.left
+                                                                                                        }
+                                                                                                        y={
+                                                                                                            highlight.top
+                                                                                                        }
+                                                                                                        width={
+                                                                                                            highlight.width
+                                                                                                        }
+                                                                                                        height={
+                                                                                                            highlight.height
+                                                                                                        }
+                                                                                                        rx="1.2"
+                                                                                                        ry="1.2"
+                                                                                                        fill="black"
+                                                                                                    />
+                                                                                                ),
+                                                                                            )}
+                                                                                        </mask>
+                                                                                    </defs>
+                                                                                    <rect
+                                                                                        x="0"
+                                                                                        y="0"
+                                                                                        width="100%"
+                                                                                        height="100%"
+                                                                                        fill="rgba(9, 17, 31, 0.42)"
+                                                                                        mask={`url(#${highlightMaskId})`}
+                                                                                    />
+                                                                                </svg>
+                                                                            )}
+                                                                            {stepHighlights.map(
+                                                                                (highlight, highlightIndex) => (
+                                                                                    <div
+                                                                                        key={`${selectedTutorial.id}-step-${index}-highlight-${highlightIndex}`}
+                                                                                        className="documentation-step-highlight"
+                                                                                        style={{
+                                                                                            left: highlight.left,
+                                                                                            top: highlight.top,
+                                                                                            width: highlight.width,
+                                                                                            height: highlight.height,
+                                                                                        }}
+                                                                                    >
+                                                                                        {highlight.label && (
+                                                                                            <span className="documentation-step-highlight-label">
+                                                                                                {highlight.label}
+                                                                                            </span>
+                                                                                        )}
+                                                                                    </div>
+                                                                                ),
+                                                                            )}
+                                                                        </div>
+                                                                        {stepDetails.imageCaption && (
+                                                                            <figcaption className="documentation-step-caption">
+                                                                                {stepDetails.imageCaption}
+                                                                            </figcaption>
+                                                                        )}
+                                                                    </figure>
+                                                                )}
+                                                        </li>
+                                                    )
+                                                })}
+                                        </ol>
+                                    )}
                                 </section>
                             </div>
                         ) : (
@@ -394,4 +524,3 @@ export default function Documentation() {
         </>
     )
 }
-
