@@ -22,8 +22,9 @@ export const profService = {
             dto.prenom,
             dto.email || null,
             dto.email_perso || null,
+            dto.telephone || null,
             dto.type,
-            dto.distanciel || false,
+            dto.modalite_enseignement || 'Présentiel',
             dto.campus_origin || null
         );
 
@@ -33,8 +34,9 @@ export const profService = {
             prenom: dto.prenom,
             email: dto.email,
             email_perso: dto.email_perso,
+            telephone: dto.telephone,
             type: dto.type,
-            distanciel: dto.distanciel,
+            modalite_enseignement: dto.modalite_enseignement,
             campus_origin: dto.campus_origin
         };
     },
@@ -53,8 +55,9 @@ export const profService = {
             dto.prenom,
             dto.email || null,
             dto.email_perso || null,
+            dto.telephone || null,
             dto.type,
-            dto.distanciel || false,
+            dto.modalite_enseignement || 'Présentiel',
             dto.campus_origin || null
         );
     },

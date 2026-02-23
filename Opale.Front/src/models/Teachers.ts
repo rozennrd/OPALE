@@ -1,4 +1,4 @@
-export type TeachingMode = 'DISTANCIEL' | 'HYBRIDE' | 'PRESENTIEL'
+export type TeachingMode = 'Distanciel' | 'Hybride' | 'Présentiel'
 
 export interface TeacherSubject {
     name: string        // ex: "Maths"

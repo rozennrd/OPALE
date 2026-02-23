@@ -4,12 +4,12 @@ export interface TeacherApi {
     id: string
     prenom: string
     nom: string
-    phone: string
     email_perso: string
     email?: string
+    telephone: string
     campus_origin?: string
     type?: 'Intervenant' | 'Permanent' | 'Invite'
-    mode: 'DISTANCIEL' | 'HYBRIDE' | 'PRESENTIEL'
+    modalite_enseignement: 'Distanciel' | 'Hybride' | 'Présentiel'
     subjects: {
         name: string
         promo: string

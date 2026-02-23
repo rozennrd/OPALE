@@ -29,17 +29,17 @@ export default function TeacherModeBadge({
     let modeClass: string
 
     switch (mode) {
-        case 'DISTANCIEL':
+        case 'Distanciel':
             label = 'Distanciel'
             iconSrc = icDistanciel
             modeClass = 'distanciel'
             break
-        case 'HYBRIDE':
+        case 'Hybride':
             label = 'Hybride'
             iconSrc = icHybride
             modeClass = 'hybride'
             break
-        case 'PRESENTIEL':
+        case 'Présentiel':
         default:
             label = 'Présentiel'
             iconSrc = icPresentiel
