@@ -5,6 +5,9 @@ import TeacherDetailCard from '../components/teachers/TeacherDetailCard'
 import SelectionToolbar from '../components/common/SelectionToolbar'
 
 import { getProfsData } from '../services/api/professorsApi'
+import { getEnseignements } from '../services/api/enseignementsApi'
+import { getMatieres } from '../services/api/matieresApi'
+import { promotionsApi } from '../services/api/promotionsApi'
 
 import { Teacher } from '../models/Teachers'
 import PageHeader from '../components/common/PageHeader'
@@ -43,11 +46,47 @@ export default function Teachers() {
 
         ;(async () => {
             try {
-                const apiTeachers = await getProfsData()
+                const [apiTeachers, enseignementsRes, matieres, promotionsRes] = await Promise.all([
+                    getProfsData(),
+                    getEnseignements(),
+                    getMatieres(),
+                    promotionsApi.getPromotions(),
+                ])
 
                 console.log(apiTeachers)
 
                 if (!mounted) return
+
+                const promoLabelById = new Map<string, string>()
+                for (const p of promotionsRes.data ?? []) {
+                    promoLabelById.set(String(p.id), p.nom)
+                }
+
+                const matiereById = new Map<string, { nom: string; promoLabel: string }>()
+                for (const m of matieres ?? []) {
+                    matiereById.set(String(m.id), {
+                        nom: m.nom ?? '',
+                        promoLabel: promoLabelById.get(String(m.id_promo ?? '')) ?? '',
+                    })
+                }
+
+                const teacherSubjectsById = new Map<string, Teacher['subjects']>()
+                for (const e of enseignementsRes.data ?? []) {
+                    const profId = String(e.id_prof)
+                    const matiereInfo = matiereById.get(String(e.id_matiere))
+                    if (!matiereInfo) continue
+
+                    const existing = teacherSubjectsById.get(profId) ?? []
+                    const alreadyExists = existing.some(
+                        (s) =>
+                            s.name.toLowerCase() === matiereInfo.nom.toLowerCase() &&
+                            s.promo.toLowerCase() === matiereInfo.promoLabel.toLowerCase(),
+                    )
+                    if (!alreadyExists) {
+                        existing.push({ name: matiereInfo.nom, promo: matiereInfo.promoLabel })
+                    }
+                    teacherSubjectsById.set(profId, existing)
+                }
 
                 const mappedTeachers: Teacher[] = (apiTeachers ?? []).map((teacher) => ({
                     id: String(teacher.id),
@@ -59,7 +98,7 @@ export default function Teachers() {
                     campus: teacher.campus_origin ?? 'Bordeaux',
                     category: normalizeCategory(teacher.type),
                     mode: teacher.modalite_enseignement ?? 'Présentiel',
-                    subjects: teacher.subjects ?? [],
+                    subjects: teacherSubjectsById.get(String(teacher.id)) ?? teacher.subjects ?? [],
                     availability: teacher.availability ?? '0000000000',
                 }))
 

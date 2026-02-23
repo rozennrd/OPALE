@@ -2,6 +2,12 @@
 import { useEffect, useState } from 'react'
 import { Teacher, TeacherAvailabilityPeriod } from '../../models/Teachers'
 import { addProf, updateProf } from '../../services/api/professorsApi'
+import {
+    addEnseignement,
+    getEnseignements,
+} from '../../services/api/enseignementsApi'
+import { getMatieres } from '../../services/api/matieresApi'
+import { promotionsApi } from '../../services/api/promotionsApi'
 
 const normalizeAvailability = (value?: string): string => {
     if (!value || value.length !== 10) return '0000000000'
@@ -74,6 +80,10 @@ const normalizeCampus = (
     if (raw.includes('lille')) return 'Lille'
     if (raw.includes('chateauroux') || raw.includes('châteauroux')) return 'Chateauroux'
     return 'Bordeaux'
+}
+
+const normalizeSubjectKey = (name: string, promo: string): string => {
+    return `${name.trim().toLowerCase()}::${promo.trim().toLowerCase()}`
 }
 
 export const useTeacherDetail = (
@@ -227,6 +237,7 @@ export const useTeacherDetail = (
     const handleSave = async (): Promise<boolean> => {
         try {
             let savedTeacher = teacherDraft
+            let savedTeacherId = teacherDraft.id
 
             if (teacherDraft.id === 'new-teacher') {
                 const insertedId = await addProf({
@@ -244,6 +255,7 @@ export const useTeacherDetail = (
                     ...teacherDraft,
                     id: String(insertedId),
                 }
+                savedTeacherId = String(insertedId)
                 setTeacherDraft(savedTeacher)
             } else {
                 await updateProf(teacherDraft.id, {
@@ -256,6 +268,91 @@ export const useTeacherDetail = (
                     modalite_enseignement: normalizeMode(teacherDraft.mode),
                     campus_origin: normalizeCampus(teacherDraft.campus),
                 })
+            }
+
+            const normalizedSubjects = (savedTeacher.subjects ?? [])
+                .map((s) => ({
+                    name: (s.name ?? '').trim(),
+                    promo: (s.promo ?? '').trim(),
+                }))
+                .filter((s) => s.name.length > 0 && s.promo.length > 0)
+
+            if (normalizedSubjects.length > 0 && savedTeacherId !== 'new-teacher') {
+                const [enseignementsRes, matieres, promotionsRes] = await Promise.all([
+                    getEnseignements(),
+                    getMatieres(),
+                    promotionsApi.getPromotions(),
+                ])
+
+                const promoIdByLabel = new Map<string, string>()
+                for (const p of promotionsRes.data ?? []) {
+                    promoIdByLabel.set((p.nom ?? '').trim().toLowerCase(), String(p.id))
+                }
+
+                const matiereIdBySubjectKey = new Map<string, string>()
+                for (const m of matieres ?? []) {
+                    const nom = (m.nom ?? '').trim()
+                    const promoId = String(m.id_promo ?? '')
+                    if (!nom || !promoId) continue
+
+                    const promoLabel = Array.from(promoIdByLabel.entries()).find(
+                        ([, id]) => id === promoId,
+                    )?.[0]
+
+                    if (!promoLabel) continue
+                    matiereIdBySubjectKey.set(
+                        normalizeSubjectKey(nom, promoLabel),
+                        String(m.id),
+                    )
+                }
+
+                const existingPairs = new Set<string>()
+                for (const e of enseignementsRes.data ?? []) {
+                    existingPairs.add(`${String(e.id_prof)}::${String(e.id_matiere)}`)
+                }
+
+                for (const subject of normalizedSubjects) {
+                    const subjectPromoId = promoIdByLabel.get(subject.promo.toLowerCase())
+
+                    let matiereId = matiereIdBySubjectKey.get(
+                        normalizeSubjectKey(subject.name, subject.promo),
+                    )
+
+                    if (!matiereId && subjectPromoId) {
+                        const found = (matieres ?? []).find(
+                            (m) =>
+                                (m.nom ?? '').trim().toLowerCase() ===
+                                    subject.name.toLowerCase() &&
+                                String(m.id_promo ?? '') === subjectPromoId,
+                        )
+                        if (found) {
+                            matiereId = String(found.id)
+                        }
+                    }
+
+                    if (!matiereId) continue
+
+                    const pairKey = `${savedTeacherId}::${matiereId}`
+                    if (existingPairs.has(pairKey)) continue
+
+                    const addRes = await addEnseignement({
+                        id_matiere: matiereId,
+                        id_prof: savedTeacherId,
+                        heures_td: 0,
+                        heures_tp: 0,
+                        heures_projet: 0,
+                        heures_elearning: 0,
+                        heures_autre: 0,
+                    })
+
+                    if (!addRes.success) {
+                        throw new Error(
+                            addRes.error?.message ?? 'Failed to create enseignement',
+                        )
+                    }
+
+                    existingPairs.add(pairKey)
+                }
             }
 
             setSnapshot({
