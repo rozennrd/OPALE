@@ -1,5 +1,5 @@
 // src/pages/Events.tsx
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import EventsToolbar, {
     TargetFilter,
     TypeFilter,
@@ -20,6 +20,10 @@ interface MonthGroup {
     events: CampusEvent[]
 }
 
+type SaveResult =
+    | { success: true; error?: undefined }
+    | { success: false; error: string }
+
 const DEFAULT_EVENT_FILTERS: {
     searchValue: string
     dateFrom: string
@@ -34,25 +38,7 @@ const DEFAULT_EVENT_FILTERS: {
     type: 'ALL',
 }
 
-const createFrontendEventId = () =>
-    `evt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
-
-const normalizeEventForList = (event: CampusEvent): CampusEvent => {
-    const startDate = event.startDate ?? event.date ?? ''
-    const endDate = event.endDate ?? startDate
-    const date = startDate || endDate || event.date
-
-    return {
-        ...event,
-        startDate,
-        endDate,
-        date,
-        showMacro: event.showMacro ?? true,
-        showMicro: event.showMicro ?? false,
-        concernedCycleIds: [...(event.concernedCycleIds ?? [])],
-        concernedPromotionIds: [...(event.concernedPromotionIds ?? [])],
-    }
-}
+const createFrontendEventId = () => `evt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 
 function getMonthKey(dateStr: string): string {
     const d = new Date(dateStr)
@@ -70,8 +56,43 @@ function getMonthLabel(dateStr: string): string {
     return label.charAt(0).toUpperCase() + label.slice(1)
 }
 
+/**
+ * Assure qu'on a toujours startDate/endDate exploitables côté liste.
+ * (utile si certains retours API ont un champ optionnel ou vide)
+ */
+const normalizeEventForList = (event: CampusEvent): CampusEvent => {
+    const startDate = event.startDate ?? ''
+    const endDate = event.endDate ?? startDate
+
+    return {
+        ...event,
+        startDate,
+        endDate,
+        // champs optionnels éventuels : on garde ce que le modèle expose
+        show_macro: event.show_macro ?? true,
+        show_micro: event.show_micro ?? false,
+        concernedCycleIds: [...(event.concernedCycleIds ?? [])],
+        concernedPromotionIds: [...(event.concernedPromotionIds ?? [])],
+    }
+}
+
 export default function Events() {
-    const { events, loading, error, createEvent, updateEvent } = useEvents()
+    const {
+        events,
+        loading,
+        error,
+        createEvent,
+        updateEvent,
+    } = useEvents()
+
+    const [eventsState, setEventsState] = useState<CampusEvent[]>([])
+    const hasLocalEditsRef = useRef(false)
+
+    useEffect(() => {
+        if (!hasLocalEditsRef.current) {
+            setEventsState((events ?? []).map(normalizeEventForList))
+        }
+    }, [events])
 
     const [searchValue, setSearchValue] = useState('')
     const [dateFrom, setDateFrom] = useState('')
@@ -104,7 +125,7 @@ export default function Events() {
     })
 
     const filteredEvents = useMemo(() => {
-        let items = [...events]
+        let items = [...eventsState]
 
         items.sort(
             (a, b) =>
@@ -117,7 +138,7 @@ export default function Events() {
                 (evt) =>
                     evt.name.toLowerCase().includes(q) ||
                     evt.location.toLowerCase().includes(q) ||
-                    evt.description?.toLowerCase().includes(q)
+                    evt.description?.toLowerCase().includes(q),
             )
         }
 
@@ -146,22 +167,20 @@ export default function Events() {
         }
 
         return items
-    }, [events, searchValue, dateFrom, dateTo, target, type])
+    }, [eventsState, searchValue, dateFrom, dateTo, target, type])
 
-    const {
-        hasActiveFilters,
-        resetFilters: handleResetFilters,
-    } = useToolbarFilters({
-        values: { searchValue, dateFrom, dateTo, target, type },
-        defaults: DEFAULT_EVENT_FILTERS,
-        onReset: () => {
-            setSearchValue(DEFAULT_EVENT_FILTERS.searchValue)
-            setDateFrom(DEFAULT_EVENT_FILTERS.dateFrom)
-            setDateTo(DEFAULT_EVENT_FILTERS.dateTo)
-            setTarget(DEFAULT_EVENT_FILTERS.target)
-            setType(DEFAULT_EVENT_FILTERS.type)
-        },
-    })
+    const { hasActiveFilters, resetFilters: handleResetFilters } =
+        useToolbarFilters({
+            values: { searchValue, dateFrom, dateTo, target, type },
+            defaults: DEFAULT_EVENT_FILTERS,
+            onReset: () => {
+                setSearchValue(DEFAULT_EVENT_FILTERS.searchValue)
+                setDateFrom(DEFAULT_EVENT_FILTERS.dateFrom)
+                setDateTo(DEFAULT_EVENT_FILTERS.dateTo)
+                setTarget(DEFAULT_EVENT_FILTERS.target)
+                setType(DEFAULT_EVENT_FILTERS.type)
+            },
+        })
 
     const visibleEventIds = useMemo(
         () => filteredEvents.map((event) => event.id),
@@ -187,16 +206,24 @@ export default function Events() {
         return groups
     }, [filteredEvents])
 
-    const removeEventsByIds = (ids: string[]) => {
+    const removeEventsByIds = async (ids: string[]) => {
         const idsSet = new Set(ids)
         if (idsSet.size === 0) return
 
-        setEvents((prev) => prev.filter((event) => !idsSet.has(event.id)))
+        hasLocalEditsRef.current = true
+
+       /* if (deleteEvents) {
+            await deleteEvents(Array.from(idsSet))
+        } else {
+            console.log('[EVENTS] deleteEvents non disponible, ids=', ids)
+        }*/
+
+        setEventsState((prev) => prev.filter((e) => !idsSet.has(e.id)))
         pruneEventSelection(Array.from(idsSet))
+
         setSelectedEvent((prev) => {
             if (!prev) return prev
-            if (idsSet.has(prev.id)) return null
-            return prev
+            return idsSet.has(prev.id) ? null : prev
         })
     }
 
@@ -213,68 +240,72 @@ export default function Events() {
     }
 
     const handleCreateRequested = () => {
-        const today = new Date().toISOString().slice(0, 10)
-        const newEvent: CampusEvent = {
+        const now = new Date()
+        const start = now.toISOString()
+        const end = new Date(now.getTime() + 60 * 60 * 1000).toISOString()
+
+        const newEvent: CampusEvent = normalizeEventForList({
             id: 'new-event',
             name: '',
-            date: today,
-            startDate: now.toISOString(),
-            endDate: new Date(now.getTime() + 3600000).toISOString(),
+            startDate: start,
+            endDate: end,
             location: '',
             type: 'AUTRE',
             source: 'JUNIA',
             description: '',
             show_macro: true,
-            show_micro: true,
-            is_blocking: false,
-            is_exceptional: true,
-            is_external: false,
+            show_micro: false,
             concernedCycleIds: [],
             concernedPromotionIds: [],
-        }
+        })
 
         setDetailMode('create')
         setSelectedEvent(newEvent)
     }
-    
-    const handleSaveEvent = async (event: Partial<CampusEvent>, salleIds: string[]) => {
-        const isCreateSave = detailMode === 'create' || savedEvent.id === 'new-event'
-        const previousEventId = savedEvent.id
-        
-        const normalized = normalizeEventForList({
-            ...savedEvent,
-            id: isCreateSave ? createFrontendEventId() : savedEvent.id,
+
+    const handleSaveEvent = async (
+        event: Partial<CampusEvent>,
+        salleIds: string[],
+    ) => {
+        if (!selectedEvent) return
+
+        const isCreate = detailMode === 'create' || event.id === 'new-event'
+
+        hasLocalEditsRef.current = true
+
+        const nextEvent: CampusEvent = normalizeEventForList({
+            ...(isCreate ? { ...selectedEvent, id: createFrontendEventId() } : selectedEvent),
+            ...event,
+            startDate: event.startDate ?? selectedEvent.startDate,
+            endDate: event.endDate ?? selectedEvent.endDate,
         })
 
-        if (detailMode === 'create') {
-            return await createEvent(event, salleIds)
-        } else {
-            return await updateEvent(event.id!, event, salleIds)
-        }
-        
-         setEvents((prev) => {
-            if (isCreateSave) {
-                return [...prev, normalized]
-            }
-
-            return prev.map((event) =>
-                event.id === previousEventId ? normalized : event,
-            )
+        setEventsState((prev) => {
+            if (isCreate) return [...prev, nextEvent]
+            return prev.map((e) => (e.id === nextEvent.id ? nextEvent : e))
         })
 
-        setSelectedEvent(normalized)
-        if (isCreateSave) {
-            setDetailMode('edit')
+        setSelectedEvent(nextEvent)
+        setDetailMode('edit')
+
+        const res: SaveResult = isCreate
+            ? await createEvent(event, salleIds)
+            : await updateEvent(nextEvent.id, event, salleIds)
+
+        if (!res.success) {
+            console.error('[EVENTS] Save failed:', res.error)
         }
+
+        return res
     }
-      
-    const handleDeleteSingleEvent = (eventId: string) => {
-        removeEventsByIds([eventId])
+
+    const handleDeleteSingleEvent = async (eventId: string) => {
+        await removeEventsByIds([eventId])
         setDetailMode('edit')
     }
 
-    const handleDeleteSelected = () => {
-        removeEventsByIds(selectedEventIds)
+    const handleDeleteSelected = async () => {
+        await removeEventsByIds(selectedEventIds)
         disableEventSelectionMode()
     }
 
@@ -358,9 +389,7 @@ export default function Events() {
                                                         <EventCard
                                                             key={event.id}
                                                             event={event}
-                                                            onSelect={
-                                                                handleSelectEvent
-                                                            }
+                                                            onSelect={handleSelectEvent}
                                                             selectionMode={selectionMode}
                                                             selected={selectedEventIdsSet.has(
                                                                 event.id,
@@ -378,7 +407,8 @@ export default function Events() {
                             </div>
                         ) : (
                             <div className="events-empty-state">
-                                Aucun événement ne correspond aux filtres sélectionnés.
+                                Aucun evenement ne correspond aux filtres
+                                selectionnes.
                             </div>
                         )}
                     </div>

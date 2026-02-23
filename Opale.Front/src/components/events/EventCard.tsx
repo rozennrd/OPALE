@@ -49,7 +49,7 @@ export default function EventCard({
         }
 
         console.log('[EVENTS] Click event card', event)
-        // if (onSelect) onSelect(event)
+         if (onSelect) onSelect(event)
     }
 
     return (
