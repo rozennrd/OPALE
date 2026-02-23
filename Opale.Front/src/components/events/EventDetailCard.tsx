@@ -1,5 +1,3 @@
-// src/components/events/EventDetailCard.tsx
-
 import React from 'react'
 import { CampusEvent, EventType } from '../../models/CampusEvent'
 import { useEventDetail } from '../../hooks/events/useEventDetail'
@@ -12,13 +10,15 @@ import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 import { ROOMS_MOCK } from '../../mocks/rooms.mock'
 
+type SaveResult = { success: boolean; error?: string }
+
 interface EventDetailCardProps {
     event: CampusEvent
     cycles?: Cycle[]
-    onClose: () => void
-    onSave?: (event: CampusEvent) => void
     onDelete?: () => void
     mode?: 'edit' | 'create'
+    onClose: () => void
+    onSave: (event: Partial<CampusEvent>, salleIds: string[]) => Promise<SaveResult>
 }
 
 function formatDate(date: string | undefined): string {
@@ -30,6 +30,11 @@ function formatDate(date: string | undefined): string {
         month: '2-digit',
         year: 'numeric',
     })
+}
+
+function toDatetimeLocal(isoString: string): string {
+    if (!isoString) return ''
+    return isoString.slice(0, 16)
 }
 
 const EVENT_LOCATION_DATALIST_ID = 'event-location-suggestions'
@@ -45,43 +50,24 @@ const EVENT_ROOM_LOCATION_SUGGESTIONS = Array.from(
 const CREATE_EVENT_REQUIRED_FIELDS_ALERT =
     'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de creer cet evenement.'
 
-const mapDraftToEvent = (
-    baseEvent: CampusEvent,
-    draft: ReturnType<typeof useEventDetail>['draft'],
-): CampusEvent => {
-    const startDate = draft.startDate.trim()
-    const endDate = draft.endDate.trim()
-    const dateForList = startDate || endDate || baseEvent.date
-
-    return {
-        ...baseEvent,
-        id: draft.id,
-        name: draft.name.trim(),
-        date: dateForList,
-        startDate,
-        endDate,
-        location: draft.location.trim(),
-        source: draft.source,
-        type: draft.type,
-        description: draft.description,
-        showMacro: draft.showMacro,
-        showMicro: draft.showMicro,
-        concernedCycleIds: [...draft.concernedCycleIds],
-        concernedPromotionIds: [...draft.concernedPromotionIds],
-    }
-}
-
 export default function EventDetailCard({
-    event,
-    cycles = [],
-    onClose,
-    onSave,
-    onDelete,
-    mode = 'edit',
-}: EventDetailCardProps) {
-    const isCreate = mode === 'create' || event.id === 'new-event'
-    const { draft, hasChanges, updateField, updateFields, handleSave } =
-        useEventDetail(event)
+                                            event,
+                                            cycles = [],
+                                            onClose,
+                                            onSave,
+                                            onDelete,
+                                            mode = 'edit',
+                                        }: EventDetailCardProps) {
+    const isCreate = mode === 'create'
+
+    const {
+        draft,
+        hasChanges,
+        saving,
+        updateField,
+        updateFields,
+        handleSave,
+    } = useEventDetail(event, onSave)
 
     const isValid =
         draft.name.trim().length > 0 &&
@@ -101,9 +87,11 @@ export default function EventDetailCard({
 
     const selectedPromotionId = draft.concernedPromotionIds[0] ?? ''
 
-    const saveDraft = () => {
-        const savedDraft = handleSave()
-        onSave?.(mapDraftToEvent(event, savedDraft))
+    const saveDraft = async () => {
+        const result = await handleSave()
+        if (!result.success) {
+            console.error('[EVENTS] Save failed:', result.error)
+        }
     }
 
     const handleSourceChange = (source: 'JUNIA' | 'EXTERNE') => {
@@ -149,7 +137,7 @@ export default function EventDetailCard({
             draft.startDate !== draft.endDate
                 ? ` -> ${formatDate(draft.endDate)}`
                 : ''
-        const location = draft.location ? ` · ${draft.location}` : ''
+        const location = draft.location ? ` Â· ${draft.location}` : ''
         return `${start}${end}${location}`
     })()
 
@@ -167,7 +155,7 @@ export default function EventDetailCard({
                 window.alert(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
                 return
             }
-            saveDraft()
+            void saveDraft()
             onClose()
         },
         ignoreWhenSelectorExists: '.modal-overlay',
@@ -215,9 +203,9 @@ export default function EventDetailCard({
                             <dt>Date de debut</dt>
                             <dd>
                                 <input
-                                    type="date"
+                                    type="datetime-local"
                                     className="event-detail-input"
-                                    value={draft.startDate}
+                                    value={toDatetimeLocal(draft.startDate)}
                                     onChange={(e) =>
                                         updateField('startDate', e.target.value)
                                     }
@@ -229,9 +217,9 @@ export default function EventDetailCard({
                             <dt>Date de fin</dt>
                             <dd>
                                 <input
-                                    type="date"
+                                    type="datetime-local"
                                     className="event-detail-input"
-                                    value={draft.endDate}
+                                    value={toDatetimeLocal(draft.endDate)}
                                     onChange={(e) =>
                                         updateField('endDate', e.target.value)
                                     }
@@ -359,11 +347,11 @@ export default function EventDetailCard({
                                     type="button"
                                     className={
                                         'event-visibility-switch' +
-                                        (draft.showMacro ? ' is-on' : '')
+                                        (draft.show_macro ? ' is-on' : '')
                                     }
-                                    aria-pressed={draft.showMacro}
+                                    aria-pressed={draft.show_macro}
                                     onClick={() =>
-                                        updateField('showMacro', !draft.showMacro)
+                                        updateField('show_macro', !draft.show_macro)
                                     }
                                 >
                                     <span
@@ -373,7 +361,7 @@ export default function EventDetailCard({
                                         <span className="event-visibility-switch-thumb" />
                                     </span>
                                     <span className="event-visibility-switch-label">
-                                        {draft.showMacro ? 'Oui' : 'Non'}
+                                        {draft.show_macro ? 'Oui' : 'Non'}
                                     </span>
                                 </button>
                             </dd>
@@ -386,11 +374,11 @@ export default function EventDetailCard({
                                     type="button"
                                     className={
                                         'event-visibility-switch' +
-                                        (draft.showMicro ? ' is-on' : '')
+                                        (draft.show_micro ? ' is-on' : '')
                                     }
-                                    aria-pressed={draft.showMicro}
+                                    aria-pressed={draft.show_micro}
                                     onClick={() =>
-                                        updateField('showMicro', !draft.showMicro)
+                                        updateField('show_micro', !draft.show_micro)
                                     }
                                 >
                                     <span
@@ -400,11 +388,14 @@ export default function EventDetailCard({
                                         <span className="event-visibility-switch-thumb" />
                                     </span>
                                     <span className="event-visibility-switch-label">
-                                        {draft.showMicro ? 'Oui' : 'Non'}
+                                        {draft.show_micro ? 'Oui' : 'Non'}
                                     </span>
                                 </button>
                             </dd>
                         </div>
+
+                        {/* NOTE: toggleSalle est disponible si tu ajoutes une UI de sÃ©lection des salles */}
+                        {/* toggleSalle('room-id') */}
                     </dl>
                 </section>
 
@@ -425,11 +416,11 @@ export default function EventDetailCard({
 
                 <DetailCardFooter
                     onCancel={onClose}
-                    onSave={saveDraft}
+                    onSave={() => void saveDraft()}
                     onAfterSaveConfirm={isCreate ? onClose : undefined}
                     onDelete={isCreate ? undefined : onDelete}
                     hasChanges={hasChanges}
-                    saveLabel={isCreate ? 'Creer' : 'Enregistrer'}
+                    saveLabel={saving ? 'Enregistrement...' : isCreate ? 'Creer' : 'Enregistrer'}
                     deleteLabel="Supprimer"
                     deleteTitle="Supprimer cet evenement"
                     deleteMessage={
@@ -449,17 +440,22 @@ export default function EventDetailCard({
                     confirmMessage={
                         isCreate ? (
                             <>
-                                Vous etes sur le point de creer l evenement{' '}
-                                <strong>{draft.name || 'sans titre'}</strong>.
+                                Vous Ãªtes sur le point de crÃ©er
+                                l&apos;Ã©vÃ©nement{' '}
+                                <strong>
+                                    {draft.name || 'sans titre'}
+                                </strong>
+                                .
                                 <br />
-                                Confirmer ?
+                                Confirmer&nbsp;?
                             </>
                         ) : (
                             <>
-                                Vous etes sur le point d enregistrer les
-                                modifications pour <strong>{draft.name}</strong>.
+                                Vous Ãªtes sur le point d&apos;enregistrer les
+                                modifications pour{' '}
+                                <strong>{draft.name}</strong>.
                                 <br />
-                                Confirmer ?
+                                Confirmer&nbsp;?
                             </>
                         )
                     }

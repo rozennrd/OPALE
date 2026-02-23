@@ -1,23 +1,28 @@
 // src/pages/Events.tsx
-import React, { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import EventsToolbar, {
     TargetFilter,
     TypeFilter,
 } from '../components/events/EventsToolbar'
 import EventCard from '../components/events/EventCard'
 import EventDetailCard from '../components/events/EventDetailCard'
-import {
-    JUNIA_EVENTS_MOCK,
-    EXTERNAL_EVENTS_MOCK,
-} from '../mocks/events.mock'
 import { CampusEvent } from '../models/CampusEvent'
 import SectionHeader from '../components/common/SectionHeader'
+import { useEvents } from '../hooks/events/useEvent'
 import SelectionToolbar from '../components/common/SelectionToolbar'
 import { useSelectionState } from '../hooks/common/useSelectionState'
 import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
 import { usePromotionCycles } from '../hooks/promotions/usePromotionCycles'
 
-const ALL_EVENTS = [...JUNIA_EVENTS_MOCK, ...EXTERNAL_EVENTS_MOCK]
+interface MonthGroup {
+    key: string
+    label: string
+    events: CampusEvent[]
+}
+
+type SaveResult =
+    | { success: true; error?: undefined }
+    | { success: false; error: string }
 
 const DEFAULT_EVENT_FILTERS: {
     searchValue: string
@@ -33,25 +38,7 @@ const DEFAULT_EVENT_FILTERS: {
     type: 'ALL',
 }
 
-const createFrontendEventId = () =>
-    `evt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
-
-const normalizeEventForList = (event: CampusEvent): CampusEvent => {
-    const startDate = event.startDate ?? event.date ?? ''
-    const endDate = event.endDate ?? startDate
-    const date = startDate || endDate || event.date
-
-    return {
-        ...event,
-        startDate,
-        endDate,
-        date,
-        showMacro: event.showMacro ?? true,
-        showMicro: event.showMicro ?? false,
-        concernedCycleIds: [...(event.concernedCycleIds ?? [])],
-        concernedPromotionIds: [...(event.concernedPromotionIds ?? [])],
-    }
-}
+const createFrontendEventId = () => `evt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 
 function getMonthKey(dateStr: string): string {
     const d = new Date(dateStr)
@@ -69,10 +56,43 @@ function getMonthLabel(dateStr: string): string {
     return label.charAt(0).toUpperCase() + label.slice(1)
 }
 
+/**
+ * Assure qu'on a toujours startDate/endDate exploitables côté liste.
+ * (utile si certains retours API ont un champ optionnel ou vide)
+ */
+const normalizeEventForList = (event: CampusEvent): CampusEvent => {
+    const startDate = event.startDate ?? ''
+    const endDate = event.endDate ?? startDate
+
+    return {
+        ...event,
+        startDate,
+        endDate,
+        // champs optionnels éventuels : on garde ce que le modèle expose
+        show_macro: event.show_macro ?? true,
+        show_micro: event.show_micro ?? false,
+        concernedCycleIds: [...(event.concernedCycleIds ?? [])],
+        concernedPromotionIds: [...(event.concernedPromotionIds ?? [])],
+    }
+}
+
 export default function Events() {
-    const [events, setEvents] = useState<CampusEvent[]>(() =>
-        ALL_EVENTS.map((event) => normalizeEventForList(event)),
-    )
+    const {
+        events,
+        loading,
+        error,
+        createEvent,
+        updateEvent,
+    } = useEvents()
+
+    const [eventsState, setEventsState] = useState<CampusEvent[]>([])
+    const hasLocalEditsRef = useRef(false)
+
+    useEffect(() => {
+        if (!hasLocalEditsRef.current) {
+            setEventsState((events ?? []).map(normalizeEventForList))
+        }
+    }, [events])
 
     const [searchValue, setSearchValue] = useState('')
     const [dateFrom, setDateFrom] = useState('')
@@ -105,27 +125,35 @@ export default function Events() {
     })
 
     const filteredEvents = useMemo(() => {
-        let items = [...events]
+        let items = [...eventsState]
 
-        items.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        items.sort(
+            (a, b) =>
+                new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+        )
 
         if (searchValue.trim()) {
             const q = searchValue.trim().toLowerCase()
             items = items.filter(
                 (evt) =>
                     evt.name.toLowerCase().includes(q) ||
-                    evt.location.toLowerCase().includes(q),
+                    evt.location.toLowerCase().includes(q) ||
+                    evt.description?.toLowerCase().includes(q),
             )
         }
 
         if (dateFrom) {
             const min = new Date(dateFrom).getTime()
-            items = items.filter((evt) => new Date(evt.date).getTime() >= min)
+            items = items.filter(
+                (evt) => new Date(evt.startDate).getTime() >= min,
+            )
         }
 
         if (dateTo) {
             const max = new Date(dateTo).getTime()
-            items = items.filter((evt) => new Date(evt.date).getTime() <= max)
+            items = items.filter(
+                (evt) => new Date(evt.startDate).getTime() <= max,
+            )
         }
 
         if (target === 'JUNIA') {
@@ -139,22 +167,20 @@ export default function Events() {
         }
 
         return items
-    }, [events, searchValue, dateFrom, dateTo, target, type])
+    }, [eventsState, searchValue, dateFrom, dateTo, target, type])
 
-    const {
-        hasActiveFilters,
-        resetFilters: handleResetFilters,
-    } = useToolbarFilters({
-        values: { searchValue, dateFrom, dateTo, target, type },
-        defaults: DEFAULT_EVENT_FILTERS,
-        onReset: () => {
-            setSearchValue(DEFAULT_EVENT_FILTERS.searchValue)
-            setDateFrom(DEFAULT_EVENT_FILTERS.dateFrom)
-            setDateTo(DEFAULT_EVENT_FILTERS.dateTo)
-            setTarget(DEFAULT_EVENT_FILTERS.target)
-            setType(DEFAULT_EVENT_FILTERS.type)
-        },
-    })
+    const { hasActiveFilters, resetFilters: handleResetFilters } =
+        useToolbarFilters({
+            values: { searchValue, dateFrom, dateTo, target, type },
+            defaults: DEFAULT_EVENT_FILTERS,
+            onReset: () => {
+                setSearchValue(DEFAULT_EVENT_FILTERS.searchValue)
+                setDateFrom(DEFAULT_EVENT_FILTERS.dateFrom)
+                setDateTo(DEFAULT_EVENT_FILTERS.dateTo)
+                setTarget(DEFAULT_EVENT_FILTERS.target)
+                setType(DEFAULT_EVENT_FILTERS.type)
+            },
+        })
 
     const visibleEventIds = useMemo(
         () => filteredEvents.map((event) => event.id),
@@ -162,22 +188,15 @@ export default function Events() {
     )
 
     const monthGroups = useMemo(() => {
-        const groups: {
-            key: string
-            label: string
-            events: CampusEvent[]
-        }[] = []
-        const byKey = new Map<
-            string,
-            { key: string; label: string; events: CampusEvent[] }
-        >()
+        const groups: MonthGroup[] = []
+        const byKey = new Map<string, MonthGroup>()
 
         for (const evt of filteredEvents) {
-            const key = getMonthKey(evt.date)
-            const label = getMonthLabel(evt.date)
+            const key = getMonthKey(evt.startDate)
+            const label = getMonthLabel(evt.startDate)
 
             if (!byKey.has(key)) {
-                const group = { key, label, events: [] as CampusEvent[] }
+                const group: MonthGroup = { key, label, events: [] }
                 byKey.set(key, group)
                 groups.push(group)
             }
@@ -187,16 +206,24 @@ export default function Events() {
         return groups
     }, [filteredEvents])
 
-    const removeEventsByIds = (ids: string[]) => {
+    const removeEventsByIds = async (ids: string[]) => {
         const idsSet = new Set(ids)
         if (idsSet.size === 0) return
 
-        setEvents((prev) => prev.filter((event) => !idsSet.has(event.id)))
+        hasLocalEditsRef.current = true
+
+       /* if (deleteEvents) {
+            await deleteEvents(Array.from(idsSet))
+        } else {
+            console.log('[EVENTS] deleteEvents non disponible, ids=', ids)
+        }*/
+
+        setEventsState((prev) => prev.filter((e) => !idsSet.has(e.id)))
         pruneEventSelection(Array.from(idsSet))
+
         setSelectedEvent((prev) => {
             if (!prev) return prev
-            if (idsSet.has(prev.id)) return null
-            return prev
+            return idsSet.has(prev.id) ? null : prev
         })
     }
 
@@ -213,59 +240,89 @@ export default function Events() {
     }
 
     const handleCreateRequested = () => {
-        const today = new Date().toISOString().slice(0, 10)
-        const newEvent: CampusEvent = {
+        const now = new Date()
+        const start = now.toISOString()
+        const end = new Date(now.getTime() + 60 * 60 * 1000).toISOString()
+
+        const newEvent: CampusEvent = normalizeEventForList({
             id: 'new-event',
             name: '',
-            date: today,
-            startDate: today,
-            endDate: today,
+            startDate: start,
+            endDate: end,
             location: '',
             type: 'AUTRE',
             source: 'JUNIA',
             description: '',
-            showMacro: true,
-            showMicro: false,
+            show_macro: true,
+            show_micro: false,
             concernedCycleIds: [],
             concernedPromotionIds: [],
-        }
+        })
 
         setDetailMode('create')
         setSelectedEvent(newEvent)
     }
 
-    const handleSaveEvent = (savedEvent: CampusEvent) => {
-        const isCreateSave = detailMode === 'create' || savedEvent.id === 'new-event'
-        const previousEventId = savedEvent.id
-        const normalized = normalizeEventForList({
-            ...savedEvent,
-            id: isCreateSave ? createFrontendEventId() : savedEvent.id,
+    const handleSaveEvent = async (
+        event: Partial<CampusEvent>,
+        salleIds: string[],
+    ) => {
+        if (!selectedEvent) return
+
+        const isCreate = detailMode === 'create' || event.id === 'new-event'
+
+        hasLocalEditsRef.current = true
+
+        const nextEvent: CampusEvent = normalizeEventForList({
+            ...(isCreate ? { ...selectedEvent, id: createFrontendEventId() } : selectedEvent),
+            ...event,
+            startDate: event.startDate ?? selectedEvent.startDate,
+            endDate: event.endDate ?? selectedEvent.endDate,
         })
 
-        setEvents((prev) => {
-            if (isCreateSave) {
-                return [...prev, normalized]
-            }
-
-            return prev.map((event) =>
-                event.id === previousEventId ? normalized : event,
-            )
+        setEventsState((prev) => {
+            if (isCreate) return [...prev, nextEvent]
+            return prev.map((e) => (e.id === nextEvent.id ? nextEvent : e))
         })
 
-        setSelectedEvent(normalized)
-        if (isCreateSave) {
-            setDetailMode('edit')
+        setSelectedEvent(nextEvent)
+        setDetailMode('edit')
+
+        const res: SaveResult = isCreate
+            ? await createEvent(event, salleIds)
+            : await updateEvent(nextEvent.id, event, salleIds)
+
+        if (!res.success) {
+            console.error('[EVENTS] Save failed:', res.error)
         }
+
+        return res
     }
 
-    const handleDeleteSingleEvent = (eventId: string) => {
-        removeEventsByIds([eventId])
+    const handleDeleteSingleEvent = async (eventId: string) => {
+        await removeEventsByIds([eventId])
         setDetailMode('edit')
     }
 
-    const handleDeleteSelected = () => {
-        removeEventsByIds(selectedEventIds)
+    const handleDeleteSelected = async () => {
+        await removeEventsByIds(selectedEventIds)
         disableEventSelectionMode()
+    }
+
+    if (loading) {
+        return (
+            <div className="page-loading">
+                <p>Chargement des événements...</p>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="page-error">
+                <p>Erreur: {error}</p>
+            </div>
+        )
     }
 
     return (
@@ -322,9 +379,7 @@ export default function Events() {
                                             <SectionHeader
                                                 title={group.label}
                                                 isOpen={isOpen}
-                                                onToggle={() =>
-                                                    toggleMonth(group.key)
-                                                }
+                                                onToggle={() => toggleMonth(group.key)}
                                                 wrapperClassName="events-month-header"
                                             />
 
@@ -334,9 +389,7 @@ export default function Events() {
                                                         <EventCard
                                                             key={event.id}
                                                             event={event}
-                                                            onSelect={
-                                                                handleSelectEvent
-                                                            }
+                                                            onSelect={handleSelectEvent}
                                                             selectionMode={selectionMode}
                                                             selected={selectedEventIdsSet.has(
                                                                 event.id,

@@ -1,5 +1,4 @@
 // src/components/events/EventsToolbar.tsx
-import React from 'react'
 import { EventType } from '../../models/CampusEvent'
 import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'

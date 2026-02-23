@@ -45,6 +45,11 @@ export interface VerifyResponse {
   userId: string
 }
 
+// Generic type for grouped data : T-type element tables
+export interface GroupedData<T> {
+  [key: string]: T[]
+}
+
 // Default API configuration
 export const DEFAULT_API_CONFIG = {
   baseUrl: import.meta.env.VITE_RACINE_FETCHER_URL || 'http://localhost:3000',
