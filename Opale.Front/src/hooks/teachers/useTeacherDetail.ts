@@ -201,6 +201,7 @@ export const useTeacherDetail = (
     // ✅ snapshot "dernière sauvegarde"
     const [snapshot, setSnapshot] = useState<TeacherSnapshot | null>(null)
     const [hasChanges, setHasChanges] = useState(false)
+    const [deletedDisponibiliteIds, setDeletedDisponibiliteIds] = useState<string[]>([])
 
     // Reset complet quand on change d’enseignant
     useEffect(() => {
@@ -216,6 +217,7 @@ export const useTeacherDetail = (
             periods: initialPeriods,
         })
         setHasChanges(false)
+        setDeletedDisponibiliteIds([])
     }, [teacher])
 
     // ✅ Détection des changements par rapport au snapshot
@@ -307,6 +309,16 @@ export const useTeacherDetail = (
     const handleRemovePeriod = (id: string) => {
         setPeriods((prev) => {
             if (prev.length <= 1) return prev
+            const removed = prev.find((p) => p.id === id)
+            if (removed?.id?.startsWith('dispo-')) {
+                const dbId = removed.id.replace('dispo-', '')
+                if (dbId) {
+                    setDeletedDisponibiliteIds((current) =>
+                        current.includes(dbId) ? current : [...current, dbId],
+                    )
+                }
+            }
+
             const filtered = prev.filter((p) => p.id !== id)
             if (filtered.length === 0) return prev
             if (id === selectedPeriodId) {
@@ -467,6 +479,18 @@ export const useTeacherDetail = (
                     }
                 }
 
+                if (deletedDisponibiliteIds.length > 0) {
+                    for (const dispoId of deletedDisponibiliteIds) {
+                        const deleteRes = await deleteDisponibilite(String(dispoId))
+                        if (!deleteRes.success) {
+                            throw new Error(
+                                deleteRes.error?.message ??
+                                    `Failed to delete disponibilite ${dispoId}`,
+                            )
+                        }
+                    }
+                }
+
                 if (desiredWeekToMicro.size > 0) {
                     const disponibilityRes = await getDisponibilites()
                     if (!disponibilityRes.success) {
@@ -565,6 +589,7 @@ export const useTeacherDetail = (
                 periods: refreshedPeriods,
             })
             setHasChanges(false)
+            setDeletedDisponibiliteIds([])
             onTeacherSaved?.(savedTeacherWithPeriods)
 
             return true
