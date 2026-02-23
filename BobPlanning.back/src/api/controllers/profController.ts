@@ -104,6 +104,7 @@ export const profController = {
                 prenom: dto.prenom,
                 email: dto.email,
                 email_perso: dto.email_perso,
+                telephone: dto.telephone,
                 type: dto.type,
                 modalite_enseignement: dto.modalite_enseignement,
                 campus_origin: dto.campus_origin,
