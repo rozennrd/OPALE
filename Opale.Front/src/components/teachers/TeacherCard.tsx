@@ -1,6 +1,5 @@
 // src/components/teachers/TeacherCard.tsx
-import React from 'react'
-import { Teacher } from '../../models/Teacher'
+import { Teacher } from '../../models/Teachers'
 import TeacherModeBadge from './TeacherModeBadge'
 import icTel from '../../assets/ic-tel.png'
 import EntityCard from '../common/EntityCard'

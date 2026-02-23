@@ -1,5 +1,5 @@
 // src/components/matieres/MatiereDetailCard.tsx
-import React, { useEffect, useMemo, useState, useRef } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { Matiere } from '../../models/Matiere'
 import DetailCardBody from '../common/DetailCardBody'
 import DetailCardHeader from '../common/DetailCardHeader'
@@ -67,7 +67,7 @@ export default function MatiereDetailCard({
     const [projectHours, setProjectHours] = useState<HoursValue>(matiere.heures_projet ?? 0)
     const [eLearningHours, setELearningHours] = useState<HoursValue>(matiere.heures_elearning ?? 0)
     const [autresHours, setAutresHours] = useState<HoursValue>(matiere.heures_autre ?? 0)
-    const [volumeIncreaseMessage, setVolumeIncreaseMessage] = useState<string | null>(null)
+    const [ , setVolumeIncreaseMessage] = useState<string | null>(null)
 
     // --- right column (enseignements)
     const [loadingEns, setLoadingEns] = useState(false)
