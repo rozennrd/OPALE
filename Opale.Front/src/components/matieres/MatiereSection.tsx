@@ -8,9 +8,19 @@ interface MatiereSectionProps {
     promoLabel: string
     matieres: Matiere[]
     onSelectMatiere: (m: Matiere) => void
+    selectionMode?: boolean
+    selectedMatiereIds?: Set<string>
+    onToggleMatiereSelection?: (matiereId: string) => void
 }
 
-export default function MatiereSection({ promoLabel, matieres, onSelectMatiere }: MatiereSectionProps) {
+export default function MatiereSection({
+    promoLabel,
+    matieres,
+    onSelectMatiere,
+    selectionMode = false,
+    selectedMatiereIds,
+    onToggleMatiereSelection,
+}: MatiereSectionProps) {
     const [isOpen, setIsOpen] = useState(true)
 
     const totalHours = useMemo(
@@ -43,6 +53,13 @@ export default function MatiereSection({ promoLabel, matieres, onSelectMatiere }
                             key={matiere.id}
                             matiere={matiere}
                             onSelect={() => onSelectMatiere(matiere)}
+                            selectionMode={selectionMode}
+                            selected={selectedMatiereIds?.has(matiere.id) ?? false}
+                            onToggleSelect={() => {
+                                if (onToggleMatiereSelection) {
+                                    onToggleMatiereSelection(matiere.id)
+                                }
+                            }}
                         />
                     ))}
                 </div>

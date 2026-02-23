@@ -1,5 +1,5 @@
 // src/components/teachers/TeacherDetailCard.tsx
-import React, { useState } from 'react'
+import React from 'react'
 import { Teacher } from '../../models/Teacher'
 import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import TeacherInfoColumn from './section/TeacherInfoColumn'
@@ -15,12 +15,14 @@ import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 interface TeacherDetailCardProps {
     teacher: Teacher
     onClose: () => void
+    onDelete?: () => void
 }
 
 export default function TeacherDetailCard({
-                                              teacher,
-                                              onClose,
-                                          }: TeacherDetailCardProps) {
+    teacher,
+    onClose,
+    onDelete,
+}: TeacherDetailCardProps) {
     const {
         teacherDraft,
         periods,
@@ -59,11 +61,12 @@ export default function TeacherDetailCard({
         const lower = value.toLowerCase()
         if (lower.includes('bordeaux')) return 'Bordeaux'
         if (lower.includes('lille')) return 'Lille'
-        if (lower.includes('chÃ¢teauroux') || lower.includes('chateauroux')) {
-            return 'ChÃ¢teauroux'
+        if (lower.includes('châteauroux') || lower.includes('chateauroux')) {
+            return 'Châteauroux'
         }
         return value
     }
+
     const sectionLabel =
         teacherDraft.category === 'VACATAIRE'
             ? 'Vacataire'
@@ -81,7 +84,7 @@ export default function TeacherDetailCard({
                     <TeacherModeBadge
                         mode={teacherDraft.mode}
                         variant="header"
-                        title="Détail enseignant"
+                        title="Détail de l'enseignant"
                         subtitle={`${teacherDraft.lastName.toUpperCase()} ${teacherDraft.firstName}`}
                         className="teacher-detail-header-badge"
                         sectionLabel={sectionLabel}
@@ -116,10 +119,28 @@ export default function TeacherDetailCard({
                     <ActionButtonsWithConfirm
                         onCancel={onClose}
                         onSave={handleSave}
+                        onDelete={
+                            teacher.id === 'new-teacher' ? undefined : onDelete
+                        }
+                        deleteLabel="Supprimer"
+                        deleteTitle="Supprimer cet enseignant"
+                        deleteMessage={
+                            <>
+                                Vous allez supprimer{' '}
+                                <strong>
+                                    {teacherDraft.firstName}{' '}
+                                    {teacherDraft.lastName}
+                                </strong>
+                                .
+                                <br />
+                                Confirmer ?
+                            </>
+                        }
+                        deleteConfirmLabel="Supprimer"
                         hasChanges={hasChanges}
                         confirmMessage={
                             <>
-                                Vous êtes sur le point d’enregistrer les
+                                Vous êtes sur le point d&apos;enregistrer les
                                 modifications pour{' '}
                                 <strong>
                                     {teacherDraft.firstName}{' '}
@@ -136,16 +157,15 @@ export default function TeacherDetailCard({
                 </div>
             </DetailCardBody>
 
-            {/* Popup spécifique ESC / croix */}
             <ConfirmDialog
                 open={isConfirmOpen}
                 title="Modifications non enregistrées"
                 message={
                     <>
-                        <p>Vous avez modifié cette fiche enseignant.</p>
+                        <p>Vous avez modifié cette fiche d&apos;enseignant.</p>
                         <p>
                             Souhaitez-vous enregistrer les changements avant de
-                            fermer&nbsp;?
+                            fermer ?
                         </p>
                     </>
                 }
@@ -160,3 +180,4 @@ export default function TeacherDetailCard({
         </div>
     )
 }
+

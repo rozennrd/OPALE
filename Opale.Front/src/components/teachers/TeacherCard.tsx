@@ -8,17 +8,37 @@ import EntityCard from '../common/EntityCard'
 interface TeacherCardProps {
     teacher: Teacher
     onSelect: () => void
+    selectionMode?: boolean
+    selected?: boolean
+    onToggleSelect?: () => void
 }
 
-export default function TeacherCard({ teacher, onSelect }: TeacherCardProps) {
+export default function TeacherCard({
+    teacher,
+    onSelect,
+    selectionMode = false,
+    selected = false,
+    onToggleSelect,
+}: TeacherCardProps) {
+    const handleClick = () => {
+        if (selectionMode) {
+            if (onToggleSelect) onToggleSelect()
+            return
+        }
+
+        onSelect()
+    }
+
     return (
         <EntityCard
-            onClick={onSelect}
+            onClick={handleClick}
             className="teacher-card"
             mainClassName="teacher-card-main"
             asideClassName="teacher-card-mode"
             badge={<TeacherModeBadge mode={teacher.mode} />}
-            variant="compact" // par ex., un peu plus serré
+            variant="compact"
+            selectionMode={selectionMode}
+            selected={selected}
         >
             <div className="teacher-card-name">
                 {teacher.lastName.toUpperCase()} {teacher.firstName}

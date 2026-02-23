@@ -41,6 +41,7 @@ CREATE TABLE salle (
                        capacite    INT,
                        etage       INT,
                        description VARCHAR(255),
+                       utilisable  BOOLEAN             DEFAULT FALSE,
                        CONSTRAINT uq_salle_nom UNIQUE (nom)
 );
 
@@ -259,7 +260,11 @@ CREATE TABLE enseignement (
                               id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                               id_matiere  UUID    NOT NULL,
                               id_prof     UUID    NOT NULL,
-                              nb_heures   INT,
+                              heures_td   INT,
+                              heures_tp   INT,
+                              heures_projet INT,
+                              heures_elearning INT,
+                              heures_autre INT,
                               CONSTRAINT fk_enseignement_matiere
                                   FOREIGN KEY (id_matiere)
                                       REFERENCES matiere(id)
@@ -272,7 +277,9 @@ CREATE TABLE enseignement (
                                       ON DELETE CASCADE,
     -- Un prof ne doit pas avoir deux lignes pour la même matière
                               CONSTRAINT uq_enseignement_unique UNIQUE (id_matiere, id_prof),
-                              CONSTRAINT ck_enseignement_heures CHECK (nb_heures IS NULL OR nb_heures >= 0)
+                              CONSTRAINT ck_enseignement_heures_td CHECK (heures_td IS NULL OR heures_td >= 0),
+                              CONSTRAINT ck_enseignement_heures_tp CHECK (heures_tp IS NULL OR heures_tp >= 0)
+
 );
 
 -- --------------------------------------------------------
@@ -319,22 +326,22 @@ INSERT INTO utilisateurs (login, email, password, date_blocage, tentatives_echou
 -- Attention : A enlever une fois que la base de donnée sera correctement intégrée
 --
 INSERT INTO cycle (nom, type) VALUES
-    ('Cycle Préparatoire', 'Initial'),
-    ('Cycle Ingénieur',   'Initial'),
-    ('Cycle Ingénieur', 'Apprentissage');
+                                  ('Cycle Préparatoire', 'Initial'),
+                                  ('Cycle Ingénieur',   'Initial'),
+                                  ('Cycle Ingénieur', 'Apprentissage');
 
 
 -- Déchargement des données de la table `promotions`
 -- Attention : A enlever une fois que la base de donnée sera correctement intégrée
 --
 INSERT INTO promotion (nom, effectifs, id_cycle, date_start, date_end) VALUES
-    ('ADI1',   20,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
-    ('ADI2',   22,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
-    ('CIR1',   21,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
-    ('CIR2',   25,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
-    ('AP3',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
-    ('AP4',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
-    ('AP5',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
-    ('ISEN3',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
-    ('ISEN4',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
-    ('ISEN5',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30');
+                                                                           ('ADI1',   20,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
+                                                                           ('ADI2',   22,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
+                                                                           ('CIR1',   21,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
+                                                                           ('CIR2',   25,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
+                                                                           ('AP3',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
+                                                                           ('AP4',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
+                                                                           ('AP5',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
+                                                                           ('ISEN3',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
+                                                                           ('ISEN4',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
+                                                                           ('ISEN5',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30');

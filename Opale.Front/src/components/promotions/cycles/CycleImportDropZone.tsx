@@ -1,40 +1,38 @@
-// src/components/promotions/cycles/CycleImportDropZone.tsx
 import React, { useRef, useState } from 'react'
+
+type ImportFeedbackVariant = 'success' | 'error' | 'info'
 
 interface CycleImportDropzoneProps {
     cycleId: string
-    // on enverra maintenant la LISTE COMPLÈTE des fichiers sélectionnés
-    onFilesSelected?: (files: File[]) => void
+    selectedFiles: File[]
+    onIncomingFiles?: (files: File[]) => void
+    onRemoveFile?: (file: File) => void
+    onImportRequested?: () => void | Promise<void>
+    isImporting?: boolean
+    importFeedback?: {
+        variant: ImportFeedbackVariant
+        message: string
+    } | null
 }
 
 const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
                                                                      cycleId,
-                                                                     onFilesSelected,
+                                                                     selectedFiles,
+                                                                     onIncomingFiles,
+                                                                     onRemoveFile,
+                                                                     onImportRequested,
+                                                                     isImporting = false,
+                                                                     importFeedback = null,
                                                                  }) => {
     const inputRef = useRef<HTMLInputElement | null>(null)
     const [isDragging, setIsDragging] = useState(false)
-    const [selectedFiles, setSelectedFiles] = useState<File[]>([])
 
     const openFileDialog = () => {
         inputRef.current?.click()
     }
 
-    const mergeFiles = (current: File[], incoming: File[]): File[] => {
-        // On ajoute les nouveaux fichiers à ceux déjà présents
-        const all = [...current, ...incoming]
-
-        // Petite déduplication par nom + taille (simple mais suffisant ici)
-        const seen = new Set<string>()
-        return all.filter((file) => {
-            const key = `${file.name}-${file.size}`
-            if (seen.has(key)) return false
-            seen.add(key)
-            return true
-        })
-    }
-
-    const handleFiles = (files: File[]) => {
-        const excelFiles = files.filter((file) => {
+    const filterExcelFiles = (files: File[]): File[] => {
+        return files.filter((file) => {
             const name = file.name.toLowerCase()
             const type = file.type
 
@@ -43,11 +41,13 @@ const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
                 name.endsWith('.xlsx') ||
                 name.endsWith('.xlsm') ||
                 type === 'application/vnd.ms-excel' ||
-                type ===
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             )
         })
+    }
 
+    const handleFiles = (files: File[]) => {
+        const excelFiles = filterExcelFiles(files)
         if (excelFiles.length === 0) {
             console.warn(
                 '[CycleImportDropzone] Aucun fichier Excel détecté dans la sélection',
@@ -56,21 +56,15 @@ const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
             return
         }
 
-        setSelectedFiles((prev) => {
-            const next = mergeFiles(prev, excelFiles)
+        console.log(
+            '[CycleImportDropzone] Fichiers Excel reçus pour le cycle',
+            cycleId,
+            excelFiles,
+        )
 
-            console.log(
-                '[CycleImportDropzone] Fichiers Excel sélectionnés pour le cycle',
-                cycleId,
-                next,
-            )
-
-            if (onFilesSelected) {
-                onFilesSelected(next) // on envoie la liste complète à chaque fois
-            }
-
-            return next
-        })
+        if (onIncomingFiles) {
+            onIncomingFiles(excelFiles)
+        }
     }
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,23 +98,11 @@ const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
         handleFiles(Array.from(fileList))
     }
 
-    const handleRemoveFile = (fileToRemove: File) => {
-        setSelectedFiles((prev) => {
-            const next = prev.filter(
-                (f) =>
-                    !(
-                        f.name === fileToRemove.name &&
-                        f.size === fileToRemove.size &&
-                        f.lastModified === fileToRemove.lastModified
-                    ),
-            )
-
-            if (onFilesSelected) {
-                onFilesSelected(next)
-            }
-
-            return next
-        })
+    const handleImportClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault()
+        event.stopPropagation()
+        if (!onImportRequested || selectedFiles.length === 0 || isImporting) return
+        await onImportRequested()
     }
 
     const visibleFiles = selectedFiles.slice(0, 5)
@@ -139,19 +121,19 @@ const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
             >
-        <span className="cycle-import-dropzone-title">
-          Importer des promotions depuis Excel
-        </span>
+                <span className="cycle-import-dropzone-title">
+                    Importer des promotions depuis Excel
+                </span>
                 <span className="cycle-import-dropzone-hint">
-          Glissez-déposez vos fichiers Excel ici ou cliquez pour parcourir
-          (plusieurs fichiers possibles)
-        </span>
+                    Glissez-déposez vos fichiers Excel ici ou cliquez pour parcourir
+                    (plusieurs fichiers possibles)
+                </span>
 
                 {selectedFiles.length > 0 && (
                     <div className="cycle-import-dropzone-files">
-            <span className="cycle-import-dropzone-files-label">
-              Fichiers sélectionnés :
-            </span>
+                        <span className="cycle-import-dropzone-files-label">
+                            Fichiers valides :
+                        </span>
 
                         <div className="cycle-import-files-list">
                             {visibleFiles.map((file) => (
@@ -159,31 +141,49 @@ const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
                                     className="cycle-import-file-pill"
                                     key={`${file.name}-${file.size}-${file.lastModified}`}
                                 >
-                  <span className="file-icon" aria-hidden="true">
-                    📄
-                  </span>
+                                    <span className="file-icon" aria-hidden="true">
+                                        [XLS]
+                                    </span>
                                     <span className="file-name">{file.name}</span>
                                     <button
                                         type="button"
                                         className="file-remove-btn"
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            handleRemoveFile(file)
+                                        onClick={(event) => {
+                                            event.stopPropagation()
+                                            if (onRemoveFile) onRemoveFile(file)
                                         }}
                                         aria-label={`Supprimer le fichier ${file.name}`}
                                         title={`Supprimer le fichier ${file.name}`}
+                                        disabled={isImporting}
                                     >
-                                        ✕
+                                        x
                                     </button>
                                 </div>
                             ))}
 
                             {extraCount > 0 && (
                                 <div className="cycle-import-file-pill extra-count">
-                                    + {extraCount} fichier(s) supplémentaire(s)…
+                                    + {extraCount} fichier(s) supplémentaire(s)...
                                 </div>
                             )}
                         </div>
+
+                        <div className="cycle-import-dropzone-actions">
+                            <button
+                                type="button"
+                                className="btn-primary"
+                                onClick={handleImportClick}
+                                disabled={isImporting || selectedFiles.length === 0}
+                            >
+                                {isImporting ? 'Import en cours...' : 'Importer la maquette'}
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {importFeedback && (
+                    <div className={`cycle-import-dropzone-status is-${importFeedback.variant}`}>
+                        {importFeedback.message}
                     </div>
                 )}
             </div>

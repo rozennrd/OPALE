@@ -12,6 +12,8 @@ interface ConfirmDialogProps {
     confirmClassName?: string
     cancelClassName?: string
     cardClassName?: string
+    confirmDisabled?: boolean
+    cancelDisabled?: boolean
 
     // Appelé quand on veut simplement fermer le popup
     // (ESC, clic overlay, croix) sans déclencher confirm/cancel métier
@@ -30,6 +32,8 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props) => {
         confirmClassName = 'btn-primary',
         cancelClassName = 'btn-tertiary',
         cardClassName,
+        confirmDisabled = false,
+        cancelDisabled = false,
         onRequestClose,
     } = props
 
@@ -106,6 +110,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props) => {
                         onClick={() => {
                             onCancel()
                         }}
+                        disabled={cancelDisabled}
                     >
                         {cancelLabel}
                     </button>
@@ -116,6 +121,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props) => {
                         onClick={() => {
                             onConfirm()
                         }}
+                        disabled={confirmDisabled}
                     >
                         {confirmLabel}
                     </button>

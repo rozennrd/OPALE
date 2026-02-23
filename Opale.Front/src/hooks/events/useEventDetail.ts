@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { CampusEvent, EventType } from '../../models/CampusEvent'
+import { CampusEvent, EventSource, EventType } from '../../models/CampusEvent'
 
-type EventDraft = {
+export type EventDraft = {
     id: string
     name: string
     location: string
     type: EventType
-    source: 'JUNIA' | 'EXTERNE'
+    source: EventSource
     startDate: string
     endDate: string
     description: string
@@ -17,6 +17,8 @@ type EventDraft = {
     is_exceptional: boolean
     is_external: boolean
     selectedSalleIds: string[]
+    concernedCycleIds: string[]
+    concernedPromotionIds: string[]
 }
 
 function getWeekNumber(isoDatetime: string): number | undefined {
@@ -32,14 +34,16 @@ function getWeekNumber(isoDatetime: string): number | undefined {
 }
 
 const buildInitialDraft = (event: CampusEvent): EventDraft => {
+    const fallbackDate = event.startDate ?? event.date ?? ''
+    
     return {
         id: event.id,
-        name: event.name,
-        location: event.location,
+        name: event.name ?? '',
+        location: event.location ?? '',
         type: event.type,
         source: event.source,
-        startDate: event.startDate,
-        endDate: event.endDate,
+        startDate: event.startDate ?? fallbackDate,
+        endDate: event.endDate ?? event.date ?? fallbackDate,
         description: event.description ?? '',
         num_semaine: event.num_semaine ?? getWeekNumber(event.startDate),
         show_macro: event.show_macro ?? true,
@@ -47,7 +51,9 @@ const buildInitialDraft = (event: CampusEvent): EventDraft => {
         is_blocking: event.is_blocking ?? false,
         is_exceptional: event.is_exceptional ?? true,
         is_external: event.is_external ?? false,
-        selectedSalleIds: []
+        selectedSalleIds: [],
+        concernedCycleIds: [...(event.concernedCycleIds ?? [])],
+        concernedPromotionIds: [...(event.concernedPromotionIds ?? [])],
     }
 }
 
@@ -84,25 +90,43 @@ export const useEventDetail = (
             if (field === 'startDate' && typeof value === 'string') {
                 updated.num_semaine = getWeekNumber(value)
             }
+          
+            if (field === 'source' && value === 'EXTERNE') {
+                return {
+                    updated.concernedCycleIds = []
+                    updated.concernedPromotionIds = []
+                }
+            }
 
             return updated
         })
     }
 
-    const toggleSalle = (salleId: string) => {
+    /* const toggleSalle = (salleId: string) => {
         setDraft(prev => ({
             ...prev,
             selectedSalleIds: prev.selectedSalleIds.includes(salleId)
                 ? prev.selectedSalleIds.filter((id) => id !== salleId)
                 : [...prev.selectedSalleIds, salleId],
         }))
+    } */
+
+    const updateFields = (patch: Partial<EventDraft>) => {
+        setDraft((prev) => ({
+            ...prev,
+            ...patch,
+        }))
     }
 
     const handleSave = async () => {
+        const savedDraft = {
+            ...draft,
+            concernedCycleIds: [...draft.concernedCycleIds],
+            concernedPromotionIds: [...draft.concernedPromotionIds],
+        }
+        
         if (!onSave) {
-            console.log('[EVENTS] Enregistrer les données événement (mock)')
-            console.log({ originalEvent: event, updatedEvent: draft })
-            setSnapshot(draft)
+            setSnapshot(savedDraft)
             setHasChanges(false)
             return { success: true }
         }
@@ -110,26 +134,28 @@ export const useEventDetail = (
         setSaving(true)
 
         const eventData: Partial<CampusEvent> = {
-            id: draft.id,
-            name: draft.name,
-            startDate: draft.startDate,
-            endDate: draft.endDate,
-            type: draft.type,
-            source: draft.source,
-            description: draft.description,
-            num_semaine: draft.num_semaine,
-            show_macro: draft.show_macro,
-            show_micro: draft.show_micro,
-            is_blocking: draft.is_blocking,
-            is_exceptional: draft.is_exceptional,
-            is_external: draft.is_external || draft.source === 'EXTERNE',
+            id: savedDraft.id,
+            name: savedDraft.name,
+            startDate: savedDraft.startDate,
+            endDate: savedDraft.endDate,
+            type: savedDraft.type,
+            source: savedDraft.source,
+            description: savedDraft.description,
+            num_semaine: savedDraft.num_semaine,
+            show_macro: savedDraft.show_macro,
+            show_micro: savedDraft.show_micro,
+            is_blocking: savedDraft.is_blocking,
+            is_exceptional: savedDraft.is_exceptional,
+            is_external: savedDraft.is_external || savedDraft.source === 'EXTERNE',
+            concernedCycleIds: savedDraft.concernedCycleIds,
+            concernedPromotionIds: savedDraft.concernedPromotionIds,
         }
 
-        const result = await onSave(eventData, draft.selectedSalleIds)
+        const result = await onSave(eventData, savedDraft.selectedSalleIds)
         setSaving(false)
 
         if (result.success) {
-            setSnapshot(draft)
+            setSnapshot(savedDraft)
             setHasChanges(false)
         }
 
@@ -141,7 +167,8 @@ export const useEventDetail = (
         hasChanges,
         saving,
         updateField,
-        toggleSalle,
+        // toggleSalle,
+        updateFields,
         handleSave,
     }
 }

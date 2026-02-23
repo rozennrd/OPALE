@@ -38,4 +38,8 @@ export interface CampusEvent {
     is_exceptional?: boolean
     /** Événement externe */
     is_external?: boolean
+    /** Liste de cycles concernés par l'event **/
+    concernedCycleIds?: string[]
+    /** Liste de promo concernés par l'event **/
+    concernedPromotionIds?: string[]
 }

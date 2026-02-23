@@ -1,5 +1,7 @@
 /* Style de la page login */
+
 .login-container {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -8,18 +10,33 @@
     background-color: var(--bg);
     color: var(--text);
     transition: background-color 0.3s, color 0.3s;
-    position: relative; /* Assure que l'élément parent est positionné pour le bouton */
 }
 
 .login-logo {
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .login-logo img {
-    max-width: 200px; /* Ajuster la taille du logo */
+    max-width: 200px;
+    height: auto;
 }
 
-h2 {
+.login-logo .login-logo-dark {
+    display: none;
+}
+
+:root:is([data-theme='dark'], [data-theme='spock']) .login-logo .login-logo-light {
+    display: none;
+}
+
+:root:is([data-theme='dark'], [data-theme='spock']) .login-logo .login-logo-dark {
+    display: block;
+}
+
+.login-container h2 {
     margin-bottom: 20px;
 }
 
@@ -40,7 +57,7 @@ h2 {
 .input-group label {
     display: block;
     margin-bottom: 5px;
-    color: var(--text); /* Texte des labels en mode sombre */
+    color: var(--text);
 }
 
 .input-group input {
@@ -61,7 +78,7 @@ h2 {
     width: 100%;
     padding: 12px;
     background-color: var(--brand);
-    color: white;
+    color: var(--text-on-brand, #ffffff);
     border: none;
     border-radius: 4px;
     font-size: 16px;
@@ -71,44 +88,36 @@ h2 {
     background-color: var(--brand-hover);
 }
 
-/* Conteneur du toggle sur la page login */
-.login-container {
-    position: relative; /* nécessaire pour l'absolute du wrapper */
-}
-
-/* Position du toggle sur la page login */
 .login-theme-toggle {
     position: absolute;
     top: 16px;
-    left: 16px;          /* tu peux mettre right:16px si tu le veux à droite */
+    left: 16px;
     z-index: 10;
 }
 
-/* Override du style global du toggle UNIQUEMENT sur la page login */
 .login-theme-toggle .theme-toggle-btn {
-    width: auto;              /* au lieu de 100% */
+    width: auto;
     padding: 6px 12px;
-    justify-content: center;  /* texte centré dans la pilule */
+    justify-content: center;
 }
 
-/* Optionnel : réduire un peu le texte si tu veux un truc plus compact */
 .login-theme-toggle .theme-toggle-text {
     font-size: 14px;
 }
 
-/* Ajuster les styles du bouton en mode sombre */
-body[data-theme="dark"] .theme-toggle-btn {
+:root:is([data-theme='dark'], [data-theme='spock']) .login-theme-toggle .theme-toggle-btn {
     color: var(--text);
 }
 
-body[data-theme="dark"] .theme-toggle-thumb {
+:root:is([data-theme='dark'], [data-theme='spock']) .login-theme-toggle .theme-toggle-icon-inner,
+:root:is([data-theme='dark'], [data-theme='spock']) .login-theme-toggle .theme-toggle-toggle-thumb {
     background-color: var(--text);
 }
 
-body[data-theme="dark"] .theme-toggle-text {
+:root:is([data-theme='dark'], [data-theme='spock']) .login-theme-toggle .theme-toggle-text {
     color: var(--text);
 }
 
 .error-message {
-    color: var(--danger-800)
+    color: var(--danger-800);
 }

@@ -9,11 +9,49 @@ import EventDetailCard from '../components/events/EventDetailCard'
 import { CampusEvent } from '../models/CampusEvent'
 import SectionHeader from '../components/common/SectionHeader'
 import { useEvents } from '../hooks/events/useEvent'
+import SelectionToolbar from '../components/common/SelectionToolbar'
+import { useSelectionState } from '../hooks/common/useSelectionState'
+import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
+import { usePromotionCycles } from '../hooks/promotions/usePromotionCycles'
 
 interface MonthGroup {
     key: string
     label: string
     events: CampusEvent[]
+}
+
+const DEFAULT_EVENT_FILTERS: {
+    searchValue: string
+    dateFrom: string
+    dateTo: string
+    target: TargetFilter
+    type: TypeFilter
+} = {
+    searchValue: '',
+    dateFrom: '',
+    dateTo: '',
+    target: 'ALL',
+    type: 'ALL',
+}
+
+const createFrontendEventId = () =>
+    `evt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
+
+const normalizeEventForList = (event: CampusEvent): CampusEvent => {
+    const startDate = event.startDate ?? event.date ?? ''
+    const endDate = event.endDate ?? startDate
+    const date = startDate || endDate || event.date
+
+    return {
+        ...event,
+        startDate,
+        endDate,
+        date,
+        showMacro: event.showMacro ?? true,
+        showMicro: event.showMicro ?? false,
+        concernedCycleIds: [...(event.concernedCycleIds ?? [])],
+        concernedPromotionIds: [...(event.concernedPromotionIds ?? [])],
+    }
 }
 
 function getMonthKey(dateStr: string): string {
@@ -44,6 +82,26 @@ export default function Events() {
     const [selectedEvent, setSelectedEvent] = useState<CampusEvent | null>(null)
     const [detailMode, setDetailMode] = useState<'edit' | 'create'>('edit')
     const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({})
+
+    const { cycles: promotionCycles } = usePromotionCycles()
+
+    const {
+        selectionMode,
+        selectedIds: selectedEventIds,
+        selectedIdsSet: selectedEventIdsSet,
+        selectedCount: selectedEventCount,
+        toggleSelectionMode: toggleEventSelectionMode,
+        toggleSelection: toggleEventSelection,
+        selectAll: selectAllEvents,
+        clearSelection: clearEventSelection,
+        disableSelectionMode: disableEventSelectionMode,
+        pruneSelection: pruneEventSelection,
+    } = useSelectionState({
+        onEnterSelectionMode: () => {
+            setSelectedEvent(null)
+            setDetailMode('edit')
+        },
+    })
 
     const filteredEvents = useMemo(() => {
         let items = [...events]
@@ -90,6 +148,26 @@ export default function Events() {
         return items
     }, [events, searchValue, dateFrom, dateTo, target, type])
 
+    const {
+        hasActiveFilters,
+        resetFilters: handleResetFilters,
+    } = useToolbarFilters({
+        values: { searchValue, dateFrom, dateTo, target, type },
+        defaults: DEFAULT_EVENT_FILTERS,
+        onReset: () => {
+            setSearchValue(DEFAULT_EVENT_FILTERS.searchValue)
+            setDateFrom(DEFAULT_EVENT_FILTERS.dateFrom)
+            setDateTo(DEFAULT_EVENT_FILTERS.dateTo)
+            setTarget(DEFAULT_EVENT_FILTERS.target)
+            setType(DEFAULT_EVENT_FILTERS.type)
+        },
+    })
+
+    const visibleEventIds = useMemo(
+        () => filteredEvents.map((event) => event.id),
+        [filteredEvents],
+    )
+
     const monthGroups = useMemo(() => {
         const groups: MonthGroup[] = []
         const byKey = new Map<string, MonthGroup>()
@@ -109,6 +187,19 @@ export default function Events() {
         return groups
     }, [filteredEvents])
 
+    const removeEventsByIds = (ids: string[]) => {
+        const idsSet = new Set(ids)
+        if (idsSet.size === 0) return
+
+        setEvents((prev) => prev.filter((event) => !idsSet.has(event.id)))
+        pruneEventSelection(Array.from(idsSet))
+        setSelectedEvent((prev) => {
+            if (!prev) return prev
+            if (idsSet.has(prev.id)) return null
+            return prev
+        })
+    }
+
     const toggleMonth = (key: string) => {
         setOpenMonths((prev) => ({
             ...prev,
@@ -122,11 +213,11 @@ export default function Events() {
     }
 
     const handleCreateRequested = () => {
-        const now = new Date()
-
+        const today = new Date().toISOString().slice(0, 10)
         const newEvent: CampusEvent = {
             id: 'new-event',
             name: '',
+            date: today,
             startDate: now.toISOString(),
             endDate: new Date(now.getTime() + 3600000).toISOString(),
             location: '',
@@ -138,18 +229,53 @@ export default function Events() {
             is_blocking: false,
             is_exceptional: true,
             is_external: false,
+            concernedCycleIds: [],
+            concernedPromotionIds: [],
         }
 
         setDetailMode('create')
         setSelectedEvent(newEvent)
     }
-
+    
     const handleSaveEvent = async (event: Partial<CampusEvent>, salleIds: string[]) => {
+        const isCreateSave = detailMode === 'create' || savedEvent.id === 'new-event'
+        const previousEventId = savedEvent.id
+        
+        const normalized = normalizeEventForList({
+            ...savedEvent,
+            id: isCreateSave ? createFrontendEventId() : savedEvent.id,
+        })
+
         if (detailMode === 'create') {
             return await createEvent(event, salleIds)
         } else {
             return await updateEvent(event.id!, event, salleIds)
         }
+        
+         setEvents((prev) => {
+            if (isCreateSave) {
+                return [...prev, normalized]
+            }
+
+            return prev.map((event) =>
+                event.id === previousEventId ? normalized : event,
+            )
+        })
+
+        setSelectedEvent(normalized)
+        if (isCreateSave) {
+            setDetailMode('edit')
+        }
+    }
+      
+    const handleDeleteSingleEvent = (eventId: string) => {
+        removeEventsByIds([eventId])
+        setDetailMode('edit')
+    }
+
+    const handleDeleteSelected = () => {
+        removeEventsByIds(selectedEventIds)
+        disableEventSelectionMode()
     }
 
     if (loading) {
@@ -170,9 +296,9 @@ export default function Events() {
 
     return (
         <>
-            <h1 className="page-title">Événements</h1>
+            <h1 className="page-title">Evenements</h1>
             <p className="page-sub">
-                Vue consolidée des événements Junia et externes.
+                Vue consolidee des evenements Junia et externes.
             </p>
 
             <div className="events-page">
@@ -189,7 +315,24 @@ export default function Events() {
                         type={type}
                         onTypeChange={setType}
                         onCreateRequested={handleCreateRequested}
+                        selectionMode={selectionMode}
+                        selectedCount={selectedEventCount}
+                        onToggleSelectionMode={toggleEventSelectionMode}
+                        onResetFilters={handleResetFilters}
+                        hasActiveFilters={hasActiveFilters}
                     />
+
+                    {selectionMode && (
+                        <SelectionToolbar
+                            totalCount={visibleEventIds.length}
+                            selectedCount={selectedEventCount}
+                            onSelectAll={() => selectAllEvents(visibleEventIds)}
+                            onClearSelection={clearEventSelection}
+                            onDeleteSelected={handleDeleteSelected}
+                            confirmTitle="Supprimer les evenements selectionnes"
+                            confirmMessage={`Vous allez supprimer ${selectedEventIds.length} evenement${selectedEventIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                        />
+                    )}
 
                     <div className="events-list-wrapper">
                         {monthGroups.length > 0 ? (
@@ -215,7 +358,16 @@ export default function Events() {
                                                         <EventCard
                                                             key={event.id}
                                                             event={event}
-                                                            onSelect={handleSelectEvent}
+                                                            onSelect={
+                                                                handleSelectEvent
+                                                            }
+                                                            selectionMode={selectionMode}
+                                                            selected={selectedEventIdsSet.has(
+                                                                event.id,
+                                                            )}
+                                                            onToggleSelect={
+                                                                toggleEventSelection
+                                                            }
                                                         />
                                                     ))}
                                                 </div>
@@ -236,9 +388,18 @@ export default function Events() {
             {selectedEvent && (
                 <EventDetailCard
                     event={selectedEvent}
+                    cycles={promotionCycles}
                     mode={detailMode}
-                    onClose={() => setSelectedEvent(null)}
                     onSave={handleSaveEvent}
+                    onClose={() => {
+                        setSelectedEvent(null)
+                        setDetailMode('edit')
+                    }}
+                    onDelete={
+                        detailMode === 'create'
+                            ? undefined
+                            : () => handleDeleteSingleEvent(selectedEvent.id)
+                    }
                 />
             )}
         </>

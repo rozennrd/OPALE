@@ -1,19 +1,15 @@
 /* src/styles/pages/teachers/_toolbar.css */
 
-/*1 ligne*/
 @layer pages {
-    /* Ligne principale : search + filtres */
     .teachers-toolbar-row {
         align-items: center;
     }
 
-    /* Search réduite mais qui prend l’espace dispo */
     .teachers-toolbar-search {
         flex: 1 1 260px;
-        min-width: 200px;
+        min-width: 220px;
     }
 
-    /* Bloc filtres à droite */
     .teachers-toolbar-filters {
         display: flex;
         align-items: center;
@@ -24,6 +20,28 @@
 
     .teachers-toolbar-subjects {
         position: relative;
+    }
+
+    .teachers-toolbar-subjects-trigger {
+        min-height: 2.2rem;
+        min-width: 10rem;
+        justify-content: space-between;
+    }
+
+    .teachers-toolbar-mode-filter {
+        display: flex;
+        align-items: center;
+        min-height: 2.2rem;
+    }
+
+    .teachers-toolbar-mode-filter .toolbar-toggle-chips {
+        min-height: 2.2rem;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .teachers-toolbar-mode-filter .toolbar-toggle-chip {
+        min-height: 1.85rem;
     }
 
     .teachers-toolbar-subjects-panel {
@@ -79,31 +97,43 @@
         font-weight: 600;
     }
 
+    .teachers-toolbar-row .toolbar-selection-toggle {
+        flex: 0 0 auto;
+    }
+
+    .teachers-toolbar-reset {
+        min-height: 2.2rem;
+    }
+
     .teachers-toolbar-plus-btn {
-        border: none;
-        background: transparent;
-        padding: 0.25rem;
-        margin-left: 0.4rem;
+        width: 2.2rem;
+        height: 2.2rem;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--panel-soft);
+        padding: 0;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        transition: opacity 120ms ease, transform 120ms ease;
+        transition:
+            background-color 120ms ease,
+            border-color 120ms ease,
+            transform 120ms ease;
     }
 
     .teachers-toolbar-plus-btn:hover {
-        opacity: 0.7;
+        background: var(--surface-hover, var(--panel-soft));
         transform: translateY(-1px);
     }
 
     .teachers-toolbar-plus-btn:active {
         transform: translateY(0);
-        opacity: 0.85;
     }
 
     .teachers-toolbar-plus-icon {
-        width: 22px;
-        height: 22px;
+        width: 18px;
+        height: 18px;
         pointer-events: none;
         display: block;
     }
@@ -112,7 +142,6 @@
         filter: brightness(1.2);
     }
 
-    /* Sur mobile : on repasse en colonne */
     @media (max-width: 900px) {
         .teachers-toolbar-row {
             flex-direction: column;
@@ -129,8 +158,37 @@
             flex-wrap: wrap;
         }
 
-        .teachers-toolbar-filters .toolbar-filter {
+        .teachers-toolbar-subjects {
             width: 100%;
+        }
+
+        .teachers-toolbar-subjects-trigger {
+            width: 100%;
+        }
+
+        .teachers-toolbar-mode-filter {
+            width: 100%;
+        }
+
+        .teachers-toolbar-mode-filter .toolbar-toggle-chips {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .teachers-toolbar-mode-filter .toolbar-toggle-chip {
+            flex: 1 1 auto;
+            text-align: center;
+        }
+
+        .teachers-toolbar-row .toolbar-selection-toggle,
+        .teachers-toolbar-reset,
+        .teachers-toolbar-plus-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .teachers-toolbar-plus-btn {
+            border-radius: 0.7rem;
         }
     }
 

@@ -14,6 +14,7 @@ interface RoomDetailCardProps {
     room: Room
     onClose: () => void
     onChange: (room: Room) => void
+    onDelete?: () => void
 }
 
 const ROOM_TYPE_LABELS: Record<RoomType, string> = {
@@ -37,9 +38,12 @@ const floorLabel = (floor: Room['floor']): string => {
     }
 }
 
-export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCardProps) {
+export default function RoomDetailCard({ room, onClose, onChange, onDelete }: RoomDetailCardProps) {
     const [name, setName] = useState(room.name)
     const [fullName, setFullName] = useState(room.fullName ?? '')
+    const [floor, setFloor] = useState<Room['floor']>(room.floor)
+    const [capacity, setCapacity] = useState(room.capacity)
+    const [isAvailable, setIsAvailable] = useState(room.isAvailable)
     const [mainType, setMainType] = useState<RoomType>(room.mainType)
     const [types, setTypes] = useState<RoomType[]>(room.types)
     const [description, setDescription] = useState(room.description ?? '')
@@ -47,6 +51,9 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
     useEffect(() => {
         setName(room.name)
         setFullName(room.fullName ?? '')
+        setFloor(room.floor)
+        setCapacity(room.capacity)
+        setIsAvailable(room.isAvailable)
         setMainType(room.mainType)
         setTypes(room.types)
         setDescription(room.description ?? '')
@@ -57,6 +64,9 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
     const hasChanges =
         room.name !== name ||
         (room.fullName ?? '') !== fullName ||
+        room.floor !== floor ||
+        room.capacity !== capacity ||
+        room.isAvailable !== isAvailable ||
         (room.description ?? '') !== description ||
         room.mainType !== mainType ||
         room.types.length !== types.length ||
@@ -91,11 +101,29 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
         })
     }
 
+    const handleCapacityChange = (value: string) => {
+        const parsed = Number.parseInt(value, 10)
+        const nextCapacity = Number.isNaN(parsed) ? 0 : Math.max(0, parsed)
+        console.log('[ROOMS] Change room capacity (mock)', { roomId: room.id, nextCapacity })
+        setCapacity(nextCapacity)
+    }
+
+    const handleToggleAvailability = () => {
+        setIsAvailable((previous) => {
+            const next = !previous
+            console.log('[ROOMS] Toggle room availability (mock)', { roomId: room.id, isAvailable: next })
+            return next
+        })
+    }
+
     const handleSave = () => {
         const nextRoom: Room = {
             ...room,
             name: name.trim() || room.name,
             fullName: fullName.trim() || undefined,
+            floor,
+            capacity: Math.max(0, capacity),
+            isAvailable,
             description: description.trim() || undefined,
             mainType,
             types: types.length ? types : [mainType],
@@ -134,7 +162,7 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
                         type={mainType}
                         variant="header"
                         title={headerTitle}
-                        subtitle={`${name || room.name} · ${floorLabel(room.floor)}`}
+                        subtitle={`${name || room.name} · ${floorLabel(floor)}`}
                     />
                 </DetailCardHeader>
 
@@ -171,6 +199,70 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
                                         placeholder="Ex. J001_Projet"
                                     />
                                 </div>
+
+                                <div className="room-detail-field">
+                                    <label className="room-detail-field-label" htmlFor="room-floor-input">
+                                        Étage
+                                    </label>
+                                    <select
+                                        id="room-floor-input"
+                                        className="room-detail-input"
+                                        value={floor}
+                                        onChange={(e) => setFloor(Number(e.target.value) as Room['floor'])}
+                                    >
+                                        <option value={0}>Rez-de-chaussée</option>
+                                        <option value={1}>1er étage</option>
+                                        <option value={2}>2e étage</option>
+                                    </select>
+                                </div>
+
+                                <div className="room-detail-field">
+                                    <label className="room-detail-field-label" htmlFor="room-capacity-input">
+                                        Capacité (places)
+                                    </label>
+                                    <input
+                                        id="room-capacity-input"
+                                        type="number"
+                                        min={0}
+                                        step={1}
+                                        className="room-detail-input"
+                                        value={capacity}
+                                        onChange={(e) => handleCapacityChange(e.target.value)}
+                                        placeholder="Ex. 24"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="room-detail-availability-row">
+                                <div className="room-detail-availability-copy">
+                                    <span className="room-detail-field-label">Disponibilité globale</span>
+                                    <span className="room-detail-hint-small">
+                                        Détermine si la salle est entièrement réservable.
+                                    </span>
+                                </div>
+                                <button
+                                    type="button"
+                                    className={[
+                                        'room-availability-switch',
+                                        isAvailable ? 'is-on' : 'is-off',
+                                    ]
+                                        .filter(Boolean)
+                                        .join(' ')}
+                                    onClick={handleToggleAvailability}
+                                    aria-pressed={isAvailable}
+                                    aria-label={
+                                        isAvailable
+                                            ? 'Rendre la salle non disponible'
+                                            : 'Rendre la salle disponible'
+                                    }
+                                >
+                                    <span className="room-availability-switch-track" aria-hidden="true">
+                                        <span className="room-availability-switch-thumb" />
+                                    </span>
+                                    <span className="room-availability-switch-label">
+                                        {isAvailable ? 'Disponible' : 'Non disponible'}
+                                    </span>
+                                </button>
                             </div>
 
                             <div className="room-detail-types-grid">
@@ -203,9 +295,6 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
                                                 >
                                                     <span className="room-type-chip-dot" aria-hidden="true" />
                                                     <span className="room-type-chip-label">{ROOM_TYPE_LABELS[type]}</span>
-                                                    {isSelected && (
-                                                        <span className="room-type-chip-main-tag">Principal</span>
-                                                    )}
                                                 </button>
                                             )
                                         })}
@@ -221,7 +310,6 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
                                     <div className="room-detail-types">
                                         {ROOM_TYPES.map((type) => {
                                             const isChecked = types.includes(type)
-                                            const isMain = type === mainType
 
                                             const chipClassName = [
                                                 'room-type-chip',
@@ -247,9 +335,6 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
                                                 >
                                                     <span className={checkboxClassName} aria-hidden="true" />
                                                     <span className="room-type-chip-label">{ROOM_TYPE_LABELS[type]}</span>
-                                                    {isMain && (
-                                                        <span className="room-type-chip-main-lock">Principal</span>
-                                                    )}
                                                 </button>
                                             )
                                         })}
@@ -294,6 +379,11 @@ export default function RoomDetailCard({ room, onClose, onChange }: RoomDetailCa
                     onSave={handleSave}
                     onCancel={onClose}
                     onAfterSaveConfirm={onClose}
+                    onDelete={onDelete}
+                    deleteLabel="Supprimer"
+                    deleteTitle="Supprimer cette salle"
+                    deleteMessage="Souhaites-tu supprimer cette salle ?"
+                    deleteConfirmLabel="Supprimer"
                 />
             </DetailCardBody>
 
