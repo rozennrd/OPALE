@@ -10,7 +10,7 @@ import { getMatieres } from '../services/api/matieresApi'
 import { promotionsApi } from '../services/api/promotionsApi'
 import { getDisponibilites } from '../services/api/disponibilitesApi'
 
-import { Teacher } from '../models/Teachers'
+import { Teacher, TeacherAvailabilityPeriod } from '../models/Teachers'
 import PageHeader from '../components/common/PageHeader'
 import { useSelectionState } from '../hooks/common/useSelectionState'
 import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
@@ -23,6 +23,28 @@ const DEFAULT_TEACHERS_FILTERS: {
     searchValue: '',
     modeFilter: 'ALL',
     subjectFilter: '',
+}
+
+const getIsoWeekDateRange = (
+    weekNumber: number,
+    year: number,
+): { start: string; end: string } => {
+    const jan4 = new Date(Date.UTC(year, 0, 4))
+    const jan4Day = jan4.getUTCDay() || 7
+    const mondayWeek1 = new Date(jan4)
+    mondayWeek1.setUTCDate(jan4.getUTCDate() - (jan4Day - 1))
+
+    const monday = new Date(mondayWeek1)
+    monday.setUTCDate(mondayWeek1.getUTCDate() + (weekNumber - 1) * 7)
+
+    const friday = new Date(monday)
+    friday.setUTCDate(monday.getUTCDate() + 4)
+
+    const toIso = (d: Date) => d.toISOString().slice(0, 10)
+    return {
+        start: toIso(monday),
+        end: toIso(friday),
+    }
 }
 
 export default function Teachers() {
@@ -91,14 +113,16 @@ export default function Teachers() {
                     teacherSubjectsById.set(profId, existing)
                 }
 
-                const teacherPeriodsById = new Map<string, Teacher['availabilityPeriods']>()
+                const teacherPeriodsById = new Map<string, TeacherAvailabilityPeriod[]>()
                 const disponibilites = disponibilitesRes.success
                     ? disponibilitesRes.data ?? []
                     : []
+                const currentYear = new Date().getUTCFullYear()
 
                 for (const dispo of disponibilites) {
                     const profId = String(dispo.id_prof)
                     const week = Number(dispo.num_semaine)
+                    const { start, end } = getIsoWeekDateRange(week, currentYear)
                     const micro =
                         typeof dispo.dispo_micro === 'string' && dispo.dispo_micro.length === 10
                             ? dispo.dispo_micro
@@ -109,6 +133,8 @@ export default function Teachers() {
                         id: `dispo-${String(dispo.id)}`,
                         label: `Semaine ${week}`,
                         availability: micro,
+                        start,
+                        end,
                     })
                     teacherPeriodsById.set(profId, existing)
                 }

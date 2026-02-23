@@ -138,18 +138,47 @@ const getWeeksInRange = (start: string, end: string): number[] => {
     return Array.from(weeks).sort((a, b) => a - b)
 }
 
+const getIsoWeekDateRange = (
+    weekNumber: number,
+    year: number,
+): { start: string; end: string } => {
+    const jan4 = new Date(Date.UTC(year, 0, 4))
+    const jan4Day = jan4.getUTCDay() || 7
+    const mondayWeek1 = new Date(jan4)
+    mondayWeek1.setUTCDate(jan4.getUTCDate() - (jan4Day - 1))
+
+    const monday = new Date(mondayWeek1)
+    monday.setUTCDate(mondayWeek1.getUTCDate() + (weekNumber - 1) * 7)
+
+    const friday = new Date(monday)
+    friday.setUTCDate(monday.getUTCDate() + 4)
+
+    const toIso = (d: Date) => d.toISOString().slice(0, 10)
+    return {
+        start: toIso(monday),
+        end: toIso(friday),
+    }
+}
+
 const mapDisponibilitesToPeriods = (
     items: Array<{ id: string; num_semaine: number; dispo_micro: string | null }>,
 ): TeacherAvailabilityPeriod[] => {
+    const currentYear = new Date().getUTCFullYear()
+
     return [...items]
         .sort((a, b) => Number(a.num_semaine) - Number(b.num_semaine))
-        .map((item, index) => ({
-            id: `dispo-${String(item.id)}`,
-            label: `Semaine ${Number(item.num_semaine)}`,
-            availability: normalizeDispoMicro(item.dispo_micro ?? undefined),
-            start: '',
-            end: '',
-        }))
+        .map((item, index) => {
+            const week = Number(item.num_semaine)
+            const { start, end } = getIsoWeekDateRange(week, currentYear)
+
+            return {
+                id: `dispo-${String(item.id)}`,
+                label: `Semaine ${week}`,
+                availability: normalizeDispoMicro(item.dispo_micro ?? undefined),
+                start,
+                end,
+            }
+        })
         .map((period, index) => ({
             ...period,
             label: period.label || `Période de disponibilité ${index + 1}`,

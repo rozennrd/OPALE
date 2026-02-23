@@ -72,24 +72,7 @@ const TeacherAvailabilityColumn = ({
         end: selectedPeriod.end || '',
     }
 
-    const buildPeriodLabel = (period: TeacherAvailabilityPeriod) => {
-        const formatDate = (value?: string) => {
-            if (!value) return ''
-            const parts = value.split('-')
-            if (parts.length === 3) {
-                return `${parts[2]}/${parts[1]}/${parts[0]}`
-            }
-            return value
-        }
-        if (!period.start && !period.end) return period.label
-        if (period.start && period.end) {
-            return `${formatDate(period.start)} - ${formatDate(period.end)}`
-        }
-        if (period.start) {
-            return formatDate(period.start)
-        }
-        return formatDate(period.end)
-    }
+    const buildPeriodLabel = (period: TeacherAvailabilityPeriod) => period.label
 
     return (
         <div className="teacher-detail-col">
