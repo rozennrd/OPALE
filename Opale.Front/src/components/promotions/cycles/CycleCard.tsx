@@ -450,7 +450,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
             <div className="promotions">
                 {cycle.promotions.length === 0 && (
                     <div className="empty">
-                        Aucune promotion affichée pour ce cycle.
+                        Aucune promotion affichee pour ce cycle.
                     </div>
                 )}
 
@@ -462,7 +462,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                             {hasPromoMismatch(promo) && (
                                 <img
                                     src={icWarning}
-                                    alt="Répartition d'étudiants incohérente"
+                                    alt="Repartition d'etudiants incoherente"
                                     className="promo-warning"
                                 />
                             )}
