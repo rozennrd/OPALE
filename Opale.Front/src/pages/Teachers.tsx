@@ -219,14 +219,22 @@ export default function Teachers() {
     }
 
     const handleTeacherUpdated = (updatedTeacher: Teacher) => {
-        setTeachers((prev) =>
-            prev.map((teacher) =>
-                teacher.id === updatedTeacher.id ? { ...updatedTeacher } : teacher,
-            ),
-        )
+        setTeachers((prev) => {
+            const existingIndex = prev.findIndex(
+                (teacher) => teacher.id === updatedTeacher.id,
+            )
+
+            if (existingIndex >= 0) {
+                return prev.map((teacher) =>
+                    teacher.id === updatedTeacher.id ? { ...updatedTeacher } : teacher,
+                )
+            }
+
+            return [...prev, { ...updatedTeacher }]
+        })
+
         setSelectedTeacher((prev) => {
             if (!prev) return prev
-            if (prev.id !== updatedTeacher.id) return prev
             return { ...updatedTeacher }
         })
     }

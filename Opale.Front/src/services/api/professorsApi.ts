@@ -33,6 +33,12 @@ export interface UpdateProfPayload {
     campus_origin?: 'Bordeaux' | 'Lille' | 'Chateauroux'
 }
 
+export interface AddProfResponse {
+    success?: boolean
+    message?: string
+    insertedId?: string
+}
+
 export async function getProfsData(): Promise<TeacherApi[]> {
     const res = await apiClient.get<TeacherApi[]>('/getProfsData')
     if (!res.success) {
@@ -49,4 +55,18 @@ export async function updateProf(id: string, payload: UpdateProfPayload): Promis
     if (!res.success) {
         throw new Error(res.error?.message ?? 'Failed to update teacher')
     }
+}
+
+export async function addProf(payload: UpdateProfPayload): Promise<string> {
+    const res = await apiClient.post<AddProfResponse>('/addProf', payload)
+    if (!res.success) {
+        throw new Error(res.error?.message ?? 'Failed to create teacher')
+    }
+
+    const insertedId = res.data?.insertedId
+    if (!insertedId) {
+        throw new Error('Teacher created but insertedId is missing in response')
+    }
+
+    return insertedId
 }

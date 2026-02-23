@@ -1,7 +1,7 @@
 // src/hooks/teachers/useTeacherDetail.ts
 import { useEffect, useState } from 'react'
 import { Teacher, TeacherAvailabilityPeriod } from '../../models/Teachers'
-import { updateProf } from '../../services/api/professorsApi'
+import { addProf, updateProf } from '../../services/api/professorsApi'
 
 const normalizeAvailability = (value?: string): string => {
     if (!value || value.length !== 10) return '0000000000'
@@ -226,7 +226,26 @@ export const useTeacherDetail = (
 
     const handleSave = async (): Promise<boolean> => {
         try {
-            if (teacherDraft.id !== 'new-teacher') {
+            let savedTeacher = teacherDraft
+
+            if (teacherDraft.id === 'new-teacher') {
+                const insertedId = await addProf({
+                    nom: teacherDraft.lastName,
+                    prenom: teacherDraft.firstName,
+                    email: teacherDraft.emailJunia || undefined,
+                    email_perso: teacherDraft.email || undefined,
+                    telephone: teacherDraft.phone || undefined,
+                    type: normalizeType(teacherDraft.category),
+                    modalite_enseignement: normalizeMode(teacherDraft.mode),
+                    campus_origin: normalizeCampus(teacherDraft.campus),
+                })
+
+                savedTeacher = {
+                    ...teacherDraft,
+                    id: String(insertedId),
+                }
+                setTeacherDraft(savedTeacher)
+            } else {
                 await updateProf(teacherDraft.id, {
                     nom: teacherDraft.lastName,
                     prenom: teacherDraft.firstName,
@@ -240,11 +259,11 @@ export const useTeacherDetail = (
             }
 
             setSnapshot({
-                teacher: teacherDraft,
+                teacher: savedTeacher,
                 periods,
             })
             setHasChanges(false)
-            onTeacherSaved?.(teacherDraft)
+            onTeacherSaved?.(savedTeacher)
 
             return true
         } catch (error) {
