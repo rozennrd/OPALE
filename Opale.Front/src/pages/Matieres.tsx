@@ -1,6 +1,6 @@
 // src/pages/Matieres.tsx
 
-import React, {useEffect, useMemo, useState} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import PageHeader from '../components/common/PageHeader'
 import MatieresToolbar, {
     CycleFilter,
@@ -11,8 +11,8 @@ import MatieresToolbar, {
 import MatiereSection from '../components/matieres/MatiereSection'
 import MatiereDetailCard from '../components/matieres/MatiereDetailCard'
 import SelectionToolbar from '../components/common/SelectionToolbar'
-import { getMatieres } from '../services/api/matieresApi'
-import { TeacherApi } from '../services/api/professorsApi'
+import { deleteMatiere, getMatieres } from '../services/api/matieresApi'
+import {getProfsData, TeacherApi} from '../services/api/professorsApi'
 import { promotionsApi } from '../services/api/promotionsApi'
 import { Matiere } from '../models/Matiere'
 import { useSelectionState } from '../hooks/common/useSelectionState'
@@ -28,6 +28,7 @@ type ApiResponse<T> = {
 }
 
 type BackendEnseignement = {
+    // on rend optionnel parce que tu ne m’as pas donné le modèle exact du back
     id_matiere?: string | number
     id_prof?: string | number
 }
@@ -36,8 +37,6 @@ function unwrapApiArray<T>(res: ApiResponse<T[]> | T[]): T[] {
     if (Array.isArray(res)) return res
     return res.data ?? []
 }
-
-
 const DEFAULT_MATIERES_FILTERS: {
     searchValue: string
     semestreFilter: SemestreFilter
@@ -66,8 +65,8 @@ export default function Matieres() {
     const [cycleNameById, setCycleNameById] = useState<Map<string, string>>(new Map())
     const [teacherIdsByMatiereId, setTeacherIdsByMatiereId] = useState<Map<string, Set<string>>>(new Map())
 
-    const [allPromotionOptions, setAllPromotionOptions] = useState<{ id: string; nom: string }[]>([])
-    const [allCycleOptions, setAllCycleOptions] = useState<{ id: string; nom: string }[]>([])
+    const [allPromotionLabels, setAllPromotionLabels] = useState<string[]>([])
+    const [allCycleNames, setAllCycleNames] = useState<string[]>([])
 
 
     useEffect(() => {
@@ -77,10 +76,11 @@ export default function Matieres() {
             try {
                 console.log('[MATIERES] fetching matieres + promotions + cycles + profs')
 
-                const [backendMatieres, promosRes, cyclesRes, enseignementsRes] = await Promise.all([
+                const [backendMatieres, promosRes, cyclesRes, profs, enseignementsRes] = await Promise.all([
                     getMatieres(),                 // Array backend matieres
                     promotionsApi.getPromotions(), // ApiResponse<BackendPromotion[]>
                     cyclesApi.getCycles(),         // ApiResponse<BackendCycle[]>
+                    getProfsData(),                // ApiResponse<BackendTeacher[]>
                     getEnseignements(),            // ApiResponse<BackendEnseignement[]>
                 ])
 
@@ -120,15 +120,15 @@ export default function Matieres() {
                 console.log('[MATIERES] example matiere id:', matieres?.[0]?.id)
                 console.log('[MATIERES] example enseignement matiereId:', enseignements?.[0]?.id_matiere)
 
-                const promotionOptions = backendPromos
-                    .map((p) => ({ id: p.id, nom: p.nom }))
-                    .filter((p) => p.nom)
-                    .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
+                const promotionLabels = backendPromos
+                    .map((p) => p.nom)
+                    .filter(Boolean)
+                    .sort((a, b) => a.localeCompare(b, 'fr'))
 
-                const cycleOptions = backendCycles
-                    .map((c) => ({ id: c.id, nom: c.nom }))
-                    .filter((c) => c.nom)
-                    .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
+                const cycleNames = backendCycles
+                    .map((c) => c.nom)
+                    .filter(Boolean)
+                    .sort((a, b) => a.localeCompare(b, 'fr'))
 
                 // promoId -> { id, nom, id_cycle }
                 const promoMap = new Map<string, { id: string; nom: string; id_cycle: string }>()
@@ -151,8 +151,9 @@ export default function Matieres() {
                 setMatieres(frontMatieres)
                 setPromoById(promoMap)
                 setCycleNameById(cycleMap)
-                setAllPromotionOptions(promotionOptions)
-                setAllCycleOptions(cycleOptions)
+                setTeachers(profs ?? [])
+                setAllPromotionLabels(promotionLabels)
+                setAllCycleNames(cycleNames)
 
             } catch (e) {
                 console.error('[MATIERES] load failed:', e)
@@ -161,8 +162,8 @@ export default function Matieres() {
                 setPromoById(new Map())
                 setCycleNameById(new Map())
                 setTeachers([])
-                setAllPromotionOptions([])
-                setAllCycleOptions([])
+                setAllPromotionLabels([])
+                setAllCycleNames([])
                 setTeacherIdsByMatiereId(new Map())
             }
         })()
@@ -192,12 +193,12 @@ export default function Matieres() {
     })
 
     const cycleOptions = useMemo(() => {
-        return allCycleOptions
-    }, [allCycleOptions])
+        return allCycleNames.map((nom) => ({ id: nom, nom }))
+    }, [allCycleNames])
 
     const promotionOptions = useMemo(() => {
-        return allPromotionOptions
-    }, [allPromotionOptions])
+        return allPromotionLabels.map((nom) => ({ id: nom, nom }))
+    }, [allPromotionLabels])
 
     const teacherOptions = useMemo(() => {
         return (teachers ?? [])
@@ -305,9 +306,11 @@ export default function Matieres() {
         },
     })
 
-    const removeMatieresByIds = (ids: string[]) => {
+    const removeMatieresByIds = async (ids: string[]) => {
         const idsSet = new Set(ids)
         if (idsSet.size === 0) return
+
+        await Promise.all(Array.from(idsSet).map((id) => deleteMatiere(id)))
 
         setMatieres((prev) => prev.filter((matiere) => !idsSet.has(matiere.id)))
         pruneMatiereSelection(Array.from(idsSet))
@@ -319,12 +322,13 @@ export default function Matieres() {
     }
 
     const handleDeleteSingleMatiere = (matiereId: string) => {
-        removeMatieresByIds([matiereId])
+        void removeMatieresByIds([matiereId])
     }
 
     const handleDeleteSelected = () => {
-        removeMatieresByIds(selectedMatiereIds)
-        disableMatiereSelectionMode()
+        void removeMatieresByIds(selectedMatiereIds).then(() => {
+            disableMatiereSelectionMode()
+        })
     }
 
     const handleSelectMatiere = (matiere: Matiere) => {
@@ -376,14 +380,14 @@ export default function Matieres() {
                 />
 
                 {selectionMode && (
-                        <SelectionToolbar
-                            totalCount={visibleMatiereIds.length}
-                            selectedCount={selectedMatiereCount}
-                            onSelectAll={() => selectAllMatieres(visibleMatiereIds)}
-                            onClearSelection={clearMatiereSelection}
-                            onDeleteSelected={handleDeleteSelected}
-                            confirmTitle="Supprimer les matières sélectionnées"
-                            confirmMessage={`Vous allez supprimer ${selectedMatiereIds.length} matière${selectedMatiereIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                    <SelectionToolbar
+                        totalCount={visibleMatiereIds.length}
+                        selectedCount={selectedMatiereCount}
+                        onSelectAll={() => selectAllMatieres(visibleMatiereIds)}
+                        onClearSelection={clearMatiereSelection}
+                        onDeleteSelected={handleDeleteSelected}
+                        confirmTitle="Supprimer les matières sélectionnées"
+                        confirmMessage={`Vous allez supprimer ${selectedMatiereIds.length} matière${selectedMatiereIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
                     />
                 )}
 
