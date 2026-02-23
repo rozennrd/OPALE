@@ -15,7 +15,7 @@ import java.util.Map;
  * Service for scheduling using JSON mock data instead of database repositories
  * Same interface as SchedulingService but uses JsonDataService for data access
  */
-@Service
+@Service("appJsonSchedulingService")
 public class JsonSchedulingService {
 
     private final JsonDataService jsonDataService;

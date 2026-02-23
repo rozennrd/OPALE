@@ -13,13 +13,13 @@ import java.util.Map;
  * Scheduling service that uses JSON infrastructure
  * Completely separate from database infrastructure
  */
-@Service
+@Service("infraJsonSchedulingService")
 public class JsonSchedulingService {
 
-    private final JsonDataService jsonDataService;
+    private final JsonAccessDataService jsonAccessDataService;
 
-    public JsonSchedulingService(JsonDataService jsonDataService) {
-        this.jsonDataService = jsonDataService;
+    public JsonSchedulingService(JsonAccessDataService jsonAccessDataService) {
+        this.jsonAccessDataService = jsonAccessDataService;
     }
 
     /**
@@ -31,8 +31,8 @@ public class JsonSchedulingService {
             System.out.println("Promotion ID: " + request.getPromotionId());
 
             // 1. Get data from JSON infrastructure
-            var infraEnseignements = jsonDataService.getEnseignementsByPromotion(request.getPromotionId());
-            var infraSalles = jsonDataService.getAllSalles();
+            var infraEnseignements = jsonAccessDataService.getEnseignementsByPromotion(request.getPromotionId());
+            var infraSalles = jsonAccessDataService.getAllSalles();
 
             System.out.println("JSON Infra - Enseignements: " + infraEnseignements.size());
             System.out.println("JSON Infra - Salles: " + infraSalles.size());

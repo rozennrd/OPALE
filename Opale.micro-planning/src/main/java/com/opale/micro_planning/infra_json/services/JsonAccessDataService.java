@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
  * Completely separate from JPA/database infrastructure
  */
 @Service
-public class JsonDataService {
+public class JsonAccessDataService {
 
     private final ObjectMapper objectMapper;
     private final MockDataJson mockData;
 
-    public JsonDataService(ObjectMapper objectMapper) throws IOException {
+    public JsonAccessDataService(ObjectMapper objectMapper) throws IOException {
         this.objectMapper = objectMapper;
         this.mockData = loadMockData();
     }

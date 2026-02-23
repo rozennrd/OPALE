@@ -4,7 +4,7 @@ import com.opale.micro_planning.app.dtos.SchedulingRequest;
 import com.opale.micro_planning.app.dtos.SchedulingResult;
 import com.opale.micro_planning.app.services.SchedulingService;
 import com.opale.micro_planning.app.services.ExcelExportService;
-import com.opale.micro_planning.infra_json.services.JsonDataService;
+import com.opale.micro_planning.infra_json.services.JsonAccessDataService;
 import com.opale.micro_planning.infra_json.services.JsonSchedulingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -26,16 +26,16 @@ public class SchedulingController {
 
     private SchedulingService schedulingService;
     private final JsonSchedulingService jsonSchedulingService;
-    private final JsonDataService jsonDataService;
+    private final JsonAccessDataService jsonAccessDataService;
     private final ExcelExportService excelExportService;
 
     @Autowired
     public SchedulingController(JsonSchedulingService jsonSchedulingService,
-                              JsonDataService jsonDataService,
+                              JsonAccessDataService jsonAccessDataService,
                               ExcelExportService excelExportService,
                               @Autowired(required = false) SchedulingService schedulingService) {
         this.jsonSchedulingService = jsonSchedulingService;
-        this.jsonDataService = jsonDataService;
+        this.jsonAccessDataService = jsonAccessDataService;
         this.excelExportService = excelExportService;
         this.schedulingService = schedulingService;
     }
@@ -136,9 +136,9 @@ public class SchedulingController {
     public ResponseEntity<String> testJsonData() {
         try {
             var promotionId = UUID.fromString("22222222-2222-2222-2222-222222222221");
-            var matieres = jsonDataService.getMatieresByPromotion(promotionId);
-            var enseignements = jsonDataService.getEnseignementsByPromotion(promotionId);
-            var salles = jsonDataService.getAllSalles();
+            var matieres = jsonAccessDataService.getMatieresByPromotion(promotionId);
+            var enseignements = jsonAccessDataService.getEnseignementsByPromotion(promotionId);
+            var salles = jsonAccessDataService.getAllSalles();
 
             return ResponseEntity.ok(String.format(
                 "Matieres: %d, Enseignements: %d, Salles: %d",

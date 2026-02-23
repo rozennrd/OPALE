@@ -5,7 +5,7 @@ import com.opale.micro_planning.app.dtos.SchedulingResult;
 import com.opale.micro_planning.app.services.SchedulingService;
 import com.opale.micro_planning.infra_json.services.JsonSchedulingService;
 import com.opale.micro_planning.app.services.ExcelExportService;
-import com.opale.micro_planning.infra_json.services.JsonDataService;
+import com.opale.micro_planning.infra_json.services.JsonAccessDataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ class SchedulingControllerTest {
     private JsonSchedulingService jsonSchedulingService;
 
     @Mock
-    private JsonDataService jsonDataService;
+    private JsonAccessDataService jsonAccessDataService;
 
     @Mock
     private ExcelExportService excelExportService;
@@ -41,7 +41,7 @@ class SchedulingControllerTest {
 
     @BeforeEach
     void setUp() {
-        controller = new SchedulingController(jsonSchedulingService, jsonDataService, excelExportService, schedulingService);
+        controller = new SchedulingController(jsonSchedulingService, jsonAccessDataService, excelExportService, schedulingService);
     }
 
     @Test
