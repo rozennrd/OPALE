@@ -22,10 +22,31 @@ export interface TeacherApi {
     }[]
 }
 
+export interface UpdateProfPayload {
+    nom: string
+    prenom: string
+    email?: string
+    email_perso?: string
+    telephone?: string
+    type: 'Permanent' | 'Intervenant' | 'Invite'
+    modalite_enseignement?: 'Distanciel' | 'Hybride' | 'Présentiel'
+    campus_origin?: 'Bordeaux' | 'Lille' | 'Chateauroux'
+}
+
 export async function getProfsData(): Promise<TeacherApi[]> {
     const res = await apiClient.get<TeacherApi[]>('/getProfsData')
     if (!res.success) {
         throw new Error(res.error?.message ?? 'Failed to fetch teachers')
     }
     return res.data ?? []
+}
+
+export async function updateProf(id: string, payload: UpdateProfPayload): Promise<void> {
+    const res = await apiClient.put<{ success?: boolean; message?: string }>(
+        `/updateProf/${id}`,
+        payload,
+    )
+    if (!res.success) {
+        throw new Error(res.error?.message ?? 'Failed to update teacher')
+    }
 }

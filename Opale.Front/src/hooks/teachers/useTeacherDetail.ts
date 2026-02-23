@@ -1,6 +1,7 @@
 // src/hooks/teachers/useTeacherDetail.ts
 import { useEffect, useState } from 'react'
-import { Teacher, TeacherAvailabilityPeriod } from '../../models/Teacher'
+import { Teacher, TeacherAvailabilityPeriod } from '../../models/Teachers'
+import { updateProf } from '../../services/api/professorsApi'
 
 const normalizeAvailability = (value?: string): string => {
     if (!value || value.length !== 10) return '0000000000'
@@ -39,7 +40,47 @@ type TeacherSnapshot = {
     periods: TeacherAvailabilityPeriod[]
 }
 
-export const useTeacherDetail = (teacher: Teacher) => {
+interface UseTeacherDetailOptions {
+    onTeacherSaved?: (teacher: Teacher) => void
+}
+
+const normalizeType = (
+    value?: Teacher['category'],
+): 'Permanent' | 'Intervenant' | 'Invite' => {
+    if (value === 'Intervenant' || value === 'Invite' || value === 'Permanent') {
+        return value
+    }
+    return 'Permanent'
+}
+
+const normalizeMode = (
+    value: Teacher['mode'],
+): 'Distanciel' | 'Hybride' | 'Présentiel' => {
+    if (value === 'Distanciel' || value === 'Hybride' || value === 'Présentiel') {
+        return value
+    }
+
+    const raw = String(value).toLowerCase()
+    if (raw === 'distanciel') return 'Distanciel'
+    if (raw === 'hybride') return 'Hybride'
+    return 'Présentiel'
+}
+
+const normalizeCampus = (
+    value?: string,
+): 'Bordeaux' | 'Lille' | 'Chateauroux' | undefined => {
+    if (!value) return undefined
+    const raw = value.trim().toLowerCase()
+    if (raw.includes('lille')) return 'Lille'
+    if (raw.includes('chateauroux') || raw.includes('châteauroux')) return 'Chateauroux'
+    return 'Bordeaux'
+}
+
+export const useTeacherDetail = (
+    teacher: Teacher,
+    options: UseTeacherDetailOptions = {},
+) => {
+    const { onTeacherSaved } = options
     const [teacherDraft, setTeacherDraft] = useState<Teacher>(() => cloneTeacher(teacher))
     const [periods, setPeriods] = useState<TeacherAvailabilityPeriod[]>(() =>
         buildInitialPeriods(teacher),
@@ -183,21 +224,33 @@ export const useTeacherDetail = (teacher: Teacher) => {
         )
     }
 
-    const handleSave = () => {
-        console.log('[TEACHERS] Enregistrer les données enseignant + périodes')
-        console.log('→ demander au back de mettre à jour la BDD')
-        console.log({
-            originalTeacher: teacher,
-            updatedTeacher: teacherDraft,
-            availabilityPeriods: periods,
-        })
+    const handleSave = async (): Promise<boolean> => {
+        try {
+            if (teacherDraft.id !== 'new-teacher') {
+                await updateProf(teacherDraft.id, {
+                    nom: teacherDraft.lastName,
+                    prenom: teacherDraft.firstName,
+                    email: teacherDraft.emailJunia || undefined,
+                    email_perso: teacherDraft.email || undefined,
+                    telephone: teacherDraft.phone || undefined,
+                    type: normalizeType(teacherDraft.category),
+                    modalite_enseignement: normalizeMode(teacherDraft.mode),
+                    campus_origin: normalizeCampus(teacherDraft.campus),
+                })
+            }
 
-        // ✅ après "sauvegarde", on met à jour le snapshot
-        setSnapshot({
-            teacher: teacherDraft,
-            periods,
-        })
-        setHasChanges(false)
+            setSnapshot({
+                teacher: teacherDraft,
+                periods,
+            })
+            setHasChanges(false)
+            onTeacherSaved?.(teacherDraft)
+
+            return true
+        } catch (error) {
+            console.error('[TEACHERS] save failed:', error)
+            return false
+        }
     }
 
     return {

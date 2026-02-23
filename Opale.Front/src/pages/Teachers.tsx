@@ -118,6 +118,11 @@ export default function Teachers() {
         [teachers],
     )
 
+    const invites = useMemo(
+        () => teachers.filter((teacher) => teacher.category === 'Invite'),
+        [teachers],
+    )
+
     const handleCreateRequested = () => {
         setSelectedTeacher({
             id: 'new-teacher',
@@ -163,6 +168,7 @@ export default function Teachers() {
     const filteredInternalBordeaux = filteredTeachers(internalBordeaux)
     const filteredInternalLilleChateauroux = filteredTeachers(internalLilleChateauroux)
     const filteredVacataires = filteredTeachers(vacataires)
+    const filteredInvited = filteredTeachers(invites)
 
     const {
         hasActiveFilters,
@@ -210,6 +216,19 @@ export default function Teachers() {
     const handleDeleteSelected = () => {
         removeTeachersByIds(selectedTeacherIds)
         disableTeacherSelectionMode()
+    }
+
+    const handleTeacherUpdated = (updatedTeacher: Teacher) => {
+        setTeachers((prev) =>
+            prev.map((teacher) =>
+                teacher.id === updatedTeacher.id ? { ...updatedTeacher } : teacher,
+            ),
+        )
+        setSelectedTeacher((prev) => {
+            if (!prev) return prev
+            if (prev.id !== updatedTeacher.id) return prev
+            return { ...updatedTeacher }
+        })
     }
 
     return (
@@ -279,6 +298,16 @@ export default function Teachers() {
                             onToggleTeacherSelection={toggleTeacherSelection}
                         />
                     )}
+                    {filteredInvited.length > 0 && (
+                        <TeacherSection
+                            title="Invités ponctuels"
+                            teachers={filteredInvited}
+                            onSelectTeacher={setSelectedTeacher}
+                            selectionMode={selectionMode}
+                            selectedTeacherIds={selectedTeacherIdsSet}
+                            onToggleTeacherSelection={toggleTeacherSelection}
+                        />
+                    )}
                 </div>
             </div>
 
@@ -286,6 +315,7 @@ export default function Teachers() {
                 <TeacherDetailCard
                     teacher={selectedTeacher}
                     onClose={() => setSelectedTeacher(null)}
+                    onTeacherUpdated={handleTeacherUpdated}
                     onDelete={
                         selectedTeacher.id === 'new-teacher'
                             ? undefined

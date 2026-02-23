@@ -9,6 +9,8 @@ export interface TeacherAvailabilityPeriod {
     id: string          // identifiant interne, ex: "period-1"
     label: string       // libellé affiché, ex: "Période 1" ou "Jan–Mars"
     availability: string // 10 caractères "0"/"1"
+    start?: string
+    end?: string
 }
 
 export interface Teacher {

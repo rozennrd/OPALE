@@ -1,22 +1,21 @@
 // src/components/teachers/section/TeacherSubjectsColumn.tsx
-import React from 'react'
-import { Teacher } from '../../models/Teacher'
+import { Teacher } from '../../../models/Teachers'
 
 type SubjectField = 'name' | 'promo'
 
 interface TeacherSubjectsColumnProps {
-    subjects: Teacher['subjects'] | undefined
+    subjects: Teacher['subjects']
     onSubjectChange: (index: number, field: SubjectField, value: string) => void
     onAddSubject: () => void
     onRemoveSubject: (index: number) => void
 }
 
-const TeacherSubjectsColumn: React.FC<TeacherSubjectsColumnProps> = ({
-                                                                         subjects,
-                                                                         onSubjectChange,
-                                                                         onAddSubject,
-                                                                         onRemoveSubject,
-                                                                     }) => {
+const TeacherSubjectsColumn = ({
+    subjects,
+    onSubjectChange,
+    onAddSubject,
+    onRemoveSubject,
+}: TeacherSubjectsColumnProps) => {
     return (
         <div className="teacher-detail-col">
             <h4>Matières enseignées</h4>

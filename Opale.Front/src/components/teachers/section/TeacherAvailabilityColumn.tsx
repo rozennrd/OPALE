@@ -1,6 +1,6 @@
 // src/components/teachers/section/TeacherAvailabilityColumn.tsx
-import React, { useMemo } from 'react'
-import { TeacherAvailabilityPeriod } from '../../../models/Teacher'
+import { useMemo } from 'react'
+import { TeacherAvailabilityPeriod } from '../../../models/Teachers'
 import { DateRange } from '../../../models'
 import DateRangePill from '../../common/DateRangePill'
 
@@ -21,15 +21,15 @@ const normalizeAvailability = (value?: string): string => {
     return value
 }
 
-const TeacherAvailabilityColumn: React.FC<TeacherAvailabilityColumnProps> = ({
-                                                                                 periods,
-                                                                                 selectedPeriodId,
-                                                                                 onSelectPeriod,
-                                                                                 onAddPeriod,
-                                                                                 onRemovePeriod,
-                                                                                 onToggleSlot,
-                                                                                 onPeriodDateChange,
-                                                                             }) => {
+const TeacherAvailabilityColumn = ({
+    periods,
+    selectedPeriodId,
+    onSelectPeriod,
+    onAddPeriod,
+    onRemovePeriod,
+    onToggleSlot,
+    onPeriodDateChange,
+}: TeacherAvailabilityColumnProps) => {
     const selectedPeriod = useMemo(
         () => periods.find((p) => p.id === selectedPeriodId) ?? periods[0],
         [periods, selectedPeriodId],
