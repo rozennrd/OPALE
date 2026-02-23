@@ -274,8 +274,17 @@ describe('maquette parser', () => {
 });
 
 describe('promotion resolver', () => {
-  it('resolves AP3/AP4/AP5 using legacy semester mapping for AP', () => {
-    // Mapping AP historique base sur les blocs de semestres.
+  it('maps semester pairs to cycle year index (S1/S2->1 ... S9/S10->5)', () => {
+    const ap1 = resolvePromotionCode({
+      cycleRaw: 'Cycle : FISA',
+      sheetName: 'Maquette AP',
+      semestres: [1],
+    });
+    const ap2 = resolvePromotionCode({
+      cycleRaw: 'Cycle : FISA',
+      sheetName: 'Maquette AP',
+      semestres: [4],
+    });
     const ap3 = resolvePromotionCode({
       cycleRaw: 'Cycle : FISA',
       sheetName: 'Maquette AP',
@@ -292,9 +301,68 @@ describe('promotion resolver', () => {
       semestres: [10],
     });
 
+    expect(ap1.promotionCode).toBe('AP1');
+    expect(ap2.promotionCode).toBe('AP2');
     expect(ap3.promotionCode).toBe('AP3');
     expect(ap4.promotionCode).toBe('AP4');
     expect(ap5.promotionCode).toBe('AP5');
+  });
+
+  it('maps ADI/CIR cycle years from S5-S10 as years 3-5', () => {
+    const adiS5 = resolvePromotionCode({
+      cycleRaw: 'Cycle : ADI',
+      sheetName: 'Maquette ADI',
+      semestres: [5],
+    });
+    const adiS8 = resolvePromotionCode({
+      cycleRaw: 'Cycle : ADI',
+      sheetName: 'Maquette ADI',
+      semestres: [8],
+    });
+    const adiS10 = resolvePromotionCode({
+      cycleRaw: 'Cycle : ADI',
+      sheetName: 'Maquette ADI',
+      semestres: [10],
+    });
+
+    const cirS6 = resolvePromotionCode({
+      cycleRaw: 'Cycle : CIR',
+      sheetName: 'Maquette CIR',
+      semestres: [6],
+    });
+    const cirS9 = resolvePromotionCode({
+      cycleRaw: 'Cycle : CIR',
+      sheetName: 'Maquette CIR',
+      semestres: [9],
+    });
+
+    expect(adiS5.promotionCode).toBe('ADI3');
+    expect(adiS8.promotionCode).toBe('ADI4');
+    expect(adiS10.promotionCode).toBe('ADI5');
+    expect(cirS6.promotionCode).toBe('CIR3');
+    expect(cirS9.promotionCode).toBe('CIR5');
+  });
+
+  it('maps ISEN cycle years from S5-S10 as years 3-5', () => {
+    const isenS5 = resolvePromotionCode({
+      cycleRaw: 'Cycle : ISEN',
+      sheetName: 'Maquette ISEN',
+      semestres: [5],
+    });
+    const isenS8 = resolvePromotionCode({
+      cycleRaw: 'Cycle : ISEN',
+      sheetName: 'Maquette ISEN',
+      semestres: [8],
+    });
+    const isenS10 = resolvePromotionCode({
+      cycleRaw: 'Cycle : ISEN',
+      sheetName: 'Maquette ISEN',
+      semestres: [10],
+    });
+
+    expect(isenS5.promotionCode).toBe('ISEN3');
+    expect(isenS8.promotionCode).toBe('ISEN4');
+    expect(isenS10.promotionCode).toBe('ISEN5');
   });
 
   it('prioritizes an explicit promotion code like APS5 when present', () => {
