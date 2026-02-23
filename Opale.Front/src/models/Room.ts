@@ -20,6 +20,12 @@ export interface Room {
     /** Types disponibles pour la salle */
     types: RoomType[]
 
+    /** Nombre de places */
+    capacity: number
+
+    /** Disponibilite globale de la salle */
+    isAvailable: boolean
+
     /** Commentaires libres */
     description?: string
 }

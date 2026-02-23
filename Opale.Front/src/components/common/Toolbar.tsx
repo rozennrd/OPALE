@@ -28,3 +28,32 @@ export const ToolbarRow: React.FC<ToolbarRowProps> = ({
         .join(' ')
     return <div className={rowClassName}>{children}</div>
 }
+
+interface ToolbarResetButtonProps {
+    onClick: () => void
+    disabled?: boolean
+    label?: string
+    className?: string
+}
+
+export const ToolbarResetButton: React.FC<ToolbarResetButtonProps> = ({
+                                                                          onClick,
+                                                                          disabled = false,
+                                                                          label = 'Reset filtres',
+                                                                          className = '',
+                                                                      }) => {
+    const buttonClassName = ['toolbar-filter-button', 'toolbar-reset-button', className]
+        .filter(Boolean)
+        .join(' ')
+
+    return (
+        <button
+            type="button"
+            className={buttonClassName}
+            onClick={onClick}
+            disabled={disabled}
+        >
+            {label}
+        </button>
+    )
+}

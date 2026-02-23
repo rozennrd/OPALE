@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import icMoins from '../../../assets/ic-moins.png'
+import icTrash from '../../../assets/ic-trash.png'
 import icWarning from '../../../assets/ic-warning.png'
 import icModif from '../../../assets/ic-modif.png'
 import icPlus from '../../../assets/ic-plus.png'
@@ -223,7 +223,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
         if (newFiles.length === 0) {
             setImportFeedback({
                 variant: 'info',
-                message: 'Aucun nouveau fichier a previsualiser.',
+                message: 'Aucun nouveau fichier à prévisualiser.',
             })
             return
         }
@@ -293,15 +293,15 @@ const CycleCard: React.FC<CycleCardProps> = ({
                 failedFiles.length === 0 ? 'success' : successCount > 0 ? 'info' : 'error'
 
             const failedSuffix =
-                failedFiles.length > 0 ? ` Echec: ${failedFiles.join(', ')}.` : ''
+                failedFiles.length > 0 ? ` Échec : ${failedFiles.join(', ')}.` : ''
 
             setImportFeedback({
                 variant,
                 message:
-                    `Import termine (${successCount}/${selectedFiles.length} fichier(s)). ` +
-                    `Matieres: +${totals.insertedMatieres} / maj ${totals.updatedMatieres} / skip ${totals.skippedMatieres}. ` +
-                    `Examens: +${totals.insertedExamEvents} / skip ${totals.skippedExamEvents}. ` +
-                    `Warnings: ${warningCount}.` +
+                    `Import terminé (${successCount}/${selectedFiles.length} fichier(s)). ` +
+                    `Matières : +${totals.insertedMatieres} / mises à jour ${totals.updatedMatieres} / ignorées ${totals.skippedMatieres}. ` +
+                    `Examens : +${totals.insertedExamEvents} / ignorés ${totals.skippedExamEvents}. ` +
+                    `Avertissements : ${warningCount}.` +
                     failedSuffix,
             })
         } catch (error) {
@@ -436,12 +436,12 @@ const CycleCard: React.FC<CycleCardProps> = ({
 
                 <div className="cycle-actions">
                     <button
-                        className="btn-danger btn-icon-responsive"
+                        className="btn-danger btn-icon-only"
                         onClick={() => removeCycle(cycle.id)}
                         aria-label="Supprimer le cycle"
                         title="Supprimer le cycle"
                     >
-                        <img src={icMoins} alt="" aria-hidden="true" />
+                        <img src={icTrash} alt="" aria-hidden="true" />
                         <span className="btn-label">Supprimer le cycle</span>
                     </button>
                 </div>
@@ -470,7 +470,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
 
                         <div className="promo-actions">
                             <button
-                                className="btn-tertiary btn-icon-responsive"
+                                className="btn-tertiary btn-icon-only"
                                 onClick={() => openEditPromotion(cycle.id, promo.id)}
                                 aria-label="Modifier la promotion"
                                 title="Modifier la promotion"
@@ -480,12 +480,12 @@ const CycleCard: React.FC<CycleCardProps> = ({
                             </button>
 
                             <button
-                                className="btn-danger btn-icon-responsive"
+                                className="btn-danger btn-icon-only"
                                 onClick={() => removePromotion(promo.id)}
                                 aria-label="Supprimer la promotion"
                                 title="Supprimer la promotion"
                             >
-                                <img src={icMoins} alt="" aria-hidden="true" />
+                                <img src={icTrash} alt="" aria-hidden="true" />
                                 <span className="btn-label">Supprimer</span>
                             </button>
                         </div>
@@ -595,11 +595,11 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                                         <strong>{previewSpecialites}</strong>
                                                     </div>
                                                     <div className="maquette-preview-summary-item">
-                                                        <span>Nb matières extraites</span>
+                                                        <span>Nombre de matières extraites</span>
                                                         <strong>{previewData.matieres.length}</strong>
                                                     </div>
                                                     <div className="maquette-preview-summary-item">
-                                                        <span>Nb warnings</span>
+                                                        <span>Nombre d&apos;avertissements</span>
                                                         <strong>{previewData.warnings.length}</strong>
                                                     </div>
                                                 </div>
@@ -618,12 +618,12 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                     isPreviewWarningsVisible ? (
                                         <div className="maquette-preview-warning-list">
                                             <div className="maquette-preview-warning-head">
-                                                <strong>Warnings</strong>
+                                                <strong>Avertissements</strong>
                                                 <button
                                                     type="button"
                                                     className="maquette-preview-warning-close"
                                                     onClick={() => setIsPreviewWarningsVisible(false)}
-                                                    aria-label="Fermer les warnings"
+                                                    aria-label="Fermer les avertissements"
                                                     title="Fermer"
                                                 >
                                                     ×
@@ -641,7 +641,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                             className="maquette-preview-warning-reopen btn-tertiary"
                                             onClick={() => setIsPreviewWarningsVisible(true)}
                                         >
-                                            Afficher les warnings
+                                            Afficher les avertissements
                                         </button>
                                     )
                                 )}
@@ -753,3 +753,4 @@ const CycleCard: React.FC<CycleCardProps> = ({
 }
 
 export default CycleCard
+

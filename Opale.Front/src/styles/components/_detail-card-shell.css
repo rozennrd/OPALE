@@ -3,12 +3,13 @@
 @layer components {
     .detail-card {
         position: relative;
-        background: var(--color-surface, #fff);
+        background: var(--color-surface);
         border-radius: 1rem;
         width: min(1000px, 96vw);
         max-height: min(720px, 96vh);
         padding: 1.6rem 1.8rem 1.4rem;
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        box-shadow: var(--shadow-lg);
+        color: var(--color-text-main);
         animation: detailCardFadeInUp 180ms ease;
         overflow: hidden;
 
@@ -27,14 +28,7 @@
         }
     }
 
-    /* Variante dark générique pour toutes les cards détail */
-    [data-theme='dark'] .detail-card {
-        background: var(--panel-soft);
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
-        color: var(--text);
-    }
-
-    /* 💡 Focus commun pour tous les champs modifiables dans une card détail */
+    /* Focus common to all editable fields in detail cards */
     .detail-card input,
     .detail-card select,
     .detail-card textarea {
@@ -49,15 +43,7 @@
     .detail-card textarea:focus {
         outline: none;
         border-color: var(--primary);
-        box-shadow: 0 0 0 1px
-        color-mix(in srgb, var(--primary), transparent);
-        background: var(--color-surface, #fff);
-    }
-
-    /* Variante dark pour tous les champs des cards détail */
-    [data-theme='dark'] .detail-card input:focus,
-    [data-theme='dark'] .detail-card select:focus,
-    [data-theme='dark'] .detail-card textarea:focus {
-        background: #252f42;
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary), transparent);
+        background: var(--input-bg);
     }
 }

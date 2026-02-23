@@ -108,7 +108,7 @@ const TeacherInfoColumn: React.FC<TeacherInfoColumnProps> = ({ teacher, onInfoCh
                             >
                                 <option value="Bordeaux">Bordeaux</option>
                                 <option value="Lille">Lille</option>
-                                <option value="ChÃ¢teauroux">ChÃ¢teauroux</option>
+                                <option value="Châteauroux">Châteauroux</option>
                             </select>
                         </dd>
                     </div>
