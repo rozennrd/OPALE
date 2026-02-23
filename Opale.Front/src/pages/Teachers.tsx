@@ -58,7 +58,7 @@ export default function Teachers() {
                     emailJunia: teacher.email ?? '',
                     campus: teacher.campus_origin ?? 'Bordeaux',
                     category: normalizeCategory(teacher.type),
-                    mode: teacher.mode ?? 'Présentiel',
+                    mode: teacher.modalite_enseignement ?? 'Présentiel',
                     subjects: teacher.subjects ?? [],
                     availability: teacher.availability ?? '0000000000',
                 }))
@@ -128,7 +128,7 @@ export default function Teachers() {
             emailJunia: '',
             campus: 'Bordeaux',
             category: 'Permanent',
-            mode: 'PRESENTIEL',
+            mode: 'Présentiel',
             subjects: [],
             availability: '0000000000',
         })
