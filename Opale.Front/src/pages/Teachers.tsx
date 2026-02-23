@@ -1,24 +1,16 @@
-import React, { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import TeachersToolbar, { ModeFilter } from '../components/teachers/TeachersToolbar'
 import TeacherSection from '../components/teachers/TeacherSection'
 import TeacherDetailCard from '../components/teachers/TeacherDetailCard'
 import SelectionToolbar from '../components/common/SelectionToolbar'
 
-import {
-    INTERNAL_TEACHERS_MOCK,
-    VACATAIRE_TEACHERS_MOCK,
-} from '../mocks/teachers.mock'
-import { MATIERES_MOCK } from '../mocks/matieres.mock'
+import { getProfsData } from '../services/api/professorsApi'
 
-import { Teacher } from '../models/Teacher'
+import { Teacher } from '../models/Teachers'
 import PageHeader from '../components/common/PageHeader'
 import { useSelectionState } from '../hooks/common/useSelectionState'
 import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
 
-const INITIAL_TEACHERS: Teacher[] = [
-    ...INTERNAL_TEACHERS_MOCK,
-    ...VACATAIRE_TEACHERS_MOCK,
-]
 const DEFAULT_TEACHERS_FILTERS: {
     searchValue: string
     modeFilter: ModeFilter
@@ -30,11 +22,59 @@ const DEFAULT_TEACHERS_FILTERS: {
 }
 
 export default function Teachers() {
-    const [teachers, setTeachers] = useState<Teacher[]>(() => [...INITIAL_TEACHERS])
+    const [teachers, setTeachers] = useState<Teacher[]>([])
     const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null)
     const [searchValue, setSearchValue] = useState('')
     const [modeFilter, setModeFilter] = useState<ModeFilter>('ALL')
     const [subjectFilter, setSubjectFilter] = useState('')
+
+    useEffect(() => {
+        let mounted = true
+
+        const normalizeCategory = (
+            value?: string,
+        ): 'Permanent' | 'Intervenant' | 'Invite' => {
+            const raw = (value ?? '').trim().toLowerCase()
+            if (raw === 'intervenant' || raw === 'vacataire') return 'Intervenant'
+            if (raw === 'invité' || raw === 'invite') return 'Invite'
+            if (raw === 'permanent' || raw === 'interne') return 'Permanent'
+            return 'Permanent'
+        }
+
+        ;(async () => {
+            try {
+                const apiTeachers = await getProfsData()
+
+                console.log(apiTeachers)
+
+                if (!mounted) return
+
+                const mappedTeachers: Teacher[] = (apiTeachers ?? []).map((teacher) => ({
+                    id: String(teacher.id),
+                    firstName: teacher.prenom ?? '',
+                    lastName: teacher.nom ?? '',
+                    phone: teacher.phone ?? '',
+                    email: teacher.email_perso ?? '',
+                    emailJunia: teacher.email ?? '',
+                    campus: teacher.campus_origin ?? 'Bordeaux',
+                    category: normalizeCategory(teacher.type),
+                    mode: teacher.mode ?? 'PRESENTIEL',
+                    subjects: teacher.subjects ?? [],
+                    availability: teacher.availability ?? '0000000000',
+                }))
+
+                setTeachers(mappedTeachers)
+            } catch (error) {
+                console.error('[TEACHERS] load failed:', error)
+                if (!mounted) return
+                setTeachers([])
+            }
+        })()
+
+        return () => {
+            mounted = false
+        }
+    }, [])
 
     const {
         selectionMode,
@@ -57,7 +97,7 @@ export default function Teachers() {
         () =>
             teachers.filter(
                 (teacher) =>
-                    teacher.category === 'INTERNE' &&
+                    teacher.category === 'Permanent' &&
                     teacher.campus?.toLowerCase().includes('bordeaux'),
             ),
         [teachers],
@@ -67,14 +107,14 @@ export default function Teachers() {
         () =>
             teachers.filter(
                 (teacher) =>
-                    teacher.category === 'INTERNE' &&
+                    teacher.category === 'Permanent' &&
                     !teacher.campus?.toLowerCase().includes('bordeaux'),
             ),
         [teachers],
     )
 
     const vacataires = useMemo(
-        () => teachers.filter((teacher) => teacher.category === 'VACATAIRE'),
+        () => teachers.filter((teacher) => teacher.category === 'Intervenant'),
         [teachers],
     )
 
@@ -87,7 +127,7 @@ export default function Teachers() {
             email: '',
             emailJunia: '',
             campus: 'Bordeaux',
-            category: 'INTERNE',
+            category: 'Permanent',
             mode: 'PRESENTIEL',
             subjects: [],
             availability: '0000000000',
@@ -95,9 +135,12 @@ export default function Teachers() {
     }
 
     const subjectOptions = useMemo(() => {
-        const names = MATIERES_MOCK.map((matiere) => matiere.nom.trim())
+        const names = teachers
+            .flatMap((teacher) => teacher.subjects || [])
+            .map((subject) => subject.name.trim())
+            .filter(Boolean)
         return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b))
-    }, [])
+    }, [teachers])
 
     const filteredTeachers = (list: Teacher[]) => {
         const needle = searchValue.trim().toLowerCase()
