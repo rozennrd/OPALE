@@ -1,6 +1,6 @@
 // src/components/teachers/TeachersToolbar.tsx
-import React, { useMemo, useState } from 'react'
-import { TeachingMode } from '../../models/Teacher'
+import { useMemo, useState } from 'react'
+import { TeachingMode } from '../../models/Teachers'
 import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 import icPlus from '../../assets/ic-plus.png'
@@ -9,9 +9,9 @@ export type ModeFilter = 'ALL' | TeachingMode
 
 const MODE_OPTIONS: { value: ModeFilter; label: string }[] = [
     { value: 'ALL', label: 'Tous' },
-    { value: 'PRESENTIEL', label: 'Présentiel' },
-    { value: 'HYBRIDE', label: 'Hybride' },
-    { value: 'DISTANCIEL', label: 'Distanciel' },
+    { value: 'Présentiel', label: 'Présentiel' },
+    { value: 'Hybride', label: 'Hybride' },
+    { value: 'Distanciel', label: 'Distanciel' },
 ]
 
 interface TeachersToolbarProps {

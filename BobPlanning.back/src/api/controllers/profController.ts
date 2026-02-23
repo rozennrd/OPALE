@@ -7,6 +7,7 @@ function validateProfDto(req: Request, res: Response) {
         prenom,
         email,
         email_perso,
+        telephone,
         type,
         modalite_enseignement,
         campus_origin
@@ -32,6 +33,7 @@ function validateProfDto(req: Request, res: Response) {
         prenom,
         email: email || null,
         email_perso: email_perso || null,
+        telephone: telephone || null,
         type,
         modalite_enseignement: modalite_enseignement || 'Présentiel',
         campus_origin: campus_origin || null,

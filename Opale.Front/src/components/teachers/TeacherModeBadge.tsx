@@ -1,6 +1,5 @@
 // src/components/teachers/TeacherModeBadge.tsx
-import React from 'react'
-import { TeachingMode } from '../../models/Teacher'
+import { TeachingMode } from '../../models/Teachers'
 
 import icDistanciel from '../../assets/mode/ic-mode-distanciel.png'
 import icPresentiel from '../../assets/mode/ic-mode-presentiel.png'
