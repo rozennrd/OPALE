@@ -22,6 +22,7 @@ import matiereRoutes from "./api/routes/matiereRoutes";
 import profRoutes from "./api/routes/profRoutes";
 import specialiteRoutes from "./api/routes/specialiteRoutes";
 import enseignementRoutes from "./api/routes/enseignementRoutes";
+import disponibiliteRoutes from './api/routes/disponibiliteRoutes';
 import maquetteRoutes from './api/routes/maquetteRoutes';
 
 require('dotenv').config();
@@ -78,6 +79,7 @@ app.use('/', profRoutes);
 app.use('/', specialiteRoutes);
 app.use('/', eventRoutes);
 app.use('/', enseignementRoutes);
+app.use('/', disponibiliteRoutes);
 app.use('/', localisationRoutes);
 app.use('/', maquetteRoutes);
 
