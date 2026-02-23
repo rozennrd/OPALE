@@ -163,18 +163,28 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`
     const timeout = config?.timeout ?? this.defaultTimeout
+    const retries = config?.retries ?? this.defaultRetries
 
         const formData = new FormData()
         formData.append('file', file)
 
         if (additionalData) {
             Object.entries(additionalData).forEach(([key, value]) => {
-                formData.append(key, value as string)
+                formData.append(key, String(value))
             })
         }
 
+        const headers: Record<string, string> = {
+            ...(config?.headers || {}),
+        }
+
+        const token = getTokenFromLocalStorage()
+        if (token) {
+            headers['x-access-token'] = token
+        }
+
         let lastError: Error = new Error('Unknown error')
-        for (let attempt = 0; attempt <= (config?.retries ?? this.defaultRetries); attempt++) {
+        for (let attempt = 0; attempt <= retries; attempt++) {
             try {
                 const controller = new AbortController()
                 const id = setTimeout(() => controller.abort(), timeout)
@@ -182,6 +192,7 @@ class ApiClient {
                 const response = await fetch(url, {
                     method: 'POST',
                     body: formData,
+                    headers,
                     credentials: 'include',
                     signal: controller.signal,
                 })
@@ -190,6 +201,20 @@ class ApiClient {
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}))
+
+                    if (response.status === 401) {
+                        console.log('[AUTH] 401 received, redirecting to login')
+                        window.location.href = '/login'
+                        return {
+                            success: false,
+                            error: {
+                                code: 401,
+                                message: 'Session expired, please login again',
+                                details: errorData,
+                            },
+                        }
+                    }
+
                     const error: ApiError = {
                         code: response.status,
                         message: errorData.message || `HTTP ${response.status}: ${response.statusText}`,
@@ -224,7 +249,7 @@ class ApiClient {
                     break
                 }
 
-                if (attempt < (config?.retries ?? this.defaultRetries)) {
+                if (attempt < retries) {
                     await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000))
                 }
             }

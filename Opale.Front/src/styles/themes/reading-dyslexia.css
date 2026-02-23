@@ -1,0 +1,54 @@
+/* Dyslexia-friendly reading layer (can stack with light/dark/spock/cvd/low-vision) */
+
+@layer tokens {
+  :root[data-reading="dyslexia"] {
+    --reading-font-family: "Atkinson Hyperlegible", "Lexend", "OpenDyslexic", "Segoe UI", Tahoma, Arial, sans-serif;
+    --reading-font-size-scale: 1.1;
+    --reading-line-height: 1.7;
+    --reading-letter-spacing: 0.03em;
+    --reading-word-spacing: 0.12em;
+    --reading-content-max-width: 68ch;
+  }
+}
+
+@layer utilities {
+  :root[data-reading="dyslexia"] body {
+    font-family: var(--reading-font-family);
+    font-size: calc(1rem * var(--reading-font-size-scale));
+    line-height: var(--reading-line-height);
+    text-rendering: optimizeLegibility;
+    word-spacing: var(--reading-word-spacing);
+    letter-spacing: 0.01em;
+  }
+
+  :root[data-reading="dyslexia"] :is(p, li, dd, dt, label, .page-sub, .empty, .confirm-dialog-body, .cl-label, .entity-card-meta) {
+    line-height: var(--reading-line-height);
+    letter-spacing: var(--reading-letter-spacing);
+    word-spacing: var(--reading-word-spacing);
+    text-align: left;
+    max-width: var(--reading-content-max-width);
+  }
+
+  :root[data-reading="dyslexia"] :is(h1, h2, h3, h4, h5, h6, .page-title, .section-header-title, .entity-card-title, .event-card-name, .room-card-name, .teacher-card-name, .nav-label, .nav-code, button, .btn-primary, .btn-tertiary, .btn-danger, .btn-disconnect, .theme-toggle-text) {
+    text-transform: none !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  :root[data-reading="dyslexia"] :is(input, textarea, select, .cycle-name, .toolbar-search-input) {
+    font-family: var(--reading-font-family);
+    font-size: 1em;
+    letter-spacing: 0.02em;
+    word-spacing: 0.08em;
+    line-height: 1.5;
+  }
+
+  :root[data-reading="dyslexia"] :is(em, i) {
+    font-style: normal;
+  }
+
+  :root[data-reading="dyslexia"] :focus-visible {
+    outline: 3px solid var(--brand);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+}

@@ -29,8 +29,8 @@ export default function PlanningMacro(): React.ReactElement {
     const [items, setItems] = useState<ChecklistItem[]>([
         { id: 'promos',    label: 'Toutes les promotions sont créées',                     status: 'ok',    checked: true,  warning: false },
         { id: 'periodes',  label: 'Toutes les périodes de présence ont été remplies',      status: 'ok',    checked: true  },
-        { id: 'maquettes', label: 'Les maquettes de chaque promos créées ont été ajoutées', status: 'ok',    checked: true  },
-        { id: 'events',    label: 'Les évènements majeurs du campus ont été renseignés',  status: 'alert', checked: false },
+        { id: 'maquettes', label: 'Les maquettes de chaque promotion créée ont été ajoutées', status: 'ok',    checked: true  },
+        { id: 'events',    label: 'Les événements majeurs du campus ont été renseignés',  status: 'alert', checked: false },
     ])
 
     useEffect(() => {
@@ -129,8 +129,8 @@ export default function PlanningMacro(): React.ReactElement {
         <>
             {/* TITRE & SOUS-TITRE */}
             <PageHeader
-                title="Génération planning macro"
-                subtitle="Sélectionnez chacun de ces points s'il a été renseigné."
+                title="Génération du planning macro"
+                subtitle="Cochez chaque point uniquement s’il a été renseigné."
             />
 
             {/* CONTENU DE LA PAGE */}
@@ -141,7 +141,7 @@ export default function PlanningMacro(): React.ReactElement {
                 onClick={handleGenerate}
                 disabled={isLoading}
             >
-                Générer Planning<br/>Macro
+                Générer le planning<br/>macro
             </button>
 
             {isLoading && <p>Génération en cours...</p>}

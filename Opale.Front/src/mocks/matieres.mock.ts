@@ -88,13 +88,13 @@ export const MATIERES_MOCK: Matiere[] = [
     },
 
     // =====================
-    // SIR 1
+    // CIR 1
     // =====================
     {
-        id: 'mat-sir1-reseaux',
+        id: 'mat-cir1-reseaux',
         nom: 'Réseaux',
         volume_horaire: 30,
-        id_promo: 'SIR 1',
+        id_promo: 'CIR 1',
         id_specialite: 'spec-reseau',
         semestre: 1,
         nb_partiels: 1,
@@ -103,10 +103,10 @@ export const MATIERES_MOCK: Matiere[] = [
         heures_tp: 10,
     },
     {
-        id: 'mat-sir1-systemes',
+        id: 'mat-cir1-systemes',
         nom: 'Systèmes',
         volume_horaire: 26,
-        id_promo: 'SIR 1',
+        id_promo: 'CIR 1',
         semestre: 1,
         nb_partiels: 1,
         nb_eval_intermediaire: 1,
@@ -114,10 +114,10 @@ export const MATIERES_MOCK: Matiere[] = [
         heures_tp: 8,
     },
     {
-        id: 'mat-sir1-bdd',
+        id: 'mat-cir1-bdd',
         nom: 'Bases de données',
         volume_horaire: 24,
-        id_promo: 'SIR 1',
+        id_promo: 'CIR 1',
         semestre: 1,
         nb_partiels: 1,
         nb_eval_intermediaire: 1,
@@ -126,13 +126,13 @@ export const MATIERES_MOCK: Matiere[] = [
     },
 
     // =====================
-    // SIR 2
+    // CIR 2
     // =====================
     {
-        id: 'mat-sir2-secu',
+        id: 'mat-cir2-secu',
         nom: 'Sécurité informatique',
         volume_horaire: 28,
-        id_promo: 'SIR 2',
+        id_promo: 'CIR 2',
         id_specialite: 'spec-secu',
         semestre: 2,
         nb_partiels: 1,
@@ -141,10 +141,10 @@ export const MATIERES_MOCK: Matiere[] = [
         heures_tp: 12,
     },
     {
-        id: 'mat-sir2-cloud',
+        id: 'mat-cir2-cloud',
         nom: 'Cloud computing',
         volume_horaire: 24,
-        id_promo: 'SIR 2',
+        id_promo: 'CIR 2',
         semestre: 2,
         nb_partiels: 1,
         nb_eval_intermediaire: 1,
@@ -152,10 +152,10 @@ export const MATIERES_MOCK: Matiere[] = [
         heures_tp: 10,
     },
     {
-        id: 'mat-sir2-devops',
+        id: 'mat-cir2-devops',
         nom: 'DevOps',
         volume_horaire: 22,
-        id_promo: 'SIR 2',
+        id_promo: 'CIR 2',
         semestre: 2,
         nb_partiels: 1,
         nb_eval_intermediaire: 1,

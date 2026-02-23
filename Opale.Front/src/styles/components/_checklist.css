@@ -36,8 +36,8 @@
         font-weight: 800;
     }
 
-    .badge.ok    { background: var(--brand); color: #fff; }
-    .badge.alert { background: var(--amber); color: #111; }
+    .badge.ok    { background: var(--brand); color: var(--text-on-brand); }
+    .badge.alert { background: var(--amber); color: var(--text-on-amber); }
     .badge.checked {
         box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .06);
     }

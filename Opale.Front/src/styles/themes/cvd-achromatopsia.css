@@ -1,0 +1,317 @@
+/* Achromatopsie (lecture sans information couleur) */
+
+@layer tokens {
+  :root[data-cvd="achromatopsia"] {
+    --brand: #1f2937;
+    --brand-hover: #111827;
+
+    --primary: #4b5563;
+    --primary-hover: #374151;
+
+    --amber: #9ca3af;
+    --surface-active: repeating-linear-gradient(
+      45deg,
+      #d1d5db 0 8px,
+      #f3f4f6 8px 16px
+    );
+
+    --danger-100: #f3f4f6;
+    --danger-200: #e5e7eb;
+    --danger-800: #111827;
+    --text-on-primary: #f9fafb;
+    --text-on-brand: #f9fafb;
+    --text-on-amber: #111827;
+
+    --cvd-success-bg: repeating-linear-gradient(
+      135deg,
+      #d1d5db 0 6px,
+      #f3f4f6 6px 12px
+    );
+    --cvd-success-border: #374151;
+    --cvd-success-text: #111827;
+
+    --cvd-info-bg: repeating-linear-gradient(
+      0deg,
+      #e5e7eb 0 4px,
+      #f9fafb 4px 8px
+    );
+    --cvd-info-border: #4b5563;
+    --cvd-info-text: #111827;
+
+    --cvd-warning-bg: repeating-linear-gradient(
+      90deg,
+      #d1d5db 0 3px,
+      #f3f4f6 3px 9px
+    );
+    --cvd-warning-border: #111827;
+    --cvd-warning-text: #111827;
+
+    --cvd-error-bg: repeating-linear-gradient(
+      -45deg,
+      #d1d5db 0 5px,
+      #f3f4f6 5px 10px
+    );
+    --cvd-error-border: #111827;
+    --cvd-error-text: #111827;
+
+    --cvd-off-bg: #e5e7eb;
+    --cvd-off-border: #4b5563;
+    --cvd-off-text: #1f2937;
+
+    --cvd-error-hover-bg: color-mix(in srgb, var(--cvd-error-bg) 78%, var(--panel));
+
+    --cvd-source-junia-bg: var(--cvd-success-bg);
+    --cvd-source-junia-border: var(--cvd-success-border);
+    --cvd-source-junia-text: var(--cvd-success-text);
+
+    --cvd-source-external-bg: var(--cvd-info-bg);
+    --cvd-source-external-border: var(--cvd-info-border);
+    --cvd-source-external-text: var(--cvd-info-text);
+
+    --cvd-source-active-junia-bg: var(--cvd-success-bg);
+    --cvd-source-active-junia-border: var(--cvd-success-border);
+    --cvd-source-active-junia-text: var(--cvd-success-text);
+
+    --cvd-source-active-external-bg: var(--cvd-info-bg);
+    --cvd-source-active-external-border: var(--cvd-info-border);
+    --cvd-source-active-external-text: var(--cvd-info-text);
+    --cvd-source-active-font-weight: 700;
+
+    --cvd-room-td-bg: var(--cvd-success-bg);
+    --cvd-room-td-border: var(--cvd-success-border);
+    --cvd-room-td-text: var(--cvd-success-text);
+
+    --cvd-room-tp-electronique-bg: var(--cvd-warning-bg);
+    --cvd-room-tp-electronique-border: var(--cvd-warning-border);
+    --cvd-room-tp-electronique-text: var(--cvd-warning-text);
+
+    --cvd-room-tp-numerique-bg: var(--cvd-info-bg);
+    --cvd-room-tp-numerique-border: var(--cvd-info-border);
+    --cvd-room-tp-numerique-text: var(--cvd-info-text);
+
+    --cvd-room-projet-bg: var(--cvd-error-bg);
+    --cvd-room-projet-border: var(--cvd-error-border);
+    --cvd-room-projet-text: var(--cvd-error-text);
+
+    --cvd-room-autre-bg: repeating-linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--cvd-off-bg) 80%, #000000) 0 6px,
+      var(--cvd-off-bg) 6px 12px
+    );
+    --cvd-room-autre-border: var(--cvd-off-border);
+    --cvd-room-autre-text: var(--cvd-off-text);
+
+    --cvd-teacher-distanciel-bg: var(--cvd-success-bg);
+    --cvd-teacher-distanciel-border: var(--cvd-success-border);
+    --cvd-teacher-distanciel-text: var(--cvd-success-text);
+
+    --cvd-teacher-hybride-bg: var(--cvd-error-bg);
+    --cvd-teacher-hybride-border: var(--cvd-error-border);
+    --cvd-teacher-hybride-text: var(--cvd-error-text);
+
+    --cvd-teacher-presentiel-bg: var(--cvd-warning-bg);
+    --cvd-teacher-presentiel-border: var(--cvd-warning-border);
+    --cvd-teacher-presentiel-text: var(--cvd-warning-text);
+
+    --cvd-availability-available-bg: var(--cvd-success-bg);
+    --cvd-availability-available-border: var(--cvd-success-border);
+    --cvd-availability-available-text: var(--cvd-success-text);
+
+    --cvd-availability-unavailable-bg: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--cvd-off-bg) 90%, #000000) 0 5px,
+      var(--cvd-off-bg) 5px 10px
+    );
+    --cvd-availability-unavailable-border: var(--cvd-off-border);
+    --cvd-availability-unavailable-text: var(--cvd-off-text);
+
+    --cvd-switch-off-track-bg: var(--cvd-off-bg);
+    --cvd-switch-off-track-border: var(--cvd-off-border);
+    --cvd-switch-off-thumb: var(--cvd-off-text);
+
+    --cvd-switch-on-track-bg: var(--cvd-success-bg);
+    --cvd-switch-on-track-border: var(--cvd-success-border);
+    --cvd-switch-on-thumb: var(--cvd-success-text);
+
+    --cvd-add-promo-bg: var(--cvd-success-bg);
+    --cvd-add-promo-border: var(--cvd-success-border);
+    --cvd-add-promo-text: var(--cvd-success-text);
+    --cvd-add-promo-hover-bg: color-mix(in srgb, var(--cvd-success-bg) 65%, var(--panel));
+    --cvd-add-promo-hover-border: color-mix(in srgb, var(--cvd-success-border) 80%, #000000);
+
+    --cvd-promo-mismatch-color: var(--cvd-error-text);
+
+    --cvd-status-success-bg: var(--cvd-success-bg);
+    --cvd-status-success-border: var(--cvd-success-border);
+    --cvd-status-success-text: var(--cvd-success-text);
+
+    --cvd-status-info-bg: var(--cvd-info-bg);
+    --cvd-status-info-border: var(--cvd-info-border);
+    --cvd-status-info-text: var(--cvd-info-text);
+
+    --cvd-status-error-bg: var(--cvd-error-bg);
+    --cvd-status-error-border: var(--cvd-error-border);
+    --cvd-status-error-text: var(--cvd-error-text);
+
+    --cvd-status-warning-bg: var(--cvd-warning-bg);
+    --cvd-status-warning-border: var(--cvd-warning-border);
+    --cvd-status-warning-text: var(--cvd-warning-text);
+
+    --cvd-constraint-vacances-bg: repeating-linear-gradient(
+      90deg,
+      rgba(17, 24, 39, 0.08) 0 2px,
+      transparent 2px 7px
+    );
+    --cvd-constraint-vacances-border: #111827;
+    --cvd-constraint-vacances-style: solid;
+
+    --cvd-constraint-entreprise-bg: repeating-linear-gradient(
+      0deg,
+      rgba(17, 24, 39, 0.07) 0 2px,
+      transparent 2px 6px
+    );
+    --cvd-constraint-entreprise-border: #111827;
+    --cvd-constraint-entreprise-style: dashed;
+
+    --cvd-constraint-stages-bg: repeating-radial-gradient(
+      circle at 6px 6px,
+      rgba(17, 24, 39, 0.12) 0 2px,
+      transparent 2px 8px
+    );
+    --cvd-constraint-stages-border: #1f2937;
+    --cvd-constraint-stages-style: dotted;
+
+    --cvd-constraint-international-bg: repeating-linear-gradient(
+      45deg,
+      rgba(17, 24, 39, 0.09) 0 3px,
+      transparent 3px 9px
+    );
+    --cvd-constraint-international-border: #1f2937;
+    --cvd-constraint-international-style: double;
+
+    --cvd-constraint-partiels-bg: repeating-linear-gradient(
+      -45deg,
+      rgba(17, 24, 39, 0.09) 0 3px,
+      transparent 3px 9px
+    );
+    --cvd-constraint-partiels-border: #111827;
+    --cvd-constraint-partiels-style: solid;
+
+    --cvd-constraint-rattrapages-bg: repeating-linear-gradient(
+      180deg,
+      rgba(17, 24, 39, 0.08) 0 1px,
+      transparent 1px 5px
+    );
+    --cvd-constraint-rattrapages-border: #374151;
+    --cvd-constraint-rattrapages-style: solid;
+
+    --cvd-constraint-pill-vacances-bg: repeating-linear-gradient(
+      90deg,
+      rgba(17, 24, 39, 0.1) 0 2px,
+      rgba(255, 255, 255, 0.92) 2px 7px
+    );
+    --cvd-constraint-pill-vacances-border: #111827;
+    --cvd-constraint-pill-vacances-style: solid;
+
+    --cvd-constraint-pill-entreprise-bg: repeating-linear-gradient(
+      0deg,
+      rgba(17, 24, 39, 0.1) 0 2px,
+      rgba(255, 255, 255, 0.92) 2px 6px
+    );
+    --cvd-constraint-pill-entreprise-border: #111827;
+    --cvd-constraint-pill-entreprise-style: dashed;
+
+    --cvd-constraint-pill-stages-bg: repeating-radial-gradient(
+      circle at 5px 5px,
+      rgba(17, 24, 39, 0.14) 0 2px,
+      rgba(255, 255, 255, 0.9) 2px 7px
+    );
+    --cvd-constraint-pill-stages-border: #1f2937;
+    --cvd-constraint-pill-stages-style: dotted;
+
+    --cvd-constraint-pill-international-bg: repeating-linear-gradient(
+      45deg,
+      rgba(17, 24, 39, 0.12) 0 3px,
+      rgba(255, 255, 255, 0.9) 3px 8px
+    );
+    --cvd-constraint-pill-international-border: #1f2937;
+    --cvd-constraint-pill-international-style: double;
+
+    --cvd-constraint-pill-partiels-bg: repeating-linear-gradient(
+      -45deg,
+      rgba(17, 24, 39, 0.12) 0 3px,
+      rgba(255, 255, 255, 0.9) 3px 8px
+    );
+    --cvd-constraint-pill-partiels-border: #111827;
+    --cvd-constraint-pill-partiels-style: solid;
+
+    --cvd-constraint-pill-rattrapages-bg: repeating-linear-gradient(
+      180deg,
+      rgba(17, 24, 39, 0.1) 0 1px,
+      rgba(255, 255, 255, 0.9) 1px 5px
+    );
+    --cvd-constraint-pill-rattrapages-border: #374151;
+    --cvd-constraint-pill-rattrapages-style: solid;
+  }
+
+  :root[data-theme="dark"][data-cvd="achromatopsia"],
+  :root[data-theme="spock"][data-cvd="achromatopsia"] {
+    --brand: #d1d5db;
+    --brand-hover: #f3f4f6;
+
+    --primary: #9ca3af;
+    --primary-hover: #e5e7eb;
+
+    --amber: #9ca3af;
+    --surface-active: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.14) 0 8px,
+      rgba(255, 255, 255, 0.26) 8px 16px
+    );
+
+    --danger-100: #1f2937;
+    --danger-200: #374151;
+    --danger-800: #f9fafb;
+    --text-on-primary: #111827;
+    --text-on-brand: #111827;
+    --text-on-amber: #111827;
+
+    --cvd-success-bg: repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.22) 0 6px,
+      rgba(255, 255, 255, 0.1) 6px 12px
+    );
+    --cvd-success-border: rgba(255, 255, 255, 0.8);
+    --cvd-success-text: #f9fafb;
+
+    --cvd-info-bg: repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.22) 0 4px,
+      rgba(255, 255, 255, 0.08) 4px 8px
+    );
+    --cvd-info-border: rgba(255, 255, 255, 0.7);
+    --cvd-info-text: #f9fafb;
+
+    --cvd-warning-bg: repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.24) 0 3px,
+      rgba(255, 255, 255, 0.08) 3px 9px
+    );
+    --cvd-warning-border: rgba(255, 255, 255, 0.88);
+    --cvd-warning-text: #f9fafb;
+
+    --cvd-error-bg: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.24) 0 5px,
+      rgba(255, 255, 255, 0.08) 5px 10px
+    );
+    --cvd-error-border: rgba(255, 255, 255, 0.92);
+    --cvd-error-text: #f9fafb;
+
+    --cvd-off-bg: rgba(255, 255, 255, 0.12);
+    --cvd-off-border: rgba(255, 255, 255, 0.64);
+    --cvd-off-text: #f9fafb;
+
+    --cvd-error-hover-bg: color-mix(in srgb, var(--cvd-error-bg) 78%, var(--panel));
+  }
+}

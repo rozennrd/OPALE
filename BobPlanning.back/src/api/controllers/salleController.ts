@@ -87,7 +87,8 @@ export const salleController = {
         type: req.body.type,
         capacite: Number(req.body.capacite),
         etage: Number(req.body.etage),
-        description: req.body.description
+        description: req.body.description,
+        utilisable: req.body.utilisable
       };
 
       const result = await salleService.createSalle(dto);
@@ -153,10 +154,11 @@ export const salleController = {
         type: req.body.type,
         capacite: Number(req.body.capacite),
         etage: Number(req.body.etage),
-        description: req.body.description
+        description: req.body.description,
+        utilisable: req.body.utilisable
       };
 
-      if (!dto.id || !dto.nom || !dto.type || Number.isNaN(dto.capacite) || Number.isNaN(dto.etage) || !dto.description) {
+      if (!dto.id || !dto.nom || !dto.type || Number.isNaN(dto.capacite) || Number.isNaN(dto.etage) || !dto.description || !dto.utilisable) {
         res.status(400).json({ message: "Tous les champs sont requis." });
         return;
       }

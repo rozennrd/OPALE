@@ -96,6 +96,40 @@ const HEADER_ALIAS = {
   autoGere: ['auto gere'],
 };
 
+const ENTREPRISE_MODULE_ALIASES = new Set<string>([
+  'entreprise',
+  'entrprise',
+  'en entreprise',
+  'periode entreprise',
+  'periodes entreprise',
+  'periode en entreprise',
+  'periodes en entreprise',
+  'stage entreprise',
+  'stages entreprise',
+  'stage en entreprise',
+  'stages en entreprise',
+  'mission entreprise',
+  'missions entreprise',
+  'mission en entreprise',
+  'missions en entreprise',
+]);
+
+const isEntrepriseModuleLabel = (rawLabel: string): boolean => {
+  // Ignore les lignes "entreprise" (periodes/stages/missions) qui ne sont pas
+  // des matieres a importer.
+  const normalized = normalizeText(rawLabel)
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!normalized) return false;
+
+  if (ENTREPRISE_MODULE_ALIASES.has(normalized)) return true;
+
+  if (/^periodes?\s+(en\s+)?entr[e]?prise(s)?$/.test(normalized)) return true;
+  if (/^(stages?|missions?)\s+(en\s+)?entr[e]?prise(s)?$/.test(normalized)) return true;
+
+  return false;
+};
+
 const MAX_HEADER_SCAN_ROWS = 3;
 const DEFAULT_MAX_SCAN_COLUMNS = 90;
 
@@ -489,6 +523,10 @@ const parseDataRow = (
 
   const moduleNameNormalized = normalizeText(moduleName);
   if (!moduleNameNormalized || moduleNameNormalized.startsWith('total')) {
+    return null;
+  }
+
+  if (isEntrepriseModuleLabel(moduleName)) {
     return null;
   }
 

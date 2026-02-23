@@ -15,4 +15,54 @@
   .shadow-lg { box-shadow: var(--shadow-lg) !important; }
 
   .text-muted { color: var(--muted) !important; }
+
+  :root[data-icons-sidebar='hide'] .nav-icon-right,
+  :root[data-icons-sidebar='hide'] .footer-icon-btn img {
+    display: none !important;
+  }
+
+  :root[data-icons-sidebar='hide'] .footer-icon-btn .footer-icon-fallback {
+    display: inline-block;
+  }
+
+  :root[data-icons-sidebar='hide'] .footer-icon-btn {
+    width: auto;
+    min-width: 72px;
+    padding: 0 10px;
+  }
+
+  :root[data-icons-cards='hide'] .entity-badge__icon,
+  :root[data-icons-cards='hide'] .teacher-card-phone-icon,
+  :root[data-icons-cards='hide'] .promo-warning,
+  :root[data-icons-cards='hide'] .date-range-pill-icon {
+    display: none !important;
+  }
+
+  :root[data-icons-pages='hide'] .toolbar-search-icon,
+  :root[data-icons-pages='hide'] .events-toolbar-plus-icon,
+  :root[data-icons-pages='hide'] .teachers-toolbar-plus-icon,
+  :root[data-icons-pages='hide'] .cycle-import-file-pill .file-icon,
+  :root[data-icons-pages='hide'] .btn-icon-only img,
+  :root[data-icons-pages='hide'] .btn-icon-responsive img {
+    display: none !important;
+  }
+
+  :root[data-icons-pages='hide'] .btn-icon-only .btn-label,
+  :root[data-icons-pages='hide'] .btn-icon-responsive .btn-label {
+    display: inline !important;
+  }
+
+  :root[data-icons-pages='hide'] .btn-icon-only {
+    min-width: 0;
+    min-height: 0;
+    padding: 8px 12px;
+  }
+
+  :root[data-icons-pages='hide'] .events-toolbar-plus-btn::before,
+  :root[data-icons-pages='hide'] .teachers-toolbar-plus-btn::before {
+    content: '+';
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+  }
 }
