@@ -6,6 +6,12 @@ import {
     addEnseignement,
     getEnseignements,
 } from '../../services/api/enseignementsApi'
+import {
+    addDisponibilite,
+    deleteDisponibilite,
+    getDisponibilites,
+    updateDisponibilite,
+} from '../../services/api/disponibilitesApi'
 import { getMatieres } from '../../services/api/matieresApi'
 import { promotionsApi } from '../../services/api/promotionsApi'
 
@@ -84,6 +90,70 @@ const normalizeCampus = (
 
 const normalizeSubjectKey = (name: string, promo: string): string => {
     return `${name.trim().toLowerCase()}::${promo.trim().toLowerCase()}`
+}
+
+const normalizeDispoMicro = (value?: string): string => {
+    if (!value || value.length !== 10) return '0000000000'
+    return value
+}
+
+const toUtcDate = (isoDate: string): Date => {
+    const [year, month, day] = isoDate.split('-').map((part) => Number(part))
+    return new Date(Date.UTC(year, (month || 1) - 1, day || 1))
+}
+
+const getIsoWeekNumber = (date: Date): number => {
+    const target = new Date(date.valueOf())
+    const dayNumber = (target.getUTCDay() + 6) % 7
+    target.setUTCDate(target.getUTCDate() - dayNumber + 3)
+
+    const firstThursday = target.valueOf()
+    target.setUTCMonth(0, 1)
+
+    if (target.getUTCDay() !== 4) {
+        target.setUTCMonth(0, 1 + ((4 - target.getUTCDay()) + 7) % 7)
+    }
+
+    return 1 + Math.round(((firstThursday - target.valueOf()) / 86400000 - 3) / 7)
+}
+
+const getWeeksInRange = (start: string, end: string): number[] => {
+    if (!start || !end) return []
+
+    const startDate = toUtcDate(start)
+    const endDate = toUtcDate(end)
+    if (Number.isNaN(startDate.valueOf()) || Number.isNaN(endDate.valueOf())) {
+        return []
+    }
+
+    if (startDate > endDate) return []
+
+    const cursor = new Date(startDate.valueOf())
+    const weeks = new Set<number>()
+    while (cursor <= endDate) {
+        weeks.add(getIsoWeekNumber(cursor))
+        cursor.setUTCDate(cursor.getUTCDate() + 1)
+    }
+
+    return Array.from(weeks).sort((a, b) => a - b)
+}
+
+const mapDisponibilitesToPeriods = (
+    items: Array<{ id: string; num_semaine: number; dispo_micro: string | null }>,
+): TeacherAvailabilityPeriod[] => {
+    return [...items]
+        .sort((a, b) => Number(a.num_semaine) - Number(b.num_semaine))
+        .map((item, index) => ({
+            id: `dispo-${String(item.id)}`,
+            label: `Semaine ${Number(item.num_semaine)}`,
+            availability: normalizeDispoMicro(item.dispo_micro ?? undefined),
+            start: '',
+            end: '',
+        }))
+        .map((period, index) => ({
+            ...period,
+            label: period.label || `Période de disponibilité ${index + 1}`,
+        }))
 }
 
 export const useTeacherDetail = (
@@ -355,12 +425,118 @@ export const useTeacherDetail = (
                 }
             }
 
+            if (savedTeacherId !== 'new-teacher') {
+                const desiredWeekToMicro = new Map<number, string>()
+
+                for (const period of periods) {
+                    if (!period.start || !period.end) continue
+
+                    const weeks = getWeeksInRange(period.start, period.end)
+                    const micro = normalizeDispoMicro(period.availability)
+                    for (const week of weeks) {
+                        desiredWeekToMicro.set(week, micro)
+                    }
+                }
+
+                if (desiredWeekToMicro.size > 0) {
+                    const disponibilityRes = await getDisponibilites()
+                    if (!disponibilityRes.success) {
+                        throw new Error(
+                            disponibilityRes.error?.message ??
+                                'Failed to fetch disponibilites',
+                        )
+                    }
+
+                    const existingTeacherDispos = (disponibilityRes.data ?? []).filter(
+                        (item) => String(item.id_prof) === String(savedTeacherId),
+                    )
+
+                    const existingByWeek = new Map<number, { id: string; micro: string }>()
+                    for (const existing of existingTeacherDispos) {
+                        existingByWeek.set(Number(existing.num_semaine), {
+                            id: String(existing.id),
+                            micro: normalizeDispoMicro(existing.dispo_micro ?? undefined),
+                        })
+                    }
+
+                    for (const [week, micro] of desiredWeekToMicro.entries()) {
+                        const current = existingByWeek.get(week)
+
+                        if (!current || !current.id) {
+                            const addRes = await addDisponibilite({
+                                id_prof: String(savedTeacherId),
+                                num_semaine: week,
+                                dispo_micro: micro,
+                            })
+                            if (!addRes.success) {
+                                throw new Error(
+                                    addRes.error?.message ??
+                                        `Failed to create disponibilite for week ${week}`,
+                                )
+                            }
+                            continue
+                        }
+
+                        if (current.micro !== micro) {
+                            const updateRes = await updateDisponibilite({
+                                id: current.id,
+                                id_prof: String(savedTeacherId),
+                                num_semaine: week,
+                                dispo_micro: micro,
+                            })
+                            if (!updateRes.success) {
+                                throw new Error(
+                                    updateRes.error?.message ??
+                                        `Failed to update disponibilite for week ${week}`,
+                                )
+                            }
+                        }
+                    }
+
+                    // ⚠️ Important: on ne supprime plus automatiquement les semaines
+                    // absentes du mapping local. Dans l'UI actuelle, les disponibilités
+                    // récupérées depuis la BDD sont rematérialisées en périodes hebdo
+                    // sans plage start/end, ce qui pouvait entraîner des suppressions
+                    // involontaires lors d'un simple ajout.
+                    //
+                    // Le comportement attendu ici est donc:
+                    // - add/update pour les semaines calculées depuis les périodes saisies
+                    // - conservation des autres semaines déjà présentes en BDD
+                }
+            }
+
+            let refreshedPeriods = periods.map((period) => ({ ...period }))
+            if (savedTeacherId !== 'new-teacher') {
+                const latestDisponibilitesRes = await getDisponibilites()
+                if (latestDisponibilitesRes.success) {
+                    const latestTeacherDispos = (latestDisponibilitesRes.data ?? []).filter(
+                        (item) => String(item.id_prof) === String(savedTeacherId),
+                    )
+                    if (latestTeacherDispos.length > 0) {
+                        refreshedPeriods = mapDisponibilitesToPeriods(latestTeacherDispos)
+                        setPeriods(refreshedPeriods)
+                        setSelectedPeriodId(refreshedPeriods[0]?.id ?? null)
+                    }
+                }
+            }
+
+            const savedTeacherWithPeriods: Teacher = {
+                ...savedTeacher,
+                availabilityPeriods: refreshedPeriods,
+                availability:
+                    refreshedPeriods.find((p) => p.id === selectedPeriodId)
+                        ?.availability ??
+                    refreshedPeriods[0]?.availability ??
+                    savedTeacher.availability ??
+                    '0000000000',
+            }
+
             setSnapshot({
-                teacher: savedTeacher,
-                periods,
+                teacher: savedTeacherWithPeriods,
+                periods: refreshedPeriods,
             })
             setHasChanges(false)
-            onTeacherSaved?.(savedTeacher)
+            onTeacherSaved?.(savedTeacherWithPeriods)
 
             return true
         } catch (error) {

@@ -8,6 +8,7 @@ import { getProfsData } from '../services/api/professorsApi'
 import { getEnseignements } from '../services/api/enseignementsApi'
 import { getMatieres } from '../services/api/matieresApi'
 import { promotionsApi } from '../services/api/promotionsApi'
+import { getDisponibilites } from '../services/api/disponibilitesApi'
 
 import { Teacher } from '../models/Teachers'
 import PageHeader from '../components/common/PageHeader'
@@ -53,6 +54,8 @@ export default function Teachers() {
                     promotionsApi.getPromotions(),
                 ])
 
+                const disponibilitesRes = await getDisponibilites()
+
                 console.log(apiTeachers)
 
                 if (!mounted) return
@@ -88,6 +91,37 @@ export default function Teachers() {
                     teacherSubjectsById.set(profId, existing)
                 }
 
+                const teacherPeriodsById = new Map<string, Teacher['availabilityPeriods']>()
+                const disponibilites = disponibilitesRes.success
+                    ? disponibilitesRes.data ?? []
+                    : []
+
+                for (const dispo of disponibilites) {
+                    const profId = String(dispo.id_prof)
+                    const week = Number(dispo.num_semaine)
+                    const micro =
+                        typeof dispo.dispo_micro === 'string' && dispo.dispo_micro.length === 10
+                            ? dispo.dispo_micro
+                            : '0000000000'
+
+                    const existing = teacherPeriodsById.get(profId) ?? []
+                    existing.push({
+                        id: `dispo-${String(dispo.id)}`,
+                        label: `Semaine ${week}`,
+                        availability: micro,
+                    })
+                    teacherPeriodsById.set(profId, existing)
+                }
+
+                for (const [profId, periods] of teacherPeriodsById.entries()) {
+                    periods.sort((a, b) => {
+                        const aWeek = Number(a.label.replace('Semaine ', ''))
+                        const bWeek = Number(b.label.replace('Semaine ', ''))
+                        return aWeek - bWeek
+                    })
+                    teacherPeriodsById.set(profId, periods)
+                }
+
                 const mappedTeachers: Teacher[] = (apiTeachers ?? []).map((teacher) => ({
                     id: String(teacher.id),
                     firstName: teacher.prenom ?? '',
@@ -100,6 +134,7 @@ export default function Teachers() {
                     mode: teacher.modalite_enseignement ?? 'Présentiel',
                     subjects: teacherSubjectsById.get(String(teacher.id)) ?? teacher.subjects ?? [],
                     availability: teacher.availability ?? '0000000000',
+                    availabilityPeriods: teacherPeriodsById.get(String(teacher.id)) ?? [],
                 }))
 
                 setTeachers(mappedTeachers)

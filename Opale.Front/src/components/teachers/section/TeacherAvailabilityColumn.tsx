@@ -34,6 +34,7 @@ const TeacherAvailabilityColumn = ({
         () => periods.find((p) => p.id === selectedPeriodId) ?? periods[0],
         [periods, selectedPeriodId],
     )
+    const activePeriodId = selectedPeriod?.id ?? null
     const sortedPeriods = useMemo(() => {
         const entries = periods.map((period, index) => ({
             period,
@@ -103,7 +104,7 @@ const TeacherAvailabilityColumn = ({
                             key={period.id}
                             className={
                                 'teacher-period-pill' +
-                                (period.id === selectedPeriodId ? ' is-active' : '')
+                                (period.id === activePeriodId ? ' is-active' : '')
                             }
                         >
                             <button
