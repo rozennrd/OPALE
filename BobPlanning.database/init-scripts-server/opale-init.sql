@@ -14,6 +14,7 @@ CREATE TYPE type_event      AS ENUM ('Cours', 'Entreprise', 'Examen', 'Reunion',
 CREATE TYPE type_cours      AS ENUM ('Cours_TD', 'Cours_TD_DIST', 'Cours_TP', 'Cours_TP_DIST', 'E-Learning', 'Entreprise', 'Examen', 'Projet', 'Rattrapage', 'Associatif', 'Conférence', 'Stage', 'Encadrement', 'Auto-géré', 'Autre');
 CREATE TYPE type_cycle      AS ENUM ('Initial', 'Apprentissage');
 CREATE TYPE campus          AS ENUM ('Bordeaux', 'Lille', 'Chateauroux');
+CREATE TYPE modalite_enseignement AS ENUM ('Présentiel', 'Distanciel', 'Hybride');
 
 -- ==============================================================
 -- 2. Tables de base
@@ -26,8 +27,9 @@ CREATE TABLE professeur (
                             prenom      VARCHAR(255)        NOT NULL,
                             email       VARCHAR(255),
                             email_perso VARCHAR(255),
+                            telephone   VARCHAR(20),
                             type        type_professeur     NOT NULL,
-                            distanciel  BOOLEAN             DEFAULT FALSE,
+                            modalite_enseignement  modalite_enseignement,
                             campus_origin campus,
                             CONSTRAINT uq_professeur_email UNIQUE (email),
                             CONSTRAINT uq_professeur_email_perso UNIQUE (email_perso)
@@ -133,8 +135,8 @@ CREATE TABLE matiere (
                          semestre               INT            NOT NULL,
                          nb_partiels            INT            NOT NULL,
                          nb_eval_intermediaire  INT,
-                         heures_td              FLOAT,
-                         heures_tp              FLOAT,
+                         heures_td              INT,
+                         heures_tp              INT,
                          heures_projet          FLOAT,
                          heures_elearning       FLOAT,
                          heures_autre           FLOAT,
@@ -260,11 +262,11 @@ CREATE TABLE enseignement (
                               id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                               id_matiere  UUID    NOT NULL,
                               id_prof     UUID    NOT NULL,
-                              heures_td   FLOAT,
-                              heures_tp   FLOAT,
-                              heures_projet FLOAT,
-                              heures_elearning FLOAT,
-                              heures_autre FLOAT,
+                              heures_td   INT,
+                              heures_tp   INT,
+                              heures_projet INT,
+                              heures_elearning INT,
+                              heures_autre INT,
                               CONSTRAINT fk_enseignement_matiere
                                   FOREIGN KEY (id_matiere)
                                       REFERENCES matiere(id)
