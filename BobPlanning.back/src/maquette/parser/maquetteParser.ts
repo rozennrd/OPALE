@@ -89,10 +89,16 @@ const HEADER_ALIAS = {
   coursInteractif: ['cours interactif'],
   td: ['td', 'cours td'],
   tp: ['tp'],
-  projet: ['projet'],
+  projet: ['projet', 'heures projet', 'travaux de projet'],
   // "digitalise" est traite comme alias de e-learning, pas comme type horaire distinct.
-  elearning: ['e learning', 'e-learning', 'elearning', 'digitalise'],
-  visitesConferences: ['visites / conferences', 'visites conferences', 'visites conference'],
+  elearning: ['e learning', 'e-learning', 'elearning', 'digitalise', 'elearning asynchrone'],
+  visitesConferences: [
+    'visites / conferences',
+    'visites conferences',
+    'visites conference',
+    'visites et conferences',
+    'visites & conferences',
+  ],
   autoGere: ['auto gere'],
 };
 

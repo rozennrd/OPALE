@@ -177,6 +177,46 @@ describe('maquette parser', () => {
     expect(result.matieres[0].matiereNom).toBe('Systemes embarques');
   });
 
+  it('extracts projet, e-learning and visites/conferences hour columns with common aliases', async () => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('AP');
+
+    sheet.addRow(['2025-2026']);
+    sheet.addRow(['Cycle : ISEN FISA']);
+    sheet.addRow(['SEMESTRE 9']);
+    sheet.addRow([
+      "Unite d'Enseignements (UE)",
+      "Modules constituant l'UE",
+      'Semestre / Periode',
+      'Nb Heures planifiees etudiant module',
+      'Nb Heures encadrees etudiant module',
+      'Travaux de projet',
+      'E-learning asynchrone',
+      'Visites et conferences',
+    ]);
+    sheet.addRow([]);
+    sheet.addRow([]);
+    sheet.addRow([
+      'UE Transverse',
+      'Innovation',
+      'S9',
+      40,
+      30,
+      7,
+      5,
+      3,
+    ]);
+    sheet.addRow(['TOTAL SEMESTRE 9']);
+
+    const buffer = Buffer.from(await workbook.xlsx.writeBuffer());
+    const result = await parseMaquetteBuffer(buffer, { cycleHint: 'AP' });
+
+    expect(result.matieres).toHaveLength(1);
+    expect(result.matieres[0].heures.projet).toBe(7);
+    expect(result.matieres[0].heures.elearning).toBe(5);
+    expect(result.matieres[0].heures.visitesConferences).toBe(3);
+  });
+
   it('detects option blocks and propagates option context to nested module rows', async () => {
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('ISEN5');

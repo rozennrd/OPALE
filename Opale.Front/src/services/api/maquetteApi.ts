@@ -19,6 +19,18 @@ export interface MaquetteAnalyzeMatiere {
   ueNom: string
   matiereNom: string
   semestres: number[]
+  heures?: {
+    total: number
+    totalAvecProf: number
+    coursMagistral: number
+    coursInteractif: number
+    td: number
+    tp: number
+    projet: number
+    elearning: number
+    visitesConferences: number
+    autoGere: number
+  }
   specialiteCode?: string | null
   specialiteLabel?: string | null
   specialiteType?: 'OPTION' | 'SPECIALITE' | 'COMMUN' | null
