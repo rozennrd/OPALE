@@ -53,6 +53,12 @@ const toNullableInt = (value: number): number | null => {
   return Math.round(value);
 };
 
+const getMappedTdHours = (line: MaquetteMatiereLine): number => {
+  // Regle metier demandee:
+  // heures_td en base = TD + cours magistral + cours interactif.
+  return line.heures.td + line.heures.coursMagistral + line.heures.coursInteractif;
+};
+
 const parseSchoolYearStartYear = (schoolYear: string | null): SchoolYearInfo => {
   // Accepte: "2024-2025", "24/25", "2024".
   if (schoolYear) {
@@ -270,7 +276,7 @@ const insertMatiere = async (
     semestre,
     getNbPartiels(line),
     getNbEvalIntermediaire(line),
-    toNullableInt(line.heures.td),
+    toNullableInt(getMappedTdHours(line)),
     toNullableInt(line.heures.tp),
   ]);
 };
@@ -305,7 +311,7 @@ const updateMatiere = async (
     semestre,
     getNbPartiels(line),
     getNbEvalIntermediaire(line),
-    toNullableInt(line.heures.td),
+    toNullableInt(getMappedTdHours(line)),
     toNullableInt(line.heures.tp),
   ]);
 };
