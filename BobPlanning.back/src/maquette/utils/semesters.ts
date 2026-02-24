@@ -20,6 +20,19 @@ export const extractSemestersAndPeriods = (
     semesters.push(Number(match[1]));
   }
 
+  // Supporte les en-tetes de section de type:
+  // "SEMESTRE 3", "SEMESTRE 3 ET 4", "SEMESTRES 3-4", etc.
+  if (semesters.length === 0 && /\bsemestres?\b/i.test(normalized)) {
+    const semesterWordBlocks = normalized.matchAll(
+      /\bsemestres?\s*((?:\d{1,2}\s*(?:-|\/|et|,|&|a|à)\s*)*\d{1,2})\b/gi,
+    );
+
+    for (const block of semesterWordBlocks) {
+      const numbers = block[1]?.match(/\d{1,2}/g) ?? [];
+      numbers.forEach((value) => semesters.push(Number(value)));
+    }
+  }
+
   // Formats supportes: P1, P 2, etc.
   const periodMatches = normalized.matchAll(/P\s*(\d{1,2})/gi);
   for (const match of periodMatches) {

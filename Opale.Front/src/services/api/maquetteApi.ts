@@ -7,6 +7,12 @@ export interface MaquetteAnalyzeMetadata {
   cycleCode: string
   promotions: string[]
   feuilles: string[]
+  sectionSemesterDetections?: Array<{
+    sheetName: string
+    rowNumber: number
+    semestres: number[]
+    rawText: string
+  }>
   specialites?: Array<{
     code: string
     label: string | null
