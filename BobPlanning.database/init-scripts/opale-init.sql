@@ -14,6 +14,7 @@ CREATE TYPE type_event      AS ENUM ('Cours', 'Entreprise', 'Examen', 'Reunion',
 CREATE TYPE type_cours      AS ENUM ('Cours_TD', 'Cours_TD_DIST', 'Cours_TP', 'Cours_TP_DIST', 'E-Learning', 'Entreprise', 'Examen', 'Projet', 'Rattrapage', 'Associatif', 'Conférence', 'Stage', 'Encadrement', 'Auto-géré', 'Autre');
 CREATE TYPE type_cycle      AS ENUM ('Initial', 'Apprentissage');
 CREATE TYPE campus          AS ENUM ('Bordeaux', 'Lille', 'Chateauroux');
+CREATE TYPE modalite_enseignement AS ENUM ('Présentiel', 'Distanciel', 'Hybride');
 
 -- ==============================================================
 -- 2. Tables de base
@@ -26,8 +27,9 @@ CREATE TABLE professeur (
                             prenom      VARCHAR(255)        NOT NULL,
                             email       VARCHAR(255),
                             email_perso VARCHAR(255),
+                            telephone   VARCHAR(20),
                             type        type_professeur     NOT NULL,
-                            distanciel  BOOLEAN             DEFAULT FALSE,
+                            modalite_enseignement  modalite_enseignement,
                             campus_origin campus,
                             CONSTRAINT uq_professeur_email UNIQUE (email),
                             CONSTRAINT uq_professeur_email_perso UNIQUE (email_perso)

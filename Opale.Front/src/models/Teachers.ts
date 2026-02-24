@@ -1,4 +1,4 @@
-export type TeachingMode = 'DISTANCIEL' | 'HYBRIDE' | 'PRESENTIEL'
+export type TeachingMode = 'Distanciel' | 'Hybride' | 'Présentiel'
 
 export interface TeacherSubject {
     name: string        // ex: "Maths"
@@ -9,6 +9,8 @@ export interface TeacherAvailabilityPeriod {
     id: string          // identifiant interne, ex: "period-1"
     label: string       // libellé affiché, ex: "Période 1" ou "Jan–Mars"
     availability: string // 10 caractères "0"/"1"
+    start?: string
+    end?: string
 }
 
 export interface Teacher {
@@ -19,7 +21,7 @@ export interface Teacher {
     email: string
     emailJunia?: string
     campus?: string
-    category?: 'INTERNE' | 'VACATAIRE'
+    category?: 'Intervenant' | 'Permanent' | 'Invite'
     mode: TeachingMode
     subjects: TeacherSubject[]
 

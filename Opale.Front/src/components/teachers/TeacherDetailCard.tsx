@@ -1,6 +1,5 @@
 // src/components/teachers/TeacherDetailCard.tsx
-import React from 'react'
-import { Teacher } from '../../models/Teacher'
+import { Teacher } from '../../models/Teachers'
 import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import TeacherInfoColumn from './section/TeacherInfoColumn'
 import TeacherSubjectsColumn from './section/TeacherSubjectsColumn'
@@ -16,12 +15,14 @@ interface TeacherDetailCardProps {
     teacher: Teacher
     onClose: () => void
     onDelete?: () => void
+    onTeacherUpdated?: (teacher: Teacher) => void
 }
 
 export default function TeacherDetailCard({
     teacher,
     onClose,
     onDelete,
+    onTeacherUpdated,
 }: TeacherDetailCardProps) {
     const {
         teacherDraft,
@@ -38,7 +39,9 @@ export default function TeacherDetailCard({
         handlePeriodDateChange,
         handleSave,
         hasChanges,
-    } = useTeacherDetail(teacher)
+    } = useTeacherDetail(teacher, {
+        onTeacherSaved: onTeacherUpdated,
+    })
 
     const {
         handleRequestClose,
@@ -50,8 +53,10 @@ export default function TeacherDetailCard({
         hasChanges,
         onClose,
         onSaveAndClose: () => {
-            handleSave()
-            onClose()
+            void (async () => {
+                const saved = await handleSave()
+                if (saved) onClose()
+            })()
         },
         ignoreWhenSelectorExists: '.modal-overlay',
     })
@@ -68,7 +73,7 @@ export default function TeacherDetailCard({
     }
 
     const sectionLabel =
-        teacherDraft.category === 'VACATAIRE'
+        teacherDraft.category === 'Intervenant'
             ? 'Vacataire'
             : getCampusLabel(teacherDraft.campus)
 
@@ -117,8 +122,10 @@ export default function TeacherDetailCard({
 
                 <div className="teacher-detail-footer">
                     <ActionButtonsWithConfirm
-                        onCancel={onClose}
-                        onSave={handleSave}
+                        onCancel={handleRequestClose}
+                        onSave={() => {
+                            void handleSave()
+                        }}
                         onDelete={
                             teacher.id === 'new-teacher' ? undefined : onDelete
                         }
