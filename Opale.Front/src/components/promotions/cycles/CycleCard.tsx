@@ -109,15 +109,6 @@ const EVALUATION_COLUMNS: Array<{
     { type: 'AUTRE', label: 'Autre' },
 ]
 
-const HOUR_COLUMNS: Array<{
-    key: 'projet' | 'elearning' | 'visitesConferences'
-    label: string
-}> = [
-    { key: 'projet', label: 'Projet' },
-    { key: 'elearning', label: 'E-learning' },
-    { key: 'visitesConferences', label: 'Visites/Conf.' },
-]
-
 const CycleCard: React.FC<CycleCardProps> = ({
                                                  cycle,
                                                  renameCycle,
@@ -701,12 +692,6 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                                     <th rowSpan={2}>Spécialité</th>
                                                 )}
                                                 <th
-                                                    colSpan={HOUR_COLUMNS.length}
-                                                    className="maquette-preview-grid-group"
-                                                >
-                                                    Heures
-                                                </th>
-                                                <th
                                                     colSpan={EVALUATION_COLUMNS.length}
                                                     className="maquette-preview-grid-group"
                                                 >
@@ -714,11 +699,6 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                                 </th>
                                             </tr>
                                             <tr>
-                                                {HOUR_COLUMNS.map((column) => (
-                                                    <th key={column.key}>
-                                                        {column.label}
-                                                    </th>
-                                                ))}
                                                 {EVALUATION_COLUMNS.map((column) => (
                                                     <th
                                                         key={column.type}
@@ -743,11 +723,6 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                                     {shouldShowSpecialiteColumn && (
                                                         <td>{matiere.specialiteLabel || matiere.specialiteCode || '-'}</td>
                                                     )}
-                                                    {HOUR_COLUMNS.map((column) => (
-                                                        <td key={`${matiere.matiereNom}-${column.key}-${index}`}>
-                                                            {matiere.heures?.[column.key] ?? 0}
-                                                        </td>
-                                                    ))}
                                                     {EVALUATION_COLUMNS.map((column) => (
                                                         <td
                                                             key={`${matiere.matiereNom}-${column.type}-${index}`}
