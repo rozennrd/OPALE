@@ -59,6 +59,11 @@ const getMappedTdHours = (line: MaquetteMatiereLine): number => {
   return line.heures.td + line.heures.coursMagistral + line.heures.coursInteractif;
 };
 
+const getMappedOtherHours = (line: MaquetteMatiereLine): number => {
+  // Les heures "autres" regroupent les postes non portes nativement par la table.
+  return line.heures.visitesConferences + line.heures.autoGere;
+};
+
 const parseSchoolYearStartYear = (schoolYear: string | null): SchoolYearInfo => {
   // Accepte: "2024-2025", "24/25", "2024".
   if (schoolYear) {
@@ -264,9 +269,9 @@ const insertMatiere = async (
     INSERT INTO matiere (
       nom, volume_horaire, id_promo, id_specialite,
       semestre, nb_partiels, nb_eval_intermediaire,
-      heures_td, heures_tp
+      heures_td, heures_tp, heures_projet, heures_elearning, heures_autre
     )
-    VALUES ($1,$2,$3,NULL,$4,$5,$6,$7,$8)
+    VALUES ($1,$2,$3,NULL,$4,$5,$6,$7,$8,$9,$10,$11)
   `;
 
   await client.query(sql, [
@@ -278,6 +283,9 @@ const insertMatiere = async (
     getNbEvalIntermediaire(line),
     toNullableInt(getMappedTdHours(line)),
     toNullableInt(line.heures.tp),
+    toNullableInt(line.heures.projet),
+    toNullableInt(line.heures.elearning),
+    toNullableInt(getMappedOtherHours(line)),
   ]);
 };
 
@@ -299,7 +307,10 @@ const updateMatiere = async (
         nb_partiels = $6,
         nb_eval_intermediaire = $7,
         heures_td = $8,
-        heures_tp = $9
+        heures_tp = $9,
+        heures_projet = $10,
+        heures_elearning = $11,
+        heures_autre = $12
     WHERE id = $1
   `;
 
@@ -313,6 +324,9 @@ const updateMatiere = async (
     getNbEvalIntermediaire(line),
     toNullableInt(getMappedTdHours(line)),
     toNullableInt(line.heures.tp),
+    toNullableInt(line.heures.projet),
+    toNullableInt(line.heures.elearning),
+    toNullableInt(getMappedOtherHours(line)),
   ]);
 };
 
