@@ -706,6 +706,12 @@ export const parseMaquetteBuffer = async (
   const extractedLines: MaquetteMatiereLine[] = [];
   const promotions = new Set<string>();
   const sheetNames: string[] = [];
+  const sectionSemesterDetections: Array<{
+    sheetName: string;
+    rowNumber: number;
+    semestres: number[];
+    rawText: string;
+  }> = [];
 
   let anneeScolaire: string | null = null;
   let firstCycleRaw = '';
@@ -746,6 +752,12 @@ export const parseMaquetteBuffer = async (
         const section = extractSemestersAndPeriods(combined);
         if (section.semesters.length > 0) {
           rowContext.sectionSemesters = section.semesters;
+          sectionSemesterDetections.push({
+            sheetName: worksheet.name,
+            rowNumber,
+            semestres: [...section.semesters],
+            rawText: combined,
+          });
         }
       }
 
@@ -820,6 +832,7 @@ export const parseMaquetteBuffer = async (
       promotions: Array.from(promotions).sort(),
       specialites,
       feuilles: sheetNames,
+      sectionSemesterDetections,
     },
   };
 };

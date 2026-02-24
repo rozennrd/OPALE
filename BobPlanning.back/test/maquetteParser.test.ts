@@ -217,6 +217,51 @@ describe('maquette parser', () => {
     expect(result.matieres[0].heures.visitesConferences).toBe(3);
   });
 
+  it('uses section context when semester is written as "SEMESTRE N" in merged-style headers', async () => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('CIR');
+
+    sheet.addRow(['2025-2026']);
+    sheet.addRow(['Cycle : CIR']);
+    sheet.addRow(['SEMESTRE 3']);
+    sheet.addRow([
+      "Unite d'Enseignements (UE)",
+      "Modules constituant l'UE",
+      'Semestre / Periode',
+      'Nb Heures planifiees etudiant module',
+      'Nb Heures encadrees etudiant module',
+      'TD',
+      'TP',
+    ]);
+    sheet.addRow([]);
+    sheet.addRow([]);
+    sheet.addRow([
+      'UE Socle',
+      'Algorithmique',
+      '', // cellule semestre vide -> doit heriter du contexte section "SEMESTRE 3"
+      24,
+      24,
+      12,
+      12,
+    ]);
+    sheet.addRow(['TOTAL SEMESTRE 3']);
+
+    const buffer = Buffer.from(await workbook.xlsx.writeBuffer());
+    const result = await parseMaquetteBuffer(buffer, { cycleHint: 'CIR' });
+
+    expect(result.matieres).toHaveLength(1);
+    expect(result.matieres[0].semestres).toEqual([3]);
+    expect(result.metadata.sectionSemesterDetections).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          sheetName: 'CIR',
+          rowNumber: 3,
+          semestres: [3],
+        }),
+      ]),
+    );
+  });
+
   it('detects option blocks and propagates option context to nested module rows', async () => {
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('ISEN5');

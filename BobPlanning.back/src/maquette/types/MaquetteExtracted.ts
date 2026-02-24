@@ -96,6 +96,12 @@ export interface MaquetteAnalyzeResult {
       type: MaquetteSpecialiteType;
     }>;
     feuilles: string[];
+    sectionSemesterDetections: Array<{
+      sheetName: string;
+      rowNumber: number;
+      semestres: number[];
+      rawText: string;
+    }>;
   };
 }
 
