@@ -61,7 +61,7 @@ export default function Teachers() {
             value?: string,
         ): 'Permanent' | 'Intervenant' | 'Invite' => {
             const raw = (value ?? '').trim().toLowerCase()
-            if (raw === 'intervenant' || raw === 'vacataire') return 'Intervenant'
+            if (raw === 'intervenant') return 'Intervenant'
             if (raw === 'invité' || raw === 'invite') return 'Invite'
             if (raw === 'permanent' || raw === 'interne') return 'Permanent'
             return 'Permanent'
@@ -213,7 +213,7 @@ export default function Teachers() {
         [teachers],
     )
 
-    const vacataires = useMemo(
+    const intervenants = useMemo(
         () => teachers.filter((teacher) => teacher.category === 'Intervenant'),
         [teachers],
     )
@@ -267,7 +267,7 @@ export default function Teachers() {
 
     const filteredInternalBordeaux = filteredTeachers(internalBordeaux)
     const filteredInternalLilleChateauroux = filteredTeachers(internalLilleChateauroux)
-    const filteredVacataires = filteredTeachers(vacataires)
+    const filteredVacataires = filteredTeachers(intervenants)
     const filteredInvited = filteredTeachers(invites)
 
     const {
@@ -343,7 +343,7 @@ export default function Teachers() {
         <>
             <PageHeader
                 title="Enseignants"
-                subtitle="Gestion des enseignants (internes & vacataires)"
+                subtitle="Gestion des enseignants (permanents & intervenants)"
             />
 
             <div className="teachers-page">
