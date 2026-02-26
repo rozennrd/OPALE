@@ -1,5 +1,6 @@
 // src/components/common/ConfirmDialog.tsx
 import React, { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 interface ConfirmDialogProps {
     open: boolean
@@ -65,6 +66,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props) => {
     }, [open, onRequestClose, onCancel])
 
     if (!open) return null
+    if (typeof document === 'undefined') return null
 
     const handleOverlayClick = () => {
         if (onRequestClose) {
@@ -82,7 +84,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props) => {
         }
     }
 
-    return (
+    return createPortal(
         <div className="modal-overlay" onClick={handleOverlayClick}>
             <div
                 className={['card', 'confirm-dialog-card', cardClassName].filter(Boolean).join(' ')}
@@ -127,7 +129,8 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props) => {
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body,
     )
 }
 
