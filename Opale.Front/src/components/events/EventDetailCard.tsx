@@ -417,7 +417,7 @@ export default function EventDetailCard({
                 <DetailCardFooter
                     onCancel={onClose}
                     onSave={() => void saveDraft()}
-                    onAfterSaveConfirm={isCreate ? onClose : undefined}
+                    onAfterSaveConfirm={onClose}
                     onDelete={isCreate ? undefined : onDelete}
                     hasChanges={hasChanges}
                     saveLabel={saving ? 'Enregistrement...' : isCreate ? 'Creer' : 'Enregistrer'}
