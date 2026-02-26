@@ -124,7 +124,7 @@ export const usePromotionSync = () => {
                     newEvent.is_blocking = true; // when we have entreprise, holidays or whatever, we can't have
                     // courses on that
 
-                    await eventsApi.createEvent(newEvent)
+                    await eventsApi.addEvent(newEvent)
                 }
             }
 
@@ -137,7 +137,7 @@ export const usePromotionSync = () => {
                     originalEvent.nom !== event.nom
                 )) {
                     console.log(`Updating event ${event.id}`)
-                    await eventsApi.updateEvent(event as Event)
+                    await eventsApi.updateEvent(event.id!, event)
                 }
             }
 

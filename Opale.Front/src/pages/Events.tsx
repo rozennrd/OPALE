@@ -29,13 +29,15 @@ type SaveResult =
 
 // Mapper pour convertir Event (backend) en CampusEvent (frontend)
 function mapEventToCampusEvent(event: Event): CampusEvent {
-    // Extraire la date de datetime_start (format: "2025-03-12T00:00:00")
-    const date = event.datetime_start ? event.datetime_start.split('T')[0] : ''
+    // Keep full ISO datetime for datetime-local input compatibility
+    const startDate = event.datetime_start || ''
+    const endDate = event.datetime_end || startDate
 
     return {
         id: event.id,
         name: event.nom,
-        date: date,
+        startDate: startDate,
+        endDate: endDate,
         location: '', // Le backend n'a pas de location pour l'instant
         source: event.is_external ? 'EXTERNE' as const : 'JUNIA' as const,
         type: event.type,
@@ -103,11 +105,6 @@ export default function Events() {
     const [eventsState, setEventsState] = useState<CampusEvent[]>([])
     const hasLocalEditsRef = useRef(false)
 
-    useEffect(() => {
-        if (!hasLocalEditsRef.current) {
-            setEventsState((events ?? []).map(normalizeEventForList))
-        }
-    }, [events])
 
     const [searchValue, setSearchValue] = useState('')
     const [dateFrom, setDateFrom] = useState('')
@@ -124,6 +121,12 @@ export default function Events() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
+
+    useEffect(() => {
+        if (!hasLocalEditsRef.current) {
+            setEventsState((events ?? []).map(normalizeEventForList))
+        }
+    }, [events])
     // Charger les événements au montage du composant
     useEffect(() => {
         const fetchEvents = async () => {

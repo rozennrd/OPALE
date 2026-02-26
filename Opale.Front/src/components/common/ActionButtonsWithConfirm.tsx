@@ -61,6 +61,7 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
     deleteCancelLabel = 'Annuler',
     onBeforeSaveClick,
     onAfterSaveConfirm,
+    disabled,
     onSave,
     onCancel,
 }) => {
