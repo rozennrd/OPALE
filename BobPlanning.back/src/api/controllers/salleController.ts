@@ -22,14 +22,38 @@ export const salleController = {
    *                 type: object
    *                 properties:
    *                   id:
-   *                     type: integer
-   *                     example: 1
-   *                   name:
+   *                     type: string
+   *                     format: uuid
+   *                     example: "550e8400-e29b-41d4-a716-446655440000"
+   *                   nom:
    *                     type: string
    *                     example: "Salle 101"
-   *                   capacity:
+   *                   nom_complet:
+   *                     type: string
+   *                     nullable: true
+   *                     example: "Salle 101 - Bâtiment A"
+   *                   type_principal:
+   *                     type: string
+   *                     example: "Informatique"
+   *                   types_secondaires:
+   *                     type: array
+   *                     nullable: true
+   *                     items:
+   *                       type: string
+   *                     example: ["Projet", "Reunion"]
+   *                   etage:
+   *                     type: integer
+   *                     example: 2
+   *                   capacite:
    *                     type: integer
    *                     example: 30
+   *                   utilisable:
+   *                     type: boolean
+   *                     example: true
+   *                   description:
+   *                     type: string
+   *                     nullable: true
+   *                     example: "Salle équipée de postes informatiques"
    *       500:
    *         description: Une erreur est survenue
    */
@@ -58,14 +82,43 @@ export const salleController = {
    *           schema:
    *             type: object
    *             properties:
-   *               name:
+   *               nom:
    *                 type: string
    *                 description: Le nom de la salle.
    *                 example: "Salle 102"
-   *               capacity:
+   *               nom_complet:
+   *                 type: string
+   *                 nullable: true
+   *                 description: Le nom complet de la salle.
+   *                 example: "Salle 102 - Bâtiment B"
+   *               type_principal:
+   *                 type: string
+   *                 description: Le type principal de la salle.
+   *                 example: "Cours"
+   *               types_secondaires:
+   *                 type: array
+   *                 nullable: true
+   *                 description: Les types secondaires de la salle.
+   *                 items:
+   *                   type: string
+   *                 example: ["Projet"]
+   *               etage:
+   *                 type: integer
+   *                 description: L'étage de la salle.
+   *                 example: 1
+   *               capacite:
    *                 type: integer
    *                 description: La capacité maximale de la salle.
    *                 example: 25
+   *               utilisable:
+   *                 type: boolean
+   *                 description: Indique si la salle est utilisable.
+   *                 example: true
+   *               description:
+   *                 type: string
+   *                 nullable: true
+   *                 description: Description de la salle.
+   *                 example: "Salle polyvalente"
    *     responses:
    *       201:
    *         description: Salle ajoutée avec succès.
@@ -84,12 +137,19 @@ export const salleController = {
     try {
       const dto = {
         nom: req.body.nom,
-        type: req.body.type,
-        capacite: Number(req.body.capacite),
+        nom_complet: req.body.nom_complet ?? null,
+        type_principal: req.body.type_principal,
+        types_secondaires: req.body.types_secondaires ?? null,
         etage: Number(req.body.etage),
-        description: req.body.description,
-        utilisable: req.body.utilisable
+        capacite: Number(req.body.capacite),
+        utilisable: typeof req.body.utilisable === 'boolean' ? req.body.utilisable : req.body.isAvailable,
+        description: req.body.description ?? null,
       };
+
+      if (!dto.nom || !dto.type_principal || Number.isNaN(dto.capacite) || Number.isNaN(dto.etage)) {
+        res.status(400).json({ message: "Champs invalides pour la création de salle." });
+        return;
+      }
 
       const result = await salleService.createSalle(dto);
       res.status(201).json({
@@ -119,17 +179,47 @@ export const salleController = {
    *             type: object
    *             properties:
    *               id:
-   *                 type: integer
+   *                 type: string
+   *                 format: uuid
    *                 description: L'ID de la salle à mettre à jour.
-   *                 example: 1
-   *               name:
+   *                 example: "550e8400-e29b-41d4-a716-446655440000"
+   *               nom:
    *                 type: string
    *                 description: Le nouveau nom de la salle.
    *                 example: "Salle Informatique"
-   *               capacity:
+   *               nom_complet:
+   *                 type: string
+   *                 nullable: true
+   *                 description: Le nouveau nom complet de la salle.
+   *                 example: "Salle Informatique - Bâtiment C"
+   *               type_principal:
+   *                 type: string
+   *                 description: Le type principal de la salle.
+   *                 example: "Informatique"
+   *               types_secondaires:
+   *                 type: array
+   *                 nullable: true
+   *                 description: Les nouveaux types secondaires de la salle.
+   *                 items:
+   *                   type: string
+   *                 example: ["Projet", "Reseau"]
+   *               etage:
+   *                 type: integer
+   *                 description: Le nouvel étage de la salle.
+   *                 example: 2
+   *               capacite:
    *                 type: integer
    *                 description: La nouvelle capacité de la salle.
    *                 example: 40
+   *               utilisable:
+   *                 type: boolean
+   *                 description: Indique si la salle est utilisable.
+   *                 example: true
+   *               description:
+   *                 type: string
+   *                 nullable: true
+   *                 description: La nouvelle description de la salle.
+   *                 example: "Salle mise à niveau en 2026"
    *     responses:
    *       200:
    *         description: Salle mise à jour avec succès.
@@ -151,14 +241,16 @@ export const salleController = {
       const dto = {
         id: String(req.body.id),
         nom: req.body.nom,
-        type: req.body.type,
-        capacite: Number(req.body.capacite),
-        etage: Number(req.body.etage),
-        description: req.body.description,
-        utilisable: req.body.utilisable
+        nom_complet: req.body.nom_complet ?? null,
+        type_principal: req.body.type_principal,
+        types_secondaires: req.body.types_secondaires ?? null,
+        etage: Number(req.body.etage ?? req.body.floor),
+        capacite: Number(req.body.capacite ?? req.body.capacity),
+        utilisable: typeof req.body.utilisable === 'boolean' ? req.body.utilisable : req.body.isAvailable,
+        description: req.body.description ?? null,
       };
 
-      if (!dto.id || !dto.nom || !dto.type || Number.isNaN(dto.capacite) || Number.isNaN(dto.etage) || !dto.description || !dto.utilisable) {
+      if (!dto.id || !dto.nom || !dto.type_principal || Number.isNaN(dto.capacite) || Number.isNaN(dto.etage) || typeof dto.utilisable !== 'boolean') {
         res.status(400).json({ message: "Tous les champs sont requis." });
         return;
       }
@@ -185,13 +277,18 @@ export const salleController = {
    *     tags:
    *       - Salles
    *     description: Supprime une salle spécifique de la base de données.
-   *     parameters:
-   *       - in: query
-   *         name: id
-   *         required: true
-   *         schema:
-   *           type: integer
-   *         description: L'ID de la salle à supprimer.
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               id:
+   *                 type: string
+   *                 format: uuid
+   *                 description: L'ID de la salle à supprimer.
+   *                 example: "550e8400-e29b-41d4-a716-446655440000"
    *     responses:
    *       200:
    *         description: Salle supprimée avec succès.

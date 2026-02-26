@@ -11,14 +11,14 @@ export interface Room {
     /** Nom complet optionnel, ex : "J109_ClassLab" */
     fullName?: string
 
-    /** Étages 0, 1, 2 */
-    floor: 0 | 1 | 2
-
     /** Type principal pour l’icône / badge */
     mainType: RoomType
 
     /** Types disponibles pour la salle */
     types: RoomType[]
+
+    /** Étages 0, 1, 2 */
+    floor: 0 | 1 | 2
 
     /** Nombre de places */
     capacity: number
