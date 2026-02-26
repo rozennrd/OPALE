@@ -37,25 +37,6 @@
         filter: brightness(1.2);
     }
 
-    @media (max-width: 1200px) {
-        .events-toolbar-row--filters {
-            flex-wrap: wrap;
-        }
-
-        .events-toolbar-row--filters .toolbar-filter {
-            flex: 1 1 220px;
-            min-width: 220px;
-        }
-
-        .events-toolbar-row--filters .toolbar-toggle-chips {
-            width: 100%;
-        }
-
-        .events-toolbar-row--filters .toolbar-reset-button {
-            margin-left: auto;
-        }
-    }
-
     @media (max-width: 600px) {
         .events-toolbar-plus-icon {
             width: 20px;

@@ -94,7 +94,7 @@ export default function MatieresToolbar({
             </ToolbarRow>
 
             <ToolbarRow className="page-toolbar-row--filters matieres-toolbar-row matieres-toolbar-row--filters">
-                <div className="toolbar-filter">
+                <div className="toolbar-filter toolbar-filter--chips">
                     <span className="toolbar-filter-label">Semestre</span>
                     <div className="toolbar-toggle-chips">
                         {SEMESTRE_OPTIONS.map((option) => (

@@ -31,25 +31,6 @@
         font-size: 0.85rem;
     }
 
-    @media (max-width: 1200px) {
-        .rooms-toolbar-row--filters {
-            flex-wrap: wrap;
-        }
-
-        .rooms-toolbar-row--filters .toolbar-filter {
-            flex: 1 1 220px;
-            min-width: 220px;
-        }
-
-        .rooms-toolbar-row--filters .toolbar-toggle-chips {
-            width: 100%;
-        }
-
-        .rooms-toolbar-row--filters .toolbar-reset-button {
-            margin-left: auto;
-        }
-    }
-
     @media (max-width: 900px) {
         .rooms-toolbar-capacity-filter {
             min-width: 0;
