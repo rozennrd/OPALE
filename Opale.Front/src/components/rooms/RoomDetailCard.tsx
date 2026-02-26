@@ -13,7 +13,7 @@ import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 interface RoomDetailCardProps {
     room: Room
     onClose: () => void
-    onChange: (room: Room) => void
+    onChange: (room: Room) => Promise<boolean> | boolean | void
     onDelete?: () => void
 }
 
@@ -116,7 +116,7 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
         })
     }
 
-    const handleSave = () => {
+    const handleSave = async (): Promise<boolean> => {
         const nextRoom: Room = {
             ...room,
             name: name.trim() || room.name,
@@ -130,7 +130,11 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
         }
 
         console.log('[ROOMS] Save room (mock)', nextRoom)
-        onChange(nextRoom)
+        const result = await Promise.resolve(onChange(nextRoom))
+        if (result === false) {
+            return false
+        }
+        return true
     }
 
     const {
@@ -143,8 +147,10 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
         hasChanges,
         onClose,
         onSaveAndClose: () => {
-            handleSave()
-            onClose()
+            void (async () => {
+                const saved = await handleSave()
+                if (saved) onClose()
+            })()
         },
         ignoreWhenSelectorExists: '.modal-overlay',
     })

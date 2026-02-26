@@ -32,9 +32,7 @@ export default function RoomCard({
     selected = false,
     onToggleSelect,
 }: RoomCardProps) {
-    const displayName = room.fullName
-        ? room.fullName.split('_').slice(1).join('_') || room.fullName
-        : room.name
+    const displayName = room.fullName || room.name
 
     const handleClick = () => {
         if (selectionMode) {

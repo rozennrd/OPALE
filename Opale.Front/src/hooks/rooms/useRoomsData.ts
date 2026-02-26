@@ -172,8 +172,8 @@ export const useRoomsData = () => {
         setSelectedRoom(newRoom)
     }
 
-    const updateRoom = (updatedRoom: Room) => {
-        void (async () => {
+    const updateRoom = async (updatedRoom: Room): Promise<boolean> => {
+        try {
             const payload = {
                 ...roomToCreatePayload(updatedRoom),
                 types_secondaires: roomToCreatePayload(updatedRoom).types_secondaires.length
@@ -186,7 +186,7 @@ export const useRoomsData = () => {
 
                 if (!createResponse.success || !createResponse.data) {
                     console.error('[ROOMS] Failed to create room via API', createResponse.error)
-                    return
+                    return false
                 }
 
                 const refreshResponse = await sallesApi.getAllSalles()
@@ -199,7 +199,7 @@ export const useRoomsData = () => {
                 }
 
                 setPendingNewRoomId(null)
-                return
+                return true
             }
 
             const updateResponse = await sallesApi.updateSalle({
@@ -208,14 +208,18 @@ export const useRoomsData = () => {
             })
             if (!updateResponse.success) {
                 console.error('[ROOMS] Failed to update room via API', updateResponse.error)
-                return
+                return false
             }
 
             setRooms((prevRooms) =>
                 prevRooms.map((room) => (room.id === updatedRoom.id ? updatedRoom : room)),
             )
             setSelectedRoom(updatedRoom)
-        })()
+            return true
+        } catch (error) {
+            console.error('[ROOMS] Unexpected error while saving room', error)
+            return false
+        }
     }
 
     const closeDetail = () => {

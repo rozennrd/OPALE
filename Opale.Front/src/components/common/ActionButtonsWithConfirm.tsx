@@ -28,13 +28,13 @@ interface ActionButtonsWithConfirmProps {
 
     // Hooks optionnels autour de la sauvegarde
     onBeforeSaveClick?: () => boolean
-    onAfterSaveConfirm?: () => void
+    onAfterSaveConfirm?: () => void | Promise<void>
 
-    onSave: () => void
+    onSave: () => void | boolean | Promise<void | boolean>
     onCancel: () => void
 }
 
-const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
+export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
     saveLabel = 'Enregistrer',
     cancelLabel = 'Annuler',
     confirmTitle = 'Confirmer les modifications',
@@ -82,12 +82,13 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
         return onBeforeSaveClick()
     }
 
-    const handleConfirmSave = () => {
+    const handleConfirmSave = async () => {
         if (!canSave()) return
 
         closeSaveConfirmDialog()
-        onSave()
-        if (onAfterSaveConfirm) onAfterSaveConfirm()
+        const saveResult = await Promise.resolve(onSave())
+        if (saveResult === false) return
+        if (onAfterSaveConfirm) await Promise.resolve(onAfterSaveConfirm())
     }
 
     const handleCancelClick = () => {
@@ -99,11 +100,13 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
         setOpenCancelConfirm(true)
     }
 
-    const handleConfirmCancelWithSave = () => {
+    const handleConfirmCancelWithSave = async () => {
         if (!canSave()) return
 
+        const saveResult = await Promise.resolve(onSave())
+        if (saveResult === false) return
+
         closeCancelConfirmDialog()
-        onSave()
         onCancel()
     }
 
