@@ -307,7 +307,7 @@ export const salleController = {
    */
   async deleteSalle(req: Request, res: Response): Promise<void> {
     try {
-      const id = req.body?.id;
+      const id = req.body?.id ?? req.query?.id;
 
       if (!id) {
         res.status(400).json({ message: "L'id est requis." });

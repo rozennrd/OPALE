@@ -17,8 +17,8 @@ export interface Room {
     /** Types disponibles pour la salle */
     types: RoomType[]
 
-    /** Étages 0, 1, 2 */
-    floor: 0 | 1 | 2
+    /** Étage de la salle */
+    floor: number
 
     /** Nombre de places */
     capacity: number

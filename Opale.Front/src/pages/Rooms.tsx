@@ -87,11 +87,15 @@ export default function Rooms() {
         disableSelectionMode()
     }
 
+    const floors = Array.from(
+        new Set(rooms.map((room) => room.floor)),
+    ).sort((a, b) => a - b)
+
     return (
         <>
             <PageHeader
                 title="Salles"
-                subtitle="Liste des salles par étage avec types et commentaires (mock front uniquement)."
+                subtitle="Liste des salles par étage avec types et commentaires."
             />
 
             <div className="rooms-page">
@@ -126,10 +130,10 @@ export default function Rooms() {
                 )}
 
                 <div className="rooms-sections">
-                    {[0, 1, 2].map((floor) => (
+                    {floors.map((floor) => (
                         <RoomsSection
                             key={floor}
-                            floor={floor as 0 | 1 | 2}
+                            floor={floor}
                             rooms={roomsByFloor[floor] || []}
                             onSelectRoom={setSelectedRoom}
                             onAddRoom={addRoom}

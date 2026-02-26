@@ -12,7 +12,7 @@ interface RoomCardProps {
     onToggleSelect?: () => void
 }
 
-const floorLabel = (floor: 0 | 1 | 2): string => {
+const floorLabel = (floor: number): string => {
     switch (floor) {
         case 0:
             return 'Rez-de-chaussée'

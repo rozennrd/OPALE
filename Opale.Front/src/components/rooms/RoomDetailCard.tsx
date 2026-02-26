@@ -25,7 +25,7 @@ const ROOM_TYPE_LABELS: Record<RoomType, string> = {
     AUTRE: 'Autre',
 }
 
-const floorLabel = (floor: Room['floor']): string => {
+const floorLabel = (floor: number): string => {
     switch (floor) {
         case 0:
             return 'Rez-de-chaussée'
@@ -204,16 +204,15 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                                     <label className="room-detail-field-label" htmlFor="room-floor-input">
                                         Étage
                                     </label>
-                                    <select
+                                    <input
                                         id="room-floor-input"
+                                        type="number"
+                                        step={1}
                                         className="room-detail-input"
                                         value={floor}
-                                        onChange={(e) => setFloor(Number(e.target.value) as Room['floor'])}
-                                    >
-                                        <option value={0}>Rez-de-chaussée</option>
-                                        <option value={1}>1er étage</option>
-                                        <option value={2}>2e étage</option>
-                                    </select>
+                                        onChange={(e) => setFloor(Number(e.target.value) || 0)}
+                                        placeholder="Ex. 0"
+                                    />
                                 </div>
 
                                 <div className="room-detail-field">
