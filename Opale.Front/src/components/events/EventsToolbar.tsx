@@ -92,12 +92,13 @@ export default function EventsToolbar({
 
                 <button
                     type="button"
-                    className="events-toolbar-plus-btn"
+                    className="toolbar-add-btn events-toolbar-add-btn"
                     onClick={onCreateRequested}
-                    aria-label="Créer un événement"
-                    title="Créer un événement"
+                    aria-label="Ajouter un événement"
+                    title="Ajouter un événement"
                 >
-                    <img src={icPlus} alt="" className="events-toolbar-plus-icon" />
+                    <img src={icPlus} alt="" className="toolbar-add-icon" />
+                    <span className="toolbar-add-label">Ajouter un événement</span>
                 </button>
             </ToolbarRow>
 

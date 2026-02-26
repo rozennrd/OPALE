@@ -187,12 +187,13 @@ export default function TeachersToolbar({
 
                 <button
                     type="button"
-                    className="teachers-toolbar-plus-btn"
+                    className="toolbar-add-btn teachers-toolbar-add-btn"
                     onClick={onCreateRequested}
                     aria-label="Ajouter un enseignant"
                     title="Ajouter un enseignant"
                 >
-                    <img src={icPlus} alt="" className="teachers-toolbar-plus-icon" />
+                    <img src={icPlus} alt="" className="toolbar-add-icon" />
+                    <span className="toolbar-add-label">Ajouter un enseignant</span>
                 </button>
             </ToolbarRow>
         </PageToolbar>
