@@ -14,6 +14,8 @@ interface ConfirmDialogProps {
     cardClassName?: string
     confirmDisabled?: boolean
     cancelDisabled?: boolean
+    hideCancel?: boolean
+    variant?: 'default' | 'danger'
 
     // Appelé quand on veut simplement fermer le popup
     // (ESC, clic overlay, croix) sans déclencher confirm/cancel métier
@@ -34,6 +36,8 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props) => {
         cardClassName,
         confirmDisabled = false,
         cancelDisabled = false,
+        hideCancel = false,
+        variant = 'default',
         onRequestClose,
     } = props
 
@@ -85,7 +89,14 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props) => {
     return (
         <div className="modal-overlay" onClick={handleOverlayClick}>
             <div
-                className={['card', 'confirm-dialog-card', cardClassName].filter(Boolean).join(' ')}
+                className={[
+                    'card',
+                    'confirm-dialog-card',
+                    variant === 'danger' ? 'confirm-dialog-card--danger' : '',
+                    cardClassName,
+                ]
+                    .filter(Boolean)
+                    .join(' ')}
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Croix dans le popup */}
@@ -104,16 +115,18 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props) => {
                 </div>
 
                 <div className="confirm-dialog-actions">
-                    <button
-                        type="button"
-                        className={cancelClassName}
-                        onClick={() => {
-                            onCancel()
-                        }}
-                        disabled={cancelDisabled}
-                    >
-                        {cancelLabel}
-                    </button>
+                    {!hideCancel && (
+                        <button
+                            type="button"
+                            className={cancelClassName}
+                            onClick={() => {
+                                onCancel()
+                            }}
+                            disabled={cancelDisabled}
+                        >
+                            {cancelLabel}
+                        </button>
+                    )}
 
                     <button
                         type="button"

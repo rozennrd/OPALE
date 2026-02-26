@@ -83,7 +83,10 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
     }
 
     const handleConfirmSave = () => {
-        if (!canSave()) return
+        if (!canSave()) {
+            closeSaveConfirmDialog()
+            return
+        }
 
         closeSaveConfirmDialog()
         onSave()
