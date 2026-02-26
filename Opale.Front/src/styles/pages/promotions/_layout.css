@@ -14,7 +14,7 @@
 
     .promos-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
         gap: 16px;
     }
 
@@ -122,5 +122,21 @@
         background: transparent;
         transform: translateY(-1px);
         box-shadow: none;
+    }
+
+    @media (max-width: 720px) {
+        .cycle-head {
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .cycle-name {
+            width: 100%;
+        }
+
+        .cycle-actions {
+            width: 100%;
+            justify-content: flex-end;
+        }
     }
 }
