@@ -953,6 +953,7 @@ export default function MatiereDetailCard({
                     onSave={handleSave}
                     onCancel={onClose}
                     onAfterSaveConfirm={onClose}
+                    hideCancel
                     onDelete={onDelete}
                     deleteLabel="Supprimer"
                     deleteTitle="Supprimer cette matière"

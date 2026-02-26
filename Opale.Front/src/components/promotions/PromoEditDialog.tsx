@@ -173,6 +173,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                         onCancel={props.onClose}
                         onSave={handleSave}
                         onAfterSaveConfirm={props.onClose}
+                        hideCancel
                         hasChanges={props.hasChanges}
                         confirmMessage={
                             <>

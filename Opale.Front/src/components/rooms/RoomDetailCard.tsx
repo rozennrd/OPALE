@@ -379,6 +379,7 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                     onSave={handleSave}
                     onCancel={onClose}
                     onAfterSaveConfirm={onClose}
+                    hideCancel
                     onDelete={onDelete}
                     deleteLabel="Supprimer"
                     deleteTitle="Supprimer cette salle"

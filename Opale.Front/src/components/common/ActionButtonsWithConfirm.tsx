@@ -5,6 +5,7 @@ import ConfirmDialog from './ConfirmDialog'
 interface ActionButtonsWithConfirmProps {
     saveLabel?: string
     cancelLabel?: string
+    hideCancel?: boolean
 
     // Confirm "Enregistrer"
     confirmTitle?: string
@@ -37,6 +38,7 @@ interface ActionButtonsWithConfirmProps {
 const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
     saveLabel = 'Enregistrer',
     cancelLabel = 'Annuler',
+    hideCancel = false,
     confirmTitle = 'Confirmer les modifications',
     confirmMessage = 'Souhaitez-vous enregistrer les modifications ?',
     confirmLabel = 'Confirmer',
@@ -135,13 +137,15 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
                     </button>
                 )}
 
-                <button
-                    type="button"
-                    className="btn-tertiary"
-                    onClick={handleCancelClick}
-                >
-                    {cancelLabel}
-                </button>
+                {!hideCancel && (
+                    <button
+                        type="button"
+                        className="btn-tertiary"
+                        onClick={handleCancelClick}
+                    >
+                        {cancelLabel}
+                    </button>
+                )}
 
                 <button
                     type="button"

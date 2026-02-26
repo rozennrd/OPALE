@@ -127,6 +127,7 @@ export default function TeacherDetailCard({
                             void handleSave()
                         }}
                         onAfterSaveConfirm={onClose}
+                        hideCancel
                         onDelete={
                             teacher.id === 'new-teacher' ? undefined : onDelete
                         }
