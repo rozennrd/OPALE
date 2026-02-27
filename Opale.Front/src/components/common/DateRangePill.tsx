@@ -1,6 +1,7 @@
 // src/components/common/DateRangePill.tsx
 import React from 'react'
 import { DateRange } from '../../models'
+import DateInput from './DateInput'
 
 export interface DateRangePillProps {
     range: DateRange
@@ -52,24 +53,24 @@ const DateRangePill: React.FC<DateRangePillProps> = ({
             >
                 {isEditing ? (
                     <div className="date-range-pill-editor constraint-pill-editor">
-                        <input
-                            type="date"
-                            className="date-range-date-input constraint-date-input"
+                        <DateInput
                             value={range.start || ''}
-                            onChange={(e) =>
-                                onDateChange?.(range.id, 'start', e.target.value)
+                            onChange={(value) =>
+                                onDateChange?.(range.id, 'start', value)
                             }
+                            inputClassName="date-range-date-input constraint-date-input"
+                            max={range.end || undefined}
                         />
                         <span className="date-range-date-separator constraint-date-separator">
                             -
                         </span>
-                        <input
-                            type="date"
-                            className="date-range-date-input constraint-date-input"
+                        <DateInput
                             value={range.end || ''}
-                            onChange={(e) =>
-                                onDateChange?.(range.id, 'end', e.target.value)
+                            onChange={(value) =>
+                                onDateChange?.(range.id, 'end', value)
                             }
+                            inputClassName="date-range-date-input constraint-date-input"
+                            min={range.start || undefined}
                         />
                     </div>
                 ) : (
