@@ -489,13 +489,13 @@ const DateInput: React.FC<DateInputProps> = ({
                           >
                               Effacer
                           </button>
-                          <button
-                              type="button"
-                              className="calendar-action"
-                              onClick={handleToday}
-                          >
-                              Aujourd'hui
-                          </button>
+                      <button
+                          type="button"
+                          className="calendar-action"
+                          onClick={handleToday}
+                      >
+                          Aujourd&apos;hui
+                      </button>
                       </div>
                       <button
                           type="button"
