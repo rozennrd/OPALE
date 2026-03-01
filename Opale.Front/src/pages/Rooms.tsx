@@ -1,5 +1,4 @@
 ﻿// src/pages/Rooms.tsx
-import React from 'react'
 import RoomsSection from '../components/rooms/RoomsSection'
 import RoomDetailCard from '../components/rooms/RoomDetailCard'
 import PageHeader from '../components/common/PageHeader'
@@ -125,7 +124,7 @@ export default function Rooms() {
                         onClearSelection={handleClearSelection}
                         onDeleteSelected={handleDeleteSelected}
                         confirmTitle="Supprimer les salles sélectionnées"
-                        confirmMessage={`Vous allez supprimer ${selectedRoomIds.length} salle${selectedRoomIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                        confirmMessage={`Vous allez supprimer ${selectedRoomIds.length} salle${selectedRoomIds.length > 1 ? 's' : ''}.`}
                     />
                 )}
 

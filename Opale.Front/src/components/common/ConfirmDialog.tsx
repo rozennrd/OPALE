@@ -14,6 +14,7 @@ interface ConfirmDialogProps {
     cardClassName?: string
     confirmDisabled?: boolean
     cancelDisabled?: boolean
+    overlayClassName?: string
 
     // Appelé quand on veut simplement fermer le popup
     // (ESC, clic overlay, croix) sans déclencher confirm/cancel métier
@@ -34,6 +35,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props) => {
         cardClassName,
         confirmDisabled = false,
         cancelDisabled = false,
+        overlayClassName,
         onRequestClose,
     } = props
 
@@ -83,7 +85,10 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props) => {
     }
 
     return (
-        <div className="modal-overlay" onClick={handleOverlayClick}>
+        <div
+            className={['modal-overlay', overlayClassName].filter(Boolean).join(' ')}
+            onClick={handleOverlayClick}
+        >
             <div
                 className={['card', 'confirm-dialog-card', cardClassName].filter(Boolean).join(' ')}
                 onClick={(e) => e.stopPropagation()}

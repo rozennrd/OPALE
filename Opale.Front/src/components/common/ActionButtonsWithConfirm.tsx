@@ -29,6 +29,7 @@ interface ActionButtonsWithConfirmProps {
     // Hooks optionnels autour de la sauvegarde
     onBeforeSaveClick?: () => boolean
     onAfterSaveConfirm?: () => void | Promise<void>
+    overlayClassName?: string
 
     onSave: () => void | boolean | Promise<void | boolean>
     onCancel: () => void
