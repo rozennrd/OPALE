@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState, useRef } from 'react'
 import { Matiere } from '../../models/Matiere'
 import DetailCardBody from '../common/DetailCardBody'
 import DetailCardHeader from '../common/DetailCardHeader'
-import DetailCardFooter from '../common/DetailCardFooter'
+import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 import MatiereBadge from './MatiereBadge'
@@ -932,32 +932,33 @@ export default function MatiereDetailCard({
                     </aside>
                 </div>
 
-                <DetailCardFooter
-                    saveLabel="Enregistrer"
-                    cancelLabel="Annuler"
-                    confirmTitle="Enregistrer la matière"
-                    confirmMessage="Souhaites-tu enregistrer les modifications apportées à cette matière ?"
-                    confirmLabel="Enregistrer"
-                    hasChanges={hasChanges}
-                    cancelDirtyTitle="Modifications non enregistrées"
-                    cancelDirtyMessage={
-                        <>
-                            Tu as des modifications non enregistrées sur cette matière.
-                            <br />
-                            Souhaites-tu les enregistrer avant de fermer ?
-                        </>
-                    }
-                    cancelDirtyConfirmLabel="Enregistrer et fermer"
-                    cancelDirtyDiscardLabel="Fermer sans enregistrer"
-                    onSave={handleSave}
-                    onCancel={onClose}
-                    onAfterSaveConfirm={onClose}
-                    onDelete={onDelete}
-                    deleteLabel="Supprimer"
-                    deleteTitle="Supprimer cette matière"
-                    deleteMessage="Souhaites-tu supprimer cette matière ?"
-                    deleteConfirmLabel="Supprimer"
-                />
+                <div className="matiere-detail-footer">
+                    <ActionButtonsWithConfirm
+                        onCancel={handleRequestClose}
+                        onSave={handleSave}
+                        onDelete={onDelete}
+                        saveLabel="Enregistrer"
+                        cancelLabel="Annuler"
+                        confirmTitle="Enregistrer la matière"
+                        confirmMessage="Souhaites-tu enregistrer les modifications apportées à cette matière ?"
+                        confirmLabel="Enregistrer"
+                        hasChanges={hasChanges}
+                        cancelDirtyTitle="Modifications non enregistrées"
+                        cancelDirtyMessage={
+                            <>
+                                Tu as des modifications non enregistrées sur cette matière.
+                                <br />
+                                Souhaites-tu les enregistrer avant de fermer ?
+                            </>
+                        }
+                        cancelDirtyConfirmLabel="Enregistrer et fermer"
+                        cancelDirtyDiscardLabel="Fermer sans enregistrer"
+                        deleteLabel="Supprimer"
+                        deleteTitle="Supprimer cette matière"
+                        deleteMessage="Souhaites-tu supprimer cette matière ?"
+                        deleteConfirmLabel="Supprimer"
+                    />
+                </div>
             </DetailCardBody>
 
             <ConfirmDialog
