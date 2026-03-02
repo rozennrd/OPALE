@@ -8,7 +8,7 @@ import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import EventTypeBadge from './EventTypeBadge'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
-import { useEffect } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import DateInput from '../common/DateInput'
 import {eventPageTypes} from "../../pages/Events.tsx";
 import type { Salle } from '../../services/api/sallesApi'
@@ -90,6 +90,8 @@ export default function EventDetailCard({
                                             mode = 'edit',
                                         }: EventDetailCardProps) {
     const isCreate = mode === 'create'
+    const [isPromotionsOpen, setIsPromotionsOpen] = useState(false)
+    const promotionsDropdownRef = useRef<HTMLDivElement | null>(null)
 
     const {
         draft,
@@ -124,6 +126,13 @@ export default function EventDetailCard({
         })),
     )
 
+    const selectedPromotionLabels = useMemo(() => {
+        const selectedSet = new Set(draft.concernedPromotionIds)
+        return promotionTargets
+            .filter((target) => selectedSet.has(target.promotionId))
+            .map((target) => target.promotionLabel)
+    }, [draft.concernedPromotionIds, promotionTargets])
+
     const roomLocationSuggestions = buildRoomLocationSuggestions(salles)
 
     useEffect(() => {
@@ -138,6 +147,21 @@ export default function EventDetailCard({
             updateField('selectedSalleIds', nextSalleIds)
         }
     }, [draft.location, draft.selectedSalleIds, salles, updateField])
+
+    useEffect(() => {
+        const handleOutsideClick = (event: MouseEvent) => {
+            if (!isPromotionsOpen) return
+            if (
+                promotionsDropdownRef.current &&
+                !promotionsDropdownRef.current.contains(event.target as Node)
+            ) {
+                setIsPromotionsOpen(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleOutsideClick)
+        return () => document.removeEventListener('mousedown', handleOutsideClick)
+    }, [isPromotionsOpen])
 
     const saveDraft = async (closeOnSuccess = true): Promise<boolean> => {
         const result = await handleSave()
@@ -191,6 +215,16 @@ export default function EventDetailCard({
             concernedCycleIds: selectedCycleIds,
             concernedPromotionIds: selectedPromotionIds,
         })
+    }
+
+    const togglePromotionSelection = (promotionId: string) => {
+        const currentSet = new Set(draft.concernedPromotionIds)
+        if (currentSet.has(promotionId)) {
+            currentSet.delete(promotionId)
+        } else {
+            currentSet.add(promotionId)
+        }
+        handlePromotionChange(Array.from(currentSet))
     }
 
     const headerTitle =
@@ -393,28 +427,82 @@ export default function EventDetailCard({
                             <div className="event-detail-info-row">
                                 <dt>Promotions</dt>
                                 <dd>
-                                    <select
-                                        className="event-detail-select"
-                                        multiple
-                                        value={draft.concernedPromotionIds}
-                                        onChange={(e) =>
-                                            handlePromotionChange(
-                                                Array.from(
-                                                    e.target.selectedOptions,
-                                                    (option) => option.value,
-                                                ),
-                                            )
-                                        }
+                                    <div
+                                        className="event-detail-multiselect"
+                                        ref={promotionsDropdownRef}
                                     >
-                                        {promotionTargets.map((promotionTarget) => (
-                                            <option
-                                                key={promotionTarget.promotionId}
-                                                value={promotionTarget.promotionId}
+                                        <button
+                                            type="button"
+                                            className="event-detail-multiselect-trigger"
+                                            onClick={() =>
+                                                setIsPromotionsOpen((prev) => !prev)
+                                            }
+                                            aria-expanded={isPromotionsOpen}
+                                            aria-haspopup="listbox"
+                                        >
+                                            <span className="event-detail-multiselect-value">
+                                                {selectedPromotionLabels.length > 0
+                                                    ? selectedPromotionLabels.join(', ')
+                                                    : 'Selectionnez une ou plusieurs promotions'}
+                                            </span>
+                                            <span
+                                                className={
+                                                    'event-detail-multiselect-chevron' +
+                                                    (isPromotionsOpen ? ' is-open' : '')
+                                                }
+                                                aria-hidden="true"
                                             >
-                                                {promotionTarget.promotionLabel}
-                                            </option>
-                                        ))}
-                                    </select>
+                                                ▾
+                                            </span>
+                                        </button>
+
+                                        {isPromotionsOpen && (
+                                            <div
+                                                className="event-detail-multiselect-menu"
+                                                role="listbox"
+                                                aria-multiselectable="true"
+                                            >
+                                                {promotionTargets.map((promotionTarget) => {
+                                                    const isSelected = draft.concernedPromotionIds.includes(
+                                                        promotionTarget.promotionId,
+                                                    )
+                                                    return (
+                                                        <button
+                                                            key={promotionTarget.promotionId}
+                                                            type="button"
+                                                            className={
+                                                                'event-detail-multiselect-option' +
+                                                                (isSelected
+                                                                    ? ' is-selected'
+                                                                    : '')
+                                                            }
+                                                            role="option"
+                                                            aria-selected={isSelected}
+                                                            onClick={() =>
+                                                                togglePromotionSelection(
+                                                                    promotionTarget.promotionId,
+                                                                )
+                                                            }
+                                                        >
+                                                            <span className="event-detail-multiselect-option-label">
+                                                                {
+                                                                    promotionTarget.promotionLabel
+                                                                }
+                                                            </span>
+                                                            {isSelected && (
+                                                                <span
+                                                                    className="event-detail-multiselect-option-check"
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    ✓
+                                                                </span>
+                                                            )}
+                                                        </button>
+                                                    )
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
                                     {draft.concernedPromotionIds.length === 0 && (
                                         <small className="event-detail-input-help">
                                             Selectionnez une ou plusieurs promotions.

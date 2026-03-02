@@ -43,6 +43,8 @@ function mapEventToCampusEvent(event: Event, location = ''): CampusEvent {
         location,
         source: event.is_external ? 'EXTERNE' as const : 'JUNIA' as const,
         type: event.type,
+        concernedPromotionIds: [...(event.concerne?.promotions ?? [])],
+        concernedCycleIds: [],
     }
 }
 

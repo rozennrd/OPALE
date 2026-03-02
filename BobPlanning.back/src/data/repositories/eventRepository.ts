@@ -6,9 +6,13 @@ export const eventRepository = {
     // Récupère tous les événements
     async getAll(): Promise<EventDAO[]> {
         const sql = `
-            SELECT id, type, nom, description, num_semaine, datetime_start, datetime_end,
-                   show_macro, show_micro, is_blocking, is_exceptional, is_external
-            FROM event
+            SELECT e.id, type, nom, description, num_semaine, datetime_start, datetime_end,
+                   show_macro, show_micro, is_blocking, is_exceptional, is_external,
+                   COALESCE(array_remove(array_agg(c.id_promo), NULL), '{}') AS promotions
+            FROM event e
+            LEFT JOIN concerner c ON c.id_event = e.id
+            GROUP BY e.id, e.type, e.nom, e.description, e.num_semaine, e.datetime_start, e.datetime_end,
+                     e.show_macro, e.show_micro, e.is_blocking, e.is_exceptional, e.is_external
             ORDER BY datetime_start DESC
         `;
         const result = await pool.query(sql);
@@ -18,10 +22,14 @@ export const eventRepository = {
     // Récupère un événement par son ID
     async getById(id: string): Promise<EventDAO | null> {
         const sql = `
-            SELECT id, type, nom, description, num_semaine, datetime_start, datetime_end,
-                   show_macro, show_micro, is_blocking, is_exceptional, is_external
-            FROM event
-            WHERE id = $1
+            SELECT e.id, type, nom, description, num_semaine, datetime_start, datetime_end,
+                   show_macro, show_micro, is_blocking, is_exceptional, is_external,
+                   COALESCE(array_remove(array_agg(c.id_promo), NULL), '{}') AS promotions
+            FROM event e
+            LEFT JOIN concerner c ON c.id_event = e.id
+            WHERE e.id = $1
+            GROUP BY e.id, e.type, e.nom, e.description, e.num_semaine, e.datetime_start, e.datetime_end,
+                     e.show_macro, e.show_micro, e.is_blocking, e.is_exceptional, e.is_external
         `;
         const result = await pool.query(sql, [id]);
         return result.rows.length > 0 ? (result.rows[0] as EventDAO) : null;
@@ -30,10 +38,14 @@ export const eventRepository = {
     // Récupère les événements exceptionnels
     async getExceptional(): Promise<EventDAO[]> {
         const sql = `
-            SELECT id, type, nom, description, num_semaine, datetime_start, datetime_end,
-                   show_macro, show_micro, is_blocking, is_exceptional, is_external
-            FROM event
-            WHERE is_exceptional = TRUE
+            SELECT e.id, type, nom, description, num_semaine, datetime_start, datetime_end,
+                   show_macro, show_micro, is_blocking, is_exceptional, is_external,
+                   COALESCE(array_remove(array_agg(c.id_promo), NULL), '{}') AS promotions
+            FROM event e
+            LEFT JOIN concerner c ON c.id_event = e.id
+            WHERE e.is_exceptional = TRUE
+            GROUP BY e.id, e.type, e.nom, e.description, e.num_semaine, e.datetime_start, e.datetime_end,
+                     e.show_macro, e.show_micro, e.is_blocking, e.is_exceptional, e.is_external
             ORDER BY datetime_start DESC
         `;
         const result = await pool.query(sql);
@@ -43,25 +55,29 @@ export const eventRepository = {
     // Récupère les événements macro
     async getMacro(): Promise<EventDAO[]> {
         const sql = `
-            SELECT id,
-                   type,
-                   nom,
-                   description, 
-                   num_semaine,
-                   datetime_start,
-                   datetime_end,
-                   show_macro,
-                   show_micro,
-                   is_blocking,
-                   is_exceptional,
-                   is_external
-            FROM event
-            WHERE show_macro = TRUE
-              AND type IN
+            SELECT e.id,
+                   e.type,
+                   e.nom,
+                   e.description,
+                   e.num_semaine,
+                   e.datetime_start,
+                   e.datetime_end,
+                   e.show_macro,
+                   e.show_micro,
+                   e.is_blocking,
+                   e.is_exceptional,
+                   e.is_external,
+                   COALESCE(array_remove(array_agg(c.id_promo), NULL), '{}') AS promotions
+            FROM event e
+            LEFT JOIN concerner c ON c.id_event = e.id
+            WHERE e.show_macro = TRUE
+              AND e.type IN
                   ('Cours', 'Entreprise', 'Examen', 'Reunion', 'Fermeture', 'Soutenance', 'JPO', 'Stage', 'Mobilite',
                    'PFE', 'Rattrapage', 'Conference', 'Rentrée', 'Réunion parents', 'Journée Immersion', 'Concours',
                    'Salon', 'Fin des cours', 'Autre')
-            ORDER BY nom ASC
+            GROUP BY e.id, e.type, e.nom, e.description, e.num_semaine, e.datetime_start, e.datetime_end,
+                     e.show_macro, e.show_micro, e.is_blocking, e.is_exceptional, e.is_external
+            ORDER BY e.nom ASC
         `;
         const result = await pool.query(sql);
         return result.rows as EventDAO[];
@@ -71,12 +87,16 @@ export const eventRepository = {
     async getByPromoAndTypes(promoId: string, types: string[]): Promise<EventDAO[]> {
         const sql = `
             SELECT e.id, e.type, e.nom, e.description, e.num_semaine, e.datetime_start, e.datetime_end,
-                   e.show_macro, e.show_micro, e.is_blocking, e.is_exceptional, e.is_external
+                   e.show_macro, e.show_micro, e.is_blocking, e.is_exceptional, e.is_external,
+                   COALESCE(array_remove(array_agg(c2.id_promo), NULL), '{}') AS promotions
             FROM event e
             JOIN concerner c ON c.id_event = e.id
+            LEFT JOIN concerner c2 ON c2.id_event = e.id
             JOIN promotion p ON p.id = c.id_promo
             WHERE p.id = $1
               AND e.type = ANY($2)
+            GROUP BY e.id, e.type, e.nom, e.description, e.num_semaine, e.datetime_start, e.datetime_end,
+                     e.show_macro, e.show_micro, e.is_blocking, e.is_exceptional, e.is_external
             ORDER BY e.datetime_start ASC
         `;
         const result = await pool.query(sql, [promoId, types]);
