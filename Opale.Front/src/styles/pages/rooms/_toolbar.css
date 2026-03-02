@@ -36,4 +36,10 @@
             min-width: 0;
         }
     }
+
+    @media (max-width: 640px) {
+        .rooms-toolbar-capacity-controls {
+            grid-template-columns: 1fr;
+        }
+    }
 }

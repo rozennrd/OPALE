@@ -131,7 +131,7 @@ export default function RoomsToolbar({
                     </div>
                 </div>
 
-                <div className="toolbar-filter">
+                <div className="toolbar-filter toolbar-filter--chips">
                     <span className="toolbar-filter-label">Disponibilité</span>
                     <div className="toolbar-toggle-chips">
                         {([

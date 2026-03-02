@@ -9,6 +9,7 @@ import EventTypeBadge from './EventTypeBadge'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 import { ROOMS_MOCK } from '../../mocks/rooms.mock'
+import DateInput from '../common/DateInput'
 
 type SaveResult = { success: boolean; error?: string }
 
@@ -30,11 +31,6 @@ function formatDate(date: string | undefined): string {
         month: '2-digit',
         year: 'numeric',
     })
-}
-
-function toDatetimeLocal(isoString: string): string {
-    if (!isoString) return ''
-    return isoString.slice(0, 16)
 }
 
 const EVENT_LOCATION_DATALIST_ID = 'event-location-suggestions'
@@ -202,13 +198,14 @@ export default function EventDetailCard({
                         <div className="event-detail-info-row">
                             <dt>Date de debut</dt>
                             <dd>
-                                <input
-                                    type="datetime-local"
-                                    className="event-detail-input"
-                                    value={toDatetimeLocal(draft.startDate)}
-                                    onChange={(e) =>
-                                        updateField('startDate', e.target.value)
+                                <DateInput
+                                    mode="datetime"
+                                    value={draft.startDate}
+                                    onChange={(value) =>
+                                        updateField('startDate', value)
                                     }
+                                    inputClassName="event-detail-input"
+                                    max={draft.endDate || undefined}
                                 />
                             </dd>
                         </div>
@@ -216,13 +213,14 @@ export default function EventDetailCard({
                         <div className="event-detail-info-row">
                             <dt>Date de fin</dt>
                             <dd>
-                                <input
-                                    type="datetime-local"
-                                    className="event-detail-input"
-                                    value={toDatetimeLocal(draft.endDate)}
-                                    onChange={(e) =>
-                                        updateField('endDate', e.target.value)
+                                <DateInput
+                                    mode="datetime"
+                                    value={draft.endDate}
+                                    onChange={(value) =>
+                                        updateField('endDate', value)
                                     }
+                                    inputClassName="event-detail-input"
+                                    min={draft.startDate || undefined}
                                 />
                             </dd>
                         </div>

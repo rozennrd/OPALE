@@ -3,6 +3,7 @@ import { EventType } from '../../models/CampusEvent'
 import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 import icPlus from '../../assets/ic-plus.png'
+import DateInput from '../common/DateInput'
 
 export type TargetFilter = 'ALL' | 'JUNIA' | 'EXTERNE'
 export type TypeFilter = 'ALL' | EventType
@@ -105,11 +106,11 @@ export default function EventsToolbar({
                 <div className="toolbar-filter">
                     <label className="toolbar-filter-label">
                         À partir du
-                        <input
-                            type="date"
+                        <DateInput
                             value={dateFrom}
-                            onChange={(e) => onDateFromChange(e.target.value)}
-                            className="toolbar-filter-date"
+                            onChange={onDateFromChange}
+                            inputClassName="toolbar-filter-date"
+                            max={dateTo || undefined}
                         />
                     </label>
                 </div>
@@ -117,16 +118,16 @@ export default function EventsToolbar({
                 <div className="toolbar-filter">
                     <label className="toolbar-filter-label">
                         Jusqu&apos;au
-                        <input
-                            type="date"
+                        <DateInput
                             value={dateTo}
-                            onChange={(e) => onDateToChange(e.target.value)}
-                            className="toolbar-filter-date"
+                            onChange={onDateToChange}
+                            inputClassName="toolbar-filter-date"
+                            min={dateFrom || undefined}
                         />
                     </label>
                 </div>
 
-                <div className="toolbar-filter">
+                <div className="toolbar-filter toolbar-filter--chips">
                     <span className="toolbar-filter-label">Cible</span>
                     <div className="toolbar-toggle-chips">
                         {(['ALL', 'JUNIA', 'EXTERNE'] as TargetFilter[]).map((value) => (

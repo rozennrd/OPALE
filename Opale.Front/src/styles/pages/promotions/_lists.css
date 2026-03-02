@@ -42,4 +42,15 @@
         text-align: center;
         font-size: 15px;
     }
+
+    @media (max-width: 640px) {
+        .promo-list-main {
+            grid-template-columns: 1fr;
+        }
+
+        .promo-list-count {
+            max-width: none;
+            text-align: left;
+        }
+    }
 }
