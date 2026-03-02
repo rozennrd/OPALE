@@ -77,6 +77,8 @@ function getSalleIdsForLocation(location: string, salles: Salle[]): string[] {
 
 const CREATE_EVENT_REQUIRED_FIELDS_ALERT =
     'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de creer cet evenement.'
+const INVALID_EVENT_DATES_ALERT =
+    "La date/heure de fin doit être strictement postérieure à la date/heure de début."
 
 export default function EventDetailCard({
                                             event,
@@ -106,6 +108,14 @@ export default function EventDetailCard({
         !!draft.type &&
         !!draft.source
 
+    const hasInvalidDates = (() => {
+        if (!draft.startDate || !draft.endDate) return false
+        const start = new Date(draft.startDate)
+        const end = new Date(draft.endDate)
+        if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return true
+        return end.getTime() <= start.getTime()
+    })()
+
     const promotionTargets = cycles.flatMap((cycle) =>
         cycle.promotions.map((promotion) => ({
             promotionId: promotion.id,
@@ -129,11 +139,18 @@ export default function EventDetailCard({
         }
     }, [draft.location, draft.selectedSalleIds, salles, updateField])
 
-    const saveDraft = async () => {
+    const saveDraft = async (closeOnSuccess = true): Promise<boolean> => {
         const result = await handleSave()
         if (!result.success) {
             console.error('[EVENTS] Save failed:', result.error)
+            return false
         }
+
+        if (closeOnSuccess) {
+            onClose()
+        }
+
+        return true
     }
 
     const handleSourceChange = (source: 'JUNIA' | 'EXTERNE') => {
@@ -205,8 +222,11 @@ export default function EventDetailCard({
                 window.alert(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
                 return
             }
-            void saveDraft()
-            onClose()
+            if (hasInvalidDates) {
+                window.alert(INVALID_EVENT_DATES_ALERT)
+                return
+            }
+            void saveDraft(true)
         },
         ignoreWhenSelectorExists: '.modal-overlay',
     })
@@ -481,8 +501,7 @@ export default function EventDetailCard({
                 <div className="event-detail-footer">
                     <ActionButtonsWithConfirm
                         onCancel={handleRequestClose}
-                        onSave={() => void saveDraft()}
-                        onAfterSaveConfirm={isCreate ? onClose : undefined}
+                        onSave={() => saveDraft(true)}
                         onDelete={isCreate ? undefined : onDelete}
                         hasChanges={hasChanges}
                         saveLabel={
@@ -554,6 +573,10 @@ export default function EventDetailCard({
                                 window.alert(
                                     CREATE_EVENT_REQUIRED_FIELDS_ALERT,
                                 )
+                                return false
+                            }
+                            if (hasInvalidDates) {
+                                window.alert(INVALID_EVENT_DATES_ALERT)
                                 return false
                             }
                             return true
