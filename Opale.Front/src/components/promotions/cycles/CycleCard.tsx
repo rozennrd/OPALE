@@ -186,6 +186,19 @@ const CycleCard: React.FC<CycleCardProps> = ({
                 if (response.success && response.data) {
                     setPreviewData(response.data)
                     setIsPreviewWarningsVisible(true)
+                    const detections = response.data.metadata.sectionSemesterDetections || []
+                    if (detections.length > 0) {
+                        console.group('[Maquette Preview] Détection semestres par contexte de section')
+                        detections.forEach((detection) => {
+                            console.log(
+                                `[${detection.sheetName}] ligne ${detection.rowNumber} -> semestres ${detection.semestres.join(', ')}`,
+                                { rawText: detection.rawText },
+                            )
+                        })
+                        console.groupEnd()
+                    } else {
+                        console.info('[Maquette Preview] Aucune détection de semestres de section trouvée.')
+                    }
                     return
                 }
 
