@@ -5,6 +5,7 @@ import ConfirmDialog from './ConfirmDialog'
 interface ActionButtonsWithConfirmProps {
     saveLabel?: string
     cancelLabel?: string
+    hideCancel?: boolean
 
     // Confirm "Enregistrer"
     confirmTitle?: string
@@ -40,6 +41,7 @@ interface ActionButtonsWithConfirmProps {
 export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
     saveLabel = 'Enregistrer',
     cancelLabel = 'Annuler',
+    hideCancel = false,
     confirmTitle = 'Confirmer les modifications',
     confirmMessage = 'Souhaitez-vous enregistrer les modifications ?',
     confirmLabel = 'Confirmer',
@@ -87,7 +89,10 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
     }
 
     const handleConfirmSave = async () => {
-        if (!canSave()) return
+        if (!canSave()) {
+            closeSaveConfirmDialog()
+            return
+        }
 
         closeSaveConfirmDialog()
         const saveResult = await Promise.resolve(onSave())
@@ -111,7 +116,6 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
         if (saveResult === false) return
 
         closeCancelConfirmDialog()
-        onSave()
         onCancel()
     }
 
@@ -140,13 +144,15 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
                     </button>
                 )}
 
-                <button
-                    type="button"
-                    className="btn-tertiary"
-                    onClick={handleCancelClick}
-                >
-                    {cancelLabel}
-                </button>
+                {!hideCancel && (
+                    <button
+                        type="button"
+                        className="btn-tertiary"
+                        onClick={handleCancelClick}
+                    >
+                        {cancelLabel}
+                    </button>
+                )}
 
                 <button
                     type="button"

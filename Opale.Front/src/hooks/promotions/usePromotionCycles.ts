@@ -258,5 +258,6 @@ export function usePromotionCycles() {
         renameCycle,
         removePromotion,
         addPromotionToCycle,
+        refreshCycles: loadCycles,
     }
 }

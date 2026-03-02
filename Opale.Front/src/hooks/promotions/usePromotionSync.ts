@@ -217,7 +217,7 @@ export const usePromotionSync = () => {
             )
 
             // Map groups to their created versions
-            return groups.map(g => {
+            const syncedGroups = groups.map(g => {
                 if (g.idPromo.startsWith('new-group-')) {
                     const created = createdGroups.find(cg => cg.tempId === g.idPromo)
                     if (created) {
@@ -232,6 +232,30 @@ export const usePromotionSync = () => {
                 }
                 return g
             })
+
+            // Delete removed groups
+            try {
+                const existingGroupsRes = await groupsApi.getGroups()
+                const existingGroups = (existingGroupsRes.data || []).filter(g => String(g.id_promo) === String(promoId))
+                const currentIds = new Set(
+                    syncedGroups
+                        .map(g => g.id)
+                        .filter(Boolean)
+                        .map(id => String(id))
+                )
+
+                const deletions = existingGroups
+                    .filter(g => !currentIds.has(String(g.id)))
+                    .map(g => groupsApi.deleteGroup(Number(g.id)))
+
+                if (deletions.length > 0) {
+                    await Promise.all(deletions)
+                }
+            } catch (error) {
+                console.warn('Failed to delete removed groups:', error)
+            }
+
+            return syncedGroups
         } catch (error) {
             console.error('Error syncing groups:', error)
             throw new Error('Failed to sync groups with backend')
@@ -304,7 +328,7 @@ export const usePromotionSync = () => {
             )
 
             // Map specialties to their created versions
-            return specialties.map(s => {
+            const syncedSpecialties = specialties.map(s => {
                 if (s.idPromo.startsWith('new-specialty-')) {
                     const created = createdSpecialties.find(cs => cs.tempId === s.idPromo)
                     if (created) {
@@ -319,6 +343,32 @@ export const usePromotionSync = () => {
                 }
                 return s
             })
+
+            // Delete removed specialties
+            try {
+                const existingSpecialtiesRes = await specialtiesApi.getSpecialties()
+                const existingSpecialties = (existingSpecialtiesRes.data || []).filter(
+                    s => String(s.id_promo) === String(promoId)
+                )
+                const currentIds = new Set(
+                    syncedSpecialties
+                        .map(s => s.id)
+                        .filter(Boolean)
+                        .map(id => String(id))
+                )
+
+                const deletions = existingSpecialties
+                    .filter(s => !currentIds.has(String(s.id)))
+                    .map(s => specialtiesApi.deleteSpecialty(String(s.id)))
+
+                if (deletions.length > 0) {
+                    await Promise.all(deletions)
+                }
+            } catch (error) {
+                console.warn('Failed to delete removed specialties:', error)
+            }
+
+            return syncedSpecialties
         } catch (error) {
             console.error('Error syncing specialties:', error)
             throw new Error('Failed to sync specialties with backend')
@@ -331,7 +381,9 @@ export const usePromotionSync = () => {
      */
     const savePromotion = async (
         promo: EditingPromotion,
-        originalEvents: Event[] = []
+        originalEvents: Event[] = [],
+        removedGroupIds: string[] = [],
+        removedSpecialtyIds: string[] = []
     ): Promise<EditingPromotion> => {
         try {
             // Validate constraints are within promotion period
@@ -353,6 +405,32 @@ export const usePromotionSync = () => {
 
             // Sync specialties
             const syncedSpecialties = await syncSpecialties(promo.promoId, promo.specialties)
+
+            // Delete removed groups
+            if (removedGroupIds.length > 0) {
+                const groupsApi = new GroupsApi()
+                const uniqueGroupIds = Array.from(new Set(removedGroupIds))
+                for (const id of uniqueGroupIds) {
+                    try {
+                        await groupsApi.deleteGroup(id)
+                    } catch (error) {
+                        console.warn(`Failed to delete group ${id}:`, error)
+                    }
+                }
+            }
+
+            // Delete removed specialties
+            if (removedSpecialtyIds.length > 0) {
+                const specialtiesApi = new SpecialtiesApi()
+                const uniqueSpecialtyIds = Array.from(new Set(removedSpecialtyIds))
+                for (const id of uniqueSpecialtyIds) {
+                    try {
+                        await specialtiesApi.deleteSpecialty(id)
+                    } catch (error) {
+                        console.warn(`Failed to delete specialty ${id}:`, error)
+                    }
+                }
+            }
 
             // Sync events (constraints)
             await syncEvents(promo.promoId, promo.constraints, originalEvents)

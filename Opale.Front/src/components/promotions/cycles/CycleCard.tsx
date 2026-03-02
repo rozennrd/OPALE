@@ -475,11 +475,13 @@ const CycleCard: React.FC<CycleCardProps> = ({
                             <span className="promo-label">{promo.label}</span>
 
                             {hasPromoMismatch(promo) && (
-                                <img
-                                    src={icWarning}
-                                    alt="Repartition d'etudiants incoherente"
-                                    className="promo-warning"
-                                />
+                                <span
+                                    className="promo-row-warning"
+                                    role="img"
+                                    aria-label="Répartition d'étudiants incohérente"
+                                >
+                                    &#9888;
+                                </span>
                             )}
                         </div>
 

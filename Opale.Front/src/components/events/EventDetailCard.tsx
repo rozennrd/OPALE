@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { CampusEvent } from '../../models/CampusEvent'
 import { EventType, EVENT_TYPE_LABELS } from '../../models/EventTypes'
 import { useEventDetail } from '../../hooks/events/useEventDetail'
@@ -101,6 +102,8 @@ export default function EventDetailCard({
         updateFields,
         handleSave,
     } = useEventDetail(event, onSave)
+
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     const isValid =
         draft.name.trim().length > 0 &&
@@ -242,6 +245,10 @@ export default function EventDetailCard({
         return `${start}${end}${location}`
     })()
 
+    const openErrorDialog = (message: string) => {
+        setErrorMessage(message)
+    }
+
     const {
         handleRequestClose,
         isConfirmOpen,
@@ -253,7 +260,7 @@ export default function EventDetailCard({
         onClose,
         onSaveAndClose: () => {
             if (isCreate && !isValid) {
-                window.alert(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
+                openErrorDialog(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
                 return
             }
             if (hasInvalidDates) {
@@ -651,16 +658,12 @@ export default function EventDetailCard({
                             </>
                         }
                         cancelDirtyConfirmLabel={
-                            isCreate
-                                ? 'Creer et fermer'
-                                : 'Enregistrer et fermer'
+                            isCreate ? 'Creer et fermer' : 'Enregistrer et fermer'
                         }
                         cancelDirtyDiscardLabel="Fermer sans enregistrer"
                         onBeforeSaveClick={() => {
                             if (isCreate && !isValid) {
-                                window.alert(
-                                    CREATE_EVENT_REQUIRED_FIELDS_ALERT,
-                                )
+                                openErrorDialog(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
                                 return false
                             }
                             if (hasInvalidDates) {
@@ -694,6 +697,19 @@ export default function EventDetailCard({
                 onConfirm={handleConfirmSaveAndClose}
                 onCancel={handleDiscardAndClose}
                 onRequestClose={handleConfirmDialogRequestClose}
+            />
+
+            <ConfirmDialog
+                open={!!errorMessage}
+                title="Erreur"
+                message={errorMessage ?? ''}
+                confirmLabel="OK"
+                confirmClassName="btn-primary"
+                onConfirm={() => setErrorMessage(null)}
+                onCancel={() => setErrorMessage(null)}
+                onRequestClose={() => setErrorMessage(null)}
+                hideCancel
+                variant="danger"
             />
         </div>
     )
