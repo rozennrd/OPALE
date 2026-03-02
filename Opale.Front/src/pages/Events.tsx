@@ -144,7 +144,9 @@ export default function Events() {
                 const response = await eventsApi.getEventsMacro()
                 if (response.data) {
                     // Mapper les événements du backend vers CampusEvent
-                    const mappedEvents = response.data.map(mapEventToCampusEvent).filter(e => e.type in eventPageTypes)
+                    const mappedEvents = response.data
+                        .map(mapEventToCampusEvent)
+                        .filter((e) => eventPageTypes.includes(e.type))
                     setEvents(mappedEvents)
                 }
             } catch (err) {
@@ -178,8 +180,7 @@ export default function Events() {
     })
 
     const filteredEvents = useMemo(() => {
-        let items = [...events]
-        // let items = [...eventsState]
+        let items = [...eventsState]
 
         items.sort(
             (a, b) =>
