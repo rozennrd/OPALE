@@ -465,7 +465,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                 <img
                                     src={icWarning}
                                     alt="Repartition d'etudiants incoherente"
-                                    className="promo-warning"
+                                    className="promo-row-warning"
                                 />
                             )}
                         </div>
