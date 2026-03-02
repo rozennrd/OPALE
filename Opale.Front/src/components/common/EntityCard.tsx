@@ -58,7 +58,7 @@ export default function EntityCard({
                         .join(' ')}
                     aria-hidden="true"
                 >
-                    {selected ? '?' : ''}
+                    {selected ? '×' : ''}
                 </span>
             )}
 

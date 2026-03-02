@@ -235,6 +235,54 @@
     }
 
     /* ============================
+       Bouton d'ajout (toolbar)
+       ============================ */
+
+    .toolbar-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0.95rem;
+        border-radius: 999px;
+        border: 1px solid var(--primary);
+        background: var(--primary);
+        color: var(--text-on-primary);
+        font-size: 0.9rem;
+        font-weight: 700;
+        min-height: 2.2rem;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+        transition:
+            background-color 150ms ease,
+            border-color 150ms ease,
+            box-shadow 150ms ease,
+            transform 80ms ease;
+    }
+
+    .toolbar-add-btn:hover {
+        background: var(--primary-hover);
+        border-color: var(--primary-hover);
+        box-shadow: var(--shadow-md);
+    }
+
+    .toolbar-add-btn:active {
+        transform: translateY(1px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .toolbar-add-icon {
+        width: 18px;
+        height: 18px;
+        display: block;
+        pointer-events: none;
+        filter: brightness(0) invert(1);
+    }
+
+    .toolbar-add-label {
+        white-space: nowrap;
+    }
+
+    /* ============================
        Responsive
        ============================ */
 

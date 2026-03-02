@@ -75,6 +75,7 @@ export default function MatiereDetailCard({
     const [initialAssignments, setInitialAssignments] = useState<TeacherAssignment[]>([])
     const [removedEnseignementIds, setRemovedEnseignementIds] = useState<string[]>([])
     const [volumeWarningMessage, setVolumeWarningMessage] = useState<string | null>(null)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     type CategoryKey = 'tdHours' | 'tpHours' | 'projectHours' | 'eLearningHours' | 'autresHours'
 
@@ -442,7 +443,7 @@ export default function MatiereDetailCard({
         const promoUuid = (matiere as Matiere).promo_id as string | undefined
         if (!promoUuid) {
             console.error('[MATIERES][update] Missing matiere.promo_id (UUID). matiere=', matiere)
-            alert("Impossible d'enregistrer : promo_id (UUID) manquant sur la matière.")
+            setErrorMessage("Impossible d'enregistrer : promo_id (UUID) manquant sur la matière.")
             return
         }
 
@@ -464,7 +465,7 @@ export default function MatiereDetailCard({
 
         const matRes = await updateMatiere(matierePayload)
         if (!matRes.success) {
-            alert(matRes.error?.message ?? 'Erreur lors de la sauvegarde matière')
+            setErrorMessage(matRes.error?.message ?? 'Erreur lors de la sauvegarde matière')
             return
         }
 
@@ -491,7 +492,7 @@ export default function MatiereDetailCard({
         for (const id of removedEnseignementIds) {
             const delRes = await deleteEnseignement(id)
             if (!delRes.success) {
-                alert(delRes.error?.message ?? `Erreur suppression enseignement ${id}`)
+                setErrorMessage(delRes.error?.message ?? `Erreur suppression enseignement ${id}`)
                 return
             }
         }
@@ -509,7 +510,7 @@ export default function MatiereDetailCard({
                     heures_autre: r.autresHours,
                 })
                 if (!upRes.success) {
-                    alert(upRes.error?.message ?? 'Erreur update enseignement')
+                    setErrorMessage(upRes.error?.message ?? 'Erreur update enseignement')
                     return
                 }
             } else {
@@ -523,7 +524,7 @@ export default function MatiereDetailCard({
                     heures_autre: r.autresHours,
                 })
                 if (!addRes.success) {
-                    alert(addRes.error?.message ?? 'Erreur add enseignement')
+                    setErrorMessage(addRes.error?.message ?? 'Erreur add enseignement')
                     return
                 }
             }
@@ -977,6 +978,19 @@ export default function MatiereDetailCard({
                 onConfirm={handleConfirmSaveAndClose}
                 onCancel={handleDiscardAndClose}
                 onRequestClose={handleConfirmDialogRequestClose}
+            />
+
+            <ConfirmDialog
+                open={!!errorMessage}
+                title="Erreur"
+                message={errorMessage ?? ''}
+                confirmLabel="OK"
+                confirmClassName="btn-primary"
+                onConfirm={() => setErrorMessage(null)}
+                onCancel={() => setErrorMessage(null)}
+                onRequestClose={() => setErrorMessage(null)}
+                hideCancel
+                variant="danger"
             />
         </div>
     )
