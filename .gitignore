@@ -34,3 +34,7 @@ db.conf
 # Don't include dist ! (it's what's created after npm run build, useless in code)
 BobPlanning.back/dist
 sonar-project.properties
+.vite
+*/.vite
+Opale.micro-planning/target
+Opale.micro-planning/.idea

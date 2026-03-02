@@ -12,7 +12,7 @@ interface RoomCardProps {
     onToggleSelect?: () => void
 }
 
-const floorLabel = (floor: 0 | 1 | 2): string => {
+const floorLabel = (floor: number): string => {
     switch (floor) {
         case 0:
             return 'Rez-de-chaussée'
@@ -32,9 +32,7 @@ export default function RoomCard({
     selected = false,
     onToggleSelect,
 }: RoomCardProps) {
-    const displayName = room.fullName
-        ? room.fullName.split('_').slice(1).join('_') || room.fullName
-        : room.name
+    const displayName = room.fullName || room.name
 
     const handleClick = () => {
         if (selectionMode) {

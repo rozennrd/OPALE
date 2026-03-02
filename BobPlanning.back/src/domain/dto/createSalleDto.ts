@@ -1,8 +1,10 @@
 export interface CreateSalleDTO {
   nom: string;
-  type: string;
-  capacite: number;
+  nom_complet?: string | null;
+  type_principal: string;
+  types_secondaires?: string[] | null;
   etage: number;
-  description: string;
-  utilisable: string;
+  capacite: number;
+  utilisable: boolean;
+  description?: string | null;
 }

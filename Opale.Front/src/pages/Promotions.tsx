@@ -5,9 +5,8 @@ import icPlus from '../assets/ic-plus.png'
 import PromoEditDialog from '../components/promotions/PromoEditDialog.tsx'
 import PromoAdjustDialog from '../components/promotions/PromoAdjustDialog.tsx'
 import CycleCard from '../components/promotions/cycles/CycleCard'
-
 import CycleCreateDialog from '../components/promotions/CycleCreateDialog'
-
+import PageHeader from '../components/common/PageHeader'
 
 import {
     usePromotionCycles,
@@ -15,14 +14,12 @@ import {
     usePromotionConstraints,
     usePromotionAdjustPopup,
 } from '../hooks/promotions'
-
-import PageHeader from '../components/common/PageHeader'
+import { usePromotionSync } from "../hooks/promotions/usePromotionSync.ts"
 
 export default function Promotions() {
+    // Cycle management hooks
     const {
         cycles,
-        setCycles,
-        loading,
         error,
         isCreateModalOpen,
         openCreateModal,
@@ -34,22 +31,28 @@ export default function Promotions() {
         addPromotionToCycle,
     } = usePromotionCycles()
 
+    // Promotion sync (save/fetch)
+    const { savePromotion } = usePromotionSync()
+
+    // Promotion editing state
     const {
         editingPromo,
         setEditingPromo,
         openEditPromotion,
         closeEditPromotion,
         handleEditFieldChange,
-        handleSavePromotion,
+        markFormAsUntouched,
         addGroup,
         removeGroup,
         handleGroupChange,
+        hasChanges,
+        isLoading: isLoadingPromotion,
         addSpecialty,
         removeSpecialty,
-        handleSpecialtyChange,
-        hasChanges: promoHasChanges,
-    } = usePromotionEditing(cycles, setCycles)
+        handleSpecialtyChange
+    } = usePromotionEditing(cycles)
 
+    // Student adjustment popup
     const {
         adjustPopup,
         handleStudentsBlur,
@@ -58,12 +61,40 @@ export default function Promotions() {
         toggleAdjustSpecialties,
     } = usePromotionAdjustPopup(editingPromo, setEditingPromo)
 
+    // Constraints management
     const {
         handleAddConstraint,
         handleRemoveConstraint,
         handleUpdateConstraintRange,
     } = usePromotionConstraints(editingPromo, setEditingPromo)
-    useEffect(() => {console.log(cycles)}, [cycles] )
+
+    // Debug log cycles (can be removed in production)
+    useEffect(() => {
+    }, [cycles])
+
+    /**
+     * Handles promotion save with proper error handling
+     */
+    const handleSavePromotion = async () => {
+        if (!editingPromo) return
+
+        try {
+            const updatedPromo = await savePromotion(editingPromo)
+
+            // Update local state with synced groups (containing real IDs) and refresh state
+            markFormAsUntouched(updatedPromo);
+
+            // TODO: Update cycles state to reflect changes
+            // setCycles(prev => updateCyclePromotion(prev, updatedPromo))
+
+            // TODO: Show success notification
+            console.log('Promotion saved successfully')
+        } catch (error) {
+            console.error('Failed to save promotion:', error)
+            // TODO: Show error notification to user
+        }
+    }
+
     return (
         <div className="promos">
             <PageHeader
@@ -83,8 +114,6 @@ export default function Promotions() {
                         addPromotion={addPromotionToCycle}
                     />
                 ))}
-
-                {/* Carte "Ajouter un cycle" */}
                 <button
                     type="button"
                     className="card add-cycle-card"
@@ -94,23 +123,29 @@ export default function Promotions() {
                 >
                     <img src={icPlus} alt="" />
                 </button>
-            </div>
+            {/* Error display */}
+            {error && (
+                <div className="error-banner" role="alert">
+                    Erreur : {error}
+                </div>
+            )}
 
-            {/* Modale d’édition */}
+            {/* Edit promotion modal */}
             {editingPromo && (
                 <PromoEditDialog
                     editingPromo={editingPromo}
-                    hasChanges={promoHasChanges}
+                    hasChanges={hasChanges}
+                    isLoading={isLoadingPromotion}
                     onSubmit={handleSavePromotion}
                     onClose={closeEditPromotion}
                     onFieldChange={handleEditFieldChange}
                     onGroupChange={handleGroupChange}
                     onAddGroup={addGroup}
                     onRemoveGroup={removeGroup}
+                    onStudentsBlur={handleStudentsBlur}
                     onSpecialtyChange={handleSpecialtyChange}
                     onAddSpecialty={addSpecialty}
                     onRemoveSpecialty={removeSpecialty}
-                    onStudentsBlur={handleStudentsBlur}
                     constraints={editingPromo.constraints}
                     onAddConstraint={handleAddConstraint}
                     onRemoveConstraint={handleRemoveConstraint}
@@ -118,7 +153,7 @@ export default function Promotions() {
                 />
             )}
 
-            {/* Pop-up d’ajustement */}
+            {/* Student adjustment popup */}
             {adjustPopup.open && (
                 <PromoAdjustDialog
                     adjustPopup={adjustPopup}
@@ -128,12 +163,12 @@ export default function Promotions() {
                 />
             )}
 
-            {/* Modal de création de cycle */}
+            {/* Create cycle modal */}
             <CycleCreateDialog
                 isOpen={isCreateModalOpen}
                 onSubmit={createCycleWithPromotions}
                 onClose={closeCreateModal}
             />
-        </div>
+            </div></div>
     )
 }

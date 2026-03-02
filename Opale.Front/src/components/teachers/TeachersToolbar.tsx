@@ -137,7 +137,7 @@ export default function TeachersToolbar({
                         )}
                     </div>
 
-                    <div className="teachers-toolbar-mode-filter">
+                    <div className="teachers-toolbar-mode-filter toolbar-filter--chips">
                         <div className="toolbar-toggle-chips">
                             {MODE_OPTIONS.map((option) => (
                                 <button

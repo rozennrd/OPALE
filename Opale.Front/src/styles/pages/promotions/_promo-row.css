@@ -38,6 +38,19 @@
         }
     }
 
+    @media (max-width: 640px) {
+        .promo-row {
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .promo-actions {
+            width: 100%;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+    }
+
     /* Icône warning sur la ligne de promo */
     .promo-warning {
         width: 20px;

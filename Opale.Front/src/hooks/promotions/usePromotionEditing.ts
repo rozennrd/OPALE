@@ -1,14 +1,18 @@
-// src/hooks/promotions/usePromotionEditing.ts
-import { useEffect, useState } from 'react'
-import { Cycle, GroupSpecialtyItem, Constraints } from '../../models'
+// hooks/promotions/usePromotionEditing.ts
+import { useState, useEffect } from 'react'
+import {Constraints, Cycle, GroupSpecialtyItem} from '../../models'
 import { distributeEvenly } from '../../utils/promoUtils'
 import { createEmptyConstraints } from './usePromotionConstraints'
+import { usePromotionSync } from './usePromotionSync'
+import { usePromotionConstraints } from "./usePromotionConstraints"
+import { transformBackendPromotionToFrontend } from '../../services/api/promotionsApiTransformers'
 
 export interface EditingPromotion {
     cycleId: string
     promoId: string
     name: string
     students: number
+    isApprentissage: boolean
     startDate: string
     endDate: string
     groups: GroupSpecialtyItem[]
@@ -16,197 +20,195 @@ export interface EditingPromotion {
     constraints: Constraints
 }
 
-export function usePromotionEditing(
-    cycles: Cycle[],
-    setCycles: React.Dispatch<React.SetStateAction<Cycle[]>>
-) {
+export function usePromotionEditing(cycles: Cycle[]) {
     const [editingPromo, setEditingPromo] = useState<EditingPromotion | null>(null)
-
-    // ✅ snapshot "dernière sauvegarde"
     const [savedSnapshot, setSavedSnapshot] = useState<EditingPromotion | null>(null)
     const [hasChanges, setHasChanges] = useState(false)
+    const [newGroupCounter, setNewGroupCounter] = useState(0)
+    const [newSpecialtyCounter, setNewSpecialtyCounter] = useState(0)
+    const [isLoading, setIsLoading] = useState(false)
 
-    const normalizeList = (
-        rawList: GroupSpecialtyItem[] | undefined,
-        prefix: string
-    ): GroupSpecialtyItem[] =>
-        (rawList || []).map(item =>
-            typeof item === 'string'
-                ? { id: `${prefix}-${item}`, name: item, students: 0 }
-                : {
-                    id: item.id || `${prefix}-${item.name || 'item'}`,
-                    name: item.name || '',
-                    students: item.students ?? 0,
-                }
-        )
+    const { fetchPromotionDetails } = usePromotionSync()
+    const { convertEventsToConstraints } = usePromotionConstraints(editingPromo, setEditingPromo)
 
-    const openEditPromotion = (cycleId: string, promoId: string): void => {
-        const cycle = cycles.find(c => c.id === cycleId)
-        const promo = cycle?.promotions.find(p => p.id === promoId)
-        if (!cycle || !promo) return
-
-        const normalized: EditingPromotion = {
-            cycleId,
-            promoId,
-            name: promo.label || '',
-            students: promo.students ?? 0,
-            startDate: promo.startDate || '',
-            endDate: promo.endDate || '',
-            groups: normalizeList(promo.groups, 'grp'),
-            specialties: normalizeList(promo.specialties, 'spec'),
-            constraints: {
-                ...createEmptyConstraints(),
-                ...(promo.constraints || {}),
-            },
+    /**
+     * Detect changes between editing state and saved snapshot
+     */
+    useEffect(() => {
+        if (!editingPromo || !savedSnapshot) {
+            setHasChanges(false)
+            return
         }
+        const hasActualChanges = JSON.stringify(editingPromo) !== JSON.stringify(savedSnapshot)
+        setHasChanges(hasActualChanges)
+    }, [editingPromo, savedSnapshot])
 
-        setEditingPromo(normalized)
-        setSavedSnapshot(normalized)
-        setHasChanges(false)
+    /**
+     * Opens promotion for editing by fetching fresh data from backend
+     */
+    const openEditPromotion = async (cycleId: string, promoId: string): Promise<void> => {
+        setIsLoading(true)
+        try {
+            const { promotion, events } = await fetchPromotionDetails(promoId)
+            if (!promotion) {
+                throw new Error('Promotion not found')
+            }
+            const frontendPromo = transformBackendPromotionToFrontend(promotion)
+            const eventsAsConstraints = convertEventsToConstraints(events)
+
+            const normalized: EditingPromotion = {
+                cycleId,
+                promoId: promotion.id,
+                name: frontendPromo.label || '',
+                students: frontendPromo.students ?? 0,
+                startDate: frontendPromo.startDate || '',
+                endDate: frontendPromo.endDate || '',
+                isApprentissage: frontendPromo.isApprentissage,
+                groups: frontendPromo.groups || [],
+                specialties: frontendPromo.specialties || [],
+                constraints: {
+                    ...createEmptyConstraints(),
+                    ...eventsAsConstraints,
+                },
+            }
+
+            setEditingPromo(normalized)
+            setSavedSnapshot(structuredClone(normalized))
+            setHasChanges(false)
+            console.log("promotion reloaded successfully")
+        } catch (error) {
+            console.error('Error opening promotion:', error)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
+    /**
+     * Closes the editing dialog and resets state
+     */
     const closeEditPromotion = (): void => {
         setEditingPromo(null)
         setSavedSnapshot(null)
         setHasChanges(false)
     }
 
-    // ✅ recalcul de hasChanges par rapport au snapshot
-    useEffect(() => {
-        if (!editingPromo || !savedSnapshot) {
-            setHasChanges(false)
-            return
+    /**
+     * Updates a field in the editing promotion
+     */
+    const handleEditFieldChange = (field: string, value: string | number): void => {
+        setEditingPromo(prev => {
+            if (!prev) return prev
+            return {
+                ...prev,
+                [field]: field === 'students' ? Number(value) || 0 : value
+            }
+        })
+    }
+
+    // ============ GROUP FUNCTIONS ============
+
+    /**
+     * Adds a new group
+     */
+    const addGroup = (): void => {
+        if (!editingPromo) return
+
+        const newGroup: GroupSpecialtyItem = {
+            idPromo: `new-group-${newGroupCounter}`,
+            nom: `Groupe ${editingPromo.groups.length + 1}`,
+            effectifs: 0,
         }
 
-        const current = JSON.stringify(editingPromo)
-        const base = JSON.stringify(savedSnapshot)
+        setNewGroupCounter(prev => prev + 1)
 
-        setHasChanges(current !== base)
-    }, [editingPromo, savedSnapshot])
+        const distributedGroups = distributeEvenly(
+            editingPromo.students,
+            [...editingPromo.groups, newGroup]
+        )
 
-    const handleEditFieldChange = (field: string, value: string | number): void => {
-        setEditingPromo(prev => (prev ? { ...prev, [field]: value } : prev))
+        setEditingPromo(prev =>
+            prev ? { ...prev, groups: distributedGroups } : prev
+        )
     }
 
     /**
-     * Sauvegarde de la promotion :
-     * - Met à jour cycles
-     * - NE FERME PLUS la modale (l'utilisateur choisit ensuite de fermer)
+     * Removes a group
      */
-    const handleSavePromotion = (): void => {
+    const removeGroup = (index: number): void => {
+        if (!editingPromo) return
+        const updatedGroups = editingPromo.groups.filter((_, i) => i !== index)
+        setEditingPromo(prev => prev ? { ...prev, groups: updatedGroups } : prev)
+    }
+
+    /**
+     * Updates a group field
+     */
+    const handleGroupChange = (index: number, field: string, value: string | number): void => {
         if (!editingPromo) return
 
-        setCycles(prev =>
-            prev.map(c => {
-                if (c.id !== editingPromo.cycleId) return c
-                return {
-                    ...c,
-                    promotions: c.promotions.map(p => {
-                        if (p.id !== editingPromo.promoId) return p
-                        const updated = {
-                            ...p,
-                            label: editingPromo.name,
-                            students: Number(editingPromo.students) || 0,
-                            startDate: editingPromo.startDate,
-                            endDate: editingPromo.endDate,
-                            groups: editingPromo.groups || [],
-                            specialties: editingPromo.specialties || [],
-                            constraints:
-                                editingPromo.constraints || createEmptyConstraints(),
-                        }
-                        console.log('[PROMO] updated', updated)
-                        return updated
-                    }),
-                }
-            })
-        )
-
-        // ✅ après sauvegarde, on met à jour le snapshot et on remet hasChanges à false
-        setSavedSnapshot(editingPromo)
-        setHasChanges(false)
-    }
-
-    // Groupes / spécialités : inchangé
-    const addGroup = (): void => {
-        setEditingPromo(prev => {
-            if (!prev) return prev
-            const current = prev.groups || []
-            const next = [
-                ...current,
-                {
-                    id: `grp-${current.length + 1}`,
-                    name: `Groupe ${current.length + 1}`,
-                    students: 0,
-                },
-            ]
-            const distributed = distributeEvenly(prev.students, next)
-            console.log('[GROUPS] add', distributed)
-            return { ...prev, groups: distributed }
+        const updatedGroups = editingPromo.groups.map((g, i) => {
+            if (i !== index) return g
+            return {
+                ...g,
+                [field]: field === 'effectifs' ? (Number(value) || 0) : value
+            }
         })
+
+        setEditingPromo(prev => prev ? { ...prev, groups: updatedGroups } : prev)
     }
 
-    const removeGroup = (index: number): void => {
-        setEditingPromo(prev => {
-            if (!prev) return prev
-            const groups = prev.groups.filter((_, i) => i !== index)
-            return { ...prev, groups }
-        })
-    }
+    // ============ SPECIALTY FUNCTIONS ============
 
-    const handleGroupChange = (index: number, field: string, value: string | number): void => {
-        setEditingPromo(prev => {
-            if (!prev) return prev
-            const groups = prev.groups.map((g, i) =>
-                i === index
-                    ? {
-                        ...g,
-                        [field]: field === 'students' ? (Number(value) || 0) : value,
-                    }
-                    : g
-            )
-            return { ...prev, groups }
-        })
-    }
-
+    /**
+     * Adds a new specialty
+     */
     const addSpecialty = (): void => {
-        setEditingPromo(prev => {
-            if (!prev) return prev
-            const current = prev.specialties || []
-            const next = [
-                ...current,
-                {
-                    id: `spec-${current.length + 1}`,
-                    name: `Spécialité ${current.length + 1}`,
-                    students: 0,
-                },
-            ]
-            const distributed = distributeEvenly(prev.students, next)
-            console.log('[SPECIALTIES] add', distributed)
-            return { ...prev, specialties: distributed }
-        })
+        if (!editingPromo) return
+
+        const newSpecialty: GroupSpecialtyItem = {
+            idPromo: `new-specialty-${newSpecialtyCounter}`,
+            nom: `Spécialité ${editingPromo.specialties.length + 1}`,
+            effectifs: 0,
+        }
+
+        setNewSpecialtyCounter(prev => prev + 1)
+
+        setEditingPromo(prev =>
+            prev ? { ...prev, specialties: [...prev.specialties, newSpecialty] } : prev
+        )
     }
 
+    /**
+     * Removes a specialty
+     */
     const removeSpecialty = (index: number): void => {
-        setEditingPromo(prev => {
-            if (!prev) return prev
-            const specialties = prev.specialties.filter((_, i) => i !== index)
-            return { ...prev, specialties }
-        })
+        if (!editingPromo) return
+        const updatedSpecialties = editingPromo.specialties.filter((_, i) => i !== index)
+        setEditingPromo(prev => prev ? { ...prev, specialties: updatedSpecialties } : prev)
     }
 
+    /**
+     * Updates a specialty field
+     */
     const handleSpecialtyChange = (index: number, field: string, value: string | number): void => {
-        setEditingPromo(prev => {
-            if (!prev) return prev
-            const specialties = prev.specialties.map((s, i) =>
-                i === index
-                    ? {
-                        ...s,
-                        [field]: field === 'students' ? (Number(value) || 0) : value,
-                    }
-                    : s
-            )
-            return { ...prev, specialties }
+        if (!editingPromo) return
+
+        const updatedSpecialties = editingPromo.specialties.map((s, i) => {
+            if (i !== index) return s
+            return {
+                ...s,
+                [field]: field === 'effectifs' ? (Number(value) || 0) : value
+            }
         })
+
+        setEditingPromo(prev => prev ? { ...prev, specialties: updatedSpecialties } : prev)
+    }
+
+    const markFormAsUntouched = (updatedPromo: EditingPromotion) => {
+        setEditingPromo(updatedPromo)
+        console.log("hello")
+        setSavedSnapshot(updatedPromo)
+        setHasChanges(false)
     }
 
     return {
@@ -215,13 +217,16 @@ export function usePromotionEditing(
         openEditPromotion,
         closeEditPromotion,
         handleEditFieldChange,
-        handleSavePromotion,
+        markFormAsUntouched,
+        // Groups
         addGroup,
         removeGroup,
         handleGroupChange,
+        // Specialties
         addSpecialty,
         removeSpecialty,
         handleSpecialtyChange,
-        hasChanges, // 👈 important pour PromoEditDialog
+        hasChanges,
+        isLoading,
     }
 }

@@ -11,6 +11,9 @@ export interface BackendPromotion {
   id_cycle: string
   date_start: string
   date_end: string
+  cycle_type?: string
+  groups: Array<{ id?: string, id_promo: string; nom: string; effectifs: number }>
+  specialties: Array<{ id?: string, id_promo: string; nom: string; effectifs: number }>
 }
 
 export interface PromotionCreateRequest {
@@ -31,7 +34,7 @@ export interface PromotionUpdateRequest {
 }
 
 export interface PromotionDeleteRequest {
-  id: number
+  id: string
 }
 
 class PromotionsApi {
@@ -45,9 +48,9 @@ class PromotionsApi {
   /**
    * Get promotion by ID
    */
-  async getPromotionById(id: number): Promise<ApiResponse<BackendPromotion[]>> {
+  async getPromotionById(id: string): Promise<ApiResponse<BackendPromotion>> {
     const queryParams = new URLSearchParams({ id: id.toString() })
-    return apiClient.get<BackendPromotion[]>(`/getPromoById?${queryParams}`)
+    return apiClient.get<BackendPromotion>(`/getPromoById?${queryParams}`)
   }
 
   /**

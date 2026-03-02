@@ -1,3 +1,4 @@
+
 import React from 'react'
 import { GroupSpecialtyItem } from '../../../models'
 
@@ -30,15 +31,15 @@ const PromoSpecialties: React.FC<PromoSpecialtiesProps> = ({
                             <input
                                 type="text"
                                 className="promo-edit-input promo-list-name"
-                                value={s.name}
-                                onChange={(e) => onSpecialtyChange(index, 'name', e.target.value)}
+                                value={s.nom}
+                                onChange={(e) => onSpecialtyChange(index, 'nom', e.target.value)}
                             />
                             <input
                                 type="number"
                                 min="0"
                                 className="promo-edit-input promo-list-count"
-                                value={s.students}
-                                onChange={(e) => onSpecialtyChange(index, 'students', e.target.value)}
+                                value={s.effectifs}
+                                onChange={(e) => onSpecialtyChange(index, 'effectifs', e.target.value)}
                             />
                         </div>
 

@@ -4,7 +4,7 @@
  * Priorites appliquees:
  * 1) hints API explicites (cycleHint/promotionHint);
  * 2) code promo explicite detecte dans la feuille ou le libelle cycle;
- * 3) heuristiques par cycle (AP legacy, ADI/CIR par paire de semestres);
+ * 3) heuristique standard par paire de semestres (S1/S2->1 ... S9/S10->5);
  * 4) fallback generique.
  */
 import { normalizeText, toUpperNoSpace } from '../utils/text';
@@ -39,19 +39,9 @@ const inferCycleCode = (cycleHint: string | null | undefined, cycleRaw: string):
   const normalized = normalizeText(cycleRaw);
   if (normalized.includes('adi')) return 'ADI';
   if (normalized.includes('cir')) return 'CIR';
-  if (normalized.includes('fisa') || normalized.includes('apprentissage')) return 'AP';
   if (normalized.includes('isen')) return 'ISEN';
+  if (normalized.includes('fisa') || normalized.includes('apprentissage')) return 'AP';
   return 'CYCLE';
-};
-
-const resolveLegacyApPromotion = (semestres: number[]): string | null => {
-  // Regle metier AP historique:
-  // S5/S6 -> AP3, S7/S8 -> AP4, S9/S10 -> AP5.
-  if (semestres.length === 0) return null;
-  const maxSem = Math.max(...semestres);
-  if (maxSem <= 6) return 'AP3';
-  if (maxSem <= 8) return 'AP4';
-  return 'AP5';
 };
 
 const resolveSemesterPairPromotion = (
@@ -107,29 +97,17 @@ export const resolvePromotionCode = (
     };
   }
 
-  // 5) Heuristique AP specifique.
-  if (cycleCode === 'AP') {
-    const legacy = resolveLegacyApPromotion(input.semestres);
-    if (legacy) {
-      return {
-        cycleCode,
-        promotionCode: legacy,
-      };
-    }
+  // 5) Heuristique standard par paire de semestres:
+  // S1/S2 -> Cycle1, S3/S4 -> Cycle2, ... S9/S10 -> Cycle5.
+  const perYear = resolveSemesterPairPromotion(cycleCode, input.semestres);
+  if (perYear) {
+    return {
+      cycleCode,
+      promotionCode: perYear,
+    };
   }
 
-  // 6) Heuristique ADI/CIR par paire de semestres.
-  if (cycleCode === 'ADI' || cycleCode === 'CIR') {
-    const perYear = resolveSemesterPairPromotion(cycleCode, input.semestres);
-    if (perYear) {
-      return {
-        cycleCode,
-        promotionCode: perYear,
-      };
-    }
-  }
-
-  // 7) Fallback generique.
+  // 6) Fallback generique.
   const perSemester = resolveSemesterExactPromotion(cycleCode, input.semestres);
   return {
     cycleCode,

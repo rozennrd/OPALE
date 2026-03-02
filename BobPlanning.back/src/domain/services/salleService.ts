@@ -16,11 +16,13 @@ export const salleService = {
   async createSalle(dto: CreateSalleDTO): Promise<SalleCreatedDTO> {
     const id = await salleRepository.insert(
       dto.nom,
-      dto.type,
-      dto.capacite,
+      dto.nom_complet ?? null,
+      dto.type_principal,
+      dto.types_secondaires ?? null,
       dto.etage,
-      dto.description,
+      dto.capacite,
       dto.utilisable,
+      dto.description ?? null,
     );
 
     return {

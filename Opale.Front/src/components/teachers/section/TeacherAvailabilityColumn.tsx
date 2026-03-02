@@ -136,51 +136,53 @@ const TeacherAvailabilityColumn = ({
             </div>
 
             {/* Tableau 6x3 */}
-            <div className="teacher-availability-grid">
-                <div className="ta-empty"></div>
-                <div className="ta-day">Lun</div>
-                <div className="ta-day">Mar</div>
-                <div className="ta-day">Mer</div>
-                <div className="ta-day">Jeu</div>
-                <div className="ta-day">Ven</div>
+            <div className="teacher-availability-scroll">
+                <div className="teacher-availability-grid">
+                    <div className="ta-empty"></div>
+                    <div className="ta-day">Lun</div>
+                    <div className="ta-day">Mar</div>
+                    <div className="ta-day">Mer</div>
+                    <div className="ta-day">Jeu</div>
+                    <div className="ta-day">Ven</div>
 
-                <div className="ta-label">Matin</div>
-                {DAYS.map((_, i) => {
-                    const slotIndex = i * 2
-                    const isAvailable = availabilityForSelected[slotIndex] === '1'
-                    return (
-                        <button
-                            key={`m-${i}`}
-                            type="button"
-                            className={`ta-cell ${
-                                isAvailable ? 'is-available' : 'is-unavailable'
-                            }`}
-                            onClick={() => onToggleSlot(slotIndex)}
-                            aria-label={`${DAYS[i]} matin : ${
-                                isAvailable ? 'disponible' : 'non disponible'
-                            }`}
-                        />
-                    )
-                })}
+                    <div className="ta-label">Matin</div>
+                    {DAYS.map((_, i) => {
+                        const slotIndex = i * 2
+                        const isAvailable = availabilityForSelected[slotIndex] === '1'
+                        return (
+                            <button
+                                key={`m-${i}`}
+                                type="button"
+                                className={`ta-cell ${
+                                    isAvailable ? 'is-available' : 'is-unavailable'
+                                }`}
+                                onClick={() => onToggleSlot(slotIndex)}
+                                aria-label={`${DAYS[i]} matin : ${
+                                    isAvailable ? 'disponible' : 'non disponible'
+                                }`}
+                            />
+                        )
+                    })}
 
-                <div className="ta-label">Après-midi</div>
-                {DAYS.map((_, i) => {
-                    const slotIndex = i * 2 + 1
-                    const isAvailable = availabilityForSelected[slotIndex] === '1'
-                    return (
-                        <button
-                            key={`a-${i}`}
-                            type="button"
-                            className={`ta-cell ${
-                                isAvailable ? 'is-available' : 'is-unavailable'
-                            }`}
-                            onClick={() => onToggleSlot(slotIndex)}
-                            aria-label={`${DAYS[i]} après-midi : ${
-                                isAvailable ? 'disponible' : 'non disponible'
-                            }`}
-                        />
-                    )
-                })}
+                    <div className="ta-label">Après-midi</div>
+                    {DAYS.map((_, i) => {
+                        const slotIndex = i * 2 + 1
+                        const isAvailable = availabilityForSelected[slotIndex] === '1'
+                        return (
+                            <button
+                                key={`a-${i}`}
+                                type="button"
+                                className={`ta-cell ${
+                                    isAvailable ? 'is-available' : 'is-unavailable'
+                                }`}
+                                onClick={() => onToggleSlot(slotIndex)}
+                                aria-label={`${DAYS[i]} après-midi : ${
+                                    isAvailable ? 'disponible' : 'non disponible'
+                                }`}
+                            />
+                        )
+                    })}
+                </div>
             </div>
 
             <div className="teacher-availability-legend">

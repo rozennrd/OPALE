@@ -8,6 +8,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- 1. Types ENUM
 -- ==============================================================
 
+
 CREATE TYPE type_professeur AS ENUM ('Permanent', 'Intervenant', 'Invite');
 CREATE TYPE type_salle      AS ENUM ('Cours', 'Informatique', 'Projet', 'Rassemblement', 'Associatif', 'Reunion', 'Electronique', 'Fablab', 'Reseau');
 CREATE TYPE type_event      AS ENUM ('Cours', 'Entreprise', 'Examen', 'Reunion', 'Fermeture', 'Soutenance', 'JPO', 'Stage', 'Mobilite', 'PFE', 'Rattrapage', 'Conference', 'Rentrée', 'Réunion parents', 'Journée Immersion', 'Concours', 'Salon', 'Fin des cours', 'Autre');
@@ -39,11 +40,13 @@ CREATE TABLE professeur (
 CREATE TABLE salle (
                        id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                        nom         VARCHAR(100)        NOT NULL,
-                       type        type_salle          NOT NULL,
-                       capacite    INT,
+                       nom_complet  VARCHAR(255),
+                       type_principal type_salle  NOT NULL,
+                       types_secondaires type_salle[],
                        etage       INT,
-                       description VARCHAR(255),
+                       capacite    INT,
                        utilisable  BOOLEAN             DEFAULT FALSE,
+                       description VARCHAR(500),
                        CONSTRAINT uq_salle_nom UNIQUE (nom)
 );
 

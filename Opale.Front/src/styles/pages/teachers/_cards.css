@@ -8,12 +8,16 @@
     .teacher-card-name {
         /* typographie commune via .entity-card-title */
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .teacher-card-phone {
         /* typographie commune via .entity-card-meta */
         /* on garde juste le layout spécifique si besoin */
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .teacher-card-phone-icon {

@@ -39,11 +39,13 @@ CREATE TABLE professeur (
 CREATE TABLE salle (
                        id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                        nom         VARCHAR(100)        NOT NULL,
-                       type        type_salle          NOT NULL,
-                       capacite    INT,
+                       nom_complet  VARCHAR(255),
+                       type_principal type_salle  NOT NULL,
+                       types_secondaires type_salle[],
                        etage       INT,
-                       description VARCHAR(255),
+                       capacite    INT,
                        utilisable  BOOLEAN             DEFAULT FALSE,
+                       description VARCHAR(500),
                        CONSTRAINT uq_salle_nom UNIQUE (nom)
 );
 

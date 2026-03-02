@@ -2,8 +2,15 @@
 
 @layer pages {
     .matiere-detail-card .detail-layout {
-        grid-template-columns: 0.95fr 420px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
         gap: 4rem;
+    }
+
+    @media (max-width: 900px) {
+        .matiere-detail-card .detail-layout {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
     }
 
     .matiere-detail-overlay {
@@ -22,6 +29,10 @@
         display: flex;
         flex-direction: column;
         overflow-y: auto;
+    }
+
+    .matiere-detail-footer {
+        flex-shrink: 0;
     }
     .volume-warning {
         margin-top: 12px;

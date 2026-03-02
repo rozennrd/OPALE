@@ -133,6 +133,13 @@
         gap: 4px;
     }
 
+    .valid-promo {
+        background-color: #fff3cd;
+        border-color: #ffc107;
+        padding: 12px;
+        margin-top: 12px;
+    }
+
     .promo-mismatch {
         margin: 0;
         font-size: 13px;
@@ -297,7 +304,21 @@
     }
 
     /* Responsive */
+    @media (max-width: 1100px) {
+        .promo-edit-layout {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .promo-section-constraints {
+            grid-column: 1 / -1;
+        }
+    }
+
     @media (max-width: 860px) {
+        .promo-edit-layout {
+            grid-template-columns: 1fr;
+        }
+
         .constraints-grid {
             grid-template-columns: 1fr;
         }

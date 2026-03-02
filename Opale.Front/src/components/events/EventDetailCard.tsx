@@ -1,14 +1,17 @@
 import React, { useState } from 'react'
-import { CampusEvent, EventType } from '../../models/CampusEvent'
+import { CampusEvent } from '../../models/CampusEvent'
+import { EventType, EVENT_TYPE_LABELS } from '../../models/EventTypes'
 import { useEventDetail } from '../../hooks/events/useEventDetail'
 import { Cycle } from '../../models/Cycle'
 import DetailCardHeader from '../common/DetailCardHeader'
-import DetailCardFooter from '../common/DetailCardFooter'
 import DetailCardBody from '../common/DetailCardBody'
+import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import EventTypeBadge from './EventTypeBadge'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 import { ROOMS_MOCK } from '../../mocks/rooms.mock'
+import DateInput from '../common/DateInput'
+import {eventPageTypes} from "../../pages/Events.tsx";
 
 type SaveResult = { success: boolean; error?: string }
 
@@ -21,6 +24,15 @@ interface EventDetailCardProps {
     onSave: (event: Partial<CampusEvent>, salleIds: string[]) => Promise<SaveResult>
 }
 
+export const constraintEventTypes: EventType[] = [
+    'Forum',
+    'JPO',
+    'Salon',
+    'Examen',
+    'Conference',
+    'Autre',
+]
+
 function formatDate(date: string | undefined): string {
     if (!date) return '-'
     const d = new Date(date)
@@ -30,11 +42,6 @@ function formatDate(date: string | undefined): string {
         month: '2-digit',
         year: 'numeric',
     })
-}
-
-function toDatetimeLocal(isoString: string): string {
-    if (!isoString) return ''
-    return isoString.slice(0, 16)
 }
 
 const EVENT_LOCATION_DATALIST_ID = 'event-location-suggestions'
@@ -208,13 +215,14 @@ export default function EventDetailCard({
                         <div className="event-detail-info-row">
                             <dt>Date de debut</dt>
                             <dd>
-                                <input
-                                    type="datetime-local"
-                                    className="event-detail-input"
-                                    value={toDatetimeLocal(draft.startDate)}
-                                    onChange={(e) =>
-                                        updateField('startDate', e.target.value)
+                                <DateInput
+                                    mode="datetime"
+                                    value={draft.startDate}
+                                    onChange={(value) =>
+                                        updateField('startDate', value)
                                     }
+                                    inputClassName="event-detail-input"
+                                    max={draft.endDate || undefined}
                                 />
                             </dd>
                         </div>
@@ -222,13 +230,14 @@ export default function EventDetailCard({
                         <div className="event-detail-info-row">
                             <dt>Date de fin</dt>
                             <dd>
-                                <input
-                                    type="datetime-local"
-                                    className="event-detail-input"
-                                    value={toDatetimeLocal(draft.endDate)}
-                                    onChange={(e) =>
-                                        updateField('endDate', e.target.value)
+                                <DateInput
+                                    mode="datetime"
+                                    value={draft.endDate}
+                                    onChange={(value) =>
+                                        updateField('endDate', value)
                                     }
+                                    inputClassName="event-detail-input"
+                                    min={draft.startDate || undefined}
                                 />
                             </dd>
                         </div>
@@ -271,14 +280,11 @@ export default function EventDetailCard({
                                         )
                                     }
                                 >
-                                    <option value="JOURNEE_PO">
-                                        Journee Portes Ouvertes
-                                    </option>
-                                    <option value="EXAMEN">Examen</option>
-                                    <option value="CONFERENCE">Conference</option>
-                                    <option value="FORUM">Forum</option>
-                                    <option value="SALON">Salon</option>
-                                    <option value="AUTRE">Autre</option>
+                                    {eventPageTypes.map((value) => (
+                                        <option key={value} value={value}>
+                                            {EVENT_TYPE_LABELS[value]}
+                                        </option>
+                                    ))}
                                 </select>
                             </dd>
                         </div>
@@ -420,49 +426,69 @@ export default function EventDetailCard({
                     />
                 </section>
 
-                <DetailCardFooter
-                    onCancel={onClose}
-                    onSave={() => void saveDraft()}
-                    onAfterSaveConfirm={onClose}
-                    hideCancel
-                    onDelete={isCreate ? undefined : onDelete}
-                    hasChanges={hasChanges}
-                    saveLabel={saving ? 'Enregistrement...' : isCreate ? 'Creer' : 'Enregistrer'}
-                    deleteLabel="Supprimer"
-                    deleteTitle="Supprimer cet evenement"
-                    deleteMessage={
-                        <>
-                            Vous allez supprimer{' '}
-                            <strong>{draft.name || 'cet evenement'}</strong>.
-                            <br />
-                            Confirmer ?
-                        </>
-                    }
-                    deleteConfirmLabel="Supprimer"
-                    confirmTitle={
-                        isCreate
-                            ? 'Creer cet evenement'
-                            : 'Confirmer les modifications'
-                    }
-                    confirmMessage={
-                        isCreate ? (
+                <div className="event-detail-footer">
+                    <ActionButtonsWithConfirm
+                        onCancel={handleRequestClose}
+                        onSave={() => void saveDraft()}
+                        onAfterSaveConfirm={isCreate ? onClose : undefined}
+                        onDelete={isCreate ? undefined : onDelete}
+                        hasChanges={hasChanges}
+                        saveLabel={
+                            saving
+                                ? 'Enregistrement...'
+                                : isCreate
+                                  ? 'Creer'
+                                  : 'Enregistrer'
+                        }
+                        deleteLabel="Supprimer"
+                        deleteTitle="Supprimer cet evenement"
+                        deleteMessage={
                             <>
-                                Vous Ãªtes sur le point de crÃ©er
-                                l&apos;Ã©vÃ©nement{' '}
-                                <strong>
-                                    {draft.name || 'sans titre'}
-                                </strong>
+                                Vous allez supprimer{' '}
+                                <strong>{draft.name || 'cet evenement'}</strong>
                                 .
                                 <br />
-                                Confirmer&nbsp;?
+                                Confirmer ?
                             </>
-                        ) : (
+                        }
+                        deleteConfirmLabel="Supprimer"
+                        confirmTitle={
+                            isCreate
+                                ? 'Creer cet evenement'
+                                : 'Confirmer les modifications'
+                        }
+                        confirmMessage={
+                            isCreate ? (
+                                <>
+                                    Vous etes sur le point de créer
+                                    l&apos;événement{' '}
+                                    <strong>
+                                        {draft.name || 'sans titre'}
+                                    </strong>
+                                    .
+                                    <br />
+                                    Confirmer&nbsp;?
+                                </>
+                            ) : (
+                                <>
+                                    Vous êtes sur le point d&apos;enregistrer les
+                                    modifications pour{' '}
+                                    <strong>{draft.name}</strong>.
+                                    <br />
+                                    Confirmer&nbsp;?
+                                </>
+                            )
+                        }
+                        confirmLabel={isCreate ? 'Creer' : 'Enregistrer'}
+                        cancelLabel="Annuler"
+                        cancelDirtyTitle="Modifications non enregistrees"
+                        cancelDirtyMessage={
                             <>
-                                Vous Ãªtes sur le point d&apos;enregistrer les
-                                modifications pour{' '}
-                                <strong>{draft.name}</strong>.
-                                <br />
-                                Confirmer&nbsp;?
+                                <p>Vous avez modifie cette fiche evenement.</p>
+                                <p>
+                                    Souhaitez-vous enregistrer les changements
+                                    avant de fermer ?
+                                </p>
                             </>
                         )
                     }
@@ -487,9 +513,23 @@ export default function EventDetailCard({
                             openErrorDialog(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
                             return false
                         }
-                        return true
-                    }}
-                />
+                        cancelDirtyConfirmLabel={
+                            isCreate
+                                ? 'Creer et fermer'
+                                : 'Enregistrer et fermer'
+                        }
+                        cancelDirtyDiscardLabel="Fermer sans enregistrer"
+                        onBeforeSaveClick={() => {
+                            if (isCreate && !isValid) {
+                                window.alert(
+                                    CREATE_EVENT_REQUIRED_FIELDS_ALERT,
+                                )
+                                return false
+                            }
+                            return true
+                        }}
+                    />
+                </div>
             </DetailCardBody>
 
             <ConfirmDialog
