@@ -8,15 +8,17 @@ import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import EventTypeBadge from './EventTypeBadge'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
-import { ROOMS_MOCK } from '../../mocks/rooms.mock'
+import { useEffect } from 'react'
 import DateInput from '../common/DateInput'
 import {eventPageTypes} from "../../pages/Events.tsx";
+import type { Salle } from '../../services/api/sallesApi'
 
 type SaveResult = { success: boolean; error?: string }
 
 interface EventDetailCardProps {
     event: CampusEvent
     cycles?: Cycle[]
+    salles?: Salle[]
     onDelete?: () => void
     mode?: 'edit' | 'create'
     onClose: () => void
@@ -44,14 +46,34 @@ function formatDate(date: string | undefined): string {
 }
 
 const EVENT_LOCATION_DATALIST_ID = 'event-location-suggestions'
-const EVENT_ROOM_LOCATION_SUGGESTIONS = Array.from(
-    new Set(ROOMS_MOCK.map((room) => room.fullName ?? room.name)),
-).sort((a, b) =>
-    a.localeCompare(b, 'fr', {
-        numeric: true,
-        sensitivity: 'base',
-    }),
-)
+
+const buildRoomLocationSuggestions = (salles: Salle[]): string[] =>
+    Array.from(
+        new Set(
+            salles
+                .map((salle) => salle.nom_complet ?? salle.nom)
+                .filter((label): label is string => Boolean(label && label.trim())),
+        ),
+    ).sort((a, b) =>
+        a.localeCompare(b, 'fr', {
+            numeric: true,
+            sensitivity: 'base',
+        }),
+    )
+
+function getSalleIdsForLocation(location: string, salles: Salle[]): string[] {
+    const normalizedLocation = location.trim().toLowerCase()
+    if (!normalizedLocation) return []
+
+    return salles
+        .filter((salle) => {
+            const labels = [salle.nom_complet, salle.nom]
+                .filter((label): label is string => Boolean(label))
+                .map((label) => label.trim().toLowerCase())
+            return labels.includes(normalizedLocation)
+        })
+        .map((salle) => salle.id)
+}
 
 const CREATE_EVENT_REQUIRED_FIELDS_ALERT =
     'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de creer cet evenement.'
@@ -59,6 +81,7 @@ const CREATE_EVENT_REQUIRED_FIELDS_ALERT =
 export default function EventDetailCard({
                                             event,
                                             cycles = [],
+                                            salles = [],
                                             onClose,
                                             onSave,
                                             onDelete,
@@ -91,7 +114,20 @@ export default function EventDetailCard({
         })),
     )
 
-    const selectedPromotionId = draft.concernedPromotionIds[0] ?? ''
+    const roomLocationSuggestions = buildRoomLocationSuggestions(salles)
+
+    useEffect(() => {
+        const nextSalleIds = getSalleIdsForLocation(draft.location, salles)
+        const currentSalleIds = draft.selectedSalleIds
+
+        const sameLength = currentSalleIds.length === nextSalleIds.length
+        const sameValues =
+            sameLength && currentSalleIds.every((id) => nextSalleIds.includes(id))
+
+        if (!sameValues) {
+            updateField('selectedSalleIds', nextSalleIds)
+        }
+    }, [draft.location, draft.selectedSalleIds, salles, updateField])
 
     const saveDraft = async () => {
         const result = await handleSave()
@@ -111,8 +147,8 @@ export default function EventDetailCard({
         }
     }
 
-    const handlePromotionChange = (promotionId: string) => {
-        if (!promotionId) {
+    const handlePromotionChange = (promotionIds: string[]) => {
+        if (promotionIds.length === 0) {
             updateFields({
                 concernedCycleIds: [],
                 concernedPromotionIds: [],
@@ -120,15 +156,23 @@ export default function EventDetailCard({
             return
         }
 
-        const target = promotionTargets.find(
-            (promotionTarget) => promotionTarget.promotionId === promotionId,
+        const selectedTargets = promotionTargets.filter((promotionTarget) =>
+            promotionIds.includes(promotionTarget.promotionId),
         )
-        if (!target) return
+
+        if (selectedTargets.length === 0) return
+
+        const selectedCycleIds = Array.from(
+            new Set(selectedTargets.map((target) => target.cycleId)),
+        )
+        const selectedPromotionIds = selectedTargets.map(
+            (target) => target.promotionId,
+        )
 
         updateFields({
             source: 'JUNIA',
-            concernedCycleIds: [target.cycleId],
-            concernedPromotionIds: [target.promotionId],
+            concernedCycleIds: selectedCycleIds,
+            concernedPromotionIds: selectedPromotionIds,
         })
     }
 
@@ -243,12 +287,19 @@ export default function EventDetailCard({
                                     className="event-detail-input"
                                     list={EVENT_LOCATION_DATALIST_ID}
                                     value={draft.location}
-                                    onChange={(e) =>
-                                        updateField('location', e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                        const nextLocation = e.target.value
+                                        updateFields({
+                                            location: nextLocation,
+                                            selectedSalleIds: getSalleIdsForLocation(
+                                                nextLocation,
+                                                salles,
+                                            ),
+                                        })
+                                    }}
                                 />
                                 <datalist id={EVENT_LOCATION_DATALIST_ID}>
-                                    {EVENT_ROOM_LOCATION_SUGGESTIONS.map(
+                                    {roomLocationSuggestions.map(
                                         (roomLabel) => (
                                             <option
                                                 key={roomLabel}
@@ -324,14 +375,17 @@ export default function EventDetailCard({
                                 <dd>
                                     <select
                                         className="event-detail-select"
-                                        value={selectedPromotionId}
+                                        multiple
+                                        value={draft.concernedPromotionIds}
                                         onChange={(e) =>
-                                            handlePromotionChange(e.target.value)
+                                            handlePromotionChange(
+                                                Array.from(
+                                                    e.target.selectedOptions,
+                                                    (option) => option.value,
+                                                ),
+                                            )
                                         }
                                     >
-                                        <option value="">
-                                            Aucune promotion cible
-                                        </option>
                                         {promotionTargets.map((promotionTarget) => (
                                             <option
                                                 key={promotionTarget.promotionId}
@@ -341,6 +395,11 @@ export default function EventDetailCard({
                                             </option>
                                         ))}
                                     </select>
+                                    {draft.concernedPromotionIds.length === 0 && (
+                                        <small className="event-detail-input-help">
+                                            Selectionnez une ou plusieurs promotions.
+                                        </small>
+                                    )}
                                 </dd>
                             </div>
                         )}

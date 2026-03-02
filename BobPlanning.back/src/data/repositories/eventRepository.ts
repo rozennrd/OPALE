@@ -166,28 +166,74 @@ export const eventRepository = {
         show_micro: boolean,
         is_blocking: boolean,
         is_exceptional: boolean,
-        is_external: boolean
+        is_external: boolean,
+        concerne?: { promotions: string[], groups: string[], specialties: string[] },
     ): Promise<void> {
+        const client = await pool.connect();
+
         const sql = `
             UPDATE event
             SET type = $1, nom = $2, description = $3, num_semaine = $4, datetime_start = $5, datetime_end = $6,
                 show_macro = $7, show_micro = $8, is_blocking = $9, is_exceptional = $10, is_external = $11
             WHERE id = $12
         `;
-        await pool.query(sql, [
-            type,
-            nom,
-            description,
-            num_semaine,
-            datetime_start,
-            datetime_end,
-            show_macro,
-            show_micro,
-            is_blocking,
-            is_exceptional,
-            is_external,
-            id
-        ]);
+
+        try {
+            await client.query('BEGIN');
+
+            await client.query(sql, [
+                type,
+                nom,
+                description,
+                num_semaine,
+                datetime_start,
+                datetime_end,
+                show_macro,
+                show_micro,
+                is_blocking,
+                is_exceptional,
+                is_external,
+                id,
+            ]);
+
+            if (concerne) {
+                await client.query('DELETE FROM concerner WHERE id_event = $1', [id]);
+
+                if (concerne.promotions.length > 0) {
+                    for (const promoId of concerne.promotions) {
+                        await client.query(
+                            'INSERT INTO concerner (id_event, id_promo) VALUES ($1, $2)',
+                            [id, promoId],
+                        );
+                    }
+                }
+
+                if (concerne.specialties.length > 0) {
+                    for (const specId of concerne.specialties) {
+                        await client.query(
+                            'INSERT INTO concerner (id_event, id_specialite) VALUES ($1, $2)',
+                            [id, specId],
+                        );
+                    }
+                }
+
+                if (concerne.groups.length > 0) {
+                    for (const groupId of concerne.groups) {
+                        await client.query(
+                            'INSERT INTO concerner (id_event, id_groupe) VALUES ($1, $2)',
+                            [id, groupId],
+                        );
+                    }
+                }
+            }
+
+            await client.query('COMMIT');
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
     },
 
     // Supprime un événement

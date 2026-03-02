@@ -7,6 +7,8 @@ import EventsToolbar, {
 import EventCard from '../components/events/EventCard'
 import EventDetailCard from '../components/events/EventDetailCard'
 import { eventsApi } from '../services/api/eventsApi'
+import { localisationsApi, Localisation } from '../services/api/localisationsApi'
+import { sallesApi, Salle } from '../services/api/sallesApi'
 import { CampusEvent } from '../models/CampusEvent'
 import { Event } from '../models/Event'
 import SectionHeader from '../components/common/SectionHeader'
@@ -28,7 +30,7 @@ type SaveResult =
 
 
 // Mapper pour convertir Event (backend) en CampusEvent (frontend)
-function mapEventToCampusEvent(event: Event): CampusEvent {
+function mapEventToCampusEvent(event: Event, location = ''): CampusEvent {
     // Keep full ISO datetime for datetime-local input compatibility
     const startDate = event.datetime_start || ''
     const endDate = event.datetime_end || startDate
@@ -38,7 +40,7 @@ function mapEventToCampusEvent(event: Event): CampusEvent {
         name: event.nom,
         startDate: startDate,
         endDate: endDate,
-        location: '', // Le backend n'a pas de location pour l'instant
+        location,
         source: event.is_external ? 'EXTERNE' as const : 'JUNIA' as const,
         type: event.type,
     }
@@ -53,6 +55,21 @@ export const eventPageTypes: EventType[] = [
     'Autre',
 ]
 
+function buildLocationFromEvent(
+    eventId: string,
+    localisations: Localisation[],
+    salles: Salle[],
+): string {
+    const eventSalles = localisations
+        .filter((loc) => loc.id_event === eventId)
+        .map((loc) => salles.find((salle) => salle.id === loc.id_salle))
+        .filter((salle): salle is Salle => Boolean(salle))
+
+    return Array.from(
+        new Set(eventSalles.map((salle) => salle.nom_complet ?? salle.nom)),
+    ).join(', ')
+}
+
 const DEFAULT_EVENT_FILTERS: {
     searchValue: string
     dateFrom: string
@@ -66,8 +83,6 @@ const DEFAULT_EVENT_FILTERS: {
     target: 'ALL',
     type: 'ALL',
 }
-
-const createFrontendEventId = () => `evt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 
 function getMonthKey(dateStr: string): string {
     const d = new Date(dateStr)
@@ -107,8 +122,10 @@ const normalizeEventForList = (event: CampusEvent): CampusEvent => {
 
 export default function Events() {
     const {
+        salles,
         createEvent,
         updateEvent,
+        deleteEvents,
     } = useEvents()
 
     const [eventsState, setEventsState] = useState<CampusEvent[]>([])
@@ -141,11 +158,29 @@ export default function Events() {
         const fetchEvents = async () => {
             try {
                 setLoading(true)
-                const response = await eventsApi.getEventsMacro()
-                if (response.data) {
+                const [eventsResponse, localisationsResponse, sallesResponse] =
+                    await Promise.all([
+                        eventsApi.getEventsMacro(),
+                        localisationsApi.getAllLocalisations(),
+                        sallesApi.getAllSalles(),
+                    ])
+
+                if (eventsResponse.data) {
+                    const localisations = localisationsResponse.data ?? []
+                    const allSalles = sallesResponse.data ?? []
+
                     // Mapper les événements du backend vers CampusEvent
-                    const mappedEvents = response.data
-                        .map(mapEventToCampusEvent)
+                    const mappedEvents = eventsResponse.data
+                        .map((event) =>
+                            mapEventToCampusEvent(
+                                event,
+                                buildLocationFromEvent(
+                                    event.id,
+                                    localisations,
+                                    allSalles,
+                                ),
+                            ),
+                        )
                         .filter((e) => eventPageTypes.includes(e.type))
                     setEvents(mappedEvents)
                 }
@@ -267,18 +302,24 @@ export default function Events() {
 
         hasLocalEditsRef.current = true
 
-       /* if (deleteEvents) {
-            await deleteEvents(Array.from(idsSet))
-        } else {
-            console.log('[EVENTS] deleteEvents non disponible, ids=', ids)
-        }*/
+        const deleteResult = await deleteEvents(Array.from(idsSet))
+        if (!deleteResult.success) {
+            console.error('[EVENTS] Delete failed:', deleteResult.error)
+        }
 
-        setEventsState((prev) => prev.filter((e) => !idsSet.has(e.id)))
-        pruneEventSelection(Array.from(idsSet))
+        const actuallyDeletedIds =
+            'deletedIds' in deleteResult && deleteResult.deletedIds.length > 0
+                ? new Set(deleteResult.deletedIds)
+                : idsSet
+
+        setEventsState((prev) =>
+            prev.filter((e) => !actuallyDeletedIds.has(e.id)),
+        )
+        pruneEventSelection(Array.from(actuallyDeletedIds))
 
         setSelectedEvent((prev) => {
             if (!prev) return prev
-            return idsSet.has(prev.id) ? null : prev
+            return actuallyDeletedIds.has(prev.id) ? null : prev
         })
     }
 
@@ -321,15 +362,20 @@ export default function Events() {
     const handleSaveEvent = async (
         event: Partial<CampusEvent>,
         salleIds: string[],
-    ) => {
-        if (!selectedEvent) return
+    ): Promise<SaveResult> => {
+        if (!selectedEvent) {
+            return {
+                success: false,
+                error: "Aucun evenement selectionne.",
+            }
+        }
 
         const isCreate = detailMode === 'create' || event.id === 'new-event'
 
         hasLocalEditsRef.current = true
 
         const nextEvent: CampusEvent = normalizeEventForList({
-            ...(isCreate ? { ...selectedEvent, id: createFrontendEventId() } : selectedEvent),
+            ...selectedEvent,
             ...event,
             startDate: event.startDate ?? selectedEvent.startDate,
             endDate: event.endDate ?? selectedEvent.endDate,
@@ -343,12 +389,47 @@ export default function Events() {
         setSelectedEvent(nextEvent)
         setDetailMode('edit')
 
-        const res: SaveResult = isCreate
+        const apiRes = isCreate
             ? await createEvent(event, salleIds)
             : await updateEvent(nextEvent.id, event, salleIds)
 
+        const res: SaveResult = apiRes ?? {
+            success: false,
+            error: 'Erreur lors de la sauvegarde.',
+        }
+
         if (!res.success) {
             console.error('[EVENTS] Save failed:', res.error)
+            return res
+        }
+
+        if (isCreate && apiRes && 'insertedId' in apiRes) {
+            const insertedId = (apiRes as { insertedId?: string }).insertedId
+            if (!insertedId) return res
+
+            const createdEventId = insertedId
+
+            setEventsState((prev) =>
+                prev.map((evt) =>
+                    evt.id === selectedEvent.id
+                        ? {
+                              ...evt,
+                              id: createdEventId,
+                          }
+                        : evt,
+                ),
+            )
+
+            setSelectedEvent((prev) =>
+                prev && prev.id === selectedEvent.id
+                    ? {
+                          ...prev,
+                          id: createdEventId,
+                      }
+                    : prev,
+            )
+
+            setDetailMode('edit')
         }
 
         return res
@@ -474,6 +555,7 @@ export default function Events() {
                 <EventDetailCard
                     event={selectedEvent}
                     cycles={promotionCycles}
+                    salles={salles}
                     mode={detailMode}
                     onSave={handleSaveEvent}
                     onClose={() => {
