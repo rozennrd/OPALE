@@ -88,7 +88,7 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
         return onBeforeSaveClick()
     }
 
-    const handleConfirmSave = () => {
+    const handleConfirmSave = async () => {
         if (!canSave()) {
             closeSaveConfirmDialog()
             return
@@ -116,7 +116,6 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
         if (saveResult === false) return
 
         closeCancelConfirmDialog()
-        onSave()
         onCancel()
     }
 
