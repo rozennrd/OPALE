@@ -45,7 +45,7 @@ const buildInitialDraft = (event: CampusEvent): EventDraft => {
         concernedPromotionIds: [...(event.concernedPromotionIds ?? [])],
         selectedSalleIds: [],
         is_blocking: event.is_blocking ?? true,
-        is_exceptional: event.is_exceptional?? false,
+        is_exceptional: event.is_exceptional ?? false,
         is_external: event.show_macro ?? false,
     }
 }
