@@ -3,8 +3,8 @@ import { CampusEvent, EventType } from '../../models/CampusEvent'
 import { useEventDetail } from '../../hooks/events/useEventDetail'
 import { Cycle } from '../../models/Cycle'
 import DetailCardHeader from '../common/DetailCardHeader'
-import DetailCardFooter from '../common/DetailCardFooter'
 import DetailCardBody from '../common/DetailCardBody'
+import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import EventTypeBadge from './EventTypeBadge'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
@@ -412,75 +412,88 @@ export default function EventDetailCard({
                     />
                 </section>
 
-                <DetailCardFooter
-                    onCancel={onClose}
-                    onSave={() => void saveDraft()}
-                    onAfterSaveConfirm={isCreate ? onClose : undefined}
-                    onDelete={isCreate ? undefined : onDelete}
-                    hasChanges={hasChanges}
-                    saveLabel={saving ? 'Enregistrement...' : isCreate ? 'Creer' : 'Enregistrer'}
-                    deleteLabel="Supprimer"
-                    deleteTitle="Supprimer cet evenement"
-                    deleteMessage={
-                        <>
-                            Vous allez supprimer{' '}
-                            <strong>{draft.name || 'cet evenement'}</strong>.
-                            <br />
-                            Confirmer ?
-                        </>
-                    }
-                    deleteConfirmLabel="Supprimer"
-                    confirmTitle={
-                        isCreate
-                            ? 'Creer cet evenement'
-                            : 'Confirmer les modifications'
-                    }
-                    confirmMessage={
-                        isCreate ? (
+                <div className="event-detail-footer">
+                    <ActionButtonsWithConfirm
+                        onCancel={handleRequestClose}
+                        onSave={() => void saveDraft()}
+                        onAfterSaveConfirm={isCreate ? onClose : undefined}
+                        onDelete={isCreate ? undefined : onDelete}
+                        hasChanges={hasChanges}
+                        saveLabel={
+                            saving
+                                ? 'Enregistrement...'
+                                : isCreate
+                                  ? 'Creer'
+                                  : 'Enregistrer'
+                        }
+                        deleteLabel="Supprimer"
+                        deleteTitle="Supprimer cet evenement"
+                        deleteMessage={
                             <>
-                                Vous Ãªtes sur le point de crÃ©er
-                                l&apos;Ã©vÃ©nement{' '}
-                                <strong>
-                                    {draft.name || 'sans titre'}
-                                </strong>
+                                Vous allez supprimer{' '}
+                                <strong>{draft.name || 'cet evenement'}</strong>
                                 .
                                 <br />
-                                Confirmer&nbsp;?
+                                Confirmer ?
                             </>
-                        ) : (
-                            <>
-                                Vous Ãªtes sur le point d&apos;enregistrer les
-                                modifications pour{' '}
-                                <strong>{draft.name}</strong>.
-                                <br />
-                                Confirmer&nbsp;?
-                            </>
-                        )
-                    }
-                    confirmLabel={isCreate ? 'Creer' : 'Enregistrer'}
-                    cancelLabel="Annuler"
-                    cancelDirtyTitle="Modifications non enregistrees"
-                    cancelDirtyMessage={
-                        <>
-                            <p>Vous avez modifie cette fiche evenement.</p>
-                            <p>
-                                Souhaitez-vous enregistrer les changements avant
-                                de fermer ?
-                            </p>
-                        </>
-                    }
-                    cancelDirtyConfirmLabel={
-                        isCreate ? 'Creer et fermer' : 'Enregistrer et fermer'
-                    }
-                    cancelDirtyDiscardLabel="Fermer sans enregistrer"
-                    onBeforeSaveClick={() => {
-                        if (isCreate && !isValid) {
-                            window.alert(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
-                            return false
                         }
-                        return true
-                    }}
-                />
+                        deleteConfirmLabel="Supprimer"
+                        confirmTitle={
+                            isCreate
+                                ? 'Creer cet evenement'
+                                : 'Confirmer les modifications'
+                        }
+                        confirmMessage={
+                            isCreate ? (
+                                <>
+                                    Vous etes sur le point de créer
+                                    l&apos;événement{' '}
+                                    <strong>
+                                        {draft.name || 'sans titre'}
+                                    </strong>
+                                    .
+                                    <br />
+                                    Confirmer&nbsp;?
+                                </>
+                            ) : (
+                                <>
+                                    Vous êtes sur le point d&apos;enregistrer les
+                                    modifications pour{' '}
+                                    <strong>{draft.name}</strong>.
+                                    <br />
+                                    Confirmer&nbsp;?
+                                </>
+                            )
+                        }
+                        confirmLabel={isCreate ? 'Creer' : 'Enregistrer'}
+                        cancelLabel="Annuler"
+                        cancelDirtyTitle="Modifications non enregistrees"
+                        cancelDirtyMessage={
+                            <>
+                                <p>Vous avez modifie cette fiche evenement.</p>
+                                <p>
+                                    Souhaitez-vous enregistrer les changements
+                                    avant de fermer ?
+                                </p>
+                            </>
+                        }
+                        cancelDirtyConfirmLabel={
+                            isCreate
+                                ? 'Creer et fermer'
+                                : 'Enregistrer et fermer'
+                        }
+                        cancelDirtyDiscardLabel="Fermer sans enregistrer"
+                        onBeforeSaveClick={() => {
+                            if (isCreate && !isValid) {
+                                window.alert(
+                                    CREATE_EVENT_REQUIRED_FIELDS_ALERT,
+                                )
+                                return false
+                            }
+                            return true
+                        }}
+                    />
+                </div>
             </DetailCardBody>
 
             <ConfirmDialog

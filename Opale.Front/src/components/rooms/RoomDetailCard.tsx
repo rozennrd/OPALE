@@ -1,19 +1,18 @@
 // src/components/rooms/RoomDetailCard.tsx
-
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Room, RoomType } from '../../models/Room'
 import { ROOM_TYPES } from '../../mocks/rooms.mock'
 import RoomTypeBadge from './RoomTypeBadge'
 import DetailCardHeader from '../common/DetailCardHeader'
-import DetailCardFooter from '../common/DetailCardFooter'
 import DetailCardBody from '../common/DetailCardBody'
+import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 
 interface RoomDetailCardProps {
     room: Room
     onClose: () => void
-    onChange: (room: Room) => void
+    onChange: (room: Room) => Promise<boolean> | boolean | void
     onDelete?: () => void
 }
 
@@ -25,7 +24,7 @@ const ROOM_TYPE_LABELS: Record<RoomType, string> = {
     AUTRE: 'Autre',
 }
 
-const floorLabel = (floor: Room['floor']): string => {
+const floorLabel = (floor: number): string => {
     switch (floor) {
         case 0:
             return 'Rez-de-chaussée'
@@ -116,7 +115,7 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
         })
     }
 
-    const handleSave = () => {
+    const handleSave = async (): Promise<boolean> => {
         const nextRoom: Room = {
             ...room,
             name: name.trim() || room.name,
@@ -130,7 +129,11 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
         }
 
         console.log('[ROOMS] Save room (mock)', nextRoom)
-        onChange(nextRoom)
+        const result = await Promise.resolve(onChange(nextRoom))
+        if (result === false) {
+            return false
+        }
+        return true
     }
 
     const {
@@ -143,8 +146,10 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
         hasChanges,
         onClose,
         onSaveAndClose: () => {
-            handleSave()
-            onClose()
+            void (async () => {
+                const saved = await handleSave()
+                if (saved) onClose()
+            })()
         },
         ignoreWhenSelectorExists: '.modal-overlay',
     })
@@ -204,16 +209,15 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                                     <label className="room-detail-field-label" htmlFor="room-floor-input">
                                         Étage
                                     </label>
-                                    <select
+                                    <input
                                         id="room-floor-input"
+                                        type="number"
+                                        step={1}
                                         className="room-detail-input"
                                         value={floor}
-                                        onChange={(e) => setFloor(Number(e.target.value) as Room['floor'])}
-                                    >
-                                        <option value={0}>Rez-de-chaussée</option>
-                                        <option value={1}>1er étage</option>
-                                        <option value={2}>2e étage</option>
-                                    </select>
+                                        onChange={(e) => setFloor(Number(e.target.value) || 0)}
+                                        placeholder="Ex. 0"
+                                    />
                                 </div>
 
                                 <div className="room-detail-field">
@@ -359,32 +363,41 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                     </aside>
                 </div>
 
-                <DetailCardFooter
-                    saveLabel="Enregistrer"
-                    cancelLabel="Annuler"
-                    confirmTitle="Enregistrer les modifications"
-                    confirmMessage="Souhaites-tu enregistrer les modifications apportées à cette salle ?"
-                    confirmLabel="Enregistrer"
-                    hasChanges={hasChanges}
-                    cancelDirtyTitle="Modifications non enregistrées"
-                    cancelDirtyMessage={
-                        <>
-                            Tu as des modifications non enregistrées sur cette salle.
-                            <br />
-                            Souhaites-tu les enregistrer avant de fermer ?
-                        </>
-                    }
-                    cancelDirtyConfirmLabel="Enregistrer et fermer"
-                    cancelDirtyDiscardLabel="Fermer sans enregistrer"
-                    onSave={handleSave}
-                    onCancel={onClose}
-                    onAfterSaveConfirm={onClose}
-                    onDelete={onDelete}
-                    deleteLabel="Supprimer"
-                    deleteTitle="Supprimer cette salle"
-                    deleteMessage="Souhaites-tu supprimer cette salle ?"
-                    deleteConfirmLabel="Supprimer"
-                />
+                <div className="room-detail-footer">
+                    <ActionButtonsWithConfirm
+                        onCancel={handleRequestClose}
+                        onSave={handleSave}
+                        onAfterSaveConfirm={onClose}
+                        onDelete={onDelete}
+                        saveLabel="Enregistrer"
+                        cancelLabel="Annuler"
+                        confirmTitle="Confirmer les modifications"
+                        confirmMessage={
+                            <>
+                                Vous êtes sur le point d&apos;enregistrer les modifications pour{' '}
+                                <strong>{headerTitle}</strong>.
+                                <br />
+                                Confirmer ?
+                            </>
+                        }
+                        confirmLabel="Enregistrer"
+                        hasChanges={hasChanges}
+                        cancelDirtyTitle="Modifications non enregistrées"
+                        cancelDirtyMessage={
+                            <>
+                                Tu as des modifications non enregistrées sur cette salle.
+                                <br />
+                                Souhaites-tu les enregistrer avant de fermer ?
+                            </>
+                        }
+                        cancelDirtyConfirmLabel="Enregistrer et fermer"
+                        cancelDirtyDiscardLabel="Fermer sans enregistrer"
+                        deleteLabel="Supprimer"
+                        deleteTitle="Supprimer cette salle"
+                        deleteMessage="Souhaites-tu supprimer cette salle ?"
+                        deleteConfirmLabel="Supprimer"
+                    />
+                </div>
             </DetailCardBody>
 
             <ConfirmDialog

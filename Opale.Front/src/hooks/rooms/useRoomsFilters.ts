@@ -86,16 +86,18 @@ export const useRoomsFilters = (rooms: Room[]) => {
     )
 
     const roomsByFloor = useMemo(() => {
-        const map: Record<number, Room[]> = { 0: [], 1: [], 2: [] }
+        const map: Record<number, Room[]> = {}
         for (const room of filteredRooms) {
             if (!map[room.floor]) {
                 map[room.floor] = []
             }
             map[room.floor].push(room)
         }
-        map[0].sort(sortRoomsByCode)
-        map[1].sort(sortRoomsByCode)
-        map[2].sort(sortRoomsByCode)
+
+        Object.keys(map).forEach((floor) => {
+            map[Number(floor)].sort(sortRoomsByCode)
+        })
+
         return map
     }, [filteredRooms])
 

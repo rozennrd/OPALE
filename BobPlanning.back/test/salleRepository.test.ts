@@ -21,16 +21,26 @@ describe('salleRepository', () => {
 
   it('insert returns id', async () => {
     mockQuery.mockResolvedValue({ rows: [{ id: '42' }] });
-    const res = await salleRepository.insert('Salle X', 'TP', 20, 1, 'desc');
+    const res = await salleRepository.insert('Salle X', 'Salle X complet', 'Cours', ['Projet'], 1, 20, true, 'desc');
     expect(res).toBe('42');
-    expect(mockQuery).toHaveBeenCalledWith(expect.any(String), ['Salle X', 'TP', 20, 1, 'desc']);
+    expect(mockQuery).toHaveBeenCalledWith(expect.any(String), ['Salle X', 'Salle X complet', 'Cours', ['Projet'], 1, 20, true, 'desc']);
   });
 
   it('update returns boolean based on rowCount', async () => {
     mockQuery.mockResolvedValue({ rowCount: 1 });
-    const ok = await salleRepository.update({ id: '1', nom: 'S', type: 'TP', capacite: 30, etage: 1, description: 'd' });
+    const ok = await salleRepository.update({
+      id: '1',
+      nom: 'S',
+      nom_complet: 'Salle S',
+      type_principal: 'Cours',
+      types_secondaires: ['Projet'],
+      etage: 1,
+      capacite: 30,
+      utilisable: false,
+      description: 'd'
+    });
     expect(ok).toBe(true);
-    expect(mockQuery).toHaveBeenCalledWith(expect.any(String), ['S', 30, 'TP', 1, 'd', '1']);
+    expect(mockQuery).toHaveBeenCalledWith(expect.any(String), ['S', 'Salle S', 'Cours', ['Projet'], 1, 30, false, 'd', '1']);
   });
 
   it('deleteById returns boolean based on rowCount', async () => {

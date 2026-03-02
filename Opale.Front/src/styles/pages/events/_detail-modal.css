@@ -32,8 +32,9 @@
         width: 100%;
     }
 
-    .detail-card-footer {
+    .event-detail-footer {
         grid-column: 1 / -1;
+        flex-shrink: 0;
     }
 
     .event-detail-header-pill--junia {

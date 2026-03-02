@@ -5,18 +5,24 @@ import { ApiResponse } from '../base/types'
 export interface Salle {
     id: string
     nom: string
-    type: string
+    nom_complet?: string | null
+    type_principal: string
+    types_secondaires?: string[] | null
     capacite: number
     etage: number
-    description?: string
+    utilisable: boolean
+    description?: string | null
 }
 
 export interface SalleCreateRequest {
     nom: string
-    type: string
+    nom_complet?: string | null
+    type_principal: string
+    types_secondaires?: string[] | null
     capacite: number
     etage: number
-    description?: string
+    utilisable: boolean
+    description?: string | null
 }
 
 export interface SalleUpdateRequest extends SalleCreateRequest {
@@ -33,11 +39,11 @@ class SallesApi {
     }
 
     async updateSalle(salle: SalleUpdateRequest): Promise<ApiResponse<{ message: string }>> {
-        return apiClient.put<{ message: string }>('/updateSalle', salle)
+        return apiClient.post<{ message: string }>('/updateSalle', salle)
     }
 
     async deleteSalle(id: string): Promise<ApiResponse<{ message: string }>> {
-        return apiClient.delete<{ message: string }>(`/deleteSalle/${id}`)
+        return apiClient.delete<{ message: string }>(`/deleteSalle?id=${encodeURIComponent(id)}`)
     }
 
 

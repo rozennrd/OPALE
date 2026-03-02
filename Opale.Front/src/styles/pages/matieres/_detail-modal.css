@@ -30,6 +30,10 @@
         flex-direction: column;
         overflow-y: auto;
     }
+
+    .matiere-detail-footer {
+        flex-shrink: 0;
+    }
     .volume-warning {
         margin-top: 12px;
         padding: 10px 14px;
