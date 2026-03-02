@@ -29,6 +29,7 @@ export default function Promotions() {
         renameCycle,
         removePromotion,
         addPromotionToCycle,
+        refreshCycles,
     } = usePromotionCycles()
 
     // Promotion sync (save/fetch)
@@ -49,7 +50,9 @@ export default function Promotions() {
         isLoading: isLoadingPromotion,
         addSpecialty,
         removeSpecialty,
-        handleSpecialtyChange
+        handleSpecialtyChange,
+        removedGroupIds,
+        removedSpecialtyIds,
     } = usePromotionEditing(cycles)
 
     // Student adjustment popup
@@ -79,10 +82,16 @@ export default function Promotions() {
         if (!editingPromo) return
 
         try {
-            const updatedPromo = await savePromotion(editingPromo)
+            const updatedPromo = await savePromotion(
+                editingPromo,
+                [],
+                removedGroupIds,
+                removedSpecialtyIds
+            )
 
             // Update local state with synced groups (containing real IDs) and refresh state
             markFormAsUntouched(updatedPromo);
+            await refreshCycles()
 
             // TODO: Update cycles state to reflect changes
             // setCycles(prev => updateCyclePromotion(prev, updatedPromo))

@@ -54,7 +54,7 @@ export class GroupsApi {
   /**
    * Supprime un groupe par son ID
    */
-  async deleteGroup(id: number): Promise<ApiResponse<{ message: string }>> {
+  async deleteGroup(id: string | number): Promise<ApiResponse<{ message: string }>> {
     const queryParams = new URLSearchParams({ id: id.toString() })
     return apiClient.delete<{ message: string }>(`/deleteGroup?${queryParams}`)
   }
