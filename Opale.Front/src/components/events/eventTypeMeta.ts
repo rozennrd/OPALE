@@ -32,7 +32,7 @@ export const TYPE_META = EVENT_TYPE_META
  * Helper function to get event type metadata
  */
 export function getEventTypeMeta(type: EventType) {
-    return TYPE_META[type] ?? TYPE_META['autre']
+    return TYPE_META[type] ?? TYPE_META['Autre']
 }
 
 /**
