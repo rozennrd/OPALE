@@ -14,8 +14,10 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         flex-shrink: 0;
+        min-width: 220px;
+        flex: 1 1 360px;
     }
 
     .teachers-toolbar-subjects {
@@ -49,7 +51,7 @@
         top: calc(100% + 0.4rem);
         right: 0;
         z-index: 10;
-        width: 260px;
+        width: min(260px, 92vw);
         background: var(--panel);
         border: 1px solid var(--border);
         border-radius: 0.75rem;

@@ -56,8 +56,13 @@
 
     /* Bouton Générer : bas-droite (Planning macro) */
     .btn-generate {
-        position: absolute;
-        right: 20px;
-        bottom: 20px;
+        align-self: flex-end;
+        margin-top: 16px;
+    }
+
+    @media (max-width: 640px) {
+        .btn-generate {
+            align-self: stretch;
+        }
     }
 }

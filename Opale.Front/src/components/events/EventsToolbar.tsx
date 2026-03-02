@@ -126,7 +126,7 @@ export default function EventsToolbar({
                     </label>
                 </div>
 
-                <div className="toolbar-filter">
+                <div className="toolbar-filter toolbar-filter--chips">
                     <span className="toolbar-filter-label">Cible</span>
                     <div className="toolbar-toggle-chips">
                         {(['ALL', 'JUNIA', 'EXTERNE'] as TargetFilter[]).map((value) => (

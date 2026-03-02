@@ -62,6 +62,17 @@
         }
     }
 
+    @media (max-width: 420px) {
+        .event-card-aside {
+            flex: 0 0 72px;
+            max-width: 72px;
+        }
+
+        .event-card-badges {
+            font-size: 0.7rem;
+        }
+    }
+
     /* ============================
        Badge type (icône + label)
        Layout de base = .entity-badge

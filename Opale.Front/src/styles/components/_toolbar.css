@@ -21,6 +21,7 @@
 
     .page-toolbar-row--primary {
         align-items: center;
+        flex-wrap: wrap;
     }
 
     .page-toolbar-row--primary .toolbar-selection-toggle {
@@ -28,10 +29,11 @@
     }
 
     .page-toolbar-row--filters {
-        align-items: flex-end;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.75rem;
+        align-items: end;
         width: 100%;
-        flex-wrap: nowrap;
     }
 
     .page-toolbar-row--filters .toolbar-reset-button {
@@ -83,7 +85,12 @@
         display: flex;
         flex-direction: column;
         gap: 0.35rem;
-        min-width: 180px;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .toolbar-filter--chips {
+        min-width: 260px;
     }
 
     .toolbar-filter-label {
@@ -96,6 +103,7 @@
     }
 
     .toolbar-filter-date {
+        width: 100%;
         padding: 0.3rem 0.5rem;
         border-radius: 0.5rem;
         border: 1px solid var(--border);
@@ -105,6 +113,7 @@
     }
 
     .toolbar-filter-select {
+        width: 100%;
         padding: 0.3rem 0.6rem;
         border-radius: 0.5rem;
         border: 1px solid var(--border);
@@ -121,21 +130,26 @@
         display: inline-flex;
         border-radius: 999px;
         background: var(--panel-soft);
-        padding: 0.12rem;
+        padding: 0.2rem;
         border: 1px solid var(--border-subtle, var(--border));
-        gap: 0.12rem;
-        width: fit-content;
+        gap: 0.25rem;
+        width: 100%;
+        max-width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        row-gap: 0.35rem;
     }
 
     .toolbar-toggle-chip {
         border: none;
         background: transparent;
-        padding: 0.25rem 0.7rem;
+        padding: 0.3rem 0.85rem;
         border-radius: 999px;
         font-size: 0.8rem;
         cursor: pointer;
         color: var(--muted);
         white-space: nowrap;
+        line-height: 1.1;
     }
 
     .toolbar-toggle-chip--active {
@@ -183,6 +197,8 @@
     .toolbar-reset-button {
         min-height: 2.2rem;
         font-weight: 600;
+        justify-self: end;
+        white-space: nowrap;
     }
 
     .toolbar-filter-button-chevron {
@@ -233,15 +249,21 @@
             margin-left: 0;
         }
 
-        .page-toolbar-row--filters {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .toolbar-filter {
+        .page-toolbar-row--filters .toolbar-reset-button {
             width: 100%;
+            justify-content: center;
+            justify-self: stretch;
         }
+    }
 
+    @media (max-width: 1225px) {
+        .toolbar-toggle-chips {
+            width: fit-content;
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 600px) {
         .toolbar-toggle-chips {
             width: 100%;
             justify-content: space-between;
@@ -251,10 +273,11 @@
             flex: 1;
             text-align: center;
         }
+    }
 
-        .page-toolbar-row--filters .toolbar-reset-button {
-            width: 100%;
-            justify-content: center;
+    @media (min-width: 1200px) and (max-width: 1400px) {
+        .page-toolbar-row--filters .toolbar-filter--chips {
+            grid-column: span 2;
         }
     }
 }
