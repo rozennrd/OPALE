@@ -44,7 +44,7 @@ class RoomConstraintsHandlerTest {
             rooms.add(Salle.builder()
                 .id(UUID.randomUUID())
                 .nom("Room " + name)
-                .type(TypeSalle.TD)
+                .type(TypeSalle.Cours)
                 .capacite(capacity)
                 .etage(1)
                 .build());

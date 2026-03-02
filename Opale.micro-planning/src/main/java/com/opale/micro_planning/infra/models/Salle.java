@@ -40,6 +40,13 @@ public class Salle {
     @Column(name = "etage")
     private Integer etage;
 
+    @Size(max = 255)
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "utilisable", nullable = false)
+    private Boolean utilisable = false;
+
 
     @ManyToMany
     @JoinTable(name="localisation",

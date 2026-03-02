@@ -62,4 +62,13 @@ public class Matiere {
     @Min(0)
     @Column(name = "heures_tp")
     private Integer heuresTp;
+
+    @Column(name = "heures_projet")
+    private Double heuresProjet;
+
+    @Column(name = "heures_elearning")
+    private Double heuresElearning;
+
+    @Column(name = "heures_autre")
+    private Double heuresAutre;
 }

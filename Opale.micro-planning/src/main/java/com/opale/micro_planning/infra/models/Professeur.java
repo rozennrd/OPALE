@@ -37,6 +37,10 @@ public class Professeur {
     @Column(name = "email")
     private String email;
 
+    @Size(max = 255)
+    @Column(name = "email_perso")
+    private String emailPerso;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
@@ -44,4 +48,8 @@ public class Professeur {
 
     @Column(name = "distanciel", nullable = false)
     private Boolean distanciel = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "campus_origin")
+    private Campus campusOrigin;
 }

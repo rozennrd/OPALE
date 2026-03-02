@@ -32,6 +32,22 @@ public class Enseignement {
     private Professeur professeur;
 
     @Min(0)
-    @Column(name = "nb_heures")
-    private Integer nbHeures;
+    @Column(name = "heures_td")
+    private Integer heuresTd;
+
+    @Min(0)
+    @Column(name = "heures_tp")
+    private Integer heuresTp;
+
+    @Min(0)
+    @Column(name = "heures_projet")
+    private Integer heuresProjet;
+
+    @Min(0)
+    @Column(name = "heures_elearning")
+    private Integer heuresElearning;
+
+    @Min(0)
+    @Column(name = "heures_autre")
+    private Integer heuresAutre;
 }

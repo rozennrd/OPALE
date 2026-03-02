@@ -1,16 +1,23 @@
 package com.opale.micro_planning.infra.models;
 
 public enum TypeEvent {
-    COURS,
-    ENTREPRISE,
-    EXAMEN,
-    REUNION,
-    FERMETURE,
-    SOUTENANCE,
-    PORTES_OUVERTES,
-    STAGE,
-    MOBILITE,
+    Cours,
+    Entreprise,
+    Examen,
+    Reunion,
+    Fermeture,
+    Soutenance,
+    JPO,
+    Stage,
+    Mobilite,
     PFE,
-    RATTRAPAGE,
-    AUTRE
+    Rattrapage,
+    Conference,
+    Rentree,
+    Réunion_parents,
+    Journée_Immersion,
+    Concours,
+    Salon,
+    Fin_des_cours,
+    Autre
 }

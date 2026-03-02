@@ -112,7 +112,7 @@ class ExcelExportServiceTest {
         Salle salle = Salle.builder()
             .id(UUID.randomUUID())
             .nom("Room A")
-            .type(TypeSalle.TD)
+            .type(TypeSalle.Cours)
             .capacite(40)
             .etage(1)
             .build();

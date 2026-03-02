@@ -33,6 +33,10 @@ public class Event {
     @Column(name = "nom", nullable = false)
     private String nom;
 
+    @Size(max = 255)
+    @Column(name = "description")
+    private String description;
+
     @Min(1)
     @Column(name = "num_semaine")
     private Integer numSemaine;

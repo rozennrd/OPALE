@@ -44,7 +44,7 @@ class TimeConstraintsHandlerTest {
             Salle.builder()
                 .id(UUID.randomUUID())
                 .nom("Room A")
-                .type(TypeSalle.TD)
+                .type(TypeSalle.Cours)
                 .capacite(30)
                 .etage(1)
                 .build()

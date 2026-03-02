@@ -58,7 +58,7 @@ class SchedulerTest {
                 Salle.builder()
                         .id(UUID.randomUUID())
                         .nom("Salle A")
-                        .type(TypeSalle.TD)
+                        .type(TypeSalle.Cours)
                         .capacite(30)
                         .etage(1)
                         .build(),
@@ -72,7 +72,7 @@ class SchedulerTest {
                 Salle.builder()
                         .id(UUID.randomUUID())
                         .nom("Salle C")
-                        .type(TypeSalle.TP)
+                        .type(TypeSalle.Informatique)
                         .capacite(20)
                         .etage(2)
                         .build()
