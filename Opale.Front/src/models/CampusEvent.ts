@@ -1,14 +1,8 @@
 // src/models/CampusEvent.ts
 
-export type EventSource = 'JUNIA' | 'EXTERNE'
+import { EventType } from './EventTypes'
 
-export type EventType =
-    | 'JOURNEE_PO'
-    | 'EXAMEN'
-    | 'CONFERENCE'
-    | 'FORUM'
-    | 'SALON'
-    | 'AUTRE'
+export type EventSource = 'JUNIA' | 'EXTERNE'
 
 export interface CampusEvent {
     id: string
@@ -22,7 +16,7 @@ export interface CampusEvent {
     location: string
     /** Origine de l'événement */
     source: EventSource
-    /** Type d'événement */
+    /** Type d’événement (pour le filtre + badge) - matches database enum */
     type: EventType
     /** Description optionnelle */
     description?: string

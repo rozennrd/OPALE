@@ -133,6 +133,13 @@
         gap: 4px;
     }
 
+    .valid-promo {
+        background-color: #fff3cd;
+        border-color: #ffc107;
+        padding: 12px;
+        margin-top: 12px;
+    }
+
     .promo-mismatch {
         margin: 0;
         font-size: 13px;

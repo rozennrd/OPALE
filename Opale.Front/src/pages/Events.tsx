@@ -1,28 +1,57 @@
 // src/pages/Events.tsx
-import { useEffect, useMemo, useState, useRef } from 'react'
+import React, { useMemo, useState, useEffect, useRef } from 'react'
 import EventsToolbar, {
     TargetFilter,
     TypeFilter,
 } from '../components/events/EventsToolbar'
 import EventCard from '../components/events/EventCard'
 import EventDetailCard from '../components/events/EventDetailCard'
+import { eventsApi } from '../services/api/eventsApi'
 import { CampusEvent } from '../models/CampusEvent'
+import { Event } from '../models/Event'
 import SectionHeader from '../components/common/SectionHeader'
 import { useEvents } from '../hooks/events/useEvent'
 import SelectionToolbar from '../components/common/SelectionToolbar'
 import { useSelectionState } from '../hooks/common/useSelectionState'
 import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
 import { usePromotionCycles } from '../hooks/promotions/usePromotionCycles'
+import {EventType} from "../models/EventTypes.ts";
 
 interface MonthGroup {
     key: string
     label: string
     events: CampusEvent[]
 }
-
 type SaveResult =
     | { success: true; error?: undefined }
     | { success: false; error: string }
+
+
+// Mapper pour convertir Event (backend) en CampusEvent (frontend)
+function mapEventToCampusEvent(event: Event): CampusEvent {
+    // Keep full ISO datetime for datetime-local input compatibility
+    const startDate = event.datetime_start || ''
+    const endDate = event.datetime_end || startDate
+
+    return {
+        id: event.id,
+        name: event.nom,
+        startDate: startDate,
+        endDate: endDate,
+        location: '', // Le backend n'a pas de location pour l'instant
+        source: event.is_external ? 'EXTERNE' as const : 'JUNIA' as const,
+        type: event.type,
+    }
+}
+
+export const eventPageTypes: EventType[] = [
+    'Forum',
+    'JPO',
+    'Salon',
+    'Examen',
+    'Conference',
+    'Autre',
+]
 
 const DEFAULT_EVENT_FILTERS: {
     searchValue: string
@@ -78,9 +107,6 @@ const normalizeEventForList = (event: CampusEvent): CampusEvent => {
 
 export default function Events() {
     const {
-        events,
-        loading,
-        error,
         createEvent,
         updateEvent,
     } = useEvents()
@@ -88,11 +114,6 @@ export default function Events() {
     const [eventsState, setEventsState] = useState<CampusEvent[]>([])
     const hasLocalEditsRef = useRef(false)
 
-    useEffect(() => {
-        if (!hasLocalEditsRef.current) {
-            setEventsState((events ?? []).map(normalizeEventForList))
-        }
-    }, [events])
 
     const [searchValue, setSearchValue] = useState('')
     const [dateFrom, setDateFrom] = useState('')
@@ -103,6 +124,38 @@ export default function Events() {
     const [selectedEvent, setSelectedEvent] = useState<CampusEvent | null>(null)
     const [detailMode, setDetailMode] = useState<'edit' | 'create'>('edit')
     const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({})
+
+    // State pour les événements depuis l'API
+    const [events, setEvents] = useState<CampusEvent[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+
+    useEffect(() => {
+        if (!hasLocalEditsRef.current) {
+            setEventsState((events ?? []).map(normalizeEventForList))
+        }
+    }, [events])
+    // Charger les événements au montage du composant
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                setLoading(true)
+                const response = await eventsApi.getEventsMacro()
+                if (response.data) {
+                    // Mapper les événements du backend vers CampusEvent
+                    const mappedEvents = response.data.map(mapEventToCampusEvent).filter(e => e.type in eventPageTypes)
+                    setEvents(mappedEvents)
+                }
+            } catch (err) {
+                console.error('Erreur lors du chargement des événements:', err)
+                setError('Erreur lors du chargement des événements')
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchEvents()
+    }, [])
 
     const { cycles: promotionCycles } = usePromotionCycles()
 
@@ -125,7 +178,8 @@ export default function Events() {
     })
 
     const filteredEvents = useMemo(() => {
-        let items = [...eventsState]
+        let items = [...events]
+        // let items = [...eventsState]
 
         items.sort(
             (a, b) =>
@@ -250,7 +304,7 @@ export default function Events() {
             startDate: start,
             endDate: end,
             location: '',
-            type: 'AUTRE',
+            type: 'Autre',
             source: 'JUNIA',
             description: '',
             show_macro: true,

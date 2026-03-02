@@ -1,5 +1,6 @@
 import React from 'react'
-import { CampusEvent, EventType } from '../../models/CampusEvent'
+import { CampusEvent } from '../../models/CampusEvent'
+import { EventType, EVENT_TYPE_LABELS } from '../../models/EventTypes'
 import { useEventDetail } from '../../hooks/events/useEventDetail'
 import { Cycle } from '../../models/Cycle'
 import DetailCardHeader from '../common/DetailCardHeader'
@@ -10,6 +11,7 @@ import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 import { ROOMS_MOCK } from '../../mocks/rooms.mock'
 import DateInput from '../common/DateInput'
+import {eventPageTypes} from "../../pages/Events.tsx";
 
 type SaveResult = { success: boolean; error?: string }
 
@@ -21,6 +23,15 @@ interface EventDetailCardProps {
     onClose: () => void
     onSave: (event: Partial<CampusEvent>, salleIds: string[]) => Promise<SaveResult>
 }
+
+export const constraintEventTypes: EventType[] = [
+    'Forum',
+    'JPO',
+    'Salon',
+    'Examen',
+    'Conference',
+    'Autre',
+]
 
 function formatDate(date: string | undefined): string {
     if (!date) return '-'
@@ -263,14 +274,11 @@ export default function EventDetailCard({
                                         )
                                     }
                                 >
-                                    <option value="JOURNEE_PO">
-                                        Journee Portes Ouvertes
-                                    </option>
-                                    <option value="EXAMEN">Examen</option>
-                                    <option value="CONFERENCE">Conference</option>
-                                    <option value="FORUM">Forum</option>
-                                    <option value="SALON">Salon</option>
-                                    <option value="AUTRE">Autre</option>
+                                    {eventPageTypes.map((value) => (
+                                        <option key={value} value={value}>
+                                            {EVENT_TYPE_LABELS[value]}
+                                        </option>
+                                    ))}
                                 </select>
                             </dd>
                         </div>

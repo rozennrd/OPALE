@@ -40,4 +40,10 @@ export const groupeRepository = {
     const result = await pool.query(sql, [id]);
     return (result.rowCount ?? 0) > 0;
   },
+
+  async getByPromotionId(id_promo: string): Promise<GroupeDAO[]> {
+    const sql = "SELECT id, id_promo, nom, effectifs FROM groupe WHERE id_promo = $1 ORDER BY nom;";
+    const result = await pool.query(sql, [id_promo]);
+    return result.rows as GroupeDAO[];
+  },
 };

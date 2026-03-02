@@ -26,8 +26,8 @@ export const eventService = {
         return daos.map(eventMapper.toDTO);
     },
 
-    async getEventsByPromoAndTypes(promoNom: string, types: string[]): Promise<Record<string, EventDTO[]>> {
-        const daos = await eventRepository.getByPromoAndTypes(promoNom, types);
+    async getEventsByPromoAndTypes(promoId: string, types: string[]): Promise<Record<string, EventDTO[]>> {
+        const daos = await eventRepository.getByPromoAndTypes(promoId, types);
         const dtos = daos.map(eventMapper.toDTO);
 
         // Organiser par type
@@ -44,6 +44,15 @@ export const eventService = {
             throw new Error('La date de début doit être antérieure à la date de fin.');
         }
 
+        // Convert optional concerne fields to repository format
+        // DTO/Frontend uses: groups, specialties, promotions
+        // Repository expects: groups, specialties, promotions
+        const concerne = dto.concerne ? {
+            promotions: dto.concerne.promotions || [],
+            groups: dto.concerne.groups || [],
+            specialties: dto.concerne.specialties || []
+        } : undefined;
+
         const id = await eventRepository.insert(
             dto.type,
             dto.nom,
@@ -55,7 +64,8 @@ export const eventService = {
             dto.show_micro ?? true,
             dto.is_blocking ?? false,
             dto.is_exceptional ?? false,
-            dto.is_external ?? false
+            dto.is_external ?? false,
+            concerne
         );
 
         return {

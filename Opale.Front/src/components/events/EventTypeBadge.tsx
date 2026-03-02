@@ -1,6 +1,7 @@
 // src/components/events/EventTypeBadge.tsx
 import React from 'react'
-import { EventType, EventSource } from '../../models/CampusEvent'
+import { EventType } from '../../models/EventTypes'
+import { EventSource } from '../../models/CampusEvent'
 import EntityBadge, { BadgeVariant } from '../common/EntityBadge'
 import { getEventTypeMeta } from './eventTypeMeta'
 

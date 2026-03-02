@@ -11,8 +11,19 @@ export const transformBackendPromotionToFrontend = (backend: BackendPromotion): 
   students: backend.effectifs,
   startDate: backend.date_start,
   endDate: backend.date_end,
-  groups: [], // Not stored in backend yet, provide empty arrays
-  specialties: [], // Not stored in backend yet, provide empty arrays
+  isApprentissage: backend.cycle_type === 'Apprentissage',
+  groups: (backend.groups || []).map(g => ({
+    id: g.id,
+    idPromo: g.id_promo,
+    nom: g.nom,
+    effectifs: g.effectifs
+  })),
+  specialties: (backend.specialties || []).map(s => ({
+    id: s.id,
+    idPromo: s.id_promo,
+    nom: s.nom,
+    effectifs: s.effectifs
+  })),
   constraints: {
     vacances: [],
     entreprise: [],
@@ -20,7 +31,7 @@ export const transformBackendPromotionToFrontend = (backend: BackendPromotion): 
     international: [],
     partiels: [],
     rattrapages: [],
-  }, // Default constraints
+  },
 })
 
 // Transform frontend promotion to backend promotion model for creation
@@ -39,7 +50,7 @@ export const transformFrontendPromotionToBackendCreate = (
 export const transformFrontendPromotionToBackendUpdate = (
   frontend: Promotion
 ): PromotionUpdateRequest => ({
-  id: parseInt(frontend.id),
+  id: frontend.id,
   nom: frontend.label,
   effectifs: frontend.students,
   date_start: frontend.startDate,

@@ -19,7 +19,11 @@ interface ConstraintCardProps {
     onRangeDateChange: (type: string, id: string, field: 'start' | 'end', value: string) => void
     onRemoveRange: (type: string, id: string) => void
     onAddConstraint: (type: string) => void
+    onAddEvent?: (type: string, startDate: string, endDate: string) => Promise<void>
+    onUpdateEvent?: (eventId: string, type: string, startDate: string, endDate: string) => Promise<void>
+    onDeleteEvent?: (eventId: string) => Promise<void>
     canRemove?: boolean
+    promoId?: string
 }
 
 const ConstraintCard: React.FC<ConstraintCardProps> = ({
@@ -34,6 +38,7 @@ const ConstraintCard: React.FC<ConstraintCardProps> = ({
     onRemoveRange,
     onAddConstraint,
     canRemove = true,
+    promoId,
 }) => {
     return (
         <div className={cardClass}>
@@ -52,9 +57,9 @@ const ConstraintCard: React.FC<ConstraintCardProps> = ({
             <div className="constraint-tags">
                 {ranges.map((range) => {
                     const isEditing =
-                        !!(editingRange &&
-                        editingRange.type === type &&
-                        editingRange.id === range.id)
+                        (editingRange &&
+                            editingRange.type === type &&
+                            editingRange.id === range.id) || false;
 
                     return (
                         <ConstraintPill
@@ -68,6 +73,7 @@ const ConstraintCard: React.FC<ConstraintCardProps> = ({
                             onRangeDateChange={onRangeDateChange}
                             onRemoveRange={onRemoveRange}
                             canRemove={canRemove}
+                            promoId={promoId}
                         />
                     )
                 })}

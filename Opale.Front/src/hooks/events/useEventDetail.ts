@@ -16,6 +16,9 @@ export type EventDraft = {
     concernedCycleIds: string[]
     concernedPromotionIds: string[]
     selectedSalleIds: string[]
+    is_blocking: boolean
+    is_exceptional: boolean
+    is_external: boolean
 }
 
 type SaveResult =
@@ -41,6 +44,9 @@ const buildInitialDraft = (event: CampusEvent): EventDraft => {
         concernedCycleIds: [...(event.concernedCycleIds ?? [])],
         concernedPromotionIds: [...(event.concernedPromotionIds ?? [])],
         selectedSalleIds: [],
+        is_blocking: event.is_blocking ?? true,
+        is_exceptional: event.is_exceptional ?? false,
+        is_external: event.show_macro ?? false,
     }
 }
 
@@ -58,7 +64,7 @@ function getWeekNumber(isoDatetime: string): number | undefined {
 
 export const useEventDetail = (
     event: CampusEvent,
-    onSave?: (
+    onSave: (
         event: Partial<CampusEvent>,
         salleIds: string[],
     ) => Promise<{ success: boolean; error?: string }>,
@@ -75,12 +81,14 @@ export const useEventDetail = (
         setSnapshot(initial)
         setDraft((prev) => (prev.id === event.id ? prev : initial))
         setHasChanges(false)
+        console.log('built initial draft for event ' + event)
     }, [event])
 
     useEffect(() => {
         const current = JSON.stringify(draft)
         const base = JSON.stringify(snapshot)
         setHasChanges(current !== base)
+
     }, [draft, snapshot])
 
     const updateField = <K extends keyof EventDraft>(

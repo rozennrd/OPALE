@@ -49,7 +49,7 @@ export const groupeController = {
         effectifs: Number(effectifs),
       });
 
-      res.status(201).json({ message: "Groupe ajouté avec succès !" });
+      res.status(201).json({ message: "Groupe ajouté avec succès !", insertedId: result.id });
       return;
     } catch (err: any) {
       console.error("Error addGroup:", err);

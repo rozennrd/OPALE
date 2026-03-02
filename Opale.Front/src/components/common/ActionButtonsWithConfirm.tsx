@@ -32,6 +32,8 @@ interface ActionButtonsWithConfirmProps {
     overlayClassName?: string
 
     onSave: () => void | boolean | Promise<void | boolean>
+    // Disable the save button
+    disabled?: boolean
     onCancel: () => void
 }
 
@@ -59,6 +61,7 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
     deleteCancelLabel = 'Annuler',
     onBeforeSaveClick,
     onAfterSaveConfirm,
+    disabled,
     onSave,
     onCancel,
 }) => {
@@ -108,6 +111,7 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
         if (saveResult === false) return
 
         closeCancelConfirmDialog()
+        onSave()
         onCancel()
     }
 
@@ -148,6 +152,8 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
                     type="button"
                     className="btn-primary"
                     onClick={() => setOpenSaveConfirm(true)}
+                    disabled={disabled}
+                    style={{ opacity: disabled ? 0.5 : 1, cursor: disabled ? 'not-allowed' : 'pointer' }}
                 >
                     {saveLabel}
                 </button>

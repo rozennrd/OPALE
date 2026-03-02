@@ -63,4 +63,17 @@ export const specialiteRepository = {
         const result = await pool.query(sql, [id]);
         return result.rowCount || 0;
     },
+
+    // Récupère les spécialités par promotion (directement liées ou via groupe)
+    async getByPromotionId(id_promo: string): Promise<SpecialiteDAO[]> {
+        const sql = `
+            SELECT id, id_groupe, id_promo, nom, effectifs
+            FROM specialite
+            WHERE id_promo = $1
+               OR id_groupe IN (SELECT id FROM groupe WHERE id_promo = $1)
+            ORDER BY nom ASC
+        `;
+        const result = await pool.query(sql, [id_promo]);
+        return result.rows as SpecialiteDAO[];
+    },
 };
