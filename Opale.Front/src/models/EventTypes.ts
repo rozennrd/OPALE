@@ -17,6 +17,7 @@ export type EventType =
   | 'Journée Immersion'
   | 'Concours'
   | 'Salon'
+  | 'Forum'
   | 'Fin des cours'
   | 'Autre'
 
@@ -38,6 +39,7 @@ export const EVENT_TYPE_LABELS: Record<EventType, string> = {
   'Réunion parents': 'Réunion parents',
   'Journée Immersion': 'Journée Immersion',
   'Concours': 'Concours',
+  'Forum': 'Forum',
   'Salon': 'Salon',
   'Fin des cours': 'Fin des cours',
   'Autre': 'Autre'
@@ -65,5 +67,6 @@ export const EVENT_TYPE_META: Record<EventType, { icon: string; label: string }>
   'Concours': { icon: icEventOther, label: 'Concours' },
   'Salon': { icon: icEventOther, label: 'Salon' },
   'Fin des cours': { icon: icEventOther, label: 'Fin des cours' },
+  'Forum': { icon: icEventOther, label: 'Forum' },
   'Autre': { icon: icEventOther, label: 'Autre' }
 }
