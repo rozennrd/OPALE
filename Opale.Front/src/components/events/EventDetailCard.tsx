@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { CampusEvent } from '../../models/CampusEvent'
 import { EventType, EVENT_TYPE_LABELS } from '../../models/EventTypes'
 import { useEventDetail } from '../../hooks/events/useEventDetail'
@@ -490,40 +490,14 @@ export default function EventDetailCard({
                                     avant de fermer ?
                                 </p>
                             </>
-                        )
-                    }
-                    confirmLabel={isCreate ? 'Creer' : 'Enregistrer'}
-                    cancelLabel="Annuler"
-                    cancelDirtyTitle="Modifications non enregistrees"
-                    cancelDirtyMessage={
-                        <>
-                            <p>Vous avez modifie cette fiche evenement.</p>
-                            <p>
-                                Souhaitez-vous enregistrer les changements avant
-                                de fermer ?
-                            </p>
-                        </>
-                    }
-                    cancelDirtyConfirmLabel={
-                        isCreate ? 'Creer et fermer' : 'Enregistrer et fermer'
-                    }
-                    cancelDirtyDiscardLabel="Fermer sans enregistrer"
-                    onBeforeSaveClick={() => {
-                        if (isCreate && !isValid) {
-                            openErrorDialog(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
-                            return false
                         }
                         cancelDirtyConfirmLabel={
-                            isCreate
-                                ? 'Creer et fermer'
-                                : 'Enregistrer et fermer'
+                            isCreate ? 'Creer et fermer' : 'Enregistrer et fermer'
                         }
                         cancelDirtyDiscardLabel="Fermer sans enregistrer"
                         onBeforeSaveClick={() => {
                             if (isCreate && !isValid) {
-                                window.alert(
-                                    CREATE_EVENT_REQUIRED_FIELDS_ALERT,
-                                )
+                                openErrorDialog(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
                                 return false
                             }
                             return true
