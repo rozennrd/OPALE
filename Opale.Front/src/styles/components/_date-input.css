@@ -58,6 +58,9 @@
     }
 
     .calendar-popover {
+        position: fixed;
+        top: var(--calendar-popover-top, 0px);
+        left: var(--calendar-popover-left, 0px);
         z-index: 4000;
         background: var(--panel);
         border: 1px solid var(--border);

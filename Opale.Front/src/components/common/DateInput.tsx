@@ -329,7 +329,10 @@ const DateInput: React.FC<DateInputProps> = ({
 
     const popoverStyle = (() => {
         if (!anchorRect) {
-            return { position: 'fixed' as const, top: 0, left: 0 }
+            return {
+                '--calendar-popover-top': '0px',
+                '--calendar-popover-left': '0px',
+            } as React.CSSProperties
         }
         const padding = 12
         const estimatedWidth = mode === 'datetime' ? 420 : 300
@@ -338,10 +341,9 @@ const DateInput: React.FC<DateInputProps> = ({
         const maxLeft = Math.max(padding, viewportWidth - estimatedWidth - padding)
         const left = Math.min(anchorRect.left, maxLeft)
         return {
-            position: 'fixed' as const,
-            top: anchorRect.bottom + 6,
-            left,
-        }
+            '--calendar-popover-top': `${anchorRect.bottom + 6}px`,
+            '--calendar-popover-left': `${left}px`,
+        } as React.CSSProperties
     })()
 
     const popover = isOpen
