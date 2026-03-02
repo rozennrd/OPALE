@@ -188,33 +188,37 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                 </div>
 
                 {(totals.groupsMismatch || totals.specialtiesMismatch) && (
-                    <div className="promo-mismatch-block">
-                        {totals.groupsMismatch && (
-                            <p className="promo-mismatch">
-                                Le total des groupes est {totals.groupsTotal} pour{' '}
-                                {totals.totalStudents}.
-                            </p>
-                        )}
-                        {totals.specialtiesMismatch && (
-                            <p className="promo-mismatch">
-                                Le total des spÃ©cialitÃ©s est {totals.specialtiesTotal} pour{' '}
-                                {totals.totalStudents}.
-                            </p>
-                        )}
+                    <div className="promo-warning promo-warning--danger" role="status" aria-live="polite">
+                        <span className="promo-warning-icon" aria-hidden="true">&#9888;</span>
+                        <div className="promo-warning-content">
+                            {totals.groupsMismatch && (
+                                <p>
+                                    Le total des groupes est {totals.groupsTotal} pour {totals.totalStudents}.
+                                </p>
+                            )}
+                            {totals.specialtiesMismatch && (
+                                <p>
+                                    Le total des spécialités est {totals.specialtiesTotal} pour {totals.totalStudents}.
+                                </p>
+                            )}
+                        </div>
                     </div>
                 )}
 
                 {/* Constraint validation error */}
                 {!constraintValidation.isValid && (
-                    <div className="promo-mismatch-block valid-promo">
-                        <p className="promo-mismatch" style={{ color: '#856404' }}>
-                            <strong>Attention :</strong> Les contraintes suivantes sont en dehors de la pÃ©riode de la promotion 
-                            ({formatDateLabel(editingPromo.startDate)} - {formatDateLabel(editingPromo.endDate)}) :{' '}
-                            <strong>{constraintValidation.outOfPeriodTypes.join(', ')}</strong>
-                        </p>
-                        <p style={{ color: '#856404', fontSize: '0.9em', marginTop: '4px' }}>
-                            Veuillez corriger les dates ou supprimer ces contraintes avant d&apos;enregistrer.
-                        </p>
+                    <div className="promo-warning promo-warning--warning" role="status" aria-live="polite">
+                        <span className="promo-warning-icon" aria-hidden="true">&#9888;</span>
+                        <div className="promo-warning-content">
+                            <p>
+                                <strong>Attention :</strong> Les contraintes suivantes sont en dehors de la période de la promotion 
+                                ({formatDateLabel(editingPromo.startDate)} - {formatDateLabel(editingPromo.endDate)}) :{' '}
+                                <strong>{constraintValidation.outOfPeriodTypes.join(', ')}</strong>
+                            </p>
+                            <p className="promo-warning-sub">
+                                Veuillez corriger les dates ou supprimer ces contraintes avant d&apos;enregistrer.
+                            </p>
+                        </div>
                     </div>
                 )}
 
@@ -275,3 +279,4 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
 }
 
 export default PromoEditDialog
+
