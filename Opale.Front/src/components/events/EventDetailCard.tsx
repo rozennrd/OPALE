@@ -1,4 +1,4 @@
-import React from 'react'
+import { useRef } from 'react'
 import { CampusEvent, EventType } from '../../models/CampusEvent'
 import { useEventDetail } from '../../hooks/events/useEventDetail'
 import { Cycle } from '../../models/Cycle'
@@ -8,14 +8,15 @@ import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import EventTypeBadge from './EventTypeBadge'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
-import { ROOMS_MOCK } from '../../mocks/rooms.mock'
 import DateInput from '../common/DateInput'
+import type { Salle } from '../../services/api/sallesApi'
 
 type SaveResult = { success: boolean; error?: string }
 
 interface EventDetailCardProps {
     event: CampusEvent
     cycles?: Cycle[]
+    salles?: Salle[]
     onDelete?: () => void
     mode?: 'edit' | 'create'
     onClose: () => void
@@ -34,14 +35,20 @@ function formatDate(date: string | undefined): string {
 }
 
 const EVENT_LOCATION_DATALIST_ID = 'event-location-suggestions'
-const EVENT_ROOM_LOCATION_SUGGESTIONS = Array.from(
-    new Set(ROOMS_MOCK.map((room) => room.fullName ?? room.name)),
-).sort((a, b) =>
-    a.localeCompare(b, 'fr', {
-        numeric: true,
-        sensitivity: 'base',
-    }),
-)
+
+const buildRoomLocationSuggestions = (salles: Salle[]): string[] =>
+    Array.from(
+        new Set(
+            salles
+                .map((salle) => salle.nom_complet ?? salle.nom)
+                .filter((label): label is string => Boolean(label && label.trim())),
+        ),
+    ).sort((a, b) =>
+        a.localeCompare(b, 'fr', {
+            numeric: true,
+            sensitivity: 'base',
+        }),
+    )
 
 const CREATE_EVENT_REQUIRED_FIELDS_ALERT =
     'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de creer cet evenement.'
@@ -49,12 +56,14 @@ const CREATE_EVENT_REQUIRED_FIELDS_ALERT =
 export default function EventDetailCard({
                                             event,
                                             cycles = [],
+                                            salles = [],
                                             onClose,
                                             onSave,
                                             onDelete,
                                             mode = 'edit',
                                         }: EventDetailCardProps) {
     const isCreate = mode === 'create'
+    const locationInputRef = useRef<HTMLInputElement | null>(null)
 
     const {
         draft,
@@ -82,6 +91,40 @@ export default function EventDetailCard({
     )
 
     const selectedPromotionId = draft.concernedPromotionIds[0] ?? ''
+
+    const roomLocationSuggestions = buildRoomLocationSuggestions(salles)
+
+    const openLocationSuggestions = () => {
+        const input = locationInputRef.current
+        if (!input) return
+
+        if (typeof input.showPicker === 'function') {
+            try {
+                window.setTimeout(() => {
+                    try {
+                        input.showPicker()
+                    } catch {
+                        // Certains navigateurs peuvent bloquer showPicker malgré une interaction utilisateur.
+                    }
+                }, 0)
+            } catch {
+                // Certains navigateurs peuvent bloquer showPicker hors gesture utilisateur.
+            }
+        }
+    }
+
+    const handleLocationMouseDown: React.MouseEventHandler<HTMLInputElement> =
+        (e) => {
+            if (e.button !== 0) return
+
+            const input = locationInputRef.current
+            if (!input) return
+
+            // Garantit le focus + ouverture dès le 1er clic
+            e.preventDefault()
+            input.focus()
+            openLocationSuggestions()
+        }
 
     const saveDraft = async () => {
         const result = await handleSave()
@@ -229,16 +272,20 @@ export default function EventDetailCard({
                             <dt>Salle / lieu</dt>
                             <dd>
                                 <input
+                                    ref={locationInputRef}
                                     type="text"
                                     className="event-detail-input"
                                     list={EVENT_LOCATION_DATALIST_ID}
                                     value={draft.location}
+                                    onMouseDown={handleLocationMouseDown}
+                                    onFocus={openLocationSuggestions}
+                                    onClick={openLocationSuggestions}
                                     onChange={(e) =>
                                         updateField('location', e.target.value)
                                     }
                                 />
                                 <datalist id={EVENT_LOCATION_DATALIST_ID}>
-                                    {EVENT_ROOM_LOCATION_SUGGESTIONS.map(
+                                    {roomLocationSuggestions.map(
                                         (roomLabel) => (
                                             <option
                                                 key={roomLabel}

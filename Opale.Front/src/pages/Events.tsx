@@ -79,6 +79,7 @@ const normalizeEventForList = (event: CampusEvent): CampusEvent => {
 export default function Events() {
     const {
         events,
+        salles,
         loading,
         error,
         createEvent,
@@ -419,6 +420,7 @@ export default function Events() {
                 <EventDetailCard
                     event={selectedEvent}
                     cycles={promotionCycles}
+                    salles={salles}
                     mode={detailMode}
                     onSave={handleSaveEvent}
                     onClose={() => {
