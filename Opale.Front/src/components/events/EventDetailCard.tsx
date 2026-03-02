@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { CampusEvent, EventType } from '../../models/CampusEvent'
 import { useEventDetail } from '../../hooks/events/useEventDetail'
 import { Cycle } from '../../models/Cycle'
@@ -52,6 +52,36 @@ const buildRoomLocationSuggestions = (salles: Salle[]): string[] =>
 
 const CREATE_EVENT_REQUIRED_FIELDS_ALERT =
     'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de creer cet evenement.'
+const INVALID_EVENT_DATE_RANGE_ALERT =
+    'La date/heure de fin doit etre superieure ou egale a la date/heure de debut.'
+const INVALID_EVENT_LOCATION_ALERT =
+    'Veuillez selectionner une salle existante dans la liste.'
+
+function hasInvalidDateRange(startDate: string, endDate: string): boolean {
+    if (!startDate || !endDate) return false
+
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false
+
+    return end.getTime() < start.getTime()
+}
+
+function getSalleIdsForLocation(location: string, salles: Salle[]): string[] {
+    const normalizedLocation = location.trim().toLowerCase()
+    if (!normalizedLocation) return []
+
+    return salles
+        .filter((salle) => {
+            const candidates = [salle.nom_complet, salle.nom]
+                .filter((value): value is string => Boolean(value))
+                .map((value) => value.trim().toLowerCase())
+
+            return candidates.includes(normalizedLocation)
+        })
+        .map((salle) => salle.id)
+}
 
 export default function EventDetailCard({
                                             event,
@@ -93,6 +123,22 @@ export default function EventDetailCard({
     const selectedPromotionId = draft.concernedPromotionIds[0] ?? ''
 
     const roomLocationSuggestions = buildRoomLocationSuggestions(salles)
+    const matchingSalleIds = getSalleIdsForLocation(draft.location, salles)
+    const hasUnknownSalle =
+        draft.location.trim().length > 0 && matchingSalleIds.length === 0
+
+    useEffect(() => {
+        const currentIds = draft.selectedSalleIds
+        const nextIds = matchingSalleIds
+
+        const sameLength = currentIds.length === nextIds.length
+        const sameValues =
+            sameLength && currentIds.every((id) => nextIds.includes(id))
+
+        if (!sameValues) {
+            updateField('selectedSalleIds', nextIds)
+        }
+    }, [draft.selectedSalleIds, matchingSalleIds, updateField])
 
     const openLocationSuggestions = () => {
         const input = locationInputRef.current
@@ -126,11 +172,47 @@ export default function EventDetailCard({
             openLocationSuggestions()
         }
 
-    const saveDraft = async () => {
+    const saveDraft = async (): Promise<boolean> => {
+        if (isCreate && !isValid) {
+            window.alert(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
+            return false
+        }
+
+        if (hasInvalidDateRange(draft.startDate, draft.endDate)) {
+            window.alert(INVALID_EVENT_DATE_RANGE_ALERT)
+            return false
+        }
+
+        if (hasUnknownSalle) {
+            window.alert(INVALID_EVENT_LOCATION_ALERT)
+            return false
+        }
+
         const result = await handleSave()
         if (!result.success) {
             console.error('[EVENTS] Save failed:', result.error)
+            window.alert(
+                result.error ??
+                    "Erreur lors de l'enregistrement de l'evenement.",
+            )
+            return false
         }
+
+        return true
+    }
+
+    const handleBeforeSaveClick = (): boolean => {
+        if (hasDateRangeError) {
+            window.alert(INVALID_EVENT_DATE_RANGE_ALERT)
+            return false
+        }
+
+        if (hasUnknownSalle) {
+            window.alert(INVALID_EVENT_LOCATION_ALERT)
+            return false
+        }
+
+        return true
     }
 
     const handleSourceChange = (source: 'JUNIA' | 'EXTERNE') => {
@@ -168,6 +250,8 @@ export default function EventDetailCard({
     const headerTitle =
         draft.name || (isCreate ? 'Nouvel evenement' : 'Evenement sans titre')
 
+    const hasDateRangeError = hasInvalidDateRange(draft.startDate, draft.endDate)
+
     const headerSubtitle = (() => {
         const start = formatDate(draft.startDate)
         const end =
@@ -190,12 +274,12 @@ export default function EventDetailCard({
         hasChanges,
         onClose,
         onSaveAndClose: () => {
-            if (isCreate && !isValid) {
-                window.alert(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
-                return
-            }
-            void saveDraft()
-            onClose()
+            void (async () => {
+                const didSave = await saveDraft()
+                if (didSave) {
+                    onClose()
+                }
+            })()
         },
         ignoreWhenSelectorExists: '.modal-overlay',
     })
@@ -265,6 +349,12 @@ export default function EventDetailCard({
                                     inputClassName="event-detail-input"
                                     min={draft.startDate || undefined}
                                 />
+                                {hasDateRangeError && (
+                                    <small className="event-detail-input-error">
+                                        La date/heure de fin doit etre superieure
+                                        ou egale a la date/heure de debut.
+                                    </small>
+                                )}
                             </dd>
                         </div>
 
@@ -280,9 +370,17 @@ export default function EventDetailCard({
                                     onMouseDown={handleLocationMouseDown}
                                     onFocus={openLocationSuggestions}
                                     onClick={openLocationSuggestions}
-                                    onChange={(e) =>
-                                        updateField('location', e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                        const nextLocation = e.target.value
+                                        updateFields({
+                                            location: nextLocation,
+                                            selectedSalleIds:
+                                                getSalleIdsForLocation(
+                                                    nextLocation,
+                                                    salles,
+                                                ),
+                                        })
+                                    }}
                                 />
                                 <datalist id={EVENT_LOCATION_DATALIST_ID}>
                                     {roomLocationSuggestions.map(
@@ -294,6 +392,12 @@ export default function EventDetailCard({
                                         ),
                                     )}
                                 </datalist>
+                                {hasUnknownSalle && (
+                                    <small className="event-detail-input-error">
+                                        Cette salle n&apos;existe pas dans la base.
+                                        Selectionnez une salle de la liste.
+                                    </small>
+                                )}
                             </dd>
                         </div>
 
@@ -462,8 +566,8 @@ export default function EventDetailCard({
                 <div className="event-detail-footer">
                     <ActionButtonsWithConfirm
                         onCancel={handleRequestClose}
-                        onSave={() => void saveDraft()}
-                        onAfterSaveConfirm={isCreate ? onClose : undefined}
+                        onSave={saveDraft}
+                        onAfterSaveConfirm={onClose}
                         onDelete={isCreate ? undefined : onDelete}
                         hasChanges={hasChanges}
                         saveLabel={
@@ -530,15 +634,7 @@ export default function EventDetailCard({
                                 : 'Enregistrer et fermer'
                         }
                         cancelDirtyDiscardLabel="Fermer sans enregistrer"
-                        onBeforeSaveClick={() => {
-                            if (isCreate && !isValid) {
-                                window.alert(
-                                    CREATE_EVENT_REQUIRED_FIELDS_ALERT,
-                                )
-                                return false
-                            }
-                            return true
-                        }}
+                        onBeforeSaveClick={handleBeforeSaveClick}
                     />
                 </div>
             </DetailCardBody>

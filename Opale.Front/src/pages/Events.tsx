@@ -267,8 +267,13 @@ export default function Events() {
     const handleSaveEvent = async (
         event: Partial<CampusEvent>,
         salleIds: string[],
-    ) => {
-        if (!selectedEvent) return
+    ): Promise<SaveResult> => {
+        if (!selectedEvent) {
+            return {
+                success: false,
+                error: 'Aucun evenement selectionne.',
+            }
+        }
 
         const isCreate = detailMode === 'create' || event.id === 'new-event'
 
@@ -280,6 +285,10 @@ export default function Events() {
             startDate: event.startDate ?? selectedEvent.startDate,
             endDate: event.endDate ?? selectedEvent.endDate,
         })
+
+        const previousEventsState = eventsState
+        const previousSelectedEvent = selectedEvent
+        const previousDetailMode = detailMode
 
         setEventsState((prev) => {
             if (isCreate) return [...prev, nextEvent]
@@ -295,6 +304,10 @@ export default function Events() {
 
         if (!res.success) {
             console.error('[EVENTS] Save failed:', res.error)
+
+            setEventsState(previousEventsState)
+            setSelectedEvent(previousSelectedEvent)
+            setDetailMode(previousDetailMode)
         }
 
         return res
@@ -422,7 +435,14 @@ export default function Events() {
                     cycles={promotionCycles}
                     salles={salles}
                     mode={detailMode}
-                    onSave={handleSaveEvent}
+                    onSave={async (event, salleIds) => {
+                        return (
+                            (await handleSaveEvent(event, salleIds)) ?? {
+                                success: false,
+                                error: "Erreur inattendue lors de l'enregistrement.",
+                            }
+                        )
+                    }}
                     onClose={() => {
                         setSelectedEvent(null)
                         setDetailMode('edit')
