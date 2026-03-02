@@ -206,12 +206,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
 
                 {/* Constraint validation error */}
                 {!constraintValidation.isValid && (
-                    <div className="promo-mismatch-block" style={{ 
-                        backgroundColor: '#fff3cd', 
-                        borderColor: '#ffc107',
-                        padding: '12px',
-                        marginTop: '12px'
-                    }}>
+                    <div className="promo-mismatch-block valid-promo">
                         <p className="promo-mismatch" style={{ color: '#856404' }}>
                             <strong>Attention :</strong> Les contraintes suivantes sont en dehors de la période de la promotion 
                             ({formatDateLabel(editingPromo.startDate)} - {formatDateLabel(editingPromo.endDate)}) :{' '}

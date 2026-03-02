@@ -11,6 +11,7 @@ import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 import { ROOMS_MOCK } from '../../mocks/rooms.mock'
 import DateInput from '../common/DateInput'
+import {eventPageTypes} from "../../pages/Events.tsx";
 
 type SaveResult = { success: boolean; error?: string }
 
@@ -22,6 +23,15 @@ interface EventDetailCardProps {
     onClose: () => void
     onSave: (event: Partial<CampusEvent>, salleIds: string[]) => Promise<SaveResult>
 }
+
+export const constraintEventTypes: EventType[] = [
+    'Forum',
+    'JPO',
+    'Salon',
+    'Examen',
+    'Conference',
+    'Autre',
+]
 
 function formatDate(date: string | undefined): string {
     if (!date) return '-'
@@ -264,9 +274,9 @@ export default function EventDetailCard({
                                         )
                                     }
                                 >
-                                    {Object.entries(EVENT_TYPE_LABELS).map(([value, label]) => (
+                                    {eventPageTypes.map((value) => (
                                         <option key={value} value={value}>
-                                            {label}
+                                            {EVENT_TYPE_LABELS[value]}
                                         </option>
                                     ))}
                                 </select>

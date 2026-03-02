@@ -15,6 +15,7 @@ import SelectionToolbar from '../components/common/SelectionToolbar'
 import { useSelectionState } from '../hooks/common/useSelectionState'
 import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
 import { usePromotionCycles } from '../hooks/promotions/usePromotionCycles'
+import {EventType} from "../models/EventTypes.ts";
 
 interface MonthGroup {
     key: string
@@ -42,6 +43,15 @@ function mapEventToCampusEvent(event: Event): CampusEvent {
         type: event.type,
     }
 }
+
+export const eventPageTypes: EventType[] = [
+    'Forum',
+    'JPO',
+    'Salon',
+    'Examen',
+    'Conference',
+    'Autre',
+]
 
 const DEFAULT_EVENT_FILTERS: {
     searchValue: string
@@ -134,7 +144,7 @@ export default function Events() {
                 const response = await eventsApi.getEventsMacro()
                 if (response.data) {
                     // Mapper les événements du backend vers CampusEvent
-                    const mappedEvents = response.data.map(mapEventToCampusEvent)
+                    const mappedEvents = response.data.map(mapEventToCampusEvent).filter(e => e.type in eventPageTypes)
                     setEvents(mappedEvents)
                 }
             } catch (err) {
