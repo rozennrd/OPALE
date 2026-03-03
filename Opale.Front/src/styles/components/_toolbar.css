@@ -32,17 +32,23 @@
     }
 
     .page-toolbar-row--filters {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        display: flex;
+        flex-wrap: wrap;
         column-gap: var(--toolbar-item-gap);
         row-gap: var(--toolbar-item-gap);
         align-items: end;
         width: 100%;
+        justify-content: space-between;
     }
 
     .page-toolbar-row--filters .toolbar-reset-button {
         align-self: flex-end;
         justify-self: start;
+    }
+
+    .page-toolbar-row--filters > .toolbar-filter {
+        flex: 0 1 260px;
+        min-width: 220px;
     }
 
     /* ============================
