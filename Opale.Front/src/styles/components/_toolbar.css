@@ -57,7 +57,7 @@
 
     .toolbar-search {
         flex: 1;
-        min-width: 220px;
+        min-width: 200px;
         display: flex;
         align-items: center;
         gap: 0.5rem;
