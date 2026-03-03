@@ -62,11 +62,22 @@ export const usePromotionSync = () => {
     }
 
     /**
+     * Returns the ISO week number of a date string (YYYY-MM-DD)
+     */
+    const getWeekNumber = (dateStr: string): number => {
+        const date = new Date(dateStr)
+        const thursday = new Date(date)
+        thursday.setDate(date.getDate() + (4 - (date.getDay() || 7)))
+        const yearStart = new Date(thursday.getFullYear(), 0, 1)
+        return Math.ceil(((thursday.getTime() - yearStart.getTime()) / 86400000 + 1) / 7)
+    }
+
+    /**
      * Converts constraints to Event objects for API
      */
     const constraintsToEvents = (
         constraints: Constraints,
-        promoId: string
+        promoName: string
     ): Array<Omit<Event, 'id'> & { id?: string }> => {
         const events: Array<Omit<Event, 'id'> & { id?: string }> = []
 
@@ -78,7 +89,8 @@ export const usePromotionSync = () => {
                 events.push({
                     id: range.id?.startsWith('ctr-') ? undefined : range.id,
                     type: eventType,
-                    nom: `${eventType} - ${range.start} to ${range.end}`,
+                    nom: `${eventType} - ${promoName}`,
+                    num_semaine: range.start ? getWeekNumber(range.start) : undefined,
                     datetime_start: `${range.start}T00:00:00`,
                     datetime_end: `${range.end}T23:59:59`,
                     show_macro: true,
@@ -98,11 +110,12 @@ export const usePromotionSync = () => {
      */
     const syncEvents = async (
         promoId: string,
+        promoName: string,
         currentConstraints: Constraints,
         originalEvents: Event[]
     ): Promise<void> => {
         try {
-            const currentEvents = constraintsToEvents(currentConstraints, promoId)
+            const currentEvents = constraintsToEvents(currentConstraints, promoName)
 
             // Separate new and existing events
             const newEvents = currentEvents.filter(e => !e.id)
@@ -432,8 +445,14 @@ export const usePromotionSync = () => {
                 }
             }
 
+            // Fetch original events from backend before syncing (to detect deletions/updates)
+            const { events: fetchedOriginalEvents } = await fetchPromotionDetails(promo.promoId)
+
             // Sync events (constraints)
-            await syncEvents(promo.promoId, promo.constraints, originalEvents)
+            await syncEvents( promo.promoId,
+                promo.name,
+                promo.constraints,
+                fetchedOriginalEvents)
 
             // Update promotion metadata
             await promotionsApi.updatePromotion({

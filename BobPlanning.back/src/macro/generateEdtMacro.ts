@@ -1,18 +1,49 @@
 import ExcelJS from 'exceljs';
 import path from 'path';
-import { getWeekNumber, getPublicHolidays, getHolidays } from '../tools/holidaysAndWeek';
-import { EdtMacroData, Promos } from '../types/EdtMacroData';
+import {
+  getHolidays,
+  getPublicHolidays,
+  getWeekNumber,
+} from '../tools/holidaysAndWeek';
+import { EdtMacroData, EventMacro, Promos } from '../types/EdtMacroData';
+import { COLOR, FONT_NAME, getCycleColor } from './ColorTypeEvent';
 
 export const generateEdtMacro = async (data: EdtMacroData) => {
-
   //
   // ──────────────────────────────────────────────────────────────
   // ALIGNER LA DATE DE DÉBUT SUR UN LUNDI
   // ──────────────────────────────────────────────────────────────
   //
-  let currentDate = new Date(data.DateDeb);
-  if (currentDate.getDay() !== 1) {
-    currentDate.setDate(currentDate.getDate() - (currentDate.getDay() - 1));
+  const allStarts = data.Promos.map((p) =>
+    new Date(p.date_start).getTime(),
+  ).filter((t) => !isNaN(t));
+  const allEnds = data.Promos.map((p) => new Date(p.date_end).getTime()).filter(
+    (t) => !isNaN(t),
+  );
+
+  const computedStart =
+    allStarts.length > 0
+      ? new Date(Math.min(...allStarts))
+      : new Date(data.DateDeb);
+  const computedEnd =
+    allEnds.length > 0
+      ? new Date(Math.max(...allEnds))
+      : new Date(data.DateFin);
+
+  // ────────── ALIGNER LE DÉBUT AU LUNDI ──────────
+  let currentDate = new Date(computedStart);
+  const startDay = currentDate.getDay();
+  if (startDay !== 1) {
+    const diff = startDay === 0 ? -6 : 1 - startDay;
+    currentDate.setDate(currentDate.getDate() + diff);
+  }
+
+  // ────────── ALIGNER LA FIN AU VENDREDI ──────────
+  const dateFin = new Date(computedEnd);
+  const endDay = dateFin.getDay();
+  if (endDay !== 5) {
+    const diff = endDay === 0 ? 5 : 5 - endDay;
+    dateFin.setDate(dateFin.getDate() + diff);
   }
 
   //
@@ -21,8 +52,8 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
   // ──────────────────────────────────────────────────────────────
   //
   // Trouver la première promo de type Initial (référence CyPré)
-  const initialPromo = data.Promos.find(p =>
-    (p.type ?? "").toLowerCase() === "initial"
+  const initialPromo = data.Promos.find(
+    (p) => (p.type ?? '').toLowerCase() === 'initial',
   );
 
   // Point de départ CyPré : date_start alignée au premier lundi
@@ -40,6 +71,44 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
 
   //
   // ──────────────────────────────────────────────────────────────
+  // PRÉ-CALCUL COULEURS CYCLES
+  // Index couleur par cycle + année dans le cycle (dégradé getCycleColor)
+  // ──────────────────────────────────────────────────────────────
+  //
+  const cycleIds = [...new Set(data.Promos.map((p) => p.id_cycle))];
+
+  const cycleIndexMap: Record<string, number> = {};
+  cycleIds.forEach((id, idx) => {
+    cycleIndexMap[id] = idx;
+  });
+
+  const yearInCycleMap: Record<string, number> = {};
+  cycleIds.forEach((cycleId) => {
+    data.Promos.filter((p) => p.id_cycle === cycleId)
+      .sort(
+        (a, b) =>
+          new Date(a.date_start).getTime() - new Date(b.date_start).getTime(),
+      )
+      .forEach((p, idx) => {
+        yearInCycleMap[p.id] = idx;
+      });
+  });
+
+  //
+  // ──────────────────────────────────────────────────────────────
+  // TRI DES PROMOS : par cycle puis par date_start
+  // → garantit que les cycles sont côte à côte dans l'Excel
+  // ──────────────────────────────────────────────────────────────
+  //
+  const sortedPromos = [...data.Promos].sort((a, b) => {
+    const cDiff =
+      (cycleIndexMap[a.id_cycle] ?? 0) - (cycleIndexMap[b.id_cycle] ?? 0);
+    if (cDiff !== 0) return cDiff;
+    return new Date(a.date_start).getTime() - new Date(b.date_start).getTime();
+  });
+
+  //
+  // ──────────────────────────────────────────────────────────────
   // EXCEL SETUP
   // ──────────────────────────────────────────────────────────────
   //
@@ -47,31 +116,25 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
   const worksheet = workbook.addWorksheet('MultiPromo');
 
   const columns: any[] = [
-    { header: "Numéro de la semaine", key: "weekNumber", width: 18 },
-    { header: "La semaine commence le lundi :", key: "mondayDate", width: 20 },
-    { header: "Pedago dont jurys", key: "pedagoJury", width: 20 },
-    { header: "Jurys", key: "jury", width: 20 },
-    { header: "Jour fériés / congés", key: "holidays", width: 22 },
-    { header: "Semaine de cours num CyPré", key: "cypreWeek", width: 22 },
-    { header: "Nombre Epreuves surveillées semaine", key: "examsNumber", width: 25 },
-    { header: "Evenements Promo / RE / conf / salon", key: "events", width: 25 },
+    { header: 'Numéro de la semaine', key: 'weekNumber', width: 10 },
+    { header: 'La semaine commence le lundi :', key: 'mondayDate', width: 15 },
+    { header: 'Temps études, admin et comm', key: 'tempsEtudeAdminComm', width: 15,},
+    { header: 'Jurys', key: 'jury', width: 10 },
+    { header: 'Jour fériés / congés', key: 'holidays', width: 15 },
+    { header: 'Semaine de cours num CyPré', key: 'cypreWeek', width: 10 },
+    { header: 'Nombre Epreuves surveillées semaine', key: 'examsNumber', width: 18 },
+    { header: 'Evènements JUNIA', key: 'eventsJunia', width: 20 },
+    { header: 'Evènements hors JUNIA', key: 'eventsExternal', width: 20 },
   ];
 
-  //
-  // ──────────────────────────────────────────────────────────────
-  // AJOUT DES PROMOS EN COLONNES + TRI DES PÉRIODES
-  // ──────────────────────────────────────────────────────────────
-  //
-  data.Promos.forEach((promo: Promos) => {
-    columns.push({ header: promo.nom, key: promo.nom, width: 22 });
+  sortedPromos.forEach((promo: Promos) => {
+    columns.push({ header: promo.nom, key: promo.nom, width: 15 });
 
     if (promo.periode && promo.periode.length > 0) {
       promo.periode.sort(
         (a, b) =>
-          new Date(a.DateDebutP).getTime() -
-          new Date(b.DateDebutP).getTime()
+          new Date(a.DateDebutP).getTime() - new Date(b.DateDebutP).getTime(),
       );
-
     }
   });
 
@@ -79,20 +142,38 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
 
   const headerRow = worksheet.getRow(1);
   headerRow.height = 50;
-  worksheet.getCell('G1').fill = {
-    type: 'pattern',
-    pattern: 'solid',
-    fgColor: { argb: 'FF99FF99' },
-  };
+  headerRow.eachCell((cell) => {
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: COLOR.DATE_WEEK },
+    };
+    cell.font = {
+      name: FONT_NAME,
+      bold: true,
+      color: { argb: COLOR.TEXT_DEFAULT },
+    };
+  });
 
   //
   // ──────────────────────────────────────────────────────────────
   // VACANCES & JOURS FÉRIÉS
   // ──────────────────────────────────────────────────────────────
   //
-  const publicHolidays = await getPublicHolidays(data.DateDeb.getFullYear());
-  const holidays = await getHolidays("Bordeaux", data.DateDeb.getFullYear());
+  // ────────── CHARGER LES VACANCES SUR TOUTES LES ANNÉES ──────────
+  const startYear = currentDate.getFullYear();
+  const endYear = dateFin.getFullYear();
 
+  let publicHolidays: any = {};
+  let holidays: any[] = [];
+
+  for (let year = startYear; year <= endYear; year++) {
+    const ph = await getPublicHolidays(year);
+    const h = await getHolidays('Bordeaux', year);
+
+    publicHolidays = { ...publicHolidays, ...ph };
+    holidays = [...holidays, ...h];
+  }
 
   type Holiday = {
     start_date: string;
@@ -101,8 +182,6 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
   };
 
   // Tri vacances par date
-  let isPublicHolliday: boolean = false;
-
   const sortedHolidays: Holiday[] = holidays.sort(
     (a: Holiday, b: Holiday) =>
       new Date(a.start_date).getTime() - new Date(b.start_date).getTime(),
@@ -118,12 +197,11 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
   // BOUCLE PRINCIPALE SEMAINE PAR SEMAINE
   // ──────────────────────────────────────────────────────────────
   //
-  while (currentDate < data.DateFin) {
-
+  while (currentDate <= dateFin) {
     //
     // ────────── DÉTERMINATION DES VACANCES / JOURS FÉRIÉS ──────────
     //
-    let holidayDescription = "";
+    let holidayDescription = '';
     let isPublicHoliday = false;
 
     if (currentDate >= holidayStart && currentDate <= holidayEnd) {
@@ -152,85 +230,90 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
     //
     const rowData: any = {
       weekNumber: getWeekNumber(currentDate),
-      mondayDate: currentDate.toLocaleDateString("fr-FR"),
-      pedagoJury: "",
-      jury: "",
+      mondayDate: currentDate.toLocaleDateString('fr-FR'),
+      tempsEtudeAdminComm: '',
+      jury: '',
       holidays: holidayDescription,
-      cypreWeek: "",
-      examsNumber: "",
-      events: "",
+      cypreWeek: '',
+      examsNumber: '',
+      eventsJunia: '',
+      eventsExternal: '',
     };
 
     const promosEnCours: string[] = [];
 
+    // Bornes de la semaine (lundi → dimanche)
+    const weekStart = new Date(currentDate);
+    const weekEnd = new Date(currentDate);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+
     //
     // ────────── LOGIQUE PAR PROMO ──────────
     //
-    data.Promos.forEach(promo => {
+    sortedPromos.forEach((promo) => {
       const periodes = promo.periode ?? [];
-
-      // Bornes de la semaine (lundi → dimanche)
-      const weekStart = new Date(currentDate);
-      const weekEnd = new Date(currentDate);
-      weekEnd.setDate(weekEnd.getDate() + 6);
 
       //
       // 1) Aucune période définie pour cette promo
       //
       if (periodes.length === 0) {
-        if (promo.type === "Initial") {
-          // Initial : vacances visibles
-          if (holidayDescription.includes("Vacances")) {
-            rowData[promo.nom] = "VACANCES";
+        if (promo.type === 'Initial') {
+          if (holidayDescription.includes('Vacances')) {
+            rowData[promo.nom] = 'VACANCES';
           } else {
-            rowData[promo.nom] = "";
-            promosEnCours.push(promo.nom); // cours
+            rowData[promo.nom] = '';
+            promosEnCours.push(promo.nom);
           }
         } else {
           // Apprentissage : jamais de vacances, cours par défaut
-          rowData[promo.nom] = "";
+          rowData[promo.nom] = '';
           promosEnCours.push(promo.nom);
         }
         return;
       }
 
       //
-      // 2) On cherche une période active qui recouvre AU MOINS une partie de la semaine
+      // 2) Période active cette semaine
       //
-      const active = periodes.find(p => {
+      const active = periodes.find((p) => {
         const start = new Date(p.DateDebutP);
         const end = new Date(p.DateFinP);
         return end >= weekStart && start <= weekEnd;
       });
 
-      //
-      // 3) Cas : il y a un évènement actif cette semaine
-      //
       if (active) {
         const t = active.type.toLowerCase();
 
-        if (t.includes("rattrapage")) {
-          // "Rattrapage semestre 1 ou 3", etc.
+        if (t.includes('rattrapage')) {
           rowData[promo.nom] = active.type;
           return;
-        } else if (t.includes("stage")) {
-          // "Stage Exécutant 1 mois" / "Stage International Break 2 mois"
+        } else if (
+          t.includes('examen') ||
+          t.includes('partiel') ||
+          t.includes('jury')
+        ) {
           rowData[promo.nom] = active.type;
-        } else if (t.includes("mobilité")) {
-          rowData[promo.nom] = active.type; // "Mobilité internationale"
-        } else if (t.includes("projet de fin") || t.includes("pfe")) {
+          return;
+        } else if (t.includes('stage')) {
+          rowData[promo.nom] = active.type;
+        } else if (
+          t.includes('mobilité') ||
+          t.includes('mobilite') ||
+          t.includes('international')
+        ) {
+          rowData[promo.nom] = active.type;
+        } else if (t.includes('projet de fin') || t.includes('pfe')) {
           const end = new Date(active.DateFinP);
-
           if (end >= weekStart && end <= weekEnd) {
-            rowData[promo.nom] = "Soutenance";
+            rowData[promo.nom] = 'Soutenance';
           } else {
-            rowData[promo.nom] = active.type; // "Projet de fin d'études"
+            rowData[promo.nom] = active.type;
           }
-        } else if (t.includes("entreprise")) {
-          rowData[promo.nom] = active.type; // "Entreprise"
+        } else if (t.includes('entreprise')) {
+          rowData[promo.nom] = active.type;
         } else {
-          // Évènement inconnu → on considère que c'est une semaine de cours
-          rowData[promo.nom] = "";
+          // Période inconnue → cours
+          rowData[promo.nom] = '';
           promosEnCours.push(promo.nom);
         }
 
@@ -238,33 +321,83 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
       }
 
       //
-      // 4) Cas : aucun évènement actif cette semaine
+      // 3) Aucune période active → cours ou vacances
       //
-      if (promo.type === "Initial") {
-        if (holidayDescription.includes("Vacances")) {
-          rowData[promo.nom] = "VACANCES";
+      if (promo.type === 'Initial') {
+        if (holidayDescription.includes('Vacances')) {
+          rowData[promo.nom] = 'VACANCES';
         } else {
-          rowData[promo.nom] = "";
-          promosEnCours.push(promo.nom); // cours
+          rowData[promo.nom] = '';
+          promosEnCours.push(promo.nom);
         }
       } else {
-        // Apprentissage : pas de vacances → cours
-        rowData[promo.nom] = "";
+        rowData[promo.nom] = '';
         promosEnCours.push(promo.nom);
       }
     });
 
+    //
+    // ────────── EVENTS MACRO de la semaine ──────────
+    // Events sans promo → colonne "events" (globale)
+    // Events avec promo → colonne de la promo concernée
+    //
+    const eventsThisWeek: EventMacro[] = (data.EventsMacro ?? []).filter(
+      (ev: EventMacro) => {
+        const s = new Date(ev.datetime_start);
+        const e = new Date(ev.datetime_end);
+        return e >= weekStart && s <= weekEnd;
+      },
+    );
 
+    // Events globaux (aucune promo associée)
+    const globalEvents = eventsThisWeek.filter(
+      (ev: EventMacro) => !ev.promotions || ev.promotions.length === 0,
+    );
 
+    if (globalEvents.length > 0) {
+      const juniaNames: string[] = [];
+      const externalNames: string[] = [];
+
+      globalEvents.forEach((ev: EventMacro) => {
+        const cleanName = ev.nom.split(' - ')[0];
+
+        if (ev.is_external) {
+          externalNames.push(cleanName);
+        } else {
+          juniaNames.push(cleanName);
+        }
+      });
+
+      rowData.eventsJunia = juniaNames.join('\n');
+      rowData.eventsExternal = externalNames.join('\n');
+    }
+
+    // Events liés à une promo → écrire dans la colonne de la promo
+    // Events liés à une promo → écrire dans la colonne de la promo
+    eventsThisWeek.forEach((ev: EventMacro) => {
+      if (ev.promotions && ev.promotions.length > 0) {
+        ev.promotions.forEach((promoId: string) => {
+          const promo = sortedPromos.find((p) => p.id === promoId);
+          if (promo) {
+            const existing = rowData[promo.nom] ?? '';
+            const cleanName = ev.nom.split(' - ')[0];
+
+            // Vérifier si le nom est déjà présent pour éviter doublon
+            const existingLines = existing.split('\n');
+            if (!existingLines.includes(cleanName)) {
+              rowData[promo.nom] = existing ? existing + '\n' + cleanName : cleanName;
+            }
+          }
+        });
+      }
+    });
 
     //
-// ────────── CYPRE : semaine numérotée pour les cycles Initiaux ──────────
-//
+    // ────────── CYPRE : semaine numérotée pour les cycles Initiaux ──────────
+    //
     if (cyPreStart && currentDate >= cyPreStart) {
-
       // 1) Semaine active = pas vacances
-      if (!holidayDescription.includes("Vacances")) {
-
+      if (!holidayDescription.includes('Vacances')) {
         // On avance de 1
         cyPreWeekCount++;
 
@@ -273,10 +406,10 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
 
         rowData.cypreWeek = `Se${displayWeek}`;
       } else {
-        rowData.cypreWeek = "";
+        rowData.cypreWeek = '';
       }
     } else {
-      rowData.cypreWeek = "";
+      rowData.cypreWeek = '';
     }
 
     //
@@ -284,50 +417,148 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
     //
     const row = worksheet.addRow(rowData);
 
-    //
-    // Couleurs : Soutenance
-    //
-    data.Promos.forEach(promo => {
-      if (rowData[promo.nom] === "Soutenance") {
-        row.getCell(promo.nom).fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FFFF99CC' },
-        };
-        row.getCell(promo.nom).font = { bold: true };
-      }
-    });
+    // Fond violet — N° semaine + date lundi (chaque ligne data)
+    row.getCell('weekNumber').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: COLOR.DATE_WEEK },
+    };
+    row.getCell('mondayDate').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: COLOR.DATE_WEEK },
+    };
 
     //
-    // Couleurs : Rattrapage
+    // Couleurs : vacances zone Bordeaux (colonne holidays)
     //
-    data.Promos.forEach(promo => {
-      if (rowData[promo.nom]?.toLowerCase().includes("rattrapage")) {
-        row.getCell(promo.nom).fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FFFFFF00' },
-        };
-        row.getCell(promo.nom).font = { bold: true };
-      }
-    });
-
-    //
-    // Couleurs : cours (vert)
-    //
-    promosEnCours.forEach(nom => {
-      row.getCell(nom).fill = {
+    if (holidayDescription.includes('Vacances')) {
+      row.getCell('holidays').fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'FF99FF99' },
+        fgColor: { argb: COLOR.VAC_BDX },
       };
+      row.getCell('holidays').font = {
+        name: FONT_NAME,
+        color: { argb: COLOR.TEXT_DEFAULT },
+      };
+    }
+    if (isPublicHoliday) {
+      row.getCell('holidays').font = {
+        name: FONT_NAME,
+        bold: true,
+        color: { argb: COLOR.JOUR_FERIE_FG },
+      };
+    }
+
+    //
+    // Couleurs promos — on parcourt sortedPromos (même ordre que les colonnes)
+    //
+    sortedPromos.forEach((promo) => {
+      const val = (rowData[promo.nom] ?? '').toLowerCase();
+
+      if (rowData[promo.nom] === 'VACANCES') {
+        // Vacances
+        row.getCell(promo.nom).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: COLOR.VAC_BDX },
+        };
+        row.getCell(promo.nom).font = {
+          name: FONT_NAME,
+          italic: true,
+          color: { argb: COLOR.TEXT_DEFAULT },
+        };
+      } else if (val.includes('entreprise')) {
+        // Entreprise
+        row.getCell(promo.nom).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: COLOR.ENTREPRISE },
+        };
+        row.getCell(promo.nom).font = {
+          name: FONT_NAME,
+          color: { argb: COLOR.TEXT_DEFAULT },
+        };
+      } else if (
+        val.includes('stage') ||
+        val.includes('mobilité') ||
+        val.includes('mobilite') ||
+        val.includes('international')
+      ) {
+        // Stage / Mobilité
+        row.getCell(promo.nom).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: COLOR.STAGE_MOBILITY },
+        };
+        row.getCell(promo.nom).font = {
+          name: FONT_NAME,
+          color: { argb: COLOR.TEXT_DEFAULT },
+        };
+      } else if (
+        val.includes('rattrapage') ||
+        val.includes('examen') ||
+        val.includes('partiel') ||
+        val.includes('jury') ||
+        rowData[promo.nom] === 'Soutenance'
+      ) {
+        // Partiels, rattrapages, jurys, soutenances → ALERT_RED
+        row.getCell(promo.nom).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: COLOR.ALERT_RED },
+        };
+        row.getCell(promo.nom).font = {
+          name: FONT_NAME,
+          bold: true,
+          color: { argb: COLOR.TEXT_WHITE },
+        };
+      } else if (promosEnCours.includes(promo.nom)) {
+        // Cours → couleur cycle
+        const cycleIndex = cycleIndexMap[promo.id_cycle] ?? 0;
+        const yearIndex = yearInCycleMap[promo.id] ?? 0;
+        row.getCell(promo.nom).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: getCycleColor(cycleIndex, yearIndex) },
+        };
+        row.getCell(promo.nom).font = {
+          name: FONT_NAME,
+          color: { argb: COLOR.TEXT_DEFAULT },
+        };
+      }
     });
 
     //
-    // Couleur jours fériés
+    // Couleur evenements JUNIA vs EXTERNES
     //
-    if (isPublicHoliday) {
-      row.getCell("holidays").font = { color: { argb: "FF0000" } };
+    // Colonne JUNIA
+    if (rowData.eventsJunia) {
+      row.getCell('eventsJunia').fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: COLOR.EVENT_JUNIA },
+      };
+
+      row.getCell('eventsJunia').font = {
+        name: FONT_NAME,
+        color: { argb: COLOR.TEXT_DEFAULT },
+      };
+    }
+
+    // Colonne EXTERNAL
+    if (rowData.eventsExternal) {
+      row.getCell('eventsExternal').fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: COLOR.EVENT_OTHER },
+      };
+
+      row.getCell('eventsExternal').font = {
+        name: FONT_NAME,
+        color: { argb: COLOR.TEXT_DEFAULT },
+      };
     }
 
     //
@@ -339,8 +570,8 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
   //
   // ────────── BORDURES ──────────
   //
-  worksheet.eachRow(row => {
-    row.eachCell(cell => {
+  worksheet.eachRow((row) => {
+    row.eachCell((cell) => {
       cell.border = {
         top: { style: 'thin' },
         left: { style: 'thin' },
@@ -349,6 +580,29 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
       };
     });
   });
+
+  //
+  // ────────── MISE EN FORME GLOBALE ──────────
+  //
+
+  // Centrer + retour à la ligne sur toutes les cellules
+  worksheet.eachRow((row) => {
+    row.eachCell((cell) => {
+      cell.alignment = {
+        vertical: 'middle',
+        horizontal: 'center',
+        wrapText: true,
+      };
+    });
+  });
+
+  // Zoom automatique (80% par défaut, stable)
+  worksheet.views = [
+    {
+      state: 'normal',
+      zoomScale: 75,
+    },
+  ];
 
   //
   // ────────── EXPORT EXCEL ──────────

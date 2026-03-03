@@ -3,6 +3,7 @@
 import { apiClient } from '../base/ApiClient'
 import { ApiResponse } from '../base/types'
 
+// TODO: clean-up => TypeEvent is redondant with EventType (EventTypes.ts)
 // Event types matching backend
 export type TypeEvent =
     | 'Cours'
@@ -22,6 +23,7 @@ export type TypeEvent =
     | 'Journée Immersion'
     | 'Concours'
     | 'Salon'
+    | 'Forum'
     | 'Fin des cours'
     | 'Autre'
 
