@@ -5,7 +5,9 @@
     .page-toolbar {
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        --toolbar-item-gap: 0.75rem;
+        --toolbar-row-gap: var(--toolbar-item-gap);
+        row-gap: var(--toolbar-row-gap);
         padding: 0.75rem;
         border-radius: 1rem;
         background: var(--panel, #ffffff);
@@ -15,7 +17,8 @@
     .page-toolbar-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.75rem;
+        column-gap: var(--toolbar-item-gap);
+        row-gap: var(--toolbar-item-gap);
         align-items: center;
     }
 
@@ -31,13 +34,15 @@
     .page-toolbar-row--filters {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 0.75rem;
+        column-gap: var(--toolbar-item-gap);
+        row-gap: var(--toolbar-item-gap);
         align-items: end;
         width: 100%;
     }
 
     .page-toolbar-row--filters .toolbar-reset-button {
         align-self: flex-end;
+        justify-self: start;
     }
 
     /* ============================

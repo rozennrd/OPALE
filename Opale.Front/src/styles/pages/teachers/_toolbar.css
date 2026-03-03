@@ -13,11 +13,10 @@
     .teachers-toolbar-filters {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: var(--toolbar-item-gap);
         flex-wrap: wrap;
-        flex-shrink: 0;
-        min-width: 220px;
-        flex: 1 1 360px;
+        flex: 0 1 auto;
+        min-width: 0;
     }
 
     .teachers-toolbar-subjects {
