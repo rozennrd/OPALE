@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { CampusEvent } from '../../models/CampusEvent'
 import { EventType, EVENT_TYPE_LABELS } from '../../models/EventTypes'
 import { useEventDetail } from '../../hooks/events/useEventDetail'
