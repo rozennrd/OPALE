@@ -1,24 +1,20 @@
-import React, { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import TeachersToolbar, { ModeFilter } from '../components/teachers/TeachersToolbar'
 import TeacherSection from '../components/teachers/TeacherSection'
 import TeacherDetailCard from '../components/teachers/TeacherDetailCard'
 import SelectionToolbar from '../components/common/SelectionToolbar'
 
-import {
-    INTERNAL_TEACHERS_MOCK,
-    VACATAIRE_TEACHERS_MOCK,
-} from '../mocks/teachers.mock'
-import { MATIERES_MOCK } from '../mocks/matieres.mock'
+import { getProfsData } from '../services/api/professorsApi'
+import { getEnseignements } from '../services/api/enseignementsApi'
+import { getMatieres } from '../services/api/matieresApi'
+import { promotionsApi } from '../services/api/promotionsApi'
+import { getDisponibilites } from '../services/api/disponibilitesApi'
 
-import { Teacher } from '../models/Teacher'
+import { Teacher, TeacherAvailabilityPeriod } from '../models/Teachers'
 import PageHeader from '../components/common/PageHeader'
 import { useSelectionState } from '../hooks/common/useSelectionState'
 import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
 
-const INITIAL_TEACHERS: Teacher[] = [
-    ...INTERNAL_TEACHERS_MOCK,
-    ...VACATAIRE_TEACHERS_MOCK,
-]
 const DEFAULT_TEACHERS_FILTERS: {
     searchValue: string
     modeFilter: ModeFilter
@@ -29,12 +25,156 @@ const DEFAULT_TEACHERS_FILTERS: {
     subjectFilter: '',
 }
 
+const getIsoWeekDateRange = (
+    weekNumber: number,
+    year: number,
+): { start: string; end: string } => {
+    const jan4 = new Date(Date.UTC(year, 0, 4))
+    const jan4Day = jan4.getUTCDay() || 7
+    const mondayWeek1 = new Date(jan4)
+    mondayWeek1.setUTCDate(jan4.getUTCDate() - (jan4Day - 1))
+
+    const monday = new Date(mondayWeek1)
+    monday.setUTCDate(mondayWeek1.getUTCDate() + (weekNumber - 1) * 7)
+
+    const friday = new Date(monday)
+    friday.setUTCDate(monday.getUTCDate() + 4)
+
+    const toIso = (d: Date) => d.toISOString().slice(0, 10)
+    return {
+        start: toIso(monday),
+        end: toIso(friday),
+    }
+}
+
 export default function Teachers() {
-    const [teachers, setTeachers] = useState<Teacher[]>(() => [...INITIAL_TEACHERS])
+    const [teachers, setTeachers] = useState<Teacher[]>([])
     const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null)
     const [searchValue, setSearchValue] = useState('')
     const [modeFilter, setModeFilter] = useState<ModeFilter>('ALL')
     const [subjectFilter, setSubjectFilter] = useState('')
+
+    useEffect(() => {
+        let mounted = true
+
+        const normalizeCategory = (
+            value?: string,
+        ): 'Permanent' | 'Intervenant' | 'Invite' => {
+            const raw = (value ?? '').trim().toLowerCase()
+            if (raw === 'intervenant') return 'Intervenant'
+            if (raw === 'invité' || raw === 'invite') return 'Invite'
+            if (raw === 'permanent' || raw === 'interne') return 'Permanent'
+            return 'Permanent'
+        }
+
+        ;(async () => {
+            try {
+                const [apiTeachers, enseignementsRes, matieres, promotionsRes] = await Promise.all([
+                    getProfsData(),
+                    getEnseignements(),
+                    getMatieres(),
+                    promotionsApi.getPromotions(),
+                ])
+
+                const disponibilitesRes = await getDisponibilites()
+
+                console.log(apiTeachers)
+
+                if (!mounted) return
+
+                const promoLabelById = new Map<string, string>()
+                for (const p of promotionsRes.data ?? []) {
+                    promoLabelById.set(String(p.id), p.nom)
+                }
+
+                const matiereById = new Map<string, { nom: string; promoLabel: string }>()
+                for (const m of matieres ?? []) {
+                    matiereById.set(String(m.id), {
+                        nom: m.nom ?? '',
+                        promoLabel: promoLabelById.get(String(m.id_promo ?? '')) ?? '',
+                    })
+                }
+
+                const teacherSubjectsById = new Map<string, Teacher['subjects']>()
+                for (const e of enseignementsRes.data ?? []) {
+                    const profId = String(e.id_prof)
+                    const matiereInfo = matiereById.get(String(e.id_matiere))
+                    if (!matiereInfo) continue
+
+                    const existing = teacherSubjectsById.get(profId) ?? []
+                    const alreadyExists = existing.some(
+                        (s) =>
+                            s.name.toLowerCase() === matiereInfo.nom.toLowerCase() &&
+                            s.promo.toLowerCase() === matiereInfo.promoLabel.toLowerCase(),
+                    )
+                    if (!alreadyExists) {
+                        existing.push({ name: matiereInfo.nom, promo: matiereInfo.promoLabel })
+                    }
+                    teacherSubjectsById.set(profId, existing)
+                }
+
+                const teacherPeriodsById = new Map<string, TeacherAvailabilityPeriod[]>()
+                const disponibilites = disponibilitesRes.success
+                    ? disponibilitesRes.data ?? []
+                    : []
+                const currentYear = new Date().getUTCFullYear()
+
+                for (const dispo of disponibilites) {
+                    const profId = String(dispo.id_prof)
+                    const week = Number(dispo.num_semaine)
+                    const { start, end } = getIsoWeekDateRange(week, currentYear)
+                    const micro =
+                        typeof dispo.dispo_micro === 'string' && dispo.dispo_micro.length === 10
+                            ? dispo.dispo_micro
+                            : '0000000000'
+
+                    const existing = teacherPeriodsById.get(profId) ?? []
+                    existing.push({
+                        id: `dispo-${String(dispo.id)}`,
+                        label: `Semaine ${week}`,
+                        availability: micro,
+                        start,
+                        end,
+                    })
+                    teacherPeriodsById.set(profId, existing)
+                }
+
+                for (const [profId, periods] of teacherPeriodsById.entries()) {
+                    periods.sort((a, b) => {
+                        const aWeek = Number(a.label.replace('Semaine ', ''))
+                        const bWeek = Number(b.label.replace('Semaine ', ''))
+                        return aWeek - bWeek
+                    })
+                    teacherPeriodsById.set(profId, periods)
+                }
+
+                const mappedTeachers: Teacher[] = (apiTeachers ?? []).map((teacher) => ({
+                    id: String(teacher.id),
+                    firstName: teacher.prenom ?? '',
+                    lastName: teacher.nom ?? '',
+                    phone: teacher.telephone ?? '',
+                    email: teacher.email_perso ?? '',
+                    emailJunia: teacher.email ?? '',
+                    campus: teacher.campus_origin ?? 'Bordeaux',
+                    category: normalizeCategory(teacher.type),
+                    mode: teacher.modalite_enseignement ?? 'Présentiel',
+                    subjects: teacherSubjectsById.get(String(teacher.id)) ?? teacher.subjects ?? [],
+                    availability: teacher.availability ?? '0000000000',
+                    availabilityPeriods: teacherPeriodsById.get(String(teacher.id)) ?? [],
+                }))
+
+                setTeachers(mappedTeachers)
+            } catch (error) {
+                console.error('[TEACHERS] load failed:', error)
+                if (!mounted) return
+                setTeachers([])
+            }
+        })()
+
+        return () => {
+            mounted = false
+        }
+    }, [])
 
     const {
         selectionMode,
@@ -57,7 +197,7 @@ export default function Teachers() {
         () =>
             teachers.filter(
                 (teacher) =>
-                    teacher.category === 'INTERNE' &&
+                    teacher.category === 'Permanent' &&
                     teacher.campus?.toLowerCase().includes('bordeaux'),
             ),
         [teachers],
@@ -67,14 +207,19 @@ export default function Teachers() {
         () =>
             teachers.filter(
                 (teacher) =>
-                    teacher.category === 'INTERNE' &&
+                    teacher.category === 'Permanent' &&
                     !teacher.campus?.toLowerCase().includes('bordeaux'),
             ),
         [teachers],
     )
 
-    const vacataires = useMemo(
-        () => teachers.filter((teacher) => teacher.category === 'VACATAIRE'),
+    const intervenants = useMemo(
+        () => teachers.filter((teacher) => teacher.category === 'Intervenant'),
+        [teachers],
+    )
+
+    const invites = useMemo(
+        () => teachers.filter((teacher) => teacher.category === 'Invite'),
         [teachers],
     )
 
@@ -87,17 +232,20 @@ export default function Teachers() {
             email: '',
             emailJunia: '',
             campus: 'Bordeaux',
-            category: 'INTERNE',
-            mode: 'PRESENTIEL',
+            category: 'Permanent',
+            mode: 'Présentiel',
             subjects: [],
             availability: '0000000000',
         })
     }
 
     const subjectOptions = useMemo(() => {
-        const names = MATIERES_MOCK.map((matiere) => matiere.nom.trim())
+        const names = teachers
+            .flatMap((teacher) => teacher.subjects || [])
+            .map((subject) => subject.name.trim())
+            .filter(Boolean)
         return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b))
-    }, [])
+    }, [teachers])
 
     const filteredTeachers = (list: Teacher[]) => {
         const needle = searchValue.trim().toLowerCase()
@@ -119,7 +267,8 @@ export default function Teachers() {
 
     const filteredInternalBordeaux = filteredTeachers(internalBordeaux)
     const filteredInternalLilleChateauroux = filteredTeachers(internalLilleChateauroux)
-    const filteredVacataires = filteredTeachers(vacataires)
+    const filteredVacataires = filteredTeachers(intervenants)
+    const filteredInvited = filteredTeachers(invites)
 
     const {
         hasActiveFilters,
@@ -169,11 +318,32 @@ export default function Teachers() {
         disableTeacherSelectionMode()
     }
 
+    const handleTeacherUpdated = (updatedTeacher: Teacher) => {
+        setTeachers((prev) => {
+            const existingIndex = prev.findIndex(
+                (teacher) => teacher.id === updatedTeacher.id,
+            )
+
+            if (existingIndex >= 0) {
+                return prev.map((teacher) =>
+                    teacher.id === updatedTeacher.id ? { ...updatedTeacher } : teacher,
+                )
+            }
+
+            return [...prev, { ...updatedTeacher }]
+        })
+
+        setSelectedTeacher((prev) => {
+            if (!prev) return prev
+            return { ...updatedTeacher }
+        })
+    }
+
     return (
         <>
             <PageHeader
                 title="Enseignants"
-                subtitle="Gestion des enseignants (internes & vacataires)"
+                subtitle="Gestion des enseignants (permanents & intervenants)"
             />
 
             <div className="teachers-page">
@@ -236,6 +406,16 @@ export default function Teachers() {
                             onToggleTeacherSelection={toggleTeacherSelection}
                         />
                     )}
+                    {filteredInvited.length > 0 && (
+                        <TeacherSection
+                            title="Invités ponctuels"
+                            teachers={filteredInvited}
+                            onSelectTeacher={setSelectedTeacher}
+                            selectionMode={selectionMode}
+                            selectedTeacherIds={selectedTeacherIdsSet}
+                            onToggleTeacherSelection={toggleTeacherSelection}
+                        />
+                    )}
                 </div>
             </div>
 
@@ -243,6 +423,7 @@ export default function Teachers() {
                 <TeacherDetailCard
                     teacher={selectedTeacher}
                     onClose={() => setSelectedTeacher(null)}
+                    onTeacherUpdated={handleTeacherUpdated}
                     onDelete={
                         selectedTeacher.id === 'new-teacher'
                             ? undefined

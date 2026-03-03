@@ -50,7 +50,7 @@ const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
         const excelFiles = filterExcelFiles(files)
         if (excelFiles.length === 0) {
             console.warn(
-                '[CycleImportDropzone] Aucun fichier Excel détecté dans la sélection',
+                '[CycleImportDropzone] Aucun fichier Excel detecte dans la selection',
                 files,
             )
             return

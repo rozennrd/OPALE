@@ -1,6 +1,5 @@
 // src/components/teachers/TeacherCardsGrid.tsx
-import React from 'react'
-import { Teacher } from '../../models/Teacher'
+import { Teacher } from '../../models/Teachers'
 import TeacherCard from './TeacherCard'
 
 interface TeacherCardsGridProps {

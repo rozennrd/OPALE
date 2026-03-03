@@ -1,6 +1,6 @@
 // src/components/teachers/section/TeacherAvailabilityColumn.tsx
-import React, { useMemo } from 'react'
-import { TeacherAvailabilityPeriod } from '../../../models/Teacher'
+import { useMemo } from 'react'
+import { TeacherAvailabilityPeriod } from '../../../models/Teachers'
 import { DateRange } from '../../../models'
 import DateRangePill from '../../common/DateRangePill'
 
@@ -21,19 +21,20 @@ const normalizeAvailability = (value?: string): string => {
     return value
 }
 
-const TeacherAvailabilityColumn: React.FC<TeacherAvailabilityColumnProps> = ({
-                                                                                 periods,
-                                                                                 selectedPeriodId,
-                                                                                 onSelectPeriod,
-                                                                                 onAddPeriod,
-                                                                                 onRemovePeriod,
-                                                                                 onToggleSlot,
-                                                                                 onPeriodDateChange,
-                                                                             }) => {
+const TeacherAvailabilityColumn = ({
+    periods,
+    selectedPeriodId,
+    onSelectPeriod,
+    onAddPeriod,
+    onRemovePeriod,
+    onToggleSlot,
+    onPeriodDateChange,
+}: TeacherAvailabilityColumnProps) => {
     const selectedPeriod = useMemo(
         () => periods.find((p) => p.id === selectedPeriodId) ?? periods[0],
         [periods, selectedPeriodId],
     )
+    const activePeriodId = selectedPeriod?.id ?? null
     const sortedPeriods = useMemo(() => {
         const entries = periods.map((period, index) => ({
             period,
@@ -71,24 +72,7 @@ const TeacherAvailabilityColumn: React.FC<TeacherAvailabilityColumnProps> = ({
         end: selectedPeriod.end || '',
     }
 
-    const buildPeriodLabel = (period: TeacherAvailabilityPeriod) => {
-        const formatDate = (value?: string) => {
-            if (!value) return ''
-            const parts = value.split('-')
-            if (parts.length === 3) {
-                return `${parts[2]}/${parts[1]}/${parts[0]}`
-            }
-            return value
-        }
-        if (!period.start && !period.end) return period.label
-        if (period.start && period.end) {
-            return `${formatDate(period.start)} - ${formatDate(period.end)}`
-        }
-        if (period.start) {
-            return formatDate(period.start)
-        }
-        return formatDate(period.end)
-    }
+    const buildPeriodLabel = (period: TeacherAvailabilityPeriod) => period.label
 
     return (
         <div className="teacher-detail-col">
@@ -103,7 +87,7 @@ const TeacherAvailabilityColumn: React.FC<TeacherAvailabilityColumnProps> = ({
                             key={period.id}
                             className={
                                 'teacher-period-pill' +
-                                (period.id === selectedPeriodId ? ' is-active' : '')
+                                (period.id === activePeriodId ? ' is-active' : '')
                             }
                         >
                             <button
@@ -152,51 +136,53 @@ const TeacherAvailabilityColumn: React.FC<TeacherAvailabilityColumnProps> = ({
             </div>
 
             {/* Tableau 6x3 */}
-            <div className="teacher-availability-grid">
-                <div className="ta-empty"></div>
-                <div className="ta-day">Lun</div>
-                <div className="ta-day">Mar</div>
-                <div className="ta-day">Mer</div>
-                <div className="ta-day">Jeu</div>
-                <div className="ta-day">Ven</div>
+            <div className="teacher-availability-scroll">
+                <div className="teacher-availability-grid">
+                    <div className="ta-empty"></div>
+                    <div className="ta-day">Lun</div>
+                    <div className="ta-day">Mar</div>
+                    <div className="ta-day">Mer</div>
+                    <div className="ta-day">Jeu</div>
+                    <div className="ta-day">Ven</div>
 
-                <div className="ta-label">Matin</div>
-                {DAYS.map((_, i) => {
-                    const slotIndex = i * 2
-                    const isAvailable = availabilityForSelected[slotIndex] === '1'
-                    return (
-                        <button
-                            key={`m-${i}`}
-                            type="button"
-                            className={`ta-cell ${
-                                isAvailable ? 'is-available' : 'is-unavailable'
-                            }`}
-                            onClick={() => onToggleSlot(slotIndex)}
-                            aria-label={`${DAYS[i]} matin : ${
-                                isAvailable ? 'disponible' : 'non disponible'
-                            }`}
-                        />
-                    )
-                })}
+                    <div className="ta-label">Matin</div>
+                    {DAYS.map((_, i) => {
+                        const slotIndex = i * 2
+                        const isAvailable = availabilityForSelected[slotIndex] === '1'
+                        return (
+                            <button
+                                key={`m-${i}`}
+                                type="button"
+                                className={`ta-cell ${
+                                    isAvailable ? 'is-available' : 'is-unavailable'
+                                }`}
+                                onClick={() => onToggleSlot(slotIndex)}
+                                aria-label={`${DAYS[i]} matin : ${
+                                    isAvailable ? 'disponible' : 'non disponible'
+                                }`}
+                            />
+                        )
+                    })}
 
-                <div className="ta-label">Après-midi</div>
-                {DAYS.map((_, i) => {
-                    const slotIndex = i * 2 + 1
-                    const isAvailable = availabilityForSelected[slotIndex] === '1'
-                    return (
-                        <button
-                            key={`a-${i}`}
-                            type="button"
-                            className={`ta-cell ${
-                                isAvailable ? 'is-available' : 'is-unavailable'
-                            }`}
-                            onClick={() => onToggleSlot(slotIndex)}
-                            aria-label={`${DAYS[i]} après-midi : ${
-                                isAvailable ? 'disponible' : 'non disponible'
-                            }`}
-                        />
-                    )
-                })}
+                    <div className="ta-label">Après-midi</div>
+                    {DAYS.map((_, i) => {
+                        const slotIndex = i * 2 + 1
+                        const isAvailable = availabilityForSelected[slotIndex] === '1'
+                        return (
+                            <button
+                                key={`a-${i}`}
+                                type="button"
+                                className={`ta-cell ${
+                                    isAvailable ? 'is-available' : 'is-unavailable'
+                                }`}
+                                onClick={() => onToggleSlot(slotIndex)}
+                                aria-label={`${DAYS[i]} après-midi : ${
+                                    isAvailable ? 'disponible' : 'non disponible'
+                                }`}
+                            />
+                        )
+                    })}
+                </div>
             </div>
 
             <div className="teacher-availability-legend">

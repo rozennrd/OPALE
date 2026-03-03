@@ -112,23 +112,24 @@
         position: absolute;
         top: 0.58rem;
         left: 0.6rem;
-        width: 1.1rem;
-        height: 1.1rem;
+        width: 1.2rem;
+        height: 1.2rem;
         border-radius: 999px;
-        border: 1px solid var(--border);
-        background: var(--panel);
+        border: 2px solid var(--muted-strong, var(--muted));
+        background: color-mix(in srgb, var(--panel) 70%, var(--border) 30%);
         color: #ffffff;
-        font-size: 0.72rem;
+        font-family: 'Nunito', sans-serif;
+        font-size: 0.8rem;
         font-weight: 700;
         line-height: 1;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
+        display: grid;
+        place-items: center;
         pointer-events: none;
     }
 
     .entity-card-selection-dot.is-selected {
-        background: var(--primary);
-        border-color: var(--primary);
+        background: #dc2626;
+        border-color: #dc2626;
+        color: #ffffff;
     }
 }

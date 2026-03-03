@@ -38,11 +38,28 @@
         }
     }
 
+    @media (max-width: 640px) {
+        .promo-row {
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .promo-actions {
+            width: 100%;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+    }
+
     /* Icône warning sur la ligne de promo */
-    .promo-warning {
-        width: 20px;
-        height: 20px;
+    .promo-row-warning {
         flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        font-size: 20px;
+        color: #fbbf24;
     }
 
     .promo-actions {

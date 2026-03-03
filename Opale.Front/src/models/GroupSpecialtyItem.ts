@@ -1,6 +1,7 @@
 
 export interface GroupSpecialtyItem {
-    id: string;
-    name: string;
-    students: number;
+    id?: string
+    idPromo: string;
+    nom: string;
+    effectifs: number;
 }

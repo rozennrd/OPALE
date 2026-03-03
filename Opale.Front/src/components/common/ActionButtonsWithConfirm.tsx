@@ -5,6 +5,7 @@ import ConfirmDialog from './ConfirmDialog'
 interface ActionButtonsWithConfirmProps {
     saveLabel?: string
     cancelLabel?: string
+    hideCancel?: boolean
 
     // Confirm "Enregistrer"
     confirmTitle?: string
@@ -28,15 +29,19 @@ interface ActionButtonsWithConfirmProps {
 
     // Hooks optionnels autour de la sauvegarde
     onBeforeSaveClick?: () => boolean
-    onAfterSaveConfirm?: () => void
+    onAfterSaveConfirm?: () => void | Promise<void>
+    overlayClassName?: string
 
-    onSave: () => void
+    onSave: () => void | boolean | Promise<void | boolean>
+    // Disable the save button
+    disabled?: boolean
     onCancel: () => void
 }
 
-const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
+export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
     saveLabel = 'Enregistrer',
     cancelLabel = 'Annuler',
+    hideCancel = false,
     confirmTitle = 'Confirmer les modifications',
     confirmMessage = 'Souhaitez-vous enregistrer les modifications ?',
     confirmLabel = 'Confirmer',
@@ -58,6 +63,7 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
     deleteCancelLabel = 'Annuler',
     onBeforeSaveClick,
     onAfterSaveConfirm,
+    disabled,
     onSave,
     onCancel,
 }) => {
@@ -82,12 +88,16 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
         return onBeforeSaveClick()
     }
 
-    const handleConfirmSave = () => {
-        if (!canSave()) return
+    const handleConfirmSave = async () => {
+        if (!canSave()) {
+            closeSaveConfirmDialog()
+            return
+        }
 
         closeSaveConfirmDialog()
-        onSave()
-        if (onAfterSaveConfirm) onAfterSaveConfirm()
+        const saveResult = await Promise.resolve(onSave())
+        if (saveResult === false) return
+        if (onAfterSaveConfirm) await Promise.resolve(onAfterSaveConfirm())
     }
 
     const handleCancelClick = () => {
@@ -99,11 +109,13 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
         setOpenCancelConfirm(true)
     }
 
-    const handleConfirmCancelWithSave = () => {
+    const handleConfirmCancelWithSave = async () => {
         if (!canSave()) return
 
+        const saveResult = await Promise.resolve(onSave())
+        if (saveResult === false) return
+
         closeCancelConfirmDialog()
-        onSave()
         onCancel()
     }
 
@@ -132,18 +144,22 @@ const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> = ({
                     </button>
                 )}
 
-                <button
-                    type="button"
-                    className="btn-tertiary"
-                    onClick={handleCancelClick}
-                >
-                    {cancelLabel}
-                </button>
+                {!hideCancel && (
+                    <button
+                        type="button"
+                        className="btn-tertiary"
+                        onClick={handleCancelClick}
+                    >
+                        {cancelLabel}
+                    </button>
+                )}
 
                 <button
                     type="button"
                     className="btn-primary"
                     onClick={() => setOpenSaveConfirm(true)}
+                    disabled={disabled}
+                    style={{ opacity: disabled ? 0.5 : 1, cursor: disabled ? 'not-allowed' : 'pointer' }}
                 >
                     {saveLabel}
                 </button>

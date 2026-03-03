@@ -1,6 +1,6 @@
 // src/components/teachers/TeacherSection.tsx
-import React, { useState } from 'react'
-import { Teacher } from '../../models/Teacher'
+import { useState } from 'react'
+import { Teacher } from '../../models/Teachers'
 import TeacherCardsGrid from './TeacherCardsGrid'
 import SectionHeader from '../common/SectionHeader'
 

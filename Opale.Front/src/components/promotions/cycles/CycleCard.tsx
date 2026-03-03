@@ -12,6 +12,8 @@ import {
     MaquetteAnalyzeResponse,
     MaquetteImportResponse,
 } from '../../../services/api/maquetteApi'
+import { Promotion } from "../../../models"
+
 
 interface CycleCardProps {
     cycle: Cycle
@@ -184,6 +186,19 @@ const CycleCard: React.FC<CycleCardProps> = ({
                 if (response.success && response.data) {
                     setPreviewData(response.data)
                     setIsPreviewWarningsVisible(true)
+                    const detections = response.data.metadata.sectionSemesterDetections || []
+                    if (detections.length > 0) {
+                        console.group('[Maquette Preview] Détection semestres par contexte de section')
+                        detections.forEach((detection) => {
+                            console.log(
+                                `[${detection.sheetName}] ligne ${detection.rowNumber} -> semestres ${detection.semestres.join(', ')}`,
+                                { rawText: detection.rawText },
+                            )
+                        })
+                        console.groupEnd()
+                    } else {
+                        console.info('[Maquette Preview] Aucune détection de semestres de section trouvée.')
+                    }
                     return
                 }
 
@@ -441,7 +456,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                         aria-label="Supprimer le cycle"
                         title="Supprimer le cycle"
                     >
-                        <img src={icTrash} alt="" aria-hidden="true" />
+                        <img src={icTrash} alt="" aria-hidden="true"/>
                         <span className="btn-label">Supprimer le cycle</span>
                     </button>
                 </div>
@@ -450,21 +465,23 @@ const CycleCard: React.FC<CycleCardProps> = ({
             <div className="promotions">
                 {cycle.promotions.length === 0 && (
                     <div className="empty">
-                        Aucune promotion affichée pour ce cycle.
+                        Aucune promotion affichee pour ce cycle.
                     </div>
                 )}
 
-                {cycle.promotions.map((promo) => (
+                {cycle.promotions.map((promo: Promotion) => (
                     <div key={promo.id} className="promo-row">
                         <div className="promo-main">
                             <span className="promo-label">{promo.label}</span>
 
                             {hasPromoMismatch(promo) && (
-                                <img
-                                    src={icWarning}
-                                    alt="Répartition d'étudiants incohérente"
-                                    className="promo-warning"
-                                />
+                                <span
+                                    className="promo-row-warning"
+                                    role="img"
+                                    aria-label="Répartition d'étudiants incohérente"
+                                >
+                                    &#9888;
+                                </span>
                             )}
                         </div>
 

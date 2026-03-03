@@ -1,25 +1,38 @@
-// src/components/events/EventDetailCard.tsx
-
-import React from 'react'
-import { CampusEvent, EventType } from '../../models/CampusEvent'
+import { CampusEvent } from '../../models/CampusEvent'
+import { EventType, EVENT_TYPE_LABELS } from '../../models/EventTypes'
 import { useEventDetail } from '../../hooks/events/useEventDetail'
 import { Cycle } from '../../models/Cycle'
 import DetailCardHeader from '../common/DetailCardHeader'
-import DetailCardFooter from '../common/DetailCardFooter'
 import DetailCardBody from '../common/DetailCardBody'
+import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import EventTypeBadge from './EventTypeBadge'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
-import { ROOMS_MOCK } from '../../mocks/rooms.mock'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import DateInput from '../common/DateInput'
+import {eventPageTypes} from "../../pages/Events.tsx";
+import type { Salle } from '../../services/api/sallesApi'
+
+type SaveResult = { success: boolean; error?: string }
 
 interface EventDetailCardProps {
     event: CampusEvent
     cycles?: Cycle[]
-    onClose: () => void
-    onSave?: (event: CampusEvent) => void
+    salles?: Salle[]
     onDelete?: () => void
     mode?: 'edit' | 'create'
+    onClose: () => void
+    onSave: (event: Partial<CampusEvent>, salleIds: string[]) => Promise<SaveResult>
 }
+
+export const constraintEventTypes: EventType[] = [
+    'Forum',
+    'JPO',
+    'Salon',
+    'Examen',
+    'Conference',
+    'Autre',
+]
 
 function formatDate(date: string | undefined): string {
     if (!date) return '-'
@@ -33,55 +46,63 @@ function formatDate(date: string | undefined): string {
 }
 
 const EVENT_LOCATION_DATALIST_ID = 'event-location-suggestions'
-const EVENT_ROOM_LOCATION_SUGGESTIONS = Array.from(
-    new Set(ROOMS_MOCK.map((room) => room.fullName ?? room.name)),
-).sort((a, b) =>
-    a.localeCompare(b, 'fr', {
-        numeric: true,
-        sensitivity: 'base',
-    }),
-)
+
+const buildRoomLocationSuggestions = (salles: Salle[]): string[] =>
+    Array.from(
+        new Set(
+            salles
+                .map((salle) => salle.nom_complet ?? salle.nom)
+                .filter((label): label is string => Boolean(label && label.trim())),
+        ),
+    ).sort((a, b) =>
+        a.localeCompare(b, 'fr', {
+            numeric: true,
+            sensitivity: 'base',
+        }),
+    )
+
+function getSalleIdsForLocation(location: string, salles: Salle[]): string[] {
+    const normalizedLocation = location.trim().toLowerCase()
+    if (!normalizedLocation) return []
+
+    return salles
+        .filter((salle) => {
+            const labels = [salle.nom_complet, salle.nom]
+                .filter((label): label is string => Boolean(label))
+                .map((label) => label.trim().toLowerCase())
+            return labels.includes(normalizedLocation)
+        })
+        .map((salle) => salle.id)
+}
 
 const CREATE_EVENT_REQUIRED_FIELDS_ALERT =
     'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de creer cet evenement.'
-
-const mapDraftToEvent = (
-    baseEvent: CampusEvent,
-    draft: ReturnType<typeof useEventDetail>['draft'],
-): CampusEvent => {
-    const startDate = draft.startDate.trim()
-    const endDate = draft.endDate.trim()
-    const dateForList = startDate || endDate || baseEvent.date
-
-    return {
-        ...baseEvent,
-        id: draft.id,
-        name: draft.name.trim(),
-        date: dateForList,
-        startDate,
-        endDate,
-        location: draft.location.trim(),
-        source: draft.source,
-        type: draft.type,
-        description: draft.description,
-        showMacro: draft.showMacro,
-        showMicro: draft.showMicro,
-        concernedCycleIds: [...draft.concernedCycleIds],
-        concernedPromotionIds: [...draft.concernedPromotionIds],
-    }
-}
+const INVALID_EVENT_DATES_ALERT =
+    "La date/heure de fin doit être strictement postérieure à la date/heure de début."
 
 export default function EventDetailCard({
-    event,
-    cycles = [],
-    onClose,
-    onSave,
-    onDelete,
-    mode = 'edit',
-}: EventDetailCardProps) {
-    const isCreate = mode === 'create' || event.id === 'new-event'
-    const { draft, hasChanges, updateField, updateFields, handleSave } =
-        useEventDetail(event)
+                                            event,
+                                            cycles = [],
+                                            salles = [],
+                                            onClose,
+                                            onSave,
+                                            onDelete,
+                                            mode = 'edit',
+                                        }: EventDetailCardProps) {
+    const isCreate = mode === 'create'
+    const [isPromotionsOpen, setIsPromotionsOpen] = useState(false)
+    const promotionsDropdownRef = useRef<HTMLDivElement | null>(null)
+
+    const {
+        draft,
+        hasChanges,
+        saving,
+        updateField,
+        updateFields,
+        handleSave,
+    } = useEventDetail(event, onSave)
+
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     const isValid =
         draft.name.trim().length > 0 &&
@@ -91,6 +112,14 @@ export default function EventDetailCard({
         !!draft.type &&
         !!draft.source
 
+    const hasInvalidDates = (() => {
+        if (!draft.startDate || !draft.endDate) return false
+        const start = new Date(draft.startDate)
+        const end = new Date(draft.endDate)
+        if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return true
+        return end.getTime() <= start.getTime()
+    })()
+
     const promotionTargets = cycles.flatMap((cycle) =>
         cycle.promotions.map((promotion) => ({
             promotionId: promotion.id,
@@ -99,11 +128,55 @@ export default function EventDetailCard({
         })),
     )
 
-    const selectedPromotionId = draft.concernedPromotionIds[0] ?? ''
+    const selectedPromotionLabels = useMemo(() => {
+        const selectedSet = new Set(draft.concernedPromotionIds)
+        return promotionTargets
+            .filter((target) => selectedSet.has(target.promotionId))
+            .map((target) => target.promotionLabel)
+    }, [draft.concernedPromotionIds, promotionTargets])
 
-    const saveDraft = () => {
-        const savedDraft = handleSave()
-        onSave?.(mapDraftToEvent(event, savedDraft))
+    const roomLocationSuggestions = buildRoomLocationSuggestions(salles)
+
+    useEffect(() => {
+        const nextSalleIds = getSalleIdsForLocation(draft.location, salles)
+        const currentSalleIds = draft.selectedSalleIds
+
+        const sameLength = currentSalleIds.length === nextSalleIds.length
+        const sameValues =
+            sameLength && currentSalleIds.every((id) => nextSalleIds.includes(id))
+
+        if (!sameValues) {
+            updateField('selectedSalleIds', nextSalleIds)
+        }
+    }, [draft.location, draft.selectedSalleIds, salles, updateField])
+
+    useEffect(() => {
+        const handleOutsideClick = (event: MouseEvent) => {
+            if (!isPromotionsOpen) return
+            if (
+                promotionsDropdownRef.current &&
+                !promotionsDropdownRef.current.contains(event.target as Node)
+            ) {
+                setIsPromotionsOpen(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleOutsideClick)
+        return () => document.removeEventListener('mousedown', handleOutsideClick)
+    }, [isPromotionsOpen])
+
+    const saveDraft = async (closeOnSuccess = true): Promise<boolean> => {
+        const result = await handleSave()
+        if (!result.success) {
+            console.error('[EVENTS] Save failed:', result.error)
+            return false
+        }
+
+        if (closeOnSuccess) {
+            onClose()
+        }
+
+        return true
     }
 
     const handleSourceChange = (source: 'JUNIA' | 'EXTERNE') => {
@@ -117,8 +190,8 @@ export default function EventDetailCard({
         }
     }
 
-    const handlePromotionChange = (promotionId: string) => {
-        if (!promotionId) {
+    const handlePromotionChange = (promotionIds: string[]) => {
+        if (promotionIds.length === 0) {
             updateFields({
                 concernedCycleIds: [],
                 concernedPromotionIds: [],
@@ -126,16 +199,34 @@ export default function EventDetailCard({
             return
         }
 
-        const target = promotionTargets.find(
-            (promotionTarget) => promotionTarget.promotionId === promotionId,
+        const selectedTargets = promotionTargets.filter((promotionTarget) =>
+            promotionIds.includes(promotionTarget.promotionId),
         )
-        if (!target) return
+
+        if (selectedTargets.length === 0) return
+
+        const selectedCycleIds = Array.from(
+            new Set(selectedTargets.map((target) => target.cycleId)),
+        )
+        const selectedPromotionIds = selectedTargets.map(
+            (target) => target.promotionId,
+        )
 
         updateFields({
             source: 'JUNIA',
-            concernedCycleIds: [target.cycleId],
-            concernedPromotionIds: [target.promotionId],
+            concernedCycleIds: selectedCycleIds,
+            concernedPromotionIds: selectedPromotionIds,
         })
+    }
+
+    const togglePromotionSelection = (promotionId: string) => {
+        const currentSet = new Set(draft.concernedPromotionIds)
+        if (currentSet.has(promotionId)) {
+            currentSet.delete(promotionId)
+        } else {
+            currentSet.add(promotionId)
+        }
+        handlePromotionChange(Array.from(currentSet))
     }
 
     const headerTitle =
@@ -149,9 +240,13 @@ export default function EventDetailCard({
             draft.startDate !== draft.endDate
                 ? ` -> ${formatDate(draft.endDate)}`
                 : ''
-        const location = draft.location ? ` · ${draft.location}` : ''
+        const location = draft.location ? ` Â· ${draft.location}` : ''
         return `${start}${end}${location}`
     })()
+
+    const openErrorDialog = (message: string) => {
+        setErrorMessage(message)
+    }
 
     const {
         handleRequestClose,
@@ -164,11 +259,14 @@ export default function EventDetailCard({
         onClose,
         onSaveAndClose: () => {
             if (isCreate && !isValid) {
-                window.alert(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
+                openErrorDialog(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
                 return
             }
-            saveDraft()
-            onClose()
+            if (hasInvalidDates) {
+                window.alert(INVALID_EVENT_DATES_ALERT)
+                return
+            }
+            void saveDraft(true)
         },
         ignoreWhenSelectorExists: '.modal-overlay',
     })
@@ -214,13 +312,14 @@ export default function EventDetailCard({
                         <div className="event-detail-info-row">
                             <dt>Date de debut</dt>
                             <dd>
-                                <input
-                                    type="date"
-                                    className="event-detail-input"
+                                <DateInput
+                                    mode="datetime"
                                     value={draft.startDate}
-                                    onChange={(e) =>
-                                        updateField('startDate', e.target.value)
+                                    onChange={(value) =>
+                                        updateField('startDate', value)
                                     }
+                                    inputClassName="event-detail-input"
+                                    max={draft.endDate || undefined}
                                 />
                             </dd>
                         </div>
@@ -228,13 +327,14 @@ export default function EventDetailCard({
                         <div className="event-detail-info-row">
                             <dt>Date de fin</dt>
                             <dd>
-                                <input
-                                    type="date"
-                                    className="event-detail-input"
+                                <DateInput
+                                    mode="datetime"
                                     value={draft.endDate}
-                                    onChange={(e) =>
-                                        updateField('endDate', e.target.value)
+                                    onChange={(value) =>
+                                        updateField('endDate', value)
                                     }
+                                    inputClassName="event-detail-input"
+                                    min={draft.startDate || undefined}
                                 />
                             </dd>
                         </div>
@@ -247,12 +347,19 @@ export default function EventDetailCard({
                                     className="event-detail-input"
                                     list={EVENT_LOCATION_DATALIST_ID}
                                     value={draft.location}
-                                    onChange={(e) =>
-                                        updateField('location', e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                        const nextLocation = e.target.value
+                                        updateFields({
+                                            location: nextLocation,
+                                            selectedSalleIds: getSalleIdsForLocation(
+                                                nextLocation,
+                                                salles,
+                                            ),
+                                        })
+                                    }}
                                 />
                                 <datalist id={EVENT_LOCATION_DATALIST_ID}>
-                                    {EVENT_ROOM_LOCATION_SUGGESTIONS.map(
+                                    {roomLocationSuggestions.map(
                                         (roomLabel) => (
                                             <option
                                                 key={roomLabel}
@@ -277,14 +384,11 @@ export default function EventDetailCard({
                                         )
                                     }
                                 >
-                                    <option value="JOURNEE_PO">
-                                        Journee Portes Ouvertes
-                                    </option>
-                                    <option value="EXAMEN">Examen</option>
-                                    <option value="CONFERENCE">Conference</option>
-                                    <option value="FORUM">Forum</option>
-                                    <option value="SALON">Salon</option>
-                                    <option value="AUTRE">Autre</option>
+                                    {eventPageTypes.map((value) => (
+                                        <option key={value} value={value}>
+                                            {EVENT_TYPE_LABELS[value]}
+                                        </option>
+                                    ))}
                                 </select>
                             </dd>
                         </div>
@@ -329,25 +433,87 @@ export default function EventDetailCard({
                             <div className="event-detail-info-row">
                                 <dt>Promotions</dt>
                                 <dd>
-                                    <select
-                                        className="event-detail-select"
-                                        value={selectedPromotionId}
-                                        onChange={(e) =>
-                                            handlePromotionChange(e.target.value)
-                                        }
+                                    <div
+                                        className="event-detail-multiselect"
+                                        ref={promotionsDropdownRef}
                                     >
-                                        <option value="">
-                                            Aucune promotion cible
-                                        </option>
-                                        {promotionTargets.map((promotionTarget) => (
-                                            <option
-                                                key={promotionTarget.promotionId}
-                                                value={promotionTarget.promotionId}
+                                        <button
+                                            type="button"
+                                            className="event-detail-multiselect-trigger"
+                                            onClick={() =>
+                                                setIsPromotionsOpen((prev) => !prev)
+                                            }
+                                            aria-expanded={isPromotionsOpen}
+                                            aria-haspopup="listbox"
+                                        >
+                                            <span className="event-detail-multiselect-value">
+                                                {selectedPromotionLabels.length > 0
+                                                    ? selectedPromotionLabels.join(', ')
+                                                    : 'Selectionnez une ou plusieurs promotions'}
+                                            </span>
+                                            <span
+                                                className={
+                                                    'event-detail-multiselect-chevron' +
+                                                    (isPromotionsOpen ? ' is-open' : '')
+                                                }
+                                                aria-hidden="true"
                                             >
-                                                {promotionTarget.promotionLabel}
-                                            </option>
-                                        ))}
-                                    </select>
+                                                ▾
+                                            </span>
+                                        </button>
+
+                                        {isPromotionsOpen && (
+                                            <div
+                                                className="event-detail-multiselect-menu"
+                                                role="listbox"
+                                                aria-multiselectable="true"
+                                            >
+                                                {promotionTargets.map((promotionTarget) => {
+                                                    const isSelected = draft.concernedPromotionIds.includes(
+                                                        promotionTarget.promotionId,
+                                                    )
+                                                    return (
+                                                        <button
+                                                            key={promotionTarget.promotionId}
+                                                            type="button"
+                                                            className={
+                                                                'event-detail-multiselect-option' +
+                                                                (isSelected
+                                                                    ? ' is-selected'
+                                                                    : '')
+                                                            }
+                                                            role="option"
+                                                            aria-selected={isSelected}
+                                                            onClick={() =>
+                                                                togglePromotionSelection(
+                                                                    promotionTarget.promotionId,
+                                                                )
+                                                            }
+                                                        >
+                                                            <span className="event-detail-multiselect-option-label">
+                                                                {
+                                                                    promotionTarget.promotionLabel
+                                                                }
+                                                            </span>
+                                                            {isSelected && (
+                                                                <span
+                                                                    className="event-detail-multiselect-option-check"
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    ✓
+                                                                </span>
+                                                            )}
+                                                        </button>
+                                                    )
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
+                                    {draft.concernedPromotionIds.length === 0 && (
+                                        <small className="event-detail-input-help">
+                                            Selectionnez une ou plusieurs promotions.
+                                        </small>
+                                    )}
                                 </dd>
                             </div>
                         )}
@@ -359,11 +525,11 @@ export default function EventDetailCard({
                                     type="button"
                                     className={
                                         'event-visibility-switch' +
-                                        (draft.showMacro ? ' is-on' : '')
+                                        (draft.show_macro ? ' is-on' : '')
                                     }
-                                    aria-pressed={draft.showMacro}
+                                    aria-pressed={draft.show_macro}
                                     onClick={() =>
-                                        updateField('showMacro', !draft.showMacro)
+                                        updateField('show_macro', !draft.show_macro)
                                     }
                                 >
                                     <span
@@ -373,7 +539,7 @@ export default function EventDetailCard({
                                         <span className="event-visibility-switch-thumb" />
                                     </span>
                                     <span className="event-visibility-switch-label">
-                                        {draft.showMacro ? 'Oui' : 'Non'}
+                                        {draft.show_macro ? 'Oui' : 'Non'}
                                     </span>
                                 </button>
                             </dd>
@@ -386,11 +552,11 @@ export default function EventDetailCard({
                                     type="button"
                                     className={
                                         'event-visibility-switch' +
-                                        (draft.showMicro ? ' is-on' : '')
+                                        (draft.show_micro ? ' is-on' : '')
                                     }
-                                    aria-pressed={draft.showMicro}
+                                    aria-pressed={draft.show_micro}
                                     onClick={() =>
-                                        updateField('showMicro', !draft.showMicro)
+                                        updateField('show_micro', !draft.show_micro)
                                     }
                                 >
                                     <span
@@ -400,11 +566,14 @@ export default function EventDetailCard({
                                         <span className="event-visibility-switch-thumb" />
                                     </span>
                                     <span className="event-visibility-switch-label">
-                                        {draft.showMicro ? 'Oui' : 'Non'}
+                                        {draft.show_micro ? 'Oui' : 'Non'}
                                     </span>
                                 </button>
                             </dd>
                         </div>
+
+                        {/* NOTE: toggleSalle est disponible si tu ajoutes une UI de sÃ©lection des salles */}
+                        {/* toggleSalle('room-id') */}
                     </dl>
                 </section>
 
@@ -423,70 +592,87 @@ export default function EventDetailCard({
                     />
                 </section>
 
-                <DetailCardFooter
-                    onCancel={onClose}
-                    onSave={saveDraft}
-                    onAfterSaveConfirm={isCreate ? onClose : undefined}
-                    onDelete={isCreate ? undefined : onDelete}
-                    hasChanges={hasChanges}
-                    saveLabel={isCreate ? 'Creer' : 'Enregistrer'}
-                    deleteLabel="Supprimer"
-                    deleteTitle="Supprimer cet evenement"
-                    deleteMessage={
-                        <>
-                            Vous allez supprimer{' '}
-                            <strong>{draft.name || 'cet evenement'}</strong>.
-                            <br />
-                            Confirmer ?
-                        </>
-                    }
-                    deleteConfirmLabel="Supprimer"
-                    confirmTitle={
-                        isCreate
-                            ? 'Creer cet evenement'
-                            : 'Confirmer les modifications'
-                    }
-                    confirmMessage={
-                        isCreate ? (
-                            <>
-                                Vous etes sur le point de creer l evenement{' '}
-                                <strong>{draft.name || 'sans titre'}</strong>.
-                                <br />
-                                Confirmer ?
-                            </>
-                        ) : (
-                            <>
-                                Vous etes sur le point d enregistrer les
-                                modifications pour <strong>{draft.name}</strong>.
-                                <br />
-                                Confirmer ?
-                            </>
-                        )
-                    }
-                    confirmLabel={isCreate ? 'Creer' : 'Enregistrer'}
-                    cancelLabel="Annuler"
-                    cancelDirtyTitle="Modifications non enregistrees"
-                    cancelDirtyMessage={
-                        <>
-                            <p>Vous avez modifie cette fiche evenement.</p>
-                            <p>
-                                Souhaitez-vous enregistrer les changements avant
-                                de fermer ?
-                            </p>
-                        </>
-                    }
-                    cancelDirtyConfirmLabel={
-                        isCreate ? 'Creer et fermer' : 'Enregistrer et fermer'
-                    }
-                    cancelDirtyDiscardLabel="Fermer sans enregistrer"
-                    onBeforeSaveClick={() => {
-                        if (isCreate && !isValid) {
-                            window.alert(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
-                            return false
+                <div className="event-detail-footer">
+                    <ActionButtonsWithConfirm
+                        onCancel={handleRequestClose}
+                        onSave={() => saveDraft(true)}
+                        onDelete={isCreate ? undefined : onDelete}
+                        hasChanges={hasChanges}
+                        saveLabel={
+                            saving
+                                ? 'Enregistrement...'
+                                : isCreate
+                                  ? 'Creer'
+                                  : 'Enregistrer'
                         }
-                        return true
-                    }}
-                />
+                        deleteLabel="Supprimer"
+                        deleteTitle="Supprimer cet evenement"
+                        deleteMessage={
+                            <>
+                                Vous allez supprimer{' '}
+                                <strong>{draft.name || 'cet evenement'}</strong>
+                                .
+                                <br />
+                                Confirmer ?
+                            </>
+                        }
+                        deleteConfirmLabel="Supprimer"
+                        confirmTitle={
+                            isCreate
+                                ? 'Creer cet evenement'
+                                : 'Confirmer les modifications'
+                        }
+                        confirmMessage={
+                            isCreate ? (
+                                <>
+                                    Vous etes sur le point de créer
+                                    l&apos;événement{' '}
+                                    <strong>
+                                        {draft.name || 'sans titre'}
+                                    </strong>
+                                    .
+                                    <br />
+                                    Confirmer&nbsp;?
+                                </>
+                            ) : (
+                                <>
+                                    Vous êtes sur le point d&apos;enregistrer les
+                                    modifications pour{' '}
+                                    <strong>{draft.name}</strong>.
+                                    <br />
+                                    Confirmer&nbsp;?
+                                </>
+                            )
+                        }
+                        confirmLabel={isCreate ? 'Creer' : 'Enregistrer'}
+                        cancelLabel="Annuler"
+                        cancelDirtyTitle="Modifications non enregistrees"
+                        cancelDirtyMessage={
+                            <>
+                                <p>Vous avez modifie cette fiche evenement.</p>
+                                <p>
+                                    Souhaitez-vous enregistrer les changements
+                                    avant de fermer ?
+                                </p>
+                            </>
+                        }
+                        cancelDirtyConfirmLabel={
+                            isCreate ? 'Creer et fermer' : 'Enregistrer et fermer'
+                        }
+                        cancelDirtyDiscardLabel="Fermer sans enregistrer"
+                        onBeforeSaveClick={() => {
+                            if (isCreate && !isValid) {
+                                openErrorDialog(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
+                                return false
+                            }
+                            if (hasInvalidDates) {
+                                window.alert(INVALID_EVENT_DATES_ALERT)
+                                return false
+                            }
+                            return true
+                        }}
+                    />
+                </div>
             </DetailCardBody>
 
             <ConfirmDialog
@@ -510,6 +696,19 @@ export default function EventDetailCard({
                 onConfirm={handleConfirmSaveAndClose}
                 onCancel={handleDiscardAndClose}
                 onRequestClose={handleConfirmDialogRequestClose}
+            />
+
+            <ConfirmDialog
+                open={!!errorMessage}
+                title="Erreur"
+                message={errorMessage ?? ''}
+                confirmLabel="OK"
+                confirmClassName="btn-primary"
+                onConfirm={() => setErrorMessage(null)}
+                onCancel={() => setErrorMessage(null)}
+                onRequestClose={() => setErrorMessage(null)}
+                hideCancel
+                variant="danger"
             />
         </div>
     )

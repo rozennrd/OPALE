@@ -42,7 +42,7 @@ services:
 
   db:
     image: postgres:15
-    container_name: postgres-database
+    container_name: opale-postgres-database
     env_file: 
       - BobPlanning.database/.env
     environment:

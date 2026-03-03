@@ -23,8 +23,9 @@ interface MatieresToolbarProps {
     teacherFilter: TeacherFilter
     onTeacherChange: (value: TeacherFilter) => void
 
-    cycleOptions: string[]
-    promotionOptions: string[]
+    // ✅ options injectées depuis la page
+    cycleOptions: { id: string; nom: string }[]
+    promotionOptions: { id: string; nom: string }[]
     teacherOptions: { id: string; label: string }[]
 
     selectionMode: boolean
@@ -93,7 +94,7 @@ export default function MatieresToolbar({
             </ToolbarRow>
 
             <ToolbarRow className="page-toolbar-row--filters matieres-toolbar-row matieres-toolbar-row--filters">
-                <div className="toolbar-filter">
+                <div className="toolbar-filter toolbar-filter--chips">
                     <span className="toolbar-filter-label">Semestre</span>
                     <div className="toolbar-toggle-chips">
                         {SEMESTRE_OPTIONS.map((option) => (
@@ -114,41 +115,45 @@ export default function MatieresToolbar({
                     </div>
                 </div>
 
-                <div className="toolbar-filter">
-                    <label className="toolbar-filter-label">
-                        Cycles
-                        <select
-                            value={cycleFilter}
-                            onChange={(e) => onCycleChange(e.target.value as CycleFilter)}
-                            className="toolbar-filter-select"
-                        >
-                            <option value="ALL">Tous</option>
-                            {cycleOptions.map((cycle) => (
-                                <option key={cycle} value={cycle}>
-                                    {cycle}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
-                </div>
+                    {/* Cycle (select) */}
+                    <div className="toolbar-filter">
+                        <label className="toolbar-filter-label">
+                            Cycles
+                            <select
+                                value={cycleFilter}
+                                onChange={(e) => onCycleChange(e.target.value as CycleFilter)}
+                                className="toolbar-filter-select"
+                            >
+                                <option value="ALL">Tous</option>
+                                {cycleOptions.map((c) => (
+                                    <option key={c.id} value={c.nom}>
+                                        {c.nom}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
 
-                <div className="toolbar-filter">
-                    <label className="toolbar-filter-label">
-                        Promotions
-                        <select
-                            value={promotionFilter}
-                            onChange={(e) => onPromotionChange(e.target.value as PromotionFilter)}
-                            className="toolbar-filter-select"
-                        >
-                            <option value="ALL">Toutes</option>
-                            {promotionOptions.map((promotion) => (
-                                <option key={promotion} value={promotion}>
-                                    {promotion}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
-                </div>
+                    {/* Promotions (select) */}
+                    <div className="toolbar-filter">
+                        <label className="toolbar-filter-label">
+                            Promotions
+                            <select
+                                value={promotionFilter}
+                                onChange={(e) =>
+                                    onPromotionChange(e.target.value as PromotionFilter)
+                                }
+                                className="toolbar-filter-select"
+                            >
+                                <option value="ALL">Toutes</option>
+                                {promotionOptions.map((p) => (
+                                    <option key={p.id} value={p.nom}>
+                                        {p.nom}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
 
                 <div className="toolbar-filter">
                     <label className="toolbar-filter-label">

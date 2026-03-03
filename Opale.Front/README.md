@@ -284,8 +284,7 @@ src/
 │   ├── events.mock.ts
 │   ├── matieres.mock.ts
 │   ├── promotionCycles.mock.ts
-│   ├── rooms.mock.ts
-│   └── teachers.mock.ts
+│   └── rooms.mock.ts
 ├── models
 │   ├── CampusEvent.ts
 │   ├── Constraints.ts

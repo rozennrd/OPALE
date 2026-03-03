@@ -8,6 +8,7 @@
 @import './components/_theme-toggle.css';
 @import './components/_action-buttons.css';
 @import './components/_date-range-pill.css';
+@import './components/_date-input.css';
 @import './components/_section-header.css';
 @import './components/_section-card.css';
 @import './components/_entity-badge.css';

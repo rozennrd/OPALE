@@ -4,7 +4,8 @@ export interface ProfDAO {
     prenom: string;
     email: string;
     email_perso: string;
+    telephone: string;
     type: string;
-    distanciel: boolean;
+    modalite_enseignement: string;
     campus_origin: string;
 }

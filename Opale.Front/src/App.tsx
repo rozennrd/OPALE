@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Routes, Route, Navigate, Outlet, useNavigate } from 'react-router-dom'
+import { Routes, Route, Navigate, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import Sidebar from './components/Sidebar.jsx'
 import Promotions from './pages/Promotions.jsx'
 import PlanningMacro from './pages/PlanningMacro.jsx'
@@ -19,6 +19,7 @@ import Teachers from './pages/Teachers'
 
 function AppLayout() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const checkAuthentication = () => {
@@ -36,6 +37,15 @@ function AppLayout() {
 
         return () => clearInterval(interval);
     }, [navigate]);
+
+    useEffect(() => {
+        const container = document.querySelector('.main-inner')
+        if (container instanceof HTMLElement) {
+            container.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+            return
+        }
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+    }, [location.pathname])
 
 
     return (

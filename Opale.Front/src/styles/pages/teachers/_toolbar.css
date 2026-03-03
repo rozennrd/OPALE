@@ -14,8 +14,10 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         flex-shrink: 0;
+        min-width: 220px;
+        flex: 1 1 360px;
     }
 
     .teachers-toolbar-subjects {
@@ -49,7 +51,7 @@
         top: calc(100% + 0.4rem);
         right: 0;
         z-index: 10;
-        width: 260px;
+        width: min(260px, 92vw);
         background: var(--panel);
         border: 1px solid var(--border);
         border-radius: 0.75rem;
@@ -105,43 +107,6 @@
         min-height: 2.2rem;
     }
 
-    .teachers-toolbar-plus-btn {
-        width: 2.2rem;
-        height: 2.2rem;
-        border-radius: 999px;
-        border: 1px solid var(--border);
-        background: var(--panel-soft);
-        padding: 0;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition:
-            background-color 120ms ease,
-            border-color 120ms ease,
-            transform 120ms ease;
-    }
-
-    .teachers-toolbar-plus-btn:hover {
-        background: var(--surface-hover, var(--panel-soft));
-        transform: translateY(-1px);
-    }
-
-    .teachers-toolbar-plus-btn:active {
-        transform: translateY(0);
-    }
-
-    .teachers-toolbar-plus-icon {
-        width: 18px;
-        height: 18px;
-        pointer-events: none;
-        display: block;
-    }
-
-    [data-theme="dark"] .teachers-toolbar-plus-icon {
-        filter: brightness(1.2);
-    }
-
     @media (max-width: 900px) {
         .teachers-toolbar-row {
             flex-direction: column;
@@ -182,20 +147,13 @@
 
         .teachers-toolbar-row .toolbar-selection-toggle,
         .teachers-toolbar-reset,
-        .teachers-toolbar-plus-btn {
+        .toolbar-add-btn {
             width: 100%;
             justify-content: center;
         }
 
-        .teachers-toolbar-plus-btn {
+        .toolbar-add-btn {
             border-radius: 0.7rem;
-        }
-    }
-
-    @media (max-width: 600px) {
-        .teachers-toolbar-plus-icon {
-            width: 20px;
-            height: 20px;
         }
     }
 }

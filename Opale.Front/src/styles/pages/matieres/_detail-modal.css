@@ -2,8 +2,15 @@
 
 @layer pages {
     .matiere-detail-card .detail-layout {
-        grid-template-columns: 0.95fr 420px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
         gap: 4rem;
+    }
+
+    @media (max-width: 900px) {
+        .matiere-detail-card .detail-layout {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
     }
 
     .matiere-detail-overlay {
@@ -23,6 +30,47 @@
         flex-direction: column;
         overflow-y: auto;
     }
+
+    .matiere-detail-footer {
+        flex-shrink: 0;
+    }
+    .volume-warning {
+        margin-top: 12px;
+        padding: 10px 14px;
+
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+
+        background: linear-gradient(
+                135deg,
+                rgba(251, 146, 60, 0.18),
+                rgba(251, 146, 60, 0.10)
+        );
+
+        border: 1px solid rgba(251, 146, 60, 0.45);
+        border-radius: 10px;
+
+        color: #fbbf24;
+        font-size: 0.85rem;
+        font-weight: 500;
+
+        backdrop-filter: blur(4px);
+
+        animation: volumeFadeIn 180ms ease-out;
+    }
+
+    @keyframes volumeFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
 
     /* ============================
        Colonne enseignants (UI spécifique)
@@ -85,6 +133,18 @@
         min-width: 0;
     }
 
+    input[type='number'] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+
+    input[type='number']::-webkit-outer-spin-button,
+    input[type='number']::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+
     .matiere-kind-chip {
         border: 1px solid var(--border);
         background: var(--panel);
@@ -97,8 +157,153 @@
         transition: 140ms ease;
     }
 
+    /* Centre le contenu (chiffres) dans tous les inputs */
+    .room-detail-input,
+    .matiere-hours-input {
+        text-align: center;
+        max-width: 260px;   /* ajuste à ton goût */
+    }
+
+    /* Optionnel : si tu veux aussi centrer le texte du placeholder */
+    .room-detail-input::placeholder {
+        text-align: center;
+    }
+
+    @layer pages {
+        /* La card ne doit pas scroller globalement */
+        .matiere-detail-card {
+            overflow: hidden; /* important */
+        }
+
+        /* Le contenu (entre header et footer) scrolle */
+        .matiere-detail-card .detail-layout {
+            overflow-y: auto;
+            min-height: 0;          /* IMPORTANT pour autoriser le scroll en flex */
+            padding-right: 6px;     /* optionnel: évite que la scrollbar colle */
+        }
+
+        /* Si ton DetailCardBody a un wrapper interne, tu peux cibler direct la section centrale :
+           (laisse si tu n'en as pas besoin)
+        */
+        .matiere-detail-card .detail-main-column,
+        .matiere-detail-card .detail-aside-column {
+            min-height: 0;
+        }
+
+        @layer pages {
+            /* Footer sticky, mais “glass” et compact */
+            .detail-card-footer,
+            .matiere-detail-card footer {
+                position: sticky;
+                bottom: 0;
+                z-index: 10;
+
+                /* compact */
+                padding: 12px 16px;
+
+                /* esthétique */
+                background: rgba(15, 23, 42, 0.55); /* translucide */
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+
+                border-top: 1px solid rgba(148, 163, 184, 0.14); /* subtil */
+            }
+
+            /* Optionnel mais très UX: un petit fade au-dessus du footer
+               pour indiquer la fin scrollable, sans “ruban” */
+            .detail-card-footer::before,
+            .matiere-detail-card footer::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: -18px;
+                height: 18px;
+                pointer-events: none;
+                background: linear-gradient(
+                        to top,
+                        rgba(15, 23, 42, 0.55),
+                        rgba(15, 23, 42, 0)
+                );
+            }
+        }
+
+        /* Footer toujours visible en bas */
+        .matiere-detail-card .detail-card-footer,
+        .matiere-detail-card footer {
+            position: sticky;
+            bottom: 0;
+            z-index: 5;
+            background: var(--panel); /* ou var(--panel-soft) selon ton design */
+            border-top: 1px solid var(--border-subtle);
+        }
+    }
+
     .matiere-kind-chip:hover {
         border-color: var(--primary);
+    }
+
+    @layer pages {
+        /* Colonne droite en "layout colonne" */
+        .matiere-aside {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        /* Le contenu prend la place, le dock reste en bas */
+        .matiere-aside-content {
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Dock sticky en bas de la colonne droite */
+        .matiere-footer-dock {
+            position: sticky;
+            display: flex;
+            justify-content: center; /* ✅ centré dans la colonne */
+            padding-top: 10px;
+            z-index: 5;
+        }
+
+        /* IMPORTANT:
+           Si ton DetailCardFooter a un fond (ruban), on le neutralise ici.
+           Ajuste le sélecteur selon son markup réel si besoin. */
+        .matiere-footer-pill .detail-card-footer,
+        .matiere-footer-pill footer {
+            background: transparent !important;
+            border: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+    }
+
+    @layer pages {
+        /* La pill centre son contenu */
+        .matiere-footer-pill {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Force le layout interne du footer à être centré (peu importe sa structure) */
+        .matiere-footer-pill .detail-card-footer,
+        .matiere-footer-pill footer {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+
+
+        /* Si ton footer a un padding / largeur bizarre */
+        .matiere-footer-pill .detail-card-footer,
+        .matiere-footer-pill footer {
+            padding: 0 !important;
+            margin: 0 !important;
+            background: transparent !important;
+            border: 0 !important;
+        }
     }
 
     .matiere-kind-chip.is-active {

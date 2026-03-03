@@ -4,43 +4,7 @@
         min-width: 220px;
     }
 
-    .events-toolbar-plus-btn {
-        border: none;
-        background: transparent;
-        padding: 0.25rem;
+    .events-toolbar-row--primary .toolbar-add-btn {
         margin-left: 0.4rem;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: opacity 120ms ease, transform 120ms ease;
-    }
-
-    .events-toolbar-plus-btn:hover {
-        opacity: 0.7;
-        transform: translateY(-1px);
-    }
-
-    .events-toolbar-plus-btn:active {
-        transform: translateY(0);
-        opacity: 0.85;
-    }
-
-    .events-toolbar-plus-icon {
-        width: 22px;
-        height: 22px;
-        pointer-events: none;
-        display: block;
-    }
-
-    [data-theme="dark"] .events-toolbar-plus-icon {
-        filter: brightness(1.2);
-    }
-
-    @media (max-width: 600px) {
-        .events-toolbar-plus-icon {
-            width: 20px;
-            height: 20px;
-        }
     }
 }

@@ -6,10 +6,10 @@ import RoomCard from './RoomCard'
 import SectionHeader from '../common/SectionHeader'
 
 interface RoomsSectionProps {
-    floor: 0 | 1 | 2
+    floor: number
     rooms: Room[]
     onSelectRoom: (room: Room) => void
-    onAddRoom: (floor: 0 | 1 | 2) => void
+    onAddRoom: (floor: number) => void
     selectionMode?: boolean
     selectedRoomIds?: Set<string>
     onToggleRoomSelection?: (roomId: string) => void
@@ -21,11 +21,8 @@ const FLOOR_LABELS: Record<number, string> = {
     2: '2e étage',
 }
 
-const FLOOR_CODES: Record<number, string> = {
-    0: 'Codes J0xx',
-    1: 'Codes J1xx',
-    2: 'Codes J2xx',
-}
+const floorCodeLabel = (floor: number): string => `Codes J${floor}xx`
+const floorLabel = (floor: number): string => FLOOR_LABELS[floor] ?? `Étage ${floor}`
 
 export default function RoomsSection({
     floor,
@@ -40,8 +37,8 @@ export default function RoomsSection({
 
     const handleToggle = () => setIsOpen((prev) => !prev)
 
-    const title = `${FLOOR_LABELS[floor]} · ${rooms.length} salle${rooms.length > 1 ? 's' : ''}`
-    const subtitle = FLOOR_CODES[floor]
+    const title = `${floorLabel(floor)} · ${rooms.length} salle${rooms.length > 1 ? 's' : ''}`
+    const subtitle = floorCodeLabel(floor)
 
     return (
         <section className="rooms-section">

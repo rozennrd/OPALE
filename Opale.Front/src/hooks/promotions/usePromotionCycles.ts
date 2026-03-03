@@ -28,7 +28,7 @@ export function usePromotionCycles() {
     // Store pending rename timeouts for each cycle
     const renameTimeoutsRef = useRef<Map<string, number>>(new Map())
 
-// Load cycles from backend on mount
+    // Load cycles from backend on mount
     const loadCycles = async () => {
         try {
             setLoading(true)
@@ -42,7 +42,6 @@ export function usePromotionCycles() {
                 const backendCycles = cyclesResponse.data
                 const backendPromotions = promotionsResponse.data
                 const promotionsByCycle: { [key: string]: Promotion[] } = {}
-
                 backendPromotions.forEach(bp => {
                     const promo = transformBackendPromotionToFrontend(bp)
                     if (bp.id_cycle) {
@@ -107,6 +106,7 @@ export function usePromotionCycles() {
                     id: '',
                     label: `${formData.name} ${i}`,
                     students: 0,
+                    isApprentissage: formData.type === "apprentissage",
                     startDate: now.toISOString(),
                     endDate: oneYearFromNow.toISOString(),
                     groups: [],
@@ -181,36 +181,45 @@ export function usePromotionCycles() {
         }
     }
 
-    const addPromotionToCycle = (cycleId: string, label: string): void => {
+    const addPromotionToCycle = async (cycleId: string, label: string): Promise<void> => {
         const trimmedLabel = label.trim()
         if (!trimmedLabel) return
 
-        setCycles(prevCycles =>
-            prevCycles.map(cycle => {
-                if (cycle.id !== cycleId) return cycle
+        try {
+            setLoading(true)
+            setError('')
 
-                const newPromotion: Promotion = {
-                    id: uid('promo'),
-                    label: trimmedLabel,
-                    students: 0,
-                    startDate: '',
-                    endDate: '',
-                    groups: [],
-                    specialties: [],
-                    constraints: createEmptyConstraints(),
-                }
+            // Create promotion with default dates
+            const now = new Date()
+            const oneYearFromNow = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000)
 
-                console.log('[Promotions] Ajout promotion (front only):', {
-                    cycleId: cycle.id,
-                    promotion: newPromotion,
-                })
+            const promotionData = transformFrontendPromotionToBackendCreate({
+                id: '',
+                label: trimmedLabel,
+                students: 0,
+                startDate: now.toISOString(),
+                endDate: oneYearFromNow.toISOString(),
+                isApprentissage: false,
+                groups: [],
+                specialties: [],
+                constraints: createEmptyConstraints(),
+            }, cycleId)
 
-                return {
-                    ...cycle,
-                    promotions: [...(cycle.promotions || []), newPromotion],
-                }
+            await promotionsApi.addPromotion(promotionData)
+
+            // Refresh the data from backend
+            await loadCycles()
+
+            console.log('[Promotions] Promotion ajoutée avec succès:', {
+                cycleId,
+                label: trimmedLabel,
             })
-        )
+        } catch (err) {
+            console.error('Error adding promotion:', err)
+            setError('Erreur lors de l\'ajout de la promotion')
+        } finally {
+            setLoading(false)
+        }
     }
 
     // Flag global d'incohérence (stocké en localStorage)
@@ -249,5 +258,6 @@ export function usePromotionCycles() {
         renameCycle,
         removePromotion,
         addPromotionToCycle,
+        refreshCycles: loadCycles,
     }
 }

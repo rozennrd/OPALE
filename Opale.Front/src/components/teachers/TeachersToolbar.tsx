@@ -1,6 +1,6 @@
 // src/components/teachers/TeachersToolbar.tsx
-import React, { useMemo, useState } from 'react'
-import { TeachingMode } from '../../models/Teacher'
+import { useMemo, useState } from 'react'
+import { TeachingMode } from '../../models/Teachers'
 import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 import icPlus from '../../assets/ic-plus.png'
@@ -9,9 +9,9 @@ export type ModeFilter = 'ALL' | TeachingMode
 
 const MODE_OPTIONS: { value: ModeFilter; label: string }[] = [
     { value: 'ALL', label: 'Tous' },
-    { value: 'PRESENTIEL', label: 'Présentiel' },
-    { value: 'HYBRIDE', label: 'Hybride' },
-    { value: 'DISTANCIEL', label: 'Distanciel' },
+    { value: 'Présentiel', label: 'Présentiel' },
+    { value: 'Hybride', label: 'Hybride' },
+    { value: 'Distanciel', label: 'Distanciel' },
 ]
 
 interface TeachersToolbarProps {
@@ -137,7 +137,7 @@ export default function TeachersToolbar({
                         )}
                     </div>
 
-                    <div className="teachers-toolbar-mode-filter">
+                    <div className="teachers-toolbar-mode-filter toolbar-filter--chips">
                         <div className="toolbar-toggle-chips">
                             {MODE_OPTIONS.map((option) => (
                                 <button
@@ -187,12 +187,13 @@ export default function TeachersToolbar({
 
                 <button
                     type="button"
-                    className="teachers-toolbar-plus-btn"
+                    className="toolbar-add-btn teachers-toolbar-add-btn"
                     onClick={onCreateRequested}
                     aria-label="Ajouter un enseignant"
                     title="Ajouter un enseignant"
                 >
-                    <img src={icPlus} alt="" className="teachers-toolbar-plus-icon" />
+                    <img src={icPlus} alt="" className="toolbar-add-icon" />
+                    <span className="toolbar-add-label">Ajouter un enseignant</span>
                 </button>
             </ToolbarRow>
         </PageToolbar>

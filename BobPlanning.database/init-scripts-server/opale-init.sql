@@ -14,6 +14,7 @@ CREATE TYPE type_event      AS ENUM ('Cours', 'Entreprise', 'Examen', 'Reunion',
 CREATE TYPE type_cours      AS ENUM ('Cours_TD', 'Cours_TD_DIST', 'Cours_TP', 'Cours_TP_DIST', 'E-Learning', 'Entreprise', 'Examen', 'Projet', 'Rattrapage', 'Associatif', 'Conférence', 'Stage', 'Encadrement', 'Auto-géré', 'Autre');
 CREATE TYPE type_cycle      AS ENUM ('Initial', 'Apprentissage');
 CREATE TYPE campus          AS ENUM ('Bordeaux', 'Lille', 'Chateauroux');
+CREATE TYPE modalite_enseignement AS ENUM ('Présentiel', 'Distanciel', 'Hybride');
 
 -- ==============================================================
 -- 2. Tables de base
@@ -26,8 +27,9 @@ CREATE TABLE professeur (
                             prenom      VARCHAR(255)        NOT NULL,
                             email       VARCHAR(255),
                             email_perso VARCHAR(255),
+                            telephone   VARCHAR(20),
                             type        type_professeur     NOT NULL,
-                            distanciel  BOOLEAN             DEFAULT FALSE,
+                            modalite_enseignement  modalite_enseignement,
                             campus_origin campus,
                             CONSTRAINT uq_professeur_email UNIQUE (email),
                             CONSTRAINT uq_professeur_email_perso UNIQUE (email_perso)
@@ -37,11 +39,13 @@ CREATE TABLE professeur (
 CREATE TABLE salle (
                        id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                        nom         VARCHAR(100)        NOT NULL,
-                       type        type_salle          NOT NULL,
-                       capacite    INT,
+                       nom_complet  VARCHAR(255),
+                       type_principal type_salle  NOT NULL,
+                       types_secondaires type_salle[],
                        etage       INT,
-                       description VARCHAR(255),
+                       capacite    INT,
                        utilisable  BOOLEAN             DEFAULT FALSE,
+                       description VARCHAR(500),
                        CONSTRAINT uq_salle_nom UNIQUE (nom)
 );
 
@@ -260,7 +264,11 @@ CREATE TABLE enseignement (
                               id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                               id_matiere  UUID    NOT NULL,
                               id_prof     UUID    NOT NULL,
-                              nb_heures   INT,
+                              heures_td   INT,
+                              heures_tp   INT,
+                              heures_projet INT,
+                              heures_elearning INT,
+                              heures_autre INT,
                               CONSTRAINT fk_enseignement_matiere
                                   FOREIGN KEY (id_matiere)
                                       REFERENCES matiere(id)
@@ -273,7 +281,9 @@ CREATE TABLE enseignement (
                                       ON DELETE CASCADE,
     -- Un prof ne doit pas avoir deux lignes pour la même matière
                               CONSTRAINT uq_enseignement_unique UNIQUE (id_matiere, id_prof),
-                              CONSTRAINT ck_enseignement_heures CHECK (nb_heures IS NULL OR nb_heures >= 0)
+                              CONSTRAINT ck_enseignement_heures_td CHECK (heures_td IS NULL OR heures_td >= 0),
+                              CONSTRAINT ck_enseignement_heures_tp CHECK (heures_tp IS NULL OR heures_tp >= 0)
+
 );
 
 -- --------------------------------------------------------

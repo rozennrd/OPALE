@@ -21,6 +21,8 @@ import promotionRoutes from './api/routes/promotionRoutes';
 import matiereRoutes from "./api/routes/matiereRoutes";
 import profRoutes from "./api/routes/profRoutes";
 import specialiteRoutes from "./api/routes/specialiteRoutes";
+import enseignementRoutes from "./api/routes/enseignementRoutes";
+import disponibiliteRoutes from './api/routes/disponibiliteRoutes';
 import maquetteRoutes from './api/routes/maquetteRoutes';
 
 require('dotenv').config();
@@ -33,11 +35,8 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// import dotenv from "dotenv"; Pas nécessaire doublons
 import eventRoutes from "./api/routes/eventRoutes";
 import localisationRoutes from "./api/routes/localisationRoutes";
-// dotenv.config(); Pas nécessaire triplons
-
 const dbConfig = getDBConfig();
 
 const app = express();
@@ -72,10 +71,12 @@ app.use('/', salleRoutes);
 app.use('/', cycleRoutes);
 app.use('/', groupeRoutes);
 app.use('/', promotionRoutes);
-app.use("/", matiereRoutes);
+app.use('/', matiereRoutes);
 app.use('/', profRoutes);
 app.use('/', specialiteRoutes);
 app.use('/', eventRoutes);
+app.use('/', enseignementRoutes);
+app.use('/', disponibiliteRoutes);
 app.use('/', localisationRoutes);
 app.use('/', maquetteRoutes);
 
@@ -200,6 +201,7 @@ app.post('/login', async (req: Request, res: Response) => {
   }
 });
 
+
 /**
  * @swagger
  * /generateEdtMacro:
@@ -305,8 +307,6 @@ app.post(
           });
         });
 
-        console.log("Promotions récupérées :", promotions);
-
         // ========================================
         // 2. Fetch Macro Events
         // ========================================
@@ -348,7 +348,6 @@ app.post(
           });
         });
 
-        console.log("Événements récupérés :", eventsMacro);
 
         // ========================================
         // 3. Build Promotions with Periods
@@ -886,90 +885,81 @@ app.post(
 
 /*========== COURS ==========*/
 
-app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
+app.post('/setAllCourses', authJwt.verifyToken, async (req, res) => {
+  pool.connect(async (err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
 
-    connection.beginTransaction((err: any) => {
-      if (err) {
-        connection.release();
-        return res.status(500).json({ error: err.message });
-      }
+    try {
+      // Start transaction
+      await connection.query('BEGIN');
 
       // Extraire la promo unique des cours
       const promo =
           req.body.courses.length > 0 ? req.body.courses[0].promo : null;
 
       if (!promo) {
+        await connection.query('ROLLBACK');
         connection.release();
         return res.status(400).json({ error: 'Aucune promotion fournie' });
       }
 
       // Supprimer les matières associées à cette promo
-      const deleteSql = `DELETE
-                               FROM concerner
-                               WHERE id_promo = ?`;
+      const deleteSql = `DELETE FROM concerner WHERE id_promo = $1`;
 
-      connection.query(deleteSql, [promo], (deleteErr: any) => {
-        if (deleteErr) {
-          return connection.rollback(() => {
-            connection.release();
-            res.status(500).json({ error: deleteErr.message });
-          });
-        }
+      await connection.query(deleteSql, [promo]);
 
-        // Insérer les nouvelles matières
-        const insertPromises = req.body.courses.map(
-            (cours: {
-              promo: string;
-              name: string;
-              UE: string;
-              Semestre: string;
-              Periode: string;
-              Prof: string;
-              typeSalle: string;
-              heure: string;
-            }) => {
-              return new Promise<void>((resolve, reject) => {
-                // Ancienne requête permettant l'update d'une matière si elle existe déjà ou l'insert
-                // TODO : À garder jusqu'à ce que la fonction soit fonctionnelle avec la nouvelle base de données
-                // const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
-                //               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                //               ON DUPLICATE KEY UPDATE
-                //               UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode),
-                //               Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
+      // Insérer les nouvelles matières
+      const insertPromises = req.body.courses.map(
+          (cours: {
+            promo: string;
+            name: string;
+            UE: string;
+            Semestre: string;
+            Periode: string;
+            Prof: string;
+            typeSalle: string;
+            heure: string;
+          }) => {
+            return new Promise<void>((resolve, reject) => {
+              // Ancienne requête permettant l'update d'une matière si elle existe déjà ou l'insert
+              // TODO : À garder jusqu'à ce que la fonction soit fonctionnelle avec la nouvelle base de données
+              // const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
+              //               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+              //               ON DUPLICATE KEY UPDATE
+              //               UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode),
+              //               Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
 
-                const sql = `INSERT INTO matiere (id_promo, nom, semestre, volume_horaire)
-                                         VALUES (?, ?, ?, ?) ON CONFLICT (id_promo, nom) 
-                            DO
-                            UPDATE SET
-                                semestre = EXCLUDED.semestre,
-                                volume_horaire = EXCLUDED.volume_horaire`;
-                connection.query(
-                    sql,
-                    [
-                      cours.promo,
-                      cours.name,
-                      cours.UE,
-                      cours.Semestre,
-                      cours.Periode,
-                      cours.Prof,
-                      cours.typeSalle,
-                      cours.heure,
-                    ],
-                    (error: any) => {
-                      if (error) {
-                        console.error(
-                            "Erreur lors de l'insertion/mise à jour :",
-                            error,
-                        );
-                        return reject(error);
-                      }
-                      resolve();
-                    },
-                );
+              const sql = `INSERT INTO matiere (id_promo, nom, semestre, volume_horaire)
+                                        VALUES (?, ?, ?, ?) ON CONFLICT (id_promo, nom) 
+                          DO
+                          UPDATE SET
+                              semestre = EXCLUDED.semestre,
+                              volume_horaire = EXCLUDED.volume_horaire`;
+              connection.query(
+                  sql,
+                  [
+                    cours.promo,
+                    cours.name,
+                    cours.UE,
+                    cours.Semestre,
+                    cours.Periode,
+                    cours.Prof,
+                    cours.typeSalle,
+                    cours.heure,
+                  ],
+                  (error: any) => {
+                    if (error) {
+                      console.error(
+                          "Erreur lors de l'insertion/mise à jour :",
+                          error,
+                      );
+                      return reject(error);
+                    }
+                    resolve();
+                  },
+              );
               });
             },
         );
@@ -997,10 +987,11 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
             .finally(() => {
               connection.release();
             });
-      });
-    });
+      } catch (e) { console.log (e)}
+   
   });
 });
+
 
 app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
   pool.connect((err: any, connection: any) => {
@@ -1057,7 +1048,7 @@ app.get('/getCours', authJwt.verifyToken, (req, res) => {
       return res.status(500).json({ error: err.message });
     }
 
-    const sql = 'SELECT * FROM Cours'; // Remplace `Cours` par le nom de ta table en base de données
+    const sql = 'SELECT * FROM Cours';
 
     connection.query(sql, (error: any, results: any) => {
       if (error) {
@@ -1071,8 +1062,12 @@ app.get('/getCours', authJwt.verifyToken, (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Start the server
+const server = app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Swagger docs available at http://localhost:${PORT}/docs`);
 });
+
+server.timeout = 0;
 
 export default app;

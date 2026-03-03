@@ -1,6 +1,82 @@
-import { useState } from 'react'
-import { ROOMS_MOCK } from '../../mocks/rooms.mock'
+import { useEffect, useState } from 'react'
 import { Room } from '../../models/Room'
+import { Salle, sallesApi } from '../../services/api/sallesApi'
+
+const BACKEND_TO_FRONT_TYPE: Record<string, Room['mainType']> = {
+    Cours: 'TD',
+    Informatique: 'TP_NUMERIQUE',
+    Electronique: 'TP_ELECTRONIQUE',
+    Projet: 'PROJET',
+}
+
+const FRONT_TO_BACKEND_TYPE: Record<Room['mainType'], string> = {
+    TD: 'Cours',
+    TP_NUMERIQUE: 'Informatique',
+    TP_ELECTRONIQUE: 'Electronique',
+    PROJET: 'Projet',
+    AUTRE: 'Rassemblement',
+}
+
+const mapBackendTypeToFront = (value?: string | null): Room['mainType'] => {
+    if (!value) return 'AUTRE'
+    return BACKEND_TO_FRONT_TYPE[value] ?? 'AUTRE'
+}
+
+const mapFrontTypeToBackend = (value: Room['mainType']): string => {
+    return FRONT_TO_BACKEND_TYPE[value] ?? 'Rassemblement'
+}
+
+const normalizeSecondaryTypes = (value: Salle['types_secondaires']): string[] => {
+    if (Array.isArray(value)) return value
+    if (typeof value === 'string') {
+        return value
+            .replace('{', '')
+            .replace('}', '')
+            .split(',')
+            .map((item) => item.trim())
+            .filter(Boolean)
+    }
+    return []
+}
+
+const backendToRoom = (salle: Salle): Room => {
+    const mainType = mapBackendTypeToFront(salle.type_principal)
+    const secondaryTypes = normalizeSecondaryTypes(salle.types_secondaires)
+        .map((type) => mapBackendTypeToFront(type))
+        .filter(Boolean)
+
+    const types = Array.from(new Set([mainType, ...secondaryTypes]))
+
+    return {
+        id: salle.id,
+        name: salle.nom,
+        fullName: salle.nom_complet ?? undefined,
+        mainType,
+        types,
+        floor: Number(salle.etage ?? 0),
+        capacity: Number(salle.capacite ?? 0),
+        isAvailable: Boolean(salle.utilisable),
+        description: salle.description ?? undefined,
+    }
+}
+
+const roomToCreatePayload = (room: Room) => ({
+    nom: room.name,
+    nom_complet: room.fullName ?? room.name,
+    type_principal: mapFrontTypeToBackend(room.mainType),
+    types_secondaires: room.types
+        .filter((type) => type !== room.mainType)
+        .map((type) => mapFrontTypeToBackend(type)),
+    etage: room.floor,
+    capacite: room.capacity,
+    utilisable: room.isAvailable,
+    description: room.description ?? null,
+})
+
+const roomToUpdatePayload = (room: Room) => ({
+    id: room.id,
+    ...roomToCreatePayload(room),
+})
 
 const getNextRoomCode = (rooms: Room[], floor: Room['floor']): string => {
     const usedCodes = new Set(
@@ -20,15 +96,47 @@ const getNextRoomCode = (rooms: Room[], floor: Room['floor']): string => {
 }
 
 export const useRoomsData = () => {
-    const [rooms, setRooms] = useState<Room[]>(() => [...ROOMS_MOCK])
+    const [rooms, setRooms] = useState<Room[]>([])
     const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
     const [pendingNewRoomId, setPendingNewRoomId] = useState<string | null>(null)
+
+    useEffect(() => {
+        const loadRooms = async () => {
+            try {
+                const response = await sallesApi.getAllSalles()
+                if (!response.success || !response.data) {
+                    console.error('[ROOMS] Failed to load rooms from API', response.error)
+                    return
+                }
+
+                const raw = response.data as unknown
+                const salles = Array.isArray(raw)
+                    ? (raw as Salle[])
+                    : (Array.isArray((raw as { data?: Salle[] })?.data)
+                        ? ((raw as { data: Salle[] }).data)
+                        : [])
+
+                setRooms(salles.map(backendToRoom))
+            } catch (error) {
+                console.error('[ROOMS] Unexpected error while loading rooms', error)
+            }
+        }
+
+        loadRooms()
+    }, [])
 
     const deleteRoomsByIds = (ids: string[]) => {
         const idsSet = new Set(ids)
         if (idsSet.size === 0) return
 
-        console.log('[ROOMS] Delete rooms (mock)', { ids: Array.from(idsSet) })
+        console.log('[ROOMS] Delete rooms', { ids: Array.from(idsSet) })
+
+        Array.from(idsSet).forEach(async (id) => {
+            const response = await sallesApi.deleteSalle(id)
+            if (!response.success) {
+                console.error('[ROOMS] Failed to delete room via API', { id, error: response.error })
+            }
+        })
 
         setRooms((prev) => prev.filter((room) => !idsSet.has(room.id)))
 
@@ -58,20 +166,60 @@ export const useRoomsData = () => {
             isAvailable: true,
         }
 
-        console.log('[ROOMS] Add room (mock)', newRoom)
+        console.log('[ROOMS] Add room', newRoom)
         setRooms((prevRooms) => [...prevRooms, newRoom])
         setPendingNewRoomId(newRoomId)
         setSelectedRoom(newRoom)
     }
 
-    const updateRoom = (updatedRoom: Room) => {
-        setRooms((prevRooms) =>
-            prevRooms.map((room) => (room.id === updatedRoom.id ? updatedRoom : room)),
-        )
-        if (pendingNewRoomId === updatedRoom.id) {
-            setPendingNewRoomId(null)
+    const updateRoom = async (updatedRoom: Room): Promise<boolean> => {
+        try {
+            const payload = {
+                ...roomToCreatePayload(updatedRoom),
+                types_secondaires: roomToCreatePayload(updatedRoom).types_secondaires.length
+                    ? roomToCreatePayload(updatedRoom).types_secondaires
+                    : null,
+            }
+
+            if (pendingNewRoomId === updatedRoom.id) {
+                const createResponse = await sallesApi.createSalle(payload)
+
+                if (!createResponse.success || !createResponse.data) {
+                    console.error('[ROOMS] Failed to create room via API', createResponse.error)
+                    return false
+                }
+
+                const refreshResponse = await sallesApi.getAllSalles()
+                if (refreshResponse.success && refreshResponse.data) {
+                    const mapped = refreshResponse.data.map(backendToRoom)
+                    setRooms(mapped)
+
+                    const createdRoom = mapped.find((room) => room.id === createResponse.data?.insertedId)
+                    setSelectedRoom(createdRoom ?? null)
+                }
+
+                setPendingNewRoomId(null)
+                return true
+            }
+
+            const updateResponse = await sallesApi.updateSalle({
+                id: updatedRoom.id,
+                ...payload,
+            })
+            if (!updateResponse.success) {
+                console.error('[ROOMS] Failed to update room via API', updateResponse.error)
+                return false
+            }
+
+            setRooms((prevRooms) =>
+                prevRooms.map((room) => (room.id === updatedRoom.id ? updatedRoom : room)),
+            )
+            setSelectedRoom(updatedRoom)
+            return true
+        } catch (error) {
+            console.error('[ROOMS] Unexpected error while saving room', error)
+            return false
         }
-        setSelectedRoom(updatedRoom)
     }
 
     const closeDetail = () => {
@@ -83,7 +231,7 @@ export const useRoomsData = () => {
     }
 
     const deleteSingleRoom = (roomId: string) => {
-        console.log('[ROOMS] Delete single room (mock)', { roomId })
+        console.log('[ROOMS] Delete single room', { roomId })
         deleteRoomsByIds([roomId])
     }
 

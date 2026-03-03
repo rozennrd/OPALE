@@ -1,5 +1,6 @@
 import React from 'react'
 import { EditingPromotion } from '../../../hooks/promotions/usePromotionEditing'
+import DateInput from '../../common/DateInput'
 
 interface PromoMainInfoProps {
     editingPromo: EditingPromotion
@@ -49,21 +50,21 @@ const PromoMainInfo: React.FC<PromoMainInfoProps> = ({
 
                 <label className="promo-edit-field">
                     <span className="promo-edit-label">Date de début</span>
-                    <input
-                        type="date"
-                        className="promo-edit-input"
+                    <DateInput
                         value={editingPromo.startDate}
-                        onChange={(e) => onFieldChange('startDate', e.target.value)}
+                        onChange={(value) => onFieldChange('startDate', value)}
+                        inputClassName="promo-edit-input"
+                        max={editingPromo.endDate || undefined}
                     />
                 </label>
 
                 <label className="promo-edit-field">
                     <span className="promo-edit-label">Date de fin</span>
-                    <input
-                        type="date"
-                        className="promo-edit-input"
+                    <DateInput
                         value={editingPromo.endDate}
-                        onChange={(e) => onFieldChange('endDate', e.target.value)}
+                        onChange={(value) => onFieldChange('endDate', value)}
+                        inputClassName="promo-edit-input"
+                        min={editingPromo.startDate || undefined}
                     />
                 </label>
 
