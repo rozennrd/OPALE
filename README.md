@@ -1,24 +1,29 @@
-# OPALE PROJECT
+# 💎 OPALE PROJECT
+## 📖 Presentation
+OPALE is a legacy project that helps JUNIA coordinators manage academic planning. 
 
-## To run the project : 
+It provides a complete solution to schedule and organize professors, students, and classrooms. The project is built around three main components: the database, the backend, and the frontend.
+
+- The database stores all planning-related data, including schedules, professors, students, and rooms.
+- The backend contains the business logic. It processes requests, applies the necessary rules, and communicates with the database.
+- The frontend provides the user interface, allowing coordinators and other users to interact easily with the system.
+
+
+## 📗 Run the project
 
 ### 1. Database
 
-* Prerequisite : [Docker](https://www.docker.com/get-started/) is installed.
-* Open terminal in folder BobPlanning.database
-* `docker compose up`
-
-* Add a file .env at the root of the project that contains this :
-
-```
+- Prerequisite: [Docker](https://www.docker.com/get-started/) is installed.
+- Add this `.env` file in `BobPlanning.database`:
+```env
 POSTGRES_DB=opale
 POSTGRES_USER=opale_user
 POSTGRES_PASSWORD=thisIsOpale!
 ```
 
 ### 2. Backend
-Add file `db.conf` in src/database/config
-```
+- Add this `db.conf` file in `BobPlanning.back/src/database/config`:
+```env
 DB_HOST=localhost
 DB_USER=opale_user
 DB_PASSWORD=thisIsOpale!
@@ -28,44 +33,48 @@ POSTGRES_DB=opale
 POSTGRES_USER=opale_user
 POSTGRES_PASSWORD=thisIsOpale!
 ```
-* Go to BobPlanning.back --> cd .\BobPlanning.back
-* Install library --> npm i
-* Run the project --> npm run dev
+- Add this `.env` file in `BobPlanning.back`:
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=opale
+DB_USER=opale_user
+DB_PASSWORD=thisIsOpale!
+```
+- Go to `BobPlanning.back` → `cd .\BobPlanning.back`
+- Install library → `npm i`
 
 ### 3. Frontend
- 
-* Add this .env file in BobPlanning.front :
-
+- Add this `.env` file in `BobPlanning.front`:
+```env
+VITE_RACINE_FETCHER_URL=http://localhost:3000
 ```
-  VITE_RACINE_FETCHER_URL=http://localhost:3000
-```
-* Go to BobPlanning.front --> cd .\BobPlanning.front
-* Install library --> npm i
-* Run the project --> npm run dev 
+- Go to `BobPlanning.front` → `cd .\BobPlanning.front`
+- Install library → `npm i`
 
+
+### 4. Global projet
+- Add this `.env` file in `OPALE`:
+```env
+POSTGRES_DB=opale
+POSTGRES_USER=opale_user
+POSTGRES_PASSWORD=thisIsOpale!
+VITE_RACINE_FETCHER_URL=http://localhost:3000/
+```
+- Go to `OPALE` → `cd .\OPALE`
+
+### 5. Run
+- Run the project → `docker compose up --build` (NB : write `docker compose up` if you have already built the project before)
+- The backend will be available at `http://localhost:3000` and the frontend at `http://localhost:5173`.
 
 You can stop here if you just want to run the project. Continue if you are trying to develop.
 
 ---
+## 📘Database
 
- Pour l'utilisation de le partie, utilisation de postman en rajoutant dans le headers un x-access-token que vous pouvez le récupérer depuis votre front apres la connexion en tapant dans votre console web la commande : localStorage.accessToken qui vous renvoit votre token actuel. 
- Sinon vous pouvez supprimer dans index.ts la demande de vérification du token, attention, ne pas supprimer pour la partie prod. 
+### Entity Relationship Diagram
 
-## [work in progress] MicroService
-Service pour générer le micro-planning
- Go to BobPlanning.microService --> cd .\BobPlanning.microService
- Create a env mode for python --> python -m venv venv
- Go in env mode for python : 
-   If you are a linux user --> source venv/bin/activate 
-   If you are a Windows user --> .\venv\Scripts\activate
- Install library --> pip install -r requirements.txt
- Run the project --> uvicorn main:app --port 3001 --reload
-
- Pour mettre à jour les installations de lib --> pip freeze > requirements.txt
-
-## Database
-### Entity Relationship Diagram 
-#### Existing Database Schema : BOB
+#### Existing Database Schema: BOB
 ```mermaid
 erDiagram
 %% =====================
@@ -132,7 +141,10 @@ erDiagram
 
 ```
 
-#### New Database Schema : OPALE
+#### New Database Schema: OPALE
+
+For a better understanding of the new database schema, we can refer to the following Entity Relationship Diagram (ERD) which illustrates the entities and their relationships in the OPALE project:
+
 ```mermaid
 erDiagram
     professeur {
@@ -140,28 +152,38 @@ erDiagram
         varchar nom
         varchar prenom
         varchar email
+        varchar email_perso
+        varchar telephone
         type_professeur type
-        boolean distanciel
+        modalite_enseignement modalite_enseignement
+        campus campus_origin
     }
 
     salle {
         UUID id PK
         varchar nom
-        type_salle type
-        int capacite
+        varchar nom_complet
+        type_salle type_principal
+        type_salle[] types_secondaires
         int etage
+        int capacite
+        boolean utilisable
+        varchar description
     }
 
     event {
         UUID id PK
         type_event type
         varchar nom
+        varchar description
         int num_semaine
         timestamp datetime_start
         timestamp datetime_end
         boolean show_macro
         boolean show_micro
         boolean is_blocking
+        boolean is_exceptional
+        boolean is_external
     }
 
     cycle {
@@ -205,6 +227,9 @@ erDiagram
         int nb_eval_intermediaire
         int heures_td
         int heures_tp
+        float heures_projet
+        float heures_elearning
+        float heures_autre
     }
 
     cours {
@@ -241,7 +266,11 @@ erDiagram
         UUID id PK
         UUID id_matiere FK
         UUID id_prof FK
-        int nb_heures
+        int heures_td
+        int heures_tp
+        int heures_projet
+        int heures_elearning
+        int heures_autre
     }
 
     utilisateurs {
@@ -261,12 +290,12 @@ erDiagram
     cycle ||--o{ promotion : "1,n"
 
     promotion ||--o{ groupe : "1,n"
-    promotion ||--o{ specialite : "1,n"
-    promotion ||--o{ matiere : "1,n"
+    promotion o|--o{ specialite : "0,n"
+    promotion o|--o{ matiere : "0,n"
 
-    groupe ||--o{ specialite : "1,n"
+    groupe o|--o{ specialite : "0,n"
 
-    specialite ||--o{ matiere : "1,n"
+    specialite o|--o{ matiere : "0,n"
 
     professeur ||--o{ cours : "1,n"
     matiere ||--o{ cours : "1,n"
@@ -284,5 +313,45 @@ erDiagram
 
     professeur ||--o{ enseignement : "1,n"
     matiere ||--o{ enseignement : "1,n"
-
 ```
+
+You can also follow this link, to have a better view of the database schema : [DrawSQL](https://drawsql.app/teams/opale-3/diagrams/opale-diagram?ref=embed).
+
+You can also read the database documentation by following this link : [Confluence-BDD](https://opaleap5.atlassian.net/wiki/spaces/OPALE/pages/20611077/BDD)
+
+## 📒API - Postman collection
+
+You can find the postman collection by following this link : [Postman](https://www.postman.com/workspace/My-Workspace~9c5702ca-1443-400d-88e7-5bcd552db2f4/collection/24357578-08705eb3-14c9-48e6-b159-9d5d52bd1576?action=share&source=copy-link&creator=24357578).
+With this collection, you can test all the API endpoints of the project, and import it to update the collection itself. Make sure to update the environment variables in postman to match your local setup (e.g., base URL, authentication tokens).
+* You can show the generated doc by clicking on the "Overview" tab in the postman collection, and then click on "View complete documentation". This will open the documentation, where you can see all the endpoints, their descriptions, and how to use them.
+
+You can also read the API documentation by following this link : [Confluence-API](https://opaleap5.atlassian.net/wiki/spaces/OPALE/pages/25264129/Routes?draftShareId=b507934e-0d8e-4893-b456-6b3c94cd13de)
+
+
+### Important steps for using the API
+
+1. **Authentication**: First, you need to authenticate to get an access token. Use the *GetAccessToken* endpoint to receive a JWT token (only run it).
+2. **Set Token in Headers** : For all subsequent API requests, include the received token in the headers as `x-access-token`. This will allow you to access protected endpoints.
+
+## 📕 [work in progress] MicroService
+
+Service for micro-planning generation
+
+- Go to `BobPlanning.microService` --> `cd .\BobPlanning.microService`
+- Create a env mode for python --> `python -m venv venv`
+- Go in env mode for python:
+  - If you are a linux user --> `source venv/bin/activate`
+  - If you are a Windows user --> `.\venv\Scripts\activate`
+- Install library --> `pip install -r requirements.txt`
+- Run the project --> `uvicorn main:app --port 3001 --reload`
+
+For updating lib installations, you can run --> `pip freeze > requirements.txt`
+
+## 📙 CI/CD
+
+We have set up a CI/CD pipeline to automate the testing (and furthemore deployment) of our application.
+
+## 🔗 Usefull links:
+- [DrawSQL](https://drawsql.app/teams/opale-3/diagrams/opale-diagram?ref=embed) : for the database schema
+- [Postman](https://www.postman.com/workspace/My-Workspace~9c5702ca-1443-400d-88e7-5bcd552db2f4/collection/24357578-08705eb3-14c9-48e6-b159-9d5d52bd1576?action=share&source=copy-link&creator=24357578) : for the API collection
+- [Confluence](https://opaleap5.atlassian.net/wiki/spaces/OPALE/overview?homepageId=131335) : for the project documentation
