@@ -1,4 +1,5 @@
 import type { TutorialContent } from '../types'
+/* eslint-disable react/no-unescaped-entities */
 import promoPageScreenshot from '../../../assets/tuto/promo/screen-page-promo.png'
 import eventPageScreenshot from '../../../assets/tuto/event/screen-page-event.png'
 import { buildPageTutorialDeepLink } from './docLinks'

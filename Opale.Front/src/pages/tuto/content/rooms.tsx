@@ -1,4 +1,5 @@
 ﻿import type { TutorialContent } from '../types'
+/* eslint-disable react/no-unescaped-entities */
 import screenPageSalleScreenshot from '../../../assets/tuto/salle/screen-page-salle.png'
 import screenPageSalleSuppressionScreenshot from '../../../assets/tuto/salle/screen-page-salle-suppression.png'
 import screenPopupSalleScreenshot from '../../../assets/tuto/salle/screen-pop-up-salle.png'

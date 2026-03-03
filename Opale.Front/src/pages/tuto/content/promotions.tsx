@@ -1,4 +1,5 @@
 ﻿import promoPageScreenshot from '../../../assets/tuto/promo/screen-page-promo.png'
+/* eslint-disable react/no-unescaped-entities */
 import popupAddPromotionScreenshot from '../../../assets/tuto/promo/screen-pop-up-ajouter-promotion.png'
 import popupCreateCycleScreenshot from '../../../assets/tuto/promo/screen-pop-up-creer-cycle.png'
 import popupEditPromotionScreenshot from '../../../assets/tuto/promo/screen-pop-up-modifier-promo.png'

@@ -168,7 +168,7 @@ export default function Documentation() {
 
                                 <section className="documentation-viewer-block">
                                     <h3 className="documentation-viewer-title">
-                                        Points d'attention
+                                        Points d&apos;attention
                                     </h3>
                                     <ul className="documentation-tip-list">
                                         {selectedTutorialContent.tips.map((tip, index) => (
