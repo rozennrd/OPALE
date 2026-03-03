@@ -315,6 +315,17 @@
         }
     }
 
+    @media (max-width: 1300px) {
+        .toolbar-add-btn {
+            padding: 0.45rem 0.6rem;
+            gap: 0;
+        }
+
+        .toolbar-add-label {
+            display: none;
+        }
+    }
+
     @media (max-width: 1225px) {
         .toolbar-toggle-chips {
             width: fit-content;
