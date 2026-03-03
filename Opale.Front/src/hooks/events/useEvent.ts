@@ -3,39 +3,54 @@ import { useState, useEffect } from 'react'
 import { eventsApi, BackendEvent, TypeEvent } from '../../services/api/eventsApi'
 import { sallesApi, Salle } from '../../services/api/sallesApi'
 import { localisationsApi, Localisation } from '../../services/api/localisationsApi'
-import { CampusEvent, EventType } from '../../models/CampusEvent'
+import { CampusEvent } from '../../models/CampusEvent'
+import { EventType } from '../../models/EventTypes'
 
 // Mapping backend TypeEvent → frontend EventType
 const BACKEND_TO_FRONTEND_TYPE: Record<TypeEvent, EventType> = {
-    'Cours':              'AUTRE',
-    'Entreprise':         'AUTRE',
-    'Examen':             'EXAMEN',
-    'Reunion':            'AUTRE',
-    'Fermeture':          'AUTRE',
-    'Soutenance':         'AUTRE',
-    'JPO':                'JOURNEE_PO',
-    'Stage':              'AUTRE',
-    'Mobilite':           'AUTRE',
-    'PFE':                'AUTRE',
-    'Rattrapage':         'EXAMEN',
-    'Conference':         'CONFERENCE',
-    'Rentrée':            'AUTRE',
-    'Réunion parents':    'AUTRE',
-    'Journée Immersion':  'AUTRE',
-    'Concours':           'AUTRE',
-    'Salon':              'SALON',
-    'Fin des cours':      'AUTRE',
-    'Autre':              'AUTRE',
+    'Cours': 'Cours',
+    'Entreprise': 'Entreprise',
+    'Examen': 'Examen',
+    'Reunion': 'Reunion',
+    'Fermeture': 'Fermeture',
+    'Soutenance': 'Soutenance',
+    'JPO': 'JPO',
+    'Stage': 'Stage',
+    'Mobilite': 'Mobilite',
+    'PFE': 'PFE',
+    'Rattrapage': 'Rattrapage',
+    'Conference': 'Conference',
+    'Rentrée': 'Rentrée',
+    'Réunion parents': 'Réunion parents',
+    'Journée Immersion': 'Journée Immersion',
+    'Concours': 'Concours',
+    'Salon': 'Salon',
+    'Fin des cours': 'Fin des cours',
+    'Autre': 'Autre',
 }
 
 // Mapping frontend EventType → backend TypeEvent
 const FRONTEND_TO_BACKEND_TYPE: Record<EventType, TypeEvent> = {
-    'JOURNEE_PO':  'JPO',
-    'EXAMEN':      'Examen',
-    'CONFERENCE':  'Conference',
-    'FORUM':       'Autre',
-    'SALON':       'Salon',
-    'AUTRE':       'Autre',
+    'Cours': 'Cours',
+    'Entreprise': 'Entreprise',
+    'Examen': 'Examen',
+    'Reunion': 'Reunion',
+    'Fermeture': 'Fermeture',
+    'Soutenance': 'Soutenance',
+    'JPO': 'JPO',
+    'Stage': 'Stage',
+    'Mobilite': 'Mobilite',
+    'PFE': 'PFE',
+    'Rattrapage': 'Rattrapage',
+    'Conference': 'Conference',
+    'Rentrée': 'Rentrée',
+    'Réunion parents': 'Réunion parents',
+    'Journée Immersion': 'Journée Immersion',
+    'Concours': 'Concours',
+    'Salon': 'Salon',
+    'Forum': 'Autre',
+    'Fin des cours': 'Fin des cours',
+    'Autre': 'Autre',
 }
 
 function buildLocation(salles: Salle[]): string {
@@ -50,7 +65,7 @@ function backendToFrontend(backendEvent: BackendEvent, salles: Salle[] = []): Ca
         endDate: backendEvent.datetime_end,
         location: buildLocation(salles),
         source: backendEvent.is_external ? 'EXTERNE' : 'JUNIA',
-        type: BACKEND_TO_FRONTEND_TYPE[backendEvent.type] ?? 'AUTRE',
+        type: BACKEND_TO_FRONTEND_TYPE[backendEvent.type] ?? 'Autre',
         description: backendEvent.description ?? '',
         num_semaine: backendEvent.num_semaine,
         show_macro: backendEvent.show_macro,
@@ -62,6 +77,11 @@ function backendToFrontend(backendEvent: BackendEvent, salles: Salle[] = []): Ca
 }
 
 function frontendToBackend(event: Partial<CampusEvent>) {
+    const isExternal = event.is_external ?? (event.source === 'EXTERNE')
+    const concernedPromotions = Array.from(
+        new Set(event.concernedPromotionIds ?? []),
+    )
+
     return {
         type: FRONTEND_TO_BACKEND_TYPE[event.type!],
         nom: event.name!,
@@ -73,7 +93,14 @@ function frontendToBackend(event: Partial<CampusEvent>) {
         show_micro: event.show_micro ?? true,
         is_blocking: event.is_blocking ?? false,
         is_exceptional: event.is_exceptional ?? true,
-        is_external: event.is_external ?? (event.source === 'EXTERNE'),
+        is_external: isExternal,
+        concerne: isExternal
+            ? undefined
+            : {
+                promotions: concernedPromotions,
+                groups: [],
+                specialties: [],
+            },
     }
 }
 
@@ -85,6 +112,34 @@ function getErrorMessage(error: unknown): string {
         return error
     }
     return 'Une erreur est survenue'
+}
+
+function resolveSalleIdsFromLocation(
+    location: string | undefined,
+    salles: Salle[],
+): string[] {
+    if (!location?.trim()) return []
+
+    const parts = location
+        .split(',')
+        .map((part) => part.trim().toLowerCase())
+        .filter(Boolean)
+
+    if (parts.length === 0) return []
+
+    return Array.from(
+        new Set(
+            salles
+                .filter((salle) => {
+                    const labels = [salle.nom_complet, salle.nom]
+                        .filter((label): label is string => Boolean(label))
+                        .map((label) => label.trim().toLowerCase())
+
+                    return parts.some((part) => labels.includes(part))
+                })
+                .map((salle) => salle.id),
+        ),
+    )
 }
 
 export function useEvents() {
@@ -152,9 +207,15 @@ export function useEvents() {
             if (!response.success || !response.data) {
                 throw new Error(response.error?.message ?? 'Erreur lors de la création')
             }
-            if (salleIds.length > 0) {
+
+            const effectiveSalleIds =
+                salleIds.length > 0
+                    ? Array.from(new Set(salleIds))
+                    : resolveSalleIdsFromLocation(event.location, salles)
+
+            if (effectiveSalleIds.length > 0) {
                 await Promise.all(
-                    salleIds.map((salleId) =>
+                    effectiveSalleIds.map((salleId) =>
                         localisationsApi.addLocalisation({
                             id_event: response.data!.insertedId,
                             id_salle: salleId,
@@ -164,7 +225,10 @@ export function useEvents() {
             }
 
             await loadEvents()
-            return { success: true as const }
+            return {
+                success: true as const,
+                insertedId: response.data.insertedId,
+            }
         } catch (err) {
             console.error('Error creating event:', err)
             return { success: false as const, error: getErrorMessage(err) }
@@ -184,9 +248,14 @@ export function useEvents() {
 
             await localisationsApi.deleteLocalisationsByEvent(eventId)
 
-            if (salleIds.length > 0) {
+            const effectiveSalleIds =
+                salleIds.length > 0
+                    ? Array.from(new Set(salleIds))
+                    : resolveSalleIdsFromLocation(event.location, salles)
+
+            if (effectiveSalleIds.length > 0) {
                 await Promise.all(
-                    salleIds.map((salleId) =>
+                    effectiveSalleIds.map((salleId) =>
                         localisationsApi.addLocalisation({
                             id_event: eventId,
                             id_salle: salleId,
@@ -203,6 +272,45 @@ export function useEvents() {
         }
     }
 
+    const deleteEvents = async (eventIds: string[]) => {
+        const uniqueIds = Array.from(new Set(eventIds))
+        if (uniqueIds.length === 0) {
+            return { success: true as const, deletedIds: [] as string[] }
+        }
+
+        const deletedIds: string[] = []
+        const failedIds: string[] = []
+
+        await Promise.all(
+            uniqueIds.map(async (eventId) => {
+                try {
+                    await localisationsApi.deleteLocalisationsByEvent(eventId)
+                } catch {
+                    // Best-effort cleanup; deletion of event may still succeed if cascade is configured
+                }
+
+                const response = await eventsApi.deleteEvent(eventId)
+                if (response.success) {
+                    deletedIds.push(eventId)
+                } else {
+                    failedIds.push(eventId)
+                }
+            }),
+        )
+
+        if (failedIds.length > 0) {
+            return {
+                success: false as const,
+                error: `Suppression impossible pour ${failedIds.length} événement(s).`,
+                deletedIds,
+                failedIds,
+            }
+        }
+
+        await loadEvents()
+        return { success: true as const, deletedIds }
+    }
+
     return {
         events,
         salles,
@@ -210,6 +318,7 @@ export function useEvents() {
         error,
         createEvent,
         updateEvent,
+        deleteEvents,
         refreshEvents: loadEvents,
     }
 }

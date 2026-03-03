@@ -122,6 +122,99 @@
         padding-right: 2rem;
     }
 
+    .event-detail-multiselect {
+        position: relative;
+        width: 100%;
+    }
+
+    .event-detail-multiselect-trigger {
+        width: 100%;
+        min-height: 2.15rem;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        padding: 0.35rem 0.9rem;
+        font-family: inherit;
+        font-size: 0.9rem;
+        background: var(--panel-soft);
+        color: var(--text);
+        outline: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+        cursor: pointer;
+    }
+
+    .event-detail-multiselect-value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: left;
+        flex: 1;
+    }
+
+    .event-detail-multiselect-chevron {
+        flex-shrink: 0;
+        transition: transform 140ms ease;
+    }
+
+    .event-detail-multiselect-chevron.is-open {
+        transform: rotate(180deg);
+    }
+
+    .event-detail-multiselect-menu {
+        position: absolute;
+        z-index: 20;
+        top: calc(100% + 0.35rem);
+        left: 0;
+        right: 0;
+        max-height: 220px;
+        overflow-y: auto;
+        border: 1px solid var(--border);
+        border-radius: 0.8rem;
+        background: var(--panel);
+        padding: 0.35rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.16);
+    }
+
+    .event-detail-multiselect-option {
+        width: 100%;
+        border: 1px solid transparent;
+        border-radius: 0.6rem;
+        padding: 0.45rem 0.6rem;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        font-size: 0.88rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .event-detail-multiselect-option:hover {
+        background: color-mix(in srgb, var(--primary) 12%, transparent);
+        border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+    }
+
+    .event-detail-multiselect-option.is-selected {
+        background: #ffe4f1;
+        border-color: #f8b4d9;
+        color: #8a1b5f;
+        font-weight: 600;
+    }
+
+    .event-detail-multiselect-option-check {
+        font-size: 0.82rem;
+        line-height: 1;
+        font-weight: 700;
+    }
+
     .event-detail-textarea {
         width: 100%;
         flex: 1;
@@ -320,6 +413,24 @@
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.18);
         color: var(--text);
+    }
+
+    [data-theme='dark'] .event-detail-multiselect-trigger {
+        background: #1f2735;
+        border-color: rgba(255, 255, 255, 0.18);
+        color: var(--text);
+    }
+
+    [data-theme='dark'] .event-detail-multiselect-menu {
+        background: #111827;
+        border-color: rgba(255, 255, 255, 0.18);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.42);
+    }
+
+    [data-theme='dark'] .event-detail-multiselect-option.is-selected {
+        background: rgba(244, 114, 182, 0.26);
+        border-color: rgba(244, 114, 182, 0.58);
+        color: #fbcfe8;
     }
 
     [data-theme='dark'] .event-detail-source-pill {

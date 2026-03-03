@@ -92,6 +92,12 @@ export const eventService = {
         // Vérifier que l'événement existe
         await this.getEventById(dto.id);
 
+        const concerne = dto.concerne ? {
+            promotions: dto.concerne.promotions || [],
+            groups: dto.concerne.groups || [],
+            specialties: dto.concerne.specialties || []
+        } : undefined;
+
         await eventRepository.update(
             dto.id,
             dto.type,
@@ -104,7 +110,8 @@ export const eventService = {
             dto.show_micro ?? true,
             dto.is_blocking ?? false,
             dto.is_exceptional ?? false,
-            dto.is_external ?? false
+            dto.is_external ?? false,
+            concerne
         );
     },
 

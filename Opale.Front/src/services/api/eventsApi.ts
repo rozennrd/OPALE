@@ -39,6 +39,11 @@ export interface BackendEvent {
     is_blocking: boolean
     is_exceptional: boolean
     is_external: boolean
+    concerne?: {
+        groups?: string[]
+        specialties?: string[]
+        promotions?: string[]
+    }
 }
 
 // Requests
