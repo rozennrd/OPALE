@@ -186,8 +186,19 @@ export default function Matieres() {
     }, [allCycleNames])
 
     const promotionOptions = useMemo(() => {
-        return allPromotionLabels.map((nom) => ({ id: nom, nom }))
-    }, [allPromotionLabels])
+        const promos = Array.from(promoById.values())
+        const filtered = cycleFilter === 'ALL'
+            ? promos
+            : promos.filter((p) => (cycleNameById.get(p.id_cycle) ?? '') === cycleFilter)
+
+        const labels = filtered
+            .map((p) => p.nom)
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b, 'fr'))
+
+        const uniqueLabels = Array.from(new Set(labels))
+        return uniqueLabels.map((nom) => ({ id: nom, nom }))
+    }, [promoById, cycleNameById, cycleFilter])
 
     const teacherOptions = useMemo(() => {
         return (teachers ?? [])
@@ -198,6 +209,14 @@ export default function Matieres() {
             .filter((o) => o.label.length > 0)
             .sort((a, b) => a.label.localeCompare(b.label, 'fr'))
     }, [teachers])
+
+    useEffect(() => {
+        if (promotionFilter === 'ALL') return
+        const exists = promotionOptions.some((p) => p.nom === promotionFilter)
+        if (!exists) {
+            setPromotionFilter('ALL')
+        }
+    }, [promotionFilter, promotionOptions])
 
 
     const filtered = useMemo(() => {
