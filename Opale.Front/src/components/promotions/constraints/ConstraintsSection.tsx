@@ -68,6 +68,15 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
         <section className="promo-section promo-section-constraints">
             <h4 className="promo-section-title">Contraintes académiques</h4>
 
+            {!promoIsApprentissage && (
+                <div className="promo-info" role="status" aria-live="polite">
+                    <p>
+                        <strong>Info :</strong> Les vacances scolaires sont déjà récupérées via l&apos;API.
+                        Inutile de les ajouter manuellement.
+                    </p>
+                </div>
+            )}
+
             <div className="constraints-grid">
                 {/* Vacances / Entreprise */}
                 <ConstraintCard
