@@ -302,7 +302,7 @@ src/
 │   ├── Login.tsx
 │   ├── Matieres.tsx
 │   ├── Placeholder.tsx
-│   ├── PlanningMacro.tsx
+│   ├── Planning.tsx
 │   ├── Promotions.tsx
 │   ├── Rooms.tsx
 │   └── Teachers.tsx
