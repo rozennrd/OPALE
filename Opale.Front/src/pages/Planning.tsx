@@ -160,7 +160,6 @@ export default function Planning(): React.ReactElement {
                 credentials: "include"
             });
 
-
             if (!response.ok) {
                 throw new Error(`Erreur côté serveur, status ${response.status} \n${await response.text()}`)
             }
@@ -290,7 +289,7 @@ export default function Planning(): React.ReactElement {
                     </div>
                 </section>
 
-                <section className="planning-column planning-column--micro">
+                <section className="planning-column planning-column--micro planning-column--disabled">
                     <h2 className="planning-column-title">Micro</h2>
                     <div className="planning-checklist">
                         {microSections.map((section) => {
@@ -332,9 +331,20 @@ export default function Planning(): React.ReactElement {
                     </div>
 
                     <div className="planning-column-actions">
+                        <div className="planning-unavailable-warning">
+                            <span className="planning-unavailable-warning-icon">⚠️</span>
+                            <div className="planning-unavailable-warning-content">
+                                <p>Fonctionnalité non disponible</p>
+                                <p className="planning-unavailable-warning-sub">
+                                    La génération du planning micro est en cours de développement.
+                                </p>
+                            </div>
+                        </div>
+
                         <button
                             className="btn-primary btn-generate"
                             onClick={handleGenerateMicro}
+                            disabled
                         >
                             Générer le planning<br/>micro
                         </button>
