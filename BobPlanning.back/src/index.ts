@@ -112,74 +112,6 @@ app.get('/verify-auth', authJwt.verifyToken, (req: Request, res: Response) => {
   res.json({ authenticated: true, userId: (req as any).userId });
 });
 
-/**
- * @swagger
- * /login:
- *   post:
- *     summary: Authentifie un utilisateur et renvoie un cookie JWT
- *     description: Vérifie les identifiants et génère un token JWT stocké dans un cookie sécurisé.
- *     tags:
- *       - Authentification
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 description: L'adresse email de l'utilisateur
- *                 example: "test@example.com"
- *               password:
- *                 type: string
- *                 description: Le mot de passe hashé de l'utilisateur
- *                 example: "$2b$10$1234567890abcdef"
- *     responses:
- *       200:
- *         description: Connexion réussie, cookie envoyé
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Connexion réussie"
- *                 userId:
- *                   type: string
- *                   example: "123"
- *       400:
- *         description: Email ou mot de passe manquant
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Email et mot de passe requis"
- *       401:
- *         description: Identifiants incorrects
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Identifiants incorrects"
- *       500:
- *         description: Erreur serveur
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Erreur serveur"
- */
 app.post('/login', async (req: Request, res: Response) => {
   try {
     pool.connect(async (err: any, connection: any) => {
@@ -194,65 +126,6 @@ app.post('/login', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
-
-
-/**
- * @swagger
- * /generateEdtMacro:
- *   post:
- *     summary: Generate an Excel file based on provided data
- *     tags:
- *       - Macro
- *     description: Returns an Excel file for the provided date range and promotions data.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               DateDeb:
- *                 type: string
- *                 format: date
- *                 description: The start date for the data
- *                 example: "2024-08-19"
- *               DateFin:
- *                 type: string
- *                 format: date
- *                 description: The end date for the data
- *                 example: "2025-08-27"
- *               Promos:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     Name:
- *                       type: string
- *                       description: The name of the promo
- *                     Nombre:
- *                       type: integer
- *                       description: The number associated with the promo
- *                     Periode:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           DateDebutP:
- *                             type: string
- *                             format: date
- *                             description: Start date of the period
- *                           DateFinP:
- *                             type: string
- *                             format: date
- *                             description: End date of the period
- *     responses:
- *       200:
- *         description: The Excel file was generated successfully
- *       400:
- *         description: Missing or invalid data
- *       500:
- *         description: Internal server error
- */
 
 
 app.post(
@@ -420,14 +293,6 @@ app.post(
 );
 
 
-/**
- * @swagger
- * /download/EdtMacro:
- *  get:
- *     summary: Download excel macro file
- *     tags:
- *       - Macro
- */
 app.get('/download/EdtMacro', authJwt.verifyToken, (req, res) => {
   const filePath = path.join(__dirname, '..', 'files', 'EdtMacro.xlsx');
   res.download(filePath, 'EdtMacro.xlsx', (err) => {
@@ -439,85 +304,6 @@ app.get('/download/EdtMacro', authJwt.verifyToken, (req, res) => {
 });
 
 /*========== GENERATION MICRO ==========*/
-
-/**
- * @swagger
- * /readMaquette:
- *   post:
- *     summary: Read an Excel file and return UE and course data
- *     tags:
- *       - Maquette
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               file:
- *                 type: string
- *                 format: binary
- *     responses:
- *       200:
- *         description: Successfully read the Excel file and returned UE and course data
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 UE:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       name:
- *                         type: string
- *                 cours:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       name:
- *                         type: string
- *                       UE:
- *                         type: string
- *                       semestrePeriode:
- *                         type: string
- *                       heure:
- *                           type: object
- *                           properties:
- *                             total:
- *                               type: number
- *                             coursMagistral:
- *                               type: number
- *                             coursInteractif:
- *                               type: number
- *                             td:
- *                               type: number
- *                             tp:
- *                               type: number
- *                             autre:
- *                               type: number
- *       400:
- *         description: No file was uploaded
- *         content:
- *           text/plain:
- *             schema:
- *               type: string
- *               example: Aucun fichier n'a été téléchargé
- *       500:
- *         description: Internal server error while reading the file
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Erreur lors de la lecture du fichier Excel
- *                 error:
- *                   type: string
- */
 app.post(
     '/readMaquette',
     authJwt.verifyToken,
@@ -539,16 +325,6 @@ app.post(
     },
 );
 
-/**
- * @swagger
- * /generateEdtMicro:
- *  post:
- *     summary: Generate excel micro file
- *     tags:
- *       - Micro
- *     requestBody:
- *       required: true
- */
 app.post(
     '/generateEdtMicro',
     authJwt.verifyToken,
@@ -572,14 +348,6 @@ app.post(
     },
 );
 
-/**
- * @swagger
- * /download/EdtMicro:
- *  get:
- *     summary: Download excel micro file
- *     tags:
- *       - Micro
- */
 app.get('/download/EdtMicro', authJwt.verifyToken, (req, res) => {
   const filePath = path.join(__dirname, '..', 'files', 'EdtMicro.xlsx');
   res.download(filePath, 'EdtMicro.xlsx', (err) => {
@@ -590,109 +358,6 @@ app.get('/download/EdtMicro', authJwt.verifyToken, (req, res) => {
   });
 });
 
-/**
- * @swagger
- * /generateEdtSquelette:
- *   post:
- *     summary: Generate an Excel timetable skeleton based on provided data
- *     description: Returns an Excel file representing the structure of a timetable, using the provided classes and their respective courses.
- *     tags:
- *       - Test
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: array
- *             items:
- *               type: object
- *               properties:
- *                 dateDebut:
- *                   type: string
- *                   format: date-time
- *                   description: Start date of the timetable
- *                   example: "2024-01-01T00:00:00.000Z"
- *                 promos:
- *                   type: array
- *                   description: Array of classes with schedules
- *                   items:
- *                     type: object
- *                     properties:
- *                       name:
- *                         type: string
- *                         description: Name of the class
- *                         example: "ADI 1"
- *                       semaine:
- *                         type: array
- *                         description: Weekly schedule with courses
- *                         items:
- *                           type: object
- *                           properties:
- *                             jour:
- *                               type: string
- *                               description: Day
- *                               example: "Lundi"
- *                             enCours:
- *                               type: boolean
- *                               description: Indicates if courses are scheduled on this day
- *                             message:
- *                               type: string
- *                               description: Additional message or note for the day
- *                             cours:
- *                               type: array
- *                               description: List of courses scheduled for the day
- *                               items:
- *                                 type: object
- *                                 properties:
- *                                   matiere:
- *                                     type: string
- *                                     description: Subject of the course
- *                                     example: "Mathématiques"
- *                                   heureDebut:
- *                                     type: string
- *                                     description: Start time of the course
- *                                     example: "09h"
- *                                   heureFin:
- *                                     type: string
- *                                     description: End time of the course
- *                                     example: "11h30"
- *                                   professeur:
- *                                     type: string
- *                                     description: Teacher of the course
- *                                     example: "Mme Dupont"
- *                                   salleDeCours:
- *                                     type: string
- *                                     description: Room where the course is held
- *                                     example: "Salle 101"
- *     responses:
- *       200:
- *         description: The Excel file was generated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Excel file generated and saved on the server"
- *                 filePath:
- *                   type: string
- *                   example: "../files/EdtSquelette.xlsx"
- *       400:
- *         description: Missing or invalid data
- *         content:
- *           application/json:
- *             schema:
- *               type: string
- *               example: "Missing classes"
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: string
- *               example: "Internal server error"
- */
 app.post(
     '/generateEdtSquelette',
     authJwt.verifyToken,
@@ -757,124 +422,6 @@ app.post(
     },
 );
 
-/**
- * @swagger
- * /generateDataEdtMicro:
- *   post:
- *     summary: Génère les données EdtMicro basées sur les données macro et maquette
- *     description: Retourne un tableau d'objets EdtMicro contenant les informations de promotion et de semaine.
- *     tags:
- *       - Test
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               macro:
- *                 $ref: '#/components/schemas/EdtMacroData'
- *     responses:
- *       200:
- *         description: Données EdtMicro générées avec succès
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/EdtMicro'
- *       500:
- *         description: Erreur lors de la génération des données EdtMicro
- *
- * components:
- *   schemas:
- *     EdtMacroData:
- *       type: object
- *       properties:
- *         DateDeb:
- *           type: string
- *           format: date
- *           example: "2024-01-01"
- *         DateFin:
- *           type: string
- *           format: date
- *           example: "2024-12-31"
- *         Promos:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Promos'
- *
- *     Promos:
- *       type: object
- *       properties:
- *         Name:
- *           type: string
- *           example: "Promo 2024"
- *         i:
- *           type: number
- *           example: 1
- *         Nombre:
- *           type: number
- *           example: 30
- *         Periode:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Periode'
- *
- *     Periode:
- *       type: object
- *       properties:
- *         DateDebutP:
- *           type: string
- *           format: date
- *           example: "2024-09-01"
- *         DateFinP:
- *           type: string
- *           format: date
- *           example: "2024-12-15"
- *         nbSemaineP:
- *           type: number
- *           example: 15
- *
- *     EdtMicro:
- *       type: object
- *       properties:
- *         dateDebut:
- *           type: string
- *           format: date-time
- *           example: "2024-01-01T00:00:00.000Z"
- *         promos:
- *           type: array
- *           items:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: "Promo 2024"
- *               semaine:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     date:
- *                       type: string
- *                       format: date-time
- *                       example: "2024-01-01T00:00:00.000Z"
- *                     cours:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           name:
- *                             type: string
- *                             example: "Algèbre Linéaire"
- *                           type:
- *                             type: string
- *                             example: "Cours Magistral"
- *                           heure:
- *                             type: number
- *                             example: 2
- */
 app.post(
     '/generateDataEdtMicro',
     authJwt.verifyToken,
@@ -1002,55 +549,6 @@ app.post('/setAllCourses', authJwt.verifyToken, async (req, res) => {
   });
 });
 
-
-app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    const updatePromises = req.body.courses.map(
-        (cours: {
-          promo: string;
-          name: string;
-          UE: string;
-          Semestre: string;
-          Periode: string;
-          Prof: string;
-          typeSalle: string;
-          heure: string;
-        }) => {
-          return new Promise<void>((resolve, reject) => {
-            const sql = `UPDATE Cours
-                                 SET id_prof = ?
-                                 WHERE id_event = ?`;
-
-            connection.query(sql, [cours.Prof, cours.name], (error: any) => {
-              if (error) {
-                console.error(
-                    'Erreur lors de la mise à jour du professeur :',
-                    error,
-                );
-                return reject(error);
-              }
-              resolve();
-            });
-          });
-        },
-    );
-
-    Promise.all(updatePromises)
-        .then(() => {
-          res.json({ message: 'Professeurs mis à jour avec succès.' });
-        })
-        .catch((error) => {
-          res.status(500).json({ error: error.message });
-        })
-        .finally(() => {
-          connection.release(); // Libérer la connexion après exécution
-        });
-  });
-});
 
 app.get('/getCours', authJwt.verifyToken, (req, res) => {
   pool.connect((err: any, connection: any) => {
