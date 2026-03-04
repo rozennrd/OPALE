@@ -84,8 +84,6 @@ export default function Teachers() {
 
                 const disponibilitesRes = await getDisponibilites()
 
-                console.log(apiTeachers)
-
                 if (!mounted) return
 
                 const promoLabelById = new Map<string, string>()

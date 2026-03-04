@@ -35,9 +35,6 @@ export default function Login(): React.ReactElement {
                 console.log("Erreur de connexion:", error);
                 setHasError(true);
             }
-
-        } else {
-            console.log("Veuillez entrer un nom d'utilisateur et un mot de passe");
         }
     };
 

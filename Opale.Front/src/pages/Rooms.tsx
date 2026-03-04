@@ -1,4 +1,4 @@
-// src/pages/Rooms.tsx
+﻿// src/pages/Rooms.tsx
 import RoomsSection from '../components/rooms/RoomsSection'
 import RoomDetailCard from '../components/rooms/RoomDetailCard'
 import PageHeader from '../components/common/PageHeader'
@@ -62,7 +62,6 @@ export default function Rooms() {
     })
 
     const handleToggleSelectionMode = () => {
-        console.log('[ROOMS] Toggle selection mode (mock)', { next: !selectionMode })
         toggleSelectionMode()
     }
 
@@ -72,17 +71,14 @@ export default function Rooms() {
     }
 
     const handleSelectAllVisible = () => {
-        console.log('[ROOMS] Select all visible rooms (mock)', { count: visibleRoomIds.length })
         selectAllRooms(visibleRoomIds)
     }
 
     const handleClearSelection = () => {
-        console.log('[ROOMS] Clear selection (mock)')
         clearSelection()
     }
 
     const handleDeleteSelected = () => {
-        console.log('[ROOMS] Delete selected rooms (mock)', { ids: selectedRoomIds })
         deleteRoomsByIds(selectedRoomIds)
         disableSelectionMode()
     }

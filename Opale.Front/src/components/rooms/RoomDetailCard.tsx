@@ -104,8 +104,6 @@ export default function RoomDetailCard({
                 nextTypes = [...nextTypes, type]
             }
 
-            console.log('[ROOMS] Change main type', { roomId: room.id, type })
-
             return nextTypes
         })
     }
@@ -117,8 +115,6 @@ export default function RoomDetailCard({
             const exists = prevTypes.includes(type)
             const nextTypes = exists ? prevTypes.filter((t) => t !== type) : [...prevTypes, type]
 
-            console.log('[ROOMS] Toggle type', { roomId: room.id, type, nextTypes })
-
             return nextTypes
         })
     }
@@ -126,15 +122,12 @@ export default function RoomDetailCard({
     const handleCapacityChange = (value: string) => {
         const parsed = Number.parseInt(value, 10)
         const nextCapacity = Number.isNaN(parsed) ? 0 : Math.max(0, parsed)
-        console.log('[ROOMS] Change room capacity (mock)', { roomId: room.id, nextCapacity })
         setCapacity(nextCapacity)
     }
 
     const handleToggleAvailability = () => {
         setIsAvailable((previous) => {
-            const next = !previous
-            console.log('[ROOMS] Toggle room availability (mock)', { roomId: room.id, isAvailable: next })
-            return next
+            return !previous
         })
     }
 
@@ -151,7 +144,6 @@ export default function RoomDetailCard({
             types: types.length ? types : [mainType],
         }
 
-        console.log('[ROOMS] Save room (mock)', nextRoom)
         const result = await Promise.resolve(onChange(nextRoom))
         if (result === false) {
             return false

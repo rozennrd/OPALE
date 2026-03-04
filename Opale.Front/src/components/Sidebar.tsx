@@ -1,5 +1,5 @@
 // src/components/Sidebar.tsx
-import React, { useEffect } from 'react'
+import {JSX, useEffect} from 'react'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 
 import logoFull from '../assets/logo/logo-full.png'
@@ -49,13 +49,11 @@ export default function Sidebar(): JSX.Element | null {
     if (location.pathname === '/login') return null
 
     const handleDisconnect = () => {
-        console.log('[AUTH] Se d\u00e9connecter')
         // Redirection vers la page login
         navigate('/login')
     }
 
     const handleTutorial = () => {
-        console.log('[NAV] Documentation utilisateur')
         navigate('/documentation')
     }
 
@@ -77,7 +75,6 @@ export default function Sidebar(): JSX.Element | null {
                         key={it.to}
                         to={it.to}
                         className={({ isActive }) => `nav-btn ${isActive ? 'active' : ''}`}
-                        onClick={() => console.log(`[NAV] ${it.label}`)}
                     >
                         <span className="nav-label-wrap">
                             <span className="nav-label">{it.label}</span>
