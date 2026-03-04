@@ -599,6 +599,8 @@ export default function Documentation() {
                                 setExportError(null)
                                 setExportFileName(buildDefaultExportFileName())
                                 setExportTheme('light')
+                                const defaultSelection = selectedTutorial?.id ?? selectedTutorialId
+                                setExportSelection(new Set([defaultSelection]))
                                 setIsExportDialogOpen(true)
                             }}
                         >
