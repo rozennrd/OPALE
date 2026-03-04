@@ -14,6 +14,7 @@ interface RoomDetailCardProps {
     onClose: () => void
     onChange: (room: Room) => Promise<boolean> | boolean | void
     onDelete?: () => void
+    isCreate?: boolean
 }
 
 const ROOM_TYPE_LABELS: Record<RoomType, string> = {
@@ -37,7 +38,13 @@ const floorLabel = (floor: number): string => {
     }
 }
 
-export default function RoomDetailCard({ room, onClose, onChange, onDelete }: RoomDetailCardProps) {
+export default function RoomDetailCard({
+    room,
+    onClose,
+    onChange,
+    onDelete,
+    isCreate = false,
+}: RoomDetailCardProps) {
     const [name, setName] = useState(room.name)
     const [fullName, setFullName] = useState(room.fullName ?? '')
     const [floor, setFloor] = useState<Room['floor']>(room.floor)
@@ -59,6 +66,18 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
     }, [room])
 
     const headerTitle = (fullName || name).trim() || room.name
+    const roomDisplayName = (fullName || name || 'Nom de la salle').trim()
+
+    const cancelCreateTitle = 'Création non enregistrée'
+    const cancelCreateMessage = (
+        <>
+            <p>
+                Vous êtes en train de créer la salle{' '}
+                <strong>{roomDisplayName}</strong>.
+            </p>
+            <p>Souhaitez-vous créer avant de fermer ?</p>
+        </>
+    )
 
     const hasChanges =
         room.name !== name ||
@@ -368,30 +387,54 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                         onCancel={handleRequestClose}
                         onSave={handleSave}
                         onAfterSaveConfirm={onClose}
-                        onDelete={onDelete}
-                        saveLabel="Enregistrer"
+                        onDelete={isCreate ? undefined : onDelete}
+                        hideCancel
+                        saveLabel={isCreate ? 'Créer' : 'Enregistrer'}
                         cancelLabel="Annuler"
-                        confirmTitle="Confirmer les modifications"
+                        confirmTitle={
+                            isCreate
+                                ? 'Créer cette salle'
+                                : 'Confirmer les modifications'
+                        }
                         confirmMessage={
-                            <>
-                                Vous êtes sur le point d&apos;enregistrer les modifications pour{' '}
-                                <strong>{headerTitle}</strong>.
-                                <br />
-                                Confirmer ?
-                            </>
+                            isCreate ? (
+                                <>
+                                    Vous êtes sur le point de créer la salle{' '}
+                                    <strong>{roomDisplayName}</strong>.
+                                    <br />
+                                    Confirmer ?
+                                </>
+                            ) : (
+                                <>
+                                    Vous êtes sur le point d&apos;enregistrer les modifications pour{' '}
+                                    <strong>{headerTitle}</strong>.
+                                    <br />
+                                    Confirmer ?
+                                </>
+                            )
                         }
-                        confirmLabel="Enregistrer"
+                        confirmLabel={isCreate ? 'Créer' : 'Enregistrer'}
                         hasChanges={hasChanges}
-                        cancelDirtyTitle="Modifications non enregistrées"
-                        cancelDirtyMessage={
-                            <>
-                                Tu as des modifications non enregistrées sur cette salle.
-                                <br />
-                                Souhaites-tu les enregistrer avant de fermer ?
-                            </>
+                        cancelDirtyTitle={
+                            isCreate ? cancelCreateTitle : 'Modifications non enregistrées'
                         }
-                        cancelDirtyConfirmLabel="Enregistrer et fermer"
-                        cancelDirtyDiscardLabel="Fermer sans enregistrer"
+                        cancelDirtyMessage={
+                            isCreate ? (
+                                cancelCreateMessage
+                            ) : (
+                                <>
+                                    Tu as des modifications non enregistrées sur cette salle.
+                                    <br />
+                                    Souhaites-tu les enregistrer avant de fermer ?
+                                </>
+                            )
+                        }
+                        cancelDirtyConfirmLabel={
+                            isCreate ? 'Fermer et créer' : 'Enregistrer et fermer'
+                        }
+                        cancelDirtyDiscardLabel={
+                            isCreate ? 'Fermer sans créer' : 'Fermer sans enregistrer'
+                        }
                         deleteLabel="Supprimer"
                         deleteTitle="Supprimer cette salle"
                         deleteMessage="Souhaites-tu supprimer cette salle ?"
@@ -402,15 +445,23 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
 
             <ConfirmDialog
                 open={isConfirmOpen}
-                title="Modifications non enregistrées"
+                title={isCreate ? cancelCreateTitle : 'Modifications non enregistrées'}
                 message={
-                    <>
-                        <p>Tu as des modifications non enregistrées sur cette salle.</p>
-                        <p>Souhaites-tu les enregistrer avant de fermer&nbsp;?</p>
-                    </>
+                    isCreate ? (
+                        cancelCreateMessage
+                    ) : (
+                        <>
+                            <p>Tu as des modifications non enregistrées sur cette salle.</p>
+                            <p>Souhaites-tu les enregistrer avant de fermer&nbsp;?</p>
+                        </>
+                    )
                 }
-                confirmLabel="Enregistrer et fermer"
-                cancelLabel="Fermer sans enregistrer"
+                confirmLabel={
+                    isCreate ? 'Fermer et créer' : 'Enregistrer et fermer'
+                }
+                cancelLabel={
+                    isCreate ? 'Fermer sans créer' : 'Fermer sans enregistrer'
+                }
                 confirmClassName="btn-primary"
                 cancelClassName="btn-danger"
                 onConfirm={handleConfirmSaveAndClose}

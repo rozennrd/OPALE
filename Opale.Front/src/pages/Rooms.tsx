@@ -14,6 +14,7 @@ export default function Rooms() {
     const {
         rooms,
         selectedRoom,
+        pendingNewRoomId,
         setSelectedRoom,
         addRoom,
         updateRoom,
@@ -90,6 +91,8 @@ export default function Rooms() {
         new Set(rooms.map((room) => room.floor)),
     ).sort((a, b) => a - b)
 
+    const isCreatingSelectedRoom = !!selectedRoom && pendingNewRoomId === selectedRoom.id
+    
     const handleCreateRequested = () => {
         const floor = floors[0] ?? 0
         addRoom(floor)
@@ -155,6 +158,7 @@ export default function Rooms() {
                     onClose={closeDetail}
                     onChange={updateRoom}
                     onDelete={() => handleDeleteSingleRoom(selectedRoom.id)}
+                    isCreate={isCreatingSelectedRoom}
                 />
             )}
         </>

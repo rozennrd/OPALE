@@ -24,6 +24,7 @@ export default function TeacherDetailCard({
     onDelete,
     onTeacherUpdated,
 }: TeacherDetailCardProps) {
+    const isCreate = teacher.id === 'new-teacher'
     const {
         teacherDraft,
         periods,
@@ -76,6 +77,27 @@ export default function TeacherDetailCard({
         teacherDraft.category === 'Intervenant'
             ? 'Vacataire'
             : getCampusLabel(teacherDraft.campus)
+
+    const teacherDisplayName = `${teacherDraft.firstName || 'Prénom'} ${teacherDraft.lastName || 'Nom'}`.trim()
+
+    const cancelCreateTitle = 'Création non enregistrée'
+    const cancelCreateMessage = (
+        <>
+            <p>
+                Vous êtes en train de créer l&apos;enseignant{' '}
+                <strong>{teacherDisplayName}</strong>.
+            </p>
+            <p>Souhaitez-vous créer avant de fermer ?</p>
+        </>
+    )
+
+    const cancelEditTitle = 'Modifications non enregistrées'
+    const cancelEditMessage = (
+        <>
+            <p>Vous avez modifié cette fiche d&apos;enseignant.</p>
+            <p>Souhaitez-vous enregistrer les changements avant de fermer ?</p>
+        </>
+    )
 
     return (
         <div className="teacher-detail-overlay" role="dialog" aria-modal="true">
@@ -147,39 +169,58 @@ export default function TeacherDetailCard({
                         }
                         deleteConfirmLabel="Supprimer"
                         hasChanges={hasChanges}
-                        confirmMessage={
-                            <>
-                                Vous êtes sur le point d&apos;enregistrer les
-                                modifications pour{' '}
-                                <strong>
-                                    {teacherDraft.firstName}{' '}
-                                    {teacherDraft.lastName}
-                                </strong>
-                                .
-                                <br />
-                                Confirmer ?
-                            </>
+                        confirmTitle={
+                            isCreate
+                                ? 'Créer cet enseignant'
+                                : 'Confirmer les modifications'
                         }
-                        confirmLabel="Enregistrer"
+                        confirmMessage={
+                            isCreate ? (
+                                <>
+                                    Vous êtes sur le point de créer l&apos;enseignant{' '}
+                                    <strong>{teacherDisplayName}</strong>.
+                                    <br />
+                                    Confirmer ?
+                                </>
+                            ) : (
+                                <>
+                                    Vous êtes sur le point d&apos;enregistrer les
+                                    modifications pour{' '}
+                                    <strong>
+                                        {teacherDraft.firstName}{' '}
+                                        {teacherDraft.lastName}
+                                    </strong>
+                                    .
+                                    <br />
+                                    Confirmer ?
+                                </>
+                            )
+                        }
+                        confirmLabel={isCreate ? 'Créer' : 'Enregistrer'}
                         cancelLabel="Annuler"
+                        saveLabel={isCreate ? 'Créer' : 'Enregistrer'}
+                        cancelDirtyTitle={isCreate ? cancelCreateTitle : cancelEditTitle}
+                        cancelDirtyMessage={isCreate ? cancelCreateMessage : cancelEditMessage}
+                        cancelDirtyConfirmLabel={
+                            isCreate ? 'Fermer et créer' : 'Enregistrer et fermer'
+                        }
+                        cancelDirtyDiscardLabel={
+                            isCreate ? 'Fermer sans créer' : 'Fermer sans enregistrer'
+                        }
                     />
                 </div>
             </DetailCardBody>
 
             <ConfirmDialog
                 open={isConfirmOpen}
-                title="Modifications non enregistrées"
-                message={
-                    <>
-                        <p>Vous avez modifié cette fiche d&apos;enseignant.</p>
-                        <p>
-                            Souhaitez-vous enregistrer les changements avant de
-                            fermer ?
-                        </p>
-                    </>
+                title={isCreate ? cancelCreateTitle : cancelEditTitle}
+                message={isCreate ? cancelCreateMessage : cancelEditMessage}
+                confirmLabel={
+                    isCreate ? 'Fermer et créer' : 'Enregistrer et fermer'
                 }
-                confirmLabel="Enregistrer et fermer"
-                cancelLabel="Fermer sans enregistrer"
+                cancelLabel={
+                    isCreate ? 'Fermer sans créer' : 'Fermer sans enregistrer'
+                }
                 confirmClassName="btn-primary"
                 cancelClassName="btn-danger"
                 onConfirm={handleConfirmSaveAndClose}
