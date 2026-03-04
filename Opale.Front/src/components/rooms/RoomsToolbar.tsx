@@ -29,11 +29,15 @@ interface RoomsToolbarProps {
 
 const ROOM_TYPE_OPTIONS: { value: RoomTypeFilter; label: string }[] = [
     { value: 'ALL', label: 'Tous les types' },
-    { value: 'TD', label: 'TD' },
-    { value: 'TP_ELECTRONIQUE', label: 'TP électronique' },
-    { value: 'TP_NUMERIQUE', label: 'TP numérique' },
-    { value: 'PROJET', label: 'Projet' },
-    { value: 'AUTRE', label: 'Autre' },
+    { value: 'Cours', label: 'Cours' },
+    { value: 'Informatique', label: 'Informatique' },
+    { value: 'Projet', label: 'Projet' },
+    { value: 'Rassemblement', label: 'Rassemblement' },
+    { value: 'Reunion', label: 'Reunion' },
+    { value: 'Associatif', label: 'Associatif' },
+    { value: 'Electronique', label: 'Electronique' },
+    { value: 'Fablab', label: 'Fablab' },
+    { value: 'Reseau', label: 'Reseau' },
 ]
 
 export default function RoomsToolbar({

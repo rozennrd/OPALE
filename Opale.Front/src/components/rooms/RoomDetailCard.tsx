@@ -17,11 +17,15 @@ interface RoomDetailCardProps {
 }
 
 const ROOM_TYPE_LABELS: Record<RoomType, string> = {
-    TD: 'TD',
-    TP_ELECTRONIQUE: 'TP électronique',
-    TP_NUMERIQUE: 'TP numérique',
-    PROJET: 'Projet',
-    AUTRE: 'Autre',
+    Cours: 'Cours',
+    Informatique: 'Informatique',
+    Projet: 'Projet',
+    Rassemblement: 'Rassemblement',
+    Reunion: 'Reunion',
+    Associatif: 'Associatif',
+    Electronique: 'Electronique',
+    Fablab: 'Fablab',
+    Reseau: 'Reseau',
 }
 
 const floorLabel = (floor: number): string => {
@@ -322,13 +326,6 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                                                 .filter(Boolean)
                                                 .join(' ')
 
-                                            const checkboxClassName = [
-                                                'room-type-chip-checkbox',
-                                                isChecked ? 'is-checked' : '',
-                                            ]
-                                                .filter(Boolean)
-                                                .join(' ')
-
                                             return (
                                                 <button
                                                     key={type}
@@ -337,7 +334,7 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                                                     onClick={() => handleToggleType(type)}
                                                     aria-pressed={isChecked}
                                                 >
-                                                    <span className={checkboxClassName} aria-hidden="true" />
+                                                    <span className="room-type-chip-dot" aria-hidden="true" />
                                                     <span className="room-type-chip-label">{ROOM_TYPE_LABELS[type]}</span>
                                                 </button>
                                             )

@@ -2,14 +2,21 @@ import { useEffect, useState } from 'react'
 import { Room } from '../../models/Room'
 import { Salle, sallesApi } from '../../services/api/sallesApi'
 
-const BACKEND_TO_FRONT_TYPE: Record<string, Room['mainType']> = {
-    Cours: 'TD',
-    Informatique: 'TP_NUMERIQUE',
-    Electronique: 'TP_ELECTRONIQUE',
-    Projet: 'PROJET',
-}
+const ROOM_TYPE_VALUES: Room['mainType'][] = [
+    'Cours',
+    'Informatique',
+    'Projet',
+    'Rassemblement',
+    'Reunion',
+    'Associatif',
+    'Electronique',
+    'Fablab',
+    'Reseau',
+]
 
-const FRONT_TO_BACKEND_TYPE: Record<Room['mainType'], string> = {
+const ROOM_TYPE_SET = new Set<Room['mainType']>(ROOM_TYPE_VALUES)
+
+const LEGACY_BACKEND_TO_FRONT_TYPE: Record<string, Room['mainType']> = {
     TD: 'Cours',
     TP_NUMERIQUE: 'Informatique',
     TP_ELECTRONIQUE: 'Electronique',
@@ -18,12 +25,15 @@ const FRONT_TO_BACKEND_TYPE: Record<Room['mainType'], string> = {
 }
 
 const mapBackendTypeToFront = (value?: string | null): Room['mainType'] => {
-    if (!value) return 'AUTRE'
-    return BACKEND_TO_FRONT_TYPE[value] ?? 'AUTRE'
+    if (!value) return 'Rassemblement'
+    if (ROOM_TYPE_SET.has(value as Room['mainType'])) {
+        return value as Room['mainType']
+    }
+    return LEGACY_BACKEND_TO_FRONT_TYPE[value] ?? 'Rassemblement'
 }
 
 const mapFrontTypeToBackend = (value: Room['mainType']): string => {
-    return FRONT_TO_BACKEND_TYPE[value] ?? 'Rassemblement'
+    return value
 }
 
 const normalizeSecondaryTypes = (value: Salle['types_secondaires']): string[] => {
@@ -160,8 +170,8 @@ export const useRoomsData = () => {
             name: roomCode,
             fullName: `${roomCode}_Nouvelle salle`,
             floor,
-            mainType: 'TD',
-            types: ['TD'],
+            mainType: 'Cours',
+            types: ['Cours'],
             capacity: 20,
             isAvailable: true,
         }
