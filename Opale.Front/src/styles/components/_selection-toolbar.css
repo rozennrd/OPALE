@@ -5,7 +5,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 0.75rem;
+        --toolbar-item-gap: 0.75rem;
+        gap: var(--toolbar-item-gap);
         flex-wrap: wrap;
         padding: 0.65rem 0.75rem;
         border-radius: 0.85rem;
@@ -16,7 +17,7 @@
     .selection-toolbar-left {
         display: inline-flex;
         align-items: center;
-        gap: 0.6rem;
+        gap: var(--toolbar-item-gap);
         min-width: 0;
     }
 
@@ -29,7 +30,7 @@
     .selection-toolbar-actions {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--toolbar-item-gap);
         flex-wrap: wrap;
     }
 

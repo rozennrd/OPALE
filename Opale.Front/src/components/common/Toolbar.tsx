@@ -57,3 +57,38 @@ export const ToolbarResetButton: React.FC<ToolbarResetButtonProps> = ({
         </button>
     )
 }
+
+interface ToolbarAddButtonProps {
+    onClick: () => void
+    label: string
+    className?: string
+    ariaLabel?: string
+    title?: string
+    iconSrc: string
+    iconAlt?: string
+}
+
+export const ToolbarAddButton: React.FC<ToolbarAddButtonProps> = ({
+                                                                      onClick,
+                                                                      label,
+                                                                      className = '',
+                                                                      ariaLabel,
+                                                                      title,
+                                                                      iconSrc,
+                                                                      iconAlt = '',
+                                                                  }) => {
+    const buttonClassName = ['toolbar-add-btn', className].filter(Boolean).join(' ')
+
+    return (
+        <button
+            type="button"
+            className={buttonClassName}
+            onClick={onClick}
+            aria-label={ariaLabel ?? label}
+            title={title ?? label}
+        >
+            <img src={iconSrc} alt={iconAlt} className="toolbar-add-icon" />
+            <span className="toolbar-add-label">{label}</span>
+        </button>
+    )
+}
