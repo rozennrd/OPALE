@@ -1,8 +1,9 @@
 // src/components/matieres/MatieresToolbar.tsx
 
 import React from 'react'
-import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
+import { PageToolbar, ToolbarAddButton, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
+import icPlus from '../../assets/ic-plus.png'
 
 export type SemestreFilter = 'ALL' | 1 | 2
 export type CycleFilter = 'ALL' | string
@@ -31,6 +32,7 @@ interface MatieresToolbarProps {
     selectionMode: boolean
     selectedCount: number
     onToggleSelectionMode: () => void
+    onCreateRequested: () => void
     onResetFilters: () => void
     hasActiveFilters: boolean
 }
@@ -58,6 +60,7 @@ export default function MatieresToolbar({
     selectionMode,
     selectedCount,
     onToggleSelectionMode,
+    onCreateRequested,
     onResetFilters,
     hasActiveFilters,
 }: MatieresToolbarProps) {
@@ -91,10 +94,22 @@ export default function MatieresToolbar({
                         </span>
                     )}
                 </button>
+
+                <ToolbarResetButton
+                    onClick={onResetFilters}
+                    disabled={!hasActiveFilters}
+                />
+
+                <ToolbarAddButton
+                    className="matieres-toolbar-add-btn"
+                    onClick={onCreateRequested}
+                    label="Ajouter une matière"
+                    iconSrc={icPlus}
+                />
             </ToolbarRow>
 
             <ToolbarRow className="page-toolbar-row--filters matieres-toolbar-row matieres-toolbar-row--filters">
-                <div className="toolbar-filter toolbar-filter--chips">
+                <div className="toolbar-filter toolbar-filter--chips matieres-toolbar-semestre-filter">
                     <span className="toolbar-filter-label">Semestre</span>
                     <div className="toolbar-toggle-chips">
                         {SEMESTRE_OPTIONS.map((option) => (
@@ -116,7 +131,7 @@ export default function MatieresToolbar({
                 </div>
 
                     {/* Cycle (select) */}
-                    <div className="toolbar-filter">
+                    <div className="toolbar-filter matieres-toolbar-cycle-filter">
                         <label className="toolbar-filter-label">
                             Cycles
                             <select
@@ -135,7 +150,7 @@ export default function MatieresToolbar({
                     </div>
 
                     {/* Promotions (select) */}
-                    <div className="toolbar-filter">
+                    <div className="toolbar-filter matieres-toolbar-promotion-filter">
                         <label className="toolbar-filter-label">
                             Promotions
                             <select
@@ -155,7 +170,7 @@ export default function MatieresToolbar({
                         </label>
                     </div>
 
-                <div className="toolbar-filter">
+                <div className="toolbar-filter matieres-toolbar-teacher-filter">
                     <label className="toolbar-filter-label">
                         Enseignants
                         <select
@@ -173,10 +188,6 @@ export default function MatieresToolbar({
                     </label>
                 </div>
 
-                <ToolbarResetButton
-                    onClick={onResetFilters}
-                    disabled={!hasActiveFilters}
-                />
             </ToolbarRow>
         </PageToolbar>
     )

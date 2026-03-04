@@ -19,10 +19,14 @@ const DEFAULT_TEACHERS_FILTERS: {
     searchValue: string
     modeFilter: ModeFilter
     subjectFilter: string
+    dateFrom: string
+    dateTo: string
 } = {
     searchValue: '',
     modeFilter: 'ALL',
     subjectFilter: '',
+    dateFrom: '',
+    dateTo: '',
 }
 
 const getIsoWeekDateRange = (
@@ -53,6 +57,8 @@ export default function Teachers() {
     const [searchValue, setSearchValue] = useState('')
     const [modeFilter, setModeFilter] = useState<ModeFilter>('ALL')
     const [subjectFilter, setSubjectFilter] = useState('')
+    const [dateFrom, setDateFrom] = useState('')
+    const [dateTo, setDateTo] = useState('')
 
     useEffect(() => {
         let mounted = true
@@ -250,6 +256,9 @@ export default function Teachers() {
     const filteredTeachers = (list: Teacher[]) => {
         const needle = searchValue.trim().toLowerCase()
         const subjectNeedle = subjectFilter.trim().toLowerCase()
+        const hasDateFilter = Boolean(dateFrom || dateTo)
+        const rangeStart = dateFrom || '0000-01-01'
+        const rangeEnd = dateTo || '9999-12-31'
 
         return list.filter((teacher) => {
             const fullName = `${teacher.lastName} ${teacher.firstName} ${teacher.firstName} ${teacher.lastName}`.toLowerCase()
@@ -260,8 +269,15 @@ export default function Teachers() {
                 (teacher.subjects || []).some((subject) =>
                     subject.name.toLowerCase().includes(subjectNeedle),
                 )
+            const matchesDate = !hasDateFilter
+                ? true
+                : (teacher.availabilityPeriods || []).some((period) => {
+                      const periodStart = period.start || '0000-01-01'
+                      const periodEnd = period.end || '9999-12-31'
+                      return periodStart <= rangeEnd && periodEnd >= rangeStart
+                  })
 
-            return matchesSearch && matchesMode && matchesSubject
+            return matchesSearch && matchesMode && matchesSubject && matchesDate
         })
     }
 
@@ -274,12 +290,14 @@ export default function Teachers() {
         hasActiveFilters,
         resetFilters: handleResetFilters,
     } = useToolbarFilters({
-        values: { searchValue, modeFilter, subjectFilter },
+        values: { searchValue, modeFilter, subjectFilter, dateFrom, dateTo },
         defaults: DEFAULT_TEACHERS_FILTERS,
         onReset: () => {
             setSearchValue(DEFAULT_TEACHERS_FILTERS.searchValue)
             setModeFilter(DEFAULT_TEACHERS_FILTERS.modeFilter)
             setSubjectFilter(DEFAULT_TEACHERS_FILTERS.subjectFilter)
+            setDateFrom(DEFAULT_TEACHERS_FILTERS.dateFrom)
+            setDateTo(DEFAULT_TEACHERS_FILTERS.dateTo)
         },
     })
 
@@ -356,6 +374,10 @@ export default function Teachers() {
                     subjectFilter={subjectFilter}
                     onSubjectChange={setSubjectFilter}
                     subjectOptions={subjectOptions}
+                    dateFrom={dateFrom}
+                    onDateFromChange={setDateFrom}
+                    dateTo={dateTo}
+                    onDateToChange={setDateTo}
                     selectionMode={selectionMode}
                     selectedCount={selectedTeacherCount}
                     onToggleSelectionMode={toggleTeacherSelectionMode}

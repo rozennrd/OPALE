@@ -1,4 +1,4 @@
-﻿// src/pages/Rooms.tsx
+// src/pages/Rooms.tsx
 import RoomsSection from '../components/rooms/RoomsSection'
 import RoomDetailCard from '../components/rooms/RoomDetailCard'
 import PageHeader from '../components/common/PageHeader'
@@ -91,8 +91,12 @@ export default function Rooms() {
         new Set(rooms.map((room) => room.floor)),
     ).sort((a, b) => a - b)
 
-    const isCreatingSelectedRoom =
-        !!selectedRoom && pendingNewRoomId === selectedRoom.id
+    const isCreatingSelectedRoom = !!selectedRoom && pendingNewRoomId === selectedRoom.id
+    
+    const handleCreateRequested = () => {
+        const floor = floors[0] ?? 0
+        addRoom(floor)
+    }
 
     return (
         <>
@@ -116,6 +120,7 @@ export default function Rooms() {
                     selectionMode={selectionMode}
                     selectedCount={selectedRoomCount}
                     onToggleSelectionMode={handleToggleSelectionMode}
+                    onCreateRequested={handleCreateRequested}
                     onResetFilters={handleResetFilters}
                     hasActiveFilters={hasActiveFilters}
                 />
@@ -139,7 +144,6 @@ export default function Rooms() {
                             floor={floor}
                             rooms={roomsByFloor[floor] || []}
                             onSelectRoom={setSelectedRoom}
-                            onAddRoom={addRoom}
                             selectionMode={selectionMode}
                             selectedRoomIds={selectedRoomIdsSet}
                             onToggleRoomSelection={toggleRoomSelection}

@@ -5,14 +5,12 @@ import { MaquetteData } from './types/MaquetteData';
 import { EdtMacroData } from './types/EdtMacroData';
 import { generateEdtSquelette } from './micro/generateEdtSquelette';
 import express, { Request, Response } from 'express';
-import getDBConfig from './database/getDBConfig';
 import path from 'path';
 import { EdtMicro } from './types/EdtMicroData';
 import { generateEdtMicro } from './micro/generateEdtMicro';
 import { getLogin } from './database/getLogin';
 import authJwt from './middleware/authJwt';
 import { pool } from './database/pool';
-
 import { Periode, Promos } from "./types/EdtMacroData";
 import salleRoutes from './api/routes/salleRoutes';
 import cycleRoutes from "./api/routes/cycleRoutes";
@@ -24,6 +22,8 @@ import specialiteRoutes from "./api/routes/specialiteRoutes";
 import enseignementRoutes from "./api/routes/enseignementRoutes";
 import disponibiliteRoutes from './api/routes/disponibiliteRoutes';
 import maquetteRoutes from './api/routes/maquetteRoutes';
+import eventRoutes from "./api/routes/eventRoutes";
+import localisationRoutes from "./api/routes/localisationRoutes";
 
 require('dotenv').config();
 
@@ -31,14 +31,8 @@ const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const multer = require('multer');
 const swaggerJsdoc = require('swagger-jsdoc');
-
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
-
-import eventRoutes from "./api/routes/eventRoutes";
-import localisationRoutes from "./api/routes/localisationRoutes";
-const dbConfig = getDBConfig();
-
 const app = express();
 const PORT = 3000;
 app.use(express.json({ limit: '50mb' }));
@@ -267,11 +261,13 @@ app.post(
     async (req: Request, res: Response) => {
       // Type definitions
       type RawMacroEvent = {
-        id_promotion: string;
+        id: string;
+        id_promotion: string | null;   // null = event global (pas de promo liée)
         datetime_start: string;
         datetime_end: string;
         type: string;
         nom: string;
+        is_external: boolean;
       };
 
       try {
@@ -310,39 +306,37 @@ app.post(
         // ========================================
         // 2. Fetch Macro Events
         // ========================================
-        const eventsMacro = await new Promise<RawMacroEvent[]>((resolve, reject) => {
+        const eventsMacroRaw = await new Promise<RawMacroEvent[]>((resolve, reject) => {
           pool.connect((err: any, connection: any) => {
             if (err) {
               return reject(err);
             }
 
             const sql = `
-            SELECT 
-              p.id as id_promotion, 
-              e.datetime_start, 
-              e.datetime_end, 
-              e.type, 
-              e.nom
-            FROM event e
-            INNER JOIN concerner c ON e.id = c.id_event
-            INNER JOIN promotion p ON p.id = c.id_promo
-            WHERE e.show_macro = TRUE
-              AND e.type IN ('stage', 'mobilite', 'PFE', 'rattrapage', 'entreprise')
-            ORDER BY e.nom ASC
-          `;
+              SELECT
+                e.id,
+                c.id_promo as id_promotion,
+                e.datetime_start,
+                e.datetime_end,
+                e.type,
+                e.nom,
+                e.is_external
+              FROM event e
+              LEFT JOIN concerner c ON e.id = c.id_event AND c.id_promo IS NOT NULL
+              WHERE e.show_macro = TRUE
+                AND e.type IN (
+                  'Cours', 'Entreprise', 'Examen', 'Reunion', 'Fermeture', 'Soutenance',
+                  'JPO', 'Stage', 'Mobilite', 'PFE', 'Rattrapage', 'Conference',
+                  'Rentrée', 'Réunion parents', 'Journée Immersion', 'Concours',
+                  'Salon', 'Fin des cours', 'Autre'
+                )
+              ORDER BY e.nom ASC
+            `;
 
             connection.query(sql, (error: any, results: any) => {
               connection.release();
-
-              if (error) {
-                return reject(error);
-              }
-
-              // Normalize results for different drivers
-              const normalized = Array.isArray(results)
-                  ? results
-                  : results?.rows || [];
-
+              if (error) return reject(error);
+              const normalized = Array.isArray(results) ? results : results?.rows || [];
               resolve(normalized);
             });
           });
@@ -353,46 +347,62 @@ app.post(
         // 3. Build Promotions with Periods
         // ========================================
         const promotionsWithPeriods: Promos[] = promotions.map((promo) => {
-          // Filter events for this promotion
-          const promoEvents = eventsMacro.filter(
-              (ev) => ev.id_promotion === promo.id
-          );
+          const promoEvents = eventsMacroRaw.filter(ev => ev.id_promotion === promo.id);
 
           // Transform to Periode objects and sort
           const promoPeriods: Periode[] = promoEvents
               .map((ev): Periode => ({
                 DateDebutP: new Date(ev.datetime_start),
                 DateFinP: new Date(ev.datetime_end),
-                type: ev.nom,
+                type: ev.type,   // type de l'event pour la colorisation
               }))
               .sort((a, b) => a.DateDebutP.getTime() - b.DateDebutP.getTime());
 
-          return {
-            ...promo,
-            periode: promoPeriods,
-            i: 0,
-          };
+          return { ...promo, periode: promoPeriods, i: 0 };
         });
 
-        console.log("Promotions enrichies :", promotionsWithPeriods);
+        // ========================================
+        // 4. Build EventsMacro (events show_macro = true)
+        // Un Map pour regrouper les promos multiples sur un même event
+        // ========================================
+        const eventMacroMap = new Map<string, { id: string; type: string; nom: string; datetime_start: Date; datetime_end: Date; is_external: boolean; promotions: string[] }>();
+
+        eventsMacroRaw.forEach(ev => {
+          if (!eventMacroMap.has(ev.id)) {
+            eventMacroMap.set(ev.id, {
+              id:             ev.id,
+              type:           ev.type,
+              nom:            ev.nom,
+              datetime_start: new Date(ev.datetime_start),
+              datetime_end:   new Date(ev.datetime_end),
+              is_external:    ev.is_external,
+              promotions:     ev.id_promotion ? [ev.id_promotion] : [],
+            });
+          } else if (ev.id_promotion) {
+            eventMacroMap.get(ev.id)!.promotions.push(ev.id_promotion);
+          }
+        });
+
+        const eventsMacroList = Array.from(eventMacroMap.values());
 
         // ========================================
-        // 4. Define Date Range
+        // 5. Define Date Range
         // ========================================
         const start = new Date("2025-09-01");
         const end = new Date("2026-08-31");
 
         // ========================================
-        // 5. Generate Excel
+        // 6. Generate Excel
         // ========================================
         await generateEdtMacro({
-          DateDeb: start,
-          DateFin: end,
-          Promos: promotionsWithPeriods,
+          DateDeb:     start,
+          DateFin:     end,
+          Promos:      promotionsWithPeriods,
+          EventsMacro: eventsMacroList,
         });
 
         // ========================================
-        // 6. Send Success Response
+        // 7. Send Success Response
         // ========================================
         res.status(200).json({
           message: "Excel généré avec succès",

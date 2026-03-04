@@ -8,24 +8,25 @@ import { EventType } from '../../models/EventTypes'
 
 // Mapping backend TypeEvent → frontend EventType
 const BACKEND_TO_FRONTEND_TYPE: Record<TypeEvent, EventType> = {
-    'Cours': 'Cours',
-    'Entreprise': 'Entreprise',
+    'Cours': 'Autre',
+    'Entreprise': 'Autre',
     'Examen': 'Examen',
-    'Reunion': 'Reunion',
-    'Fermeture': 'Fermeture',
-    'Soutenance': 'Soutenance',
+    'Reunion': 'Autre',
+    'Fermeture': 'Autre',
+    'Soutenance': 'Autre',
     'JPO': 'JPO',
-    'Stage': 'Stage',
-    'Mobilite': 'Mobilite',
-    'PFE': 'PFE',
-    'Rattrapage': 'Rattrapage',
+    'Stage': 'Autre',
+    'Mobilite': 'Autre',
+    'PFE': 'Autre',
+    'Rattrapage': 'Examen',
     'Conference': 'Conference',
-    'Rentrée': 'Rentrée',
-    'Réunion parents': 'Réunion parents',
-    'Journée Immersion': 'Journée Immersion',
-    'Concours': 'Concours',
+    'Rentrée': 'Autre',
+    'Réunion parents': 'Autre',
+    'Journée Immersion': 'Autre',
+    'Concours': 'Autre',
+    'Forum': 'Forum',
     'Salon': 'Salon',
-    'Fin des cours': 'Fin des cours',
+    'Fin des cours': 'Autre',
     'Autre': 'Autre',
 }
 
@@ -65,7 +66,7 @@ function backendToFrontend(backendEvent: BackendEvent, salles: Salle[] = []): Ca
         endDate: backendEvent.datetime_end,
         location: buildLocation(salles),
         source: backendEvent.is_external ? 'EXTERNE' : 'JUNIA',
-        type: BACKEND_TO_FRONTEND_TYPE[backendEvent.type] ?? 'Autre',
+        type: BACKEND_TO_FRONTEND_TYPE[backendEvent.type] ?? 'AUTRE',
         description: backendEvent.description ?? '',
         num_semaine: backendEvent.num_semaine,
         show_macro: backendEvent.show_macro,
@@ -272,45 +273,6 @@ export function useEvents() {
         }
     }
 
-    const deleteEvents = async (eventIds: string[]) => {
-        const uniqueIds = Array.from(new Set(eventIds))
-        if (uniqueIds.length === 0) {
-            return { success: true as const, deletedIds: [] as string[] }
-        }
-
-        const deletedIds: string[] = []
-        const failedIds: string[] = []
-
-        await Promise.all(
-            uniqueIds.map(async (eventId) => {
-                try {
-                    await localisationsApi.deleteLocalisationsByEvent(eventId)
-                } catch {
-                    // Best-effort cleanup; deletion of event may still succeed if cascade is configured
-                }
-
-                const response = await eventsApi.deleteEvent(eventId)
-                if (response.success) {
-                    deletedIds.push(eventId)
-                } else {
-                    failedIds.push(eventId)
-                }
-            }),
-        )
-
-        if (failedIds.length > 0) {
-            return {
-                success: false as const,
-                error: `Suppression impossible pour ${failedIds.length} événement(s).`,
-                deletedIds,
-                failedIds,
-            }
-        }
-
-        await loadEvents()
-        return { success: true as const, deletedIds }
-    }
-
     return {
         events,
         salles,
@@ -318,7 +280,6 @@ export function useEvents() {
         error,
         createEvent,
         updateEvent,
-        deleteEvents,
         refreshEvents: loadEvents,
     }
 }

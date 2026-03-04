@@ -335,6 +335,10 @@ export default function Matieres() {
         setSelected(matiere)
     }
 
+    const handleCreateRequested = () => {
+        console.log('[MATIERES] create requested')
+    }
+
     const reloadMatieres = async () => {
         console.log('[MATIERES] reloadMatieres()')
         const backendMatieres = await getMatieres()
@@ -375,6 +379,7 @@ export default function Matieres() {
                     selectionMode={selectionMode}
                     selectedCount={selectedMatiereCount}
                     onToggleSelectionMode={toggleMatiereSelectionMode}
+                    onCreateRequested={handleCreateRequested}
                     onResetFilters={handleResetFilters}
                     hasActiveFilters={hasActiveFilters}
                 />

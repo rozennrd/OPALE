@@ -108,7 +108,7 @@ export default function Promotions() {
         <div className="promos">
             <PageHeader
                 title="Promotions"
-                subtitle="Gestion des cycles, promotions et contraintes académiques (mock front uniquement)."
+                subtitle="Gestion des cycles, promotions et contraintes académiques."
             />
 
             <div className="promos-grid">

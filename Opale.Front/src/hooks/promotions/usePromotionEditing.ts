@@ -6,6 +6,7 @@ import { createEmptyConstraints } from './usePromotionConstraints'
 import { usePromotionSync } from './usePromotionSync'
 import { usePromotionConstraints } from "./usePromotionConstraints"
 import { transformBackendPromotionToFrontend } from '../../services/api/promotionsApiTransformers'
+import { Event } from '../../models/Event'
 
 export interface EditingPromotion {
     cycleId: string
@@ -29,6 +30,7 @@ export function usePromotionEditing(cycles: Cycle[]) {
     const [isLoading, setIsLoading] = useState(false)
     const [removedGroupIds, setRemovedGroupIds] = useState<string[]>([])
     const [removedSpecialtyIds, setRemovedSpecialtyIds] = useState<string[]>([])
+    const [originalEvents, setOriginalEvents] = useState<Event[]>([])
 
     const { fetchPromotionDetails } = usePromotionSync()
     const { convertEventsToConstraints } = usePromotionConstraints(editingPromo, setEditingPromo)
@@ -79,6 +81,7 @@ export function usePromotionEditing(cycles: Cycle[]) {
             setHasChanges(false)
             setRemovedGroupIds([])
             setRemovedSpecialtyIds([])
+            setOriginalEvents(events)
             console.log("promotion reloaded successfully")
         } catch (error) {
             console.error('Error opening promotion:', error)
@@ -224,11 +227,11 @@ export function usePromotionEditing(cycles: Cycle[]) {
 
     const markFormAsUntouched = (updatedPromo: EditingPromotion) => {
         setEditingPromo(updatedPromo)
-        console.log("hello")
         setSavedSnapshot(updatedPromo)
         setHasChanges(false)
         setRemovedGroupIds([])
         setRemovedSpecialtyIds([])
+        setOriginalEvents([])
     }
 
     return {
@@ -250,5 +253,6 @@ export function usePromotionEditing(cycles: Cycle[]) {
         isLoading,
         removedGroupIds,
         removedSpecialtyIds,
+        originalEvents,
     }
 }

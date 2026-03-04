@@ -1,6 +1,5 @@
 ﻿// src/components/rooms/RoomsSection.tsx
 import React, { useState } from 'react'
-import icPlus from '../../assets/ic-plus.png'
 import { Room } from '../../models/Room'
 import RoomCard from './RoomCard'
 import SectionHeader from '../common/SectionHeader'
@@ -9,7 +8,6 @@ interface RoomsSectionProps {
     floor: number
     rooms: Room[]
     onSelectRoom: (room: Room) => void
-    onAddRoom: (floor: number) => void
     selectionMode?: boolean
     selectedRoomIds?: Set<string>
     onToggleRoomSelection?: (roomId: string) => void
@@ -28,7 +26,6 @@ export default function RoomsSection({
     floor,
     rooms,
     onSelectRoom,
-    onAddRoom,
     selectionMode = false,
     selectedRoomIds,
     onToggleRoomSelection,
@@ -69,15 +66,6 @@ export default function RoomsSection({
                             }}
                         />
                     ))}
-                    <button
-                        type="button"
-                        className="card room-add-card"
-                        onClick={() => onAddRoom(floor)}
-                        aria-label="Ajouter une salle"
-                        title="Ajouter une salle"
-                    >
-                        <img src={icPlus} alt="" />
-                    </button>
                 </div>
             )}
         </section>

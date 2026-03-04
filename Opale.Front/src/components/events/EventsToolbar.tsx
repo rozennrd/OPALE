@@ -1,6 +1,6 @@
 // src/components/events/EventsToolbar.tsx
 import { EventType } from '../../models/CampusEvent'
-import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
+import { PageToolbar, ToolbarAddButton, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 import icPlus from '../../assets/ic-plus.png'
 import DateInput from '../common/DateInput'
@@ -64,7 +64,7 @@ export default function EventsToolbar({
     return (
         <PageToolbar className="events-toolbar">
             <ToolbarRow className="page-toolbar-row--primary events-toolbar-row events-toolbar-row--primary">
-                <ToolbarSearch
+                <ToolbarSearch className="events-toolbar-search"
                     value={searchValue}
                     onChange={onSearchChange}
                     placeholder="Rechercher un événement..."
@@ -91,20 +91,22 @@ export default function EventsToolbar({
                     )}
                 </button>
 
-                <button
-                    type="button"
-                    className="toolbar-add-btn events-toolbar-add-btn"
+                <ToolbarResetButton
+                    className="events-toolbar-reset-inline"
+                    onClick={onResetFilters}
+                    disabled={!hasActiveFilters}
+                />
+
+                <ToolbarAddButton
+                    className="events-toolbar-add-btn"
                     onClick={onCreateRequested}
-                    aria-label="Ajouter un événement"
-                    title="Ajouter un événement"
-                >
-                    <img src={icPlus} alt="" className="toolbar-add-icon" />
-                    <span className="toolbar-add-label">Ajouter un événement</span>
-                </button>
+                    label="Ajouter un événement"
+                    iconSrc={icPlus}
+                />
             </ToolbarRow>
 
             <ToolbarRow className="page-toolbar-row--filters events-toolbar-row events-toolbar-row--filters events-toolbar-filters">
-                <div className="toolbar-filter">
+                <div className="toolbar-filter events-toolbar-date-filter events-toolbar-date-filter--from">
                     <label className="toolbar-filter-label">
                         À partir du
                         <DateInput
@@ -116,7 +118,7 @@ export default function EventsToolbar({
                     </label>
                 </div>
 
-                <div className="toolbar-filter">
+                <div className="toolbar-filter events-toolbar-date-filter events-toolbar-date-filter--to">
                     <label className="toolbar-filter-label">
                         Jusqu&apos;au
                         <DateInput
@@ -128,7 +130,7 @@ export default function EventsToolbar({
                     </label>
                 </div>
 
-                <div className="toolbar-filter toolbar-filter--chips">
+                <div className="toolbar-filter toolbar-filter--chips events-toolbar-target-filter">
                     <span className="toolbar-filter-label">Cible</span>
                     <div className="toolbar-toggle-chips">
                         {(['ALL', 'JUNIA', 'EXTERNE'] as TargetFilter[]).map((value) => (
@@ -153,7 +155,7 @@ export default function EventsToolbar({
                     </div>
                 </div>
 
-                <div className="toolbar-filter">
+                <div className="toolbar-filter events-toolbar-type-filter">
                     <label className="toolbar-filter-label">
                         Type d&apos;événement
                         <select
@@ -170,10 +172,6 @@ export default function EventsToolbar({
                     </label>
                 </div>
 
-                <ToolbarResetButton
-                    onClick={onResetFilters}
-                    disabled={!hasActiveFilters}
-                />
             </ToolbarRow>
         </PageToolbar>
     )
