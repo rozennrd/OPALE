@@ -2,8 +2,8 @@ import PDFDocument from 'pdfkit'
 import axios from 'axios'
 
 type ExportStep = {
-    text?: string
-    subSteps?: string[]
+    text?: RichTextLine | string
+    subSteps?: RichTextLine[] | string[]
     imageUrl?: string
     imageData?: string
     imageAlt?: string
@@ -25,6 +25,15 @@ type ExportTutorial = {
     steps?: ExportStep[]
     stepSections?: ExportSection[]
 }
+
+type RichTextSpan = {
+    text: string
+    bold?: boolean
+    underline?: boolean
+    link?: string
+}
+
+type RichTextLine = RichTextSpan[]
 
 export type ExportPayload = {
     title?: string
@@ -200,6 +209,95 @@ const normalizeText = (value?: string): string => {
     }
 
     return value.replace(/\s+/g, ' ').trim()
+}
+
+const mergeRichTextSpans = (spans: RichTextSpan[]): RichTextSpan[] => {
+    const merged: RichTextSpan[] = []
+
+    spans.forEach((span) => {
+        if (!span.text) {
+            return
+        }
+        const last = merged[merged.length - 1]
+        if (
+            last &&
+            last.bold === span.bold &&
+            last.underline === span.underline &&
+            last.link === span.link
+        ) {
+            last.text += span.text
+        } else {
+            merged.push({ ...span })
+        }
+    })
+
+    return merged
+}
+
+const normalizeRichText = (value?: RichTextLine | string): RichTextLine => {
+    if (!value) {
+        return []
+    }
+
+    if (typeof value === 'string') {
+        return [{ text: value }]
+    }
+
+    return mergeRichTextSpans(value).filter((span) => span.text.length > 0)
+}
+
+const hasRichText = (spans: RichTextLine): boolean =>
+    spans.some((span) => span.text.trim().length > 0)
+
+const normalizeRichTextLines = (value?: RichTextLine[] | string[]): RichTextLine[] => {
+    if (!value || value.length === 0) {
+        return []
+    }
+
+    if (typeof value[0] === 'string') {
+        return (value as string[]).map((line) => normalizeRichText(line))
+    }
+
+    return (value as RichTextLine[]).map((line) => normalizeRichText(line))
+}
+
+const richTextToPlainText = (spans: RichTextLine): string =>
+    spans.map((span) => span.text).join('')
+
+const renderRichTextLine = (
+    doc: PdfDoc,
+    spans: RichTextLine,
+    x: number,
+    y: number,
+    width: number,
+    options?: PDFKit.Mixins.TextOptions,
+) => {
+    const cleaned = normalizeRichText(spans)
+    if (cleaned.length === 0) {
+        return
+    }
+
+    cleaned.forEach((span, index) => {
+        const isLast = index === cleaned.length - 1
+        doc.font(span.bold ? 'Helvetica-Bold' : 'Helvetica')
+        if (index === 0) {
+            doc.text(span.text, x, y, {
+                ...options,
+                width,
+                continued: !isLast,
+                underline: span.underline,
+                link: span.link,
+            })
+        } else {
+            doc.text(span.text, {
+                ...options,
+                width,
+                continued: !isLast,
+                underline: span.underline,
+                link: span.link,
+            })
+        }
+    })
 }
 
 const decodeDataUrl = (dataUrl?: string): Buffer | null => {
@@ -421,14 +519,15 @@ const renderSteps = async (
 
     for (let i = 0; i < steps.length; i += 1) {
         const step = steps[i]
-        const text = normalizeText(step.text)
+        const textSpans = normalizeRichText(step.text)
+        const circleSize = 18
+        const startX = doc.page.margins.left
+        const textX = startX + circleSize + 8
+        const textWidth = getContentWidth(doc) - circleSize - 8
 
-        if (text) {
-            const circleSize = 18
-            const startX = doc.page.margins.left
-            const textX = startX + circleSize + 8
-            const textWidth = getContentWidth(doc) - circleSize - 8
-            const textHeight = doc.heightOfString(text, { width: textWidth })
+        if (hasRichText(textSpans)) {
+            doc.font('Helvetica').fontSize(11).fillColor(COLORS.text)
+            const textHeight = doc.heightOfString(richTextToPlainText(textSpans), { width: textWidth })
             ensureSpace(doc, textHeight + circleSize + SPACING.sm)
 
             const textY = doc.y
@@ -443,19 +542,19 @@ const renderSteps = async (
             const stepLabel = String(i + 1)
             doc.font('Helvetica-Bold').fontSize(9).fillColor(COLORS.primaryDark)
             drawCenteredCapText(doc, stepLabel, startX, circleY, circleSize, circleSize, { align: 'center' })
-            doc.font('Helvetica').fontSize(11).fillColor(COLORS.text).text(text, textX, textY, {
-                width: textWidth,
-            })
+            doc.font('Helvetica').fontSize(11).fillColor(COLORS.text)
+            renderRichTextLine(doc, textSpans, textX, textY, textWidth)
             const rowHeight = Math.max(circleSize, doc.y - textY)
             doc.y = textY + rowHeight + SPACING.sm
         }
 
-        if (step.subSteps && step.subSteps.length > 0) {
-            step.subSteps
-                .map((subStep) => normalizeText(subStep))
-                .filter(Boolean)
+        const subSteps = normalizeRichTextLines(step.subSteps)
+        if (subSteps.length > 0) {
+            subSteps
+                .filter((subStep) => hasRichText(subStep))
                 .forEach((subStep) => {
-                    doc.text(`- ${subStep}`, {
+                    const bulletSpans: RichTextLine = [{ text: '- ' }, ...subStep]
+                    renderRichTextLine(doc, bulletSpans, textX, doc.y, textWidth, {
                         indent: 18,
                         paragraphGap: 4,
                     })

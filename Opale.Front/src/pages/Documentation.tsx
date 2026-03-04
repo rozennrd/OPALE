@@ -49,9 +49,16 @@ const getHighlightLabelStyle = (
     }
 }
 
-type ExportStep = {
+type RichTextSpan = {
     text: string
-    subSteps?: string[]
+    bold?: boolean
+    underline?: boolean
+    link?: string
+}
+
+type ExportStep = {
+    text: RichTextSpan[]
+    subSteps?: RichTextSpan[][]
     imageUrl?: string
     imageData?: string
     imageAlt?: string
@@ -170,30 +177,79 @@ export default function Documentation() {
         }
     }
 
-    const nodeToText = (node: React.ReactNode): string => {
+    const mergeRichTextSpans = (spans: RichTextSpan[]): RichTextSpan[] => {
+        const merged: RichTextSpan[] = []
+
+        spans.forEach((span) => {
+            if (!span.text) {
+                return
+            }
+            const last = merged[merged.length - 1]
+            if (
+                last &&
+                last.bold === span.bold &&
+                last.underline === span.underline &&
+                last.link === span.link
+            ) {
+                last.text += span.text
+            } else {
+                merged.push({ ...span })
+            }
+        })
+
+        return merged
+    }
+
+    const nodeToRichText = (
+        node: React.ReactNode,
+        style: Omit<RichTextSpan, 'text'> = {},
+    ): RichTextSpan[] => {
         if (node === null || node === undefined || node === false) {
-            return ''
+            return []
         }
 
         if (typeof node === 'string' || typeof node === 'number') {
-            return String(node)
+            return [{ text: String(node), ...style }]
         }
 
         if (Array.isArray(node)) {
-            return node.map((child) => nodeToText(child)).join('')
+            return mergeRichTextSpans(
+                node.flatMap((child) => nodeToRichText(child, style)),
+            )
         }
 
         if (React.isValidElement(node)) {
             const element = node as React.ReactElement<{ href?: string; children?: React.ReactNode }>
-            const childrenText = nodeToText(element.props.children)
-            if (element.type === 'a') {
-                return element.props.href ? `${childrenText} (${element.props.href})` : childrenText
+            if (element.type === 'br') {
+                return [{ text: '\n', ...style }]
             }
-            return childrenText
+
+            let nextStyle = style
+            if (element.type === 'strong' || element.type === 'b') {
+                nextStyle = { ...nextStyle, bold: true }
+            }
+            if (element.type === 'u') {
+                nextStyle = { ...nextStyle, underline: true }
+            }
+            if (element.type === 'a') {
+                nextStyle = {
+                    ...nextStyle,
+                    underline: true,
+                    link: element.props.href ?? nextStyle.link,
+                }
+            }
+
+            return mergeRichTextSpans(nodeToRichText(element.props.children, nextStyle))
         }
 
-        return ''
+        return []
     }
+
+    const hasRenderableRichText = (spans: RichTextSpan[]): boolean =>
+        spans.some((span) => span.text.trim().length > 0)
+
+    const normalizeRichText = (spans: RichTextSpan[]): RichTextSpan[] =>
+        mergeRichTextSpans(spans).filter((span) => span.text.length > 0)
 
     const fetchImageData = async (
         url: string,
@@ -233,8 +289,8 @@ export default function Documentation() {
 
         for (const stepEntry of entries) {
             if (!isTutorialStepObject(stepEntry)) {
-                const text = nodeToText(stepEntry).trim()
-                if (text) {
+                const text = normalizeRichText(nodeToRichText(stepEntry))
+                if (hasRenderableRichText(text)) {
                     steps.push({ text })
                 }
                 continue
@@ -242,17 +298,17 @@ export default function Documentation() {
 
             const resolvedUrl = resolveAssetUrl(stepEntry.imageSrc)
             const imageData = resolvedUrl ? await fetchImageData(resolvedUrl, cache) : undefined
-            const text = nodeToText(stepEntry.text).trim()
+            const text = normalizeRichText(nodeToRichText(stepEntry.text))
 
-            if (!text && !imageData) {
+            if (!hasRenderableRichText(text) && !imageData) {
                 continue
             }
 
             steps.push({
                 text,
                 subSteps: stepEntry.subSteps
-                    ?.map((subStep) => nodeToText(subStep).trim())
-                    .filter((value) => value.length > 0),
+                    ?.map((subStep) => normalizeRichText(nodeToRichText(subStep)))
+                    .filter((value) => hasRenderableRichText(value)),
                 imageUrl: resolvedUrl,
                 imageData,
                 imageAlt: stepEntry.imageAlt,
