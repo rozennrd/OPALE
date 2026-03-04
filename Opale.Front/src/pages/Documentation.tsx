@@ -6,7 +6,12 @@ import ConfirmDialog from '../components/common/ConfirmDialog'
 import logoFull from '../assets/logo/logo-full.png'
 import { TUTORIAL_CONTENT } from './tuto/content'
 import { TAB_ITEMS, TUTORIAL_ITEMS } from './tuto/items'
-import type { TutorialId, TutorialImageHighlight, TutorialTab } from './tuto/types'
+import type {
+    TutorialId,
+    TutorialImageHighlight,
+    TutorialStepEntry,
+    TutorialTab,
+} from './tuto/types'
 import {
     firstTutorialForTab,
     getStepHighlights,
@@ -42,10 +47,13 @@ const getHighlightLabelStyle = (
               }
             : {}),
     }
+}
+
 type ExportStep = {
     text: string
     subSteps?: string[]
     imageUrl?: string
+    imageData?: string
     imageAlt?: string
     imageCaption?: string
 }
@@ -70,6 +78,7 @@ type ExportPayload = {
     title: string
     date: string
     logoUrl?: string
+    logoData?: string
     tutorials: ExportTutorial[]
 }
 
@@ -186,6 +195,74 @@ export default function Documentation() {
         return ''
     }
 
+    const fetchImageData = async (
+        url: string,
+        cache: Map<string, string>,
+    ): Promise<string | undefined> => {
+        if (cache.has(url)) {
+            return cache.get(url)
+        }
+
+        try {
+            const response = await fetch(url)
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`)
+            }
+
+            const blob = await response.blob()
+            const dataUrl = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader()
+                reader.onload = () => resolve(String(reader.result))
+                reader.onerror = () => reject(reader.error)
+                reader.readAsDataURL(blob)
+            })
+            cache.set(url, dataUrl)
+            return dataUrl
+        } catch (error) {
+            console.warn('[PDF] Image fetch failed', url, error)
+            cache.set(url, '')
+            return undefined
+        }
+    }
+
+    const buildExportSteps = async (
+        entries: TutorialStepEntry[],
+        cache: Map<string, string>,
+    ): Promise<ExportStep[]> => {
+        const steps: ExportStep[] = []
+
+        for (const stepEntry of entries) {
+            if (!isTutorialStepObject(stepEntry)) {
+                const text = nodeToText(stepEntry).trim()
+                if (text) {
+                    steps.push({ text })
+                }
+                continue
+            }
+
+            const resolvedUrl = resolveAssetUrl(stepEntry.imageSrc)
+            const imageData = resolvedUrl ? await fetchImageData(resolvedUrl, cache) : undefined
+            const text = nodeToText(stepEntry.text).trim()
+
+            if (!text && !imageData) {
+                continue
+            }
+
+            steps.push({
+                text,
+                subSteps: stepEntry.subSteps
+                    ?.map((subStep) => nodeToText(subStep).trim())
+                    .filter((value) => value.length > 0),
+                imageUrl: resolvedUrl,
+                imageData,
+                imageAlt: stepEntry.imageAlt,
+                imageCaption: stepEntry.imageCaption,
+            })
+        }
+
+        return steps
+    }
+
     const toggleExportSelection = (tutorialId: TutorialId) => {
         setExportSelection((current) => {
             const next = new Set(current)
@@ -206,58 +283,24 @@ export default function Documentation() {
         setExportSelection(new Set())
     }
 
-    const buildExportPayload = (): ExportPayload => {
+    const buildExportPayload = async (): Promise<ExportPayload> => {
         const selectedIds = new Set(exportSelection)
-        const tutorials: ExportTutorial[] = TUTORIAL_ITEMS.filter((item) =>
-            selectedIds.has(item.id),
-        ).map((item) => {
+        const imageCache = new Map<string, string>()
+        const tutorials: ExportTutorial[] = []
+
+        for (const item of TUTORIAL_ITEMS.filter((entry) => selectedIds.has(entry.id))) {
             const content = TUTORIAL_CONTENT[item.id]
-            const steps = content.steps
-                .map((stepEntry) => {
-                    if (!isTutorialStepObject(stepEntry)) {
-                        const text = nodeToText(stepEntry).trim()
-                        return {
-                            text,
-                        }
-                    }
+            const steps = await buildExportSteps(content.steps, imageCache)
+            const stepSections = content.stepSections
+                ? await Promise.all(
+                      content.stepSections.map(async (section) => ({
+                          title: section.title,
+                          steps: await buildExportSteps(section.steps, imageCache),
+                      })),
+                  )
+                : undefined
 
-                    return {
-                        text: nodeToText(stepEntry.text).trim(),
-                        subSteps: stepEntry.subSteps
-                            ?.map((subStep) => nodeToText(subStep).trim())
-                            .filter((text) => text.length > 0),
-                        imageUrl: resolveAssetUrl(stepEntry.imageSrc),
-                        imageAlt: stepEntry.imageAlt,
-                        imageCaption: stepEntry.imageCaption,
-                    }
-                })
-                .filter((step) => step.text.length > 0 || step.imageUrl)
-
-            const stepSections = content.stepSections?.map((section) => ({
-                title: section.title,
-                steps: section.steps
-                    .map((stepEntry) => {
-                        if (!isTutorialStepObject(stepEntry)) {
-                            const text = nodeToText(stepEntry).trim()
-                            return {
-                                text,
-                            }
-                        }
-
-                        return {
-                            text: nodeToText(stepEntry.text).trim(),
-                            subSteps: stepEntry.subSteps
-                                ?.map((subStep) => nodeToText(subStep).trim())
-                                .filter((text) => text.length > 0),
-                            imageUrl: resolveAssetUrl(stepEntry.imageSrc),
-                            imageAlt: stepEntry.imageAlt,
-                            imageCaption: stepEntry.imageCaption,
-                        }
-                    })
-                    .filter((step) => step.text.length > 0 || step.imageUrl),
-            }))
-
-            return {
+            tutorials.push({
                 id: item.id,
                 title: item.title,
                 summary: item.summary,
@@ -266,8 +309,8 @@ export default function Documentation() {
                 tips: content.tips ?? [],
                 steps,
                 stepSections,
-            }
-        })
+            })
+        }
 
         const exportDate = new Date().toLocaleDateString('fr-FR', {
             day: '2-digit',
@@ -275,10 +318,16 @@ export default function Documentation() {
             year: 'numeric',
         })
 
+        const resolvedLogoUrl = resolveAssetUrl(logoFull)
+        const logoData = resolvedLogoUrl
+            ? await fetchImageData(resolvedLogoUrl, imageCache)
+            : undefined
+
         return {
             title: 'Documentation OPALE',
             date: exportDate,
-            logoUrl: resolveAssetUrl(logoFull),
+            logoUrl: resolvedLogoUrl,
+            logoData,
             tutorials,
         }
     }
@@ -292,7 +341,7 @@ export default function Documentation() {
         setExportError(null)
 
         try {
-            const payload = buildExportPayload()
+            const payload = await buildExportPayload()
             const token = getTokenFromLocalStorage()
             const response = await fetch(
                 `${DEFAULT_API_CONFIG.baseUrl}/documentation/export`,

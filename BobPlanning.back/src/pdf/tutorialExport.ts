@@ -5,6 +5,7 @@ type ExportStep = {
     text?: string
     subSteps?: string[]
     imageUrl?: string
+    imageData?: string
     imageAlt?: string
     imageCaption?: string
 }
@@ -29,6 +30,7 @@ export type ExportPayload = {
     title?: string
     date?: string
     logoUrl?: string
+    logoData?: string
     tutorials: ExportTutorial[]
 }
 
@@ -41,12 +43,59 @@ type TocLayout = {
 
 type PdfDoc = PDFKit.PDFDocument
 
+const buildImageUrlCandidates = (url: string): string[] => {
+    const candidates = [url]
+    try {
+        const parsed = new URL(url)
+        const hostname = parsed.hostname
+        const isLocalHost =
+            hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0'
+
+        if (isLocalHost) {
+            const fallbackHosts = [
+                process.env.PDF_ASSET_HOST,
+                'opale-new-frontend:5173',
+                'host.docker.internal:5173',
+            ]
+                .filter(Boolean)
+                .map(String)
+
+            fallbackHosts.forEach((fallbackHost) => {
+                const fallback = new URL(url)
+                fallback.host = fallbackHost
+                candidates.push(fallback.toString())
+            })
+        }
+    } catch {
+        // ignore invalid URLs, return original
+    }
+
+    return Array.from(new Set(candidates))
+}
+
 const fetchImageBuffer = async (url: string, timeoutMs = 10000): Promise<Buffer> => {
-    const response = await axios.get<ArrayBuffer>(url, {
-        responseType: 'arraybuffer',
-        timeout: timeoutMs,
-    })
-    return Buffer.from(response.data)
+    const candidates = buildImageUrlCandidates(url)
+    let lastError: unknown
+
+    for (const candidate of candidates) {
+        try {
+            const response = await axios.get<ArrayBuffer>(candidate, {
+                responseType: 'arraybuffer',
+                timeout: timeoutMs,
+            })
+            return Buffer.from(response.data)
+        } catch (error) {
+            const status = axios.isAxiosError(error) ? error.response?.status : undefined
+            console.warn('[PDF] Image fetch failed', {
+                candidate,
+                status,
+                message: error instanceof Error ? error.message : String(error),
+            })
+            lastError = error
+        }
+    }
+
+    throw lastError
 }
 
 const normalizeText = (value?: string): string => {
@@ -55,6 +104,23 @@ const normalizeText = (value?: string): string => {
     }
 
     return value.replace(/\s+/g, ' ').trim()
+}
+
+const decodeDataUrl = (dataUrl?: string): Buffer | null => {
+    if (!dataUrl) {
+        return null
+    }
+
+    const match = /^data:.*?;base64,(.*)$/i.exec(dataUrl)
+    if (!match) {
+        return null
+    }
+
+    try {
+        return Buffer.from(match[1], 'base64')
+    } catch {
+        return null
+    }
 }
 
 const computeTocLayout = (doc: PdfDoc, entryCount: number): TocLayout => {
@@ -78,7 +144,9 @@ const renderCover = async (
     payload: ExportPayload,
     getImage: (url: string) => Promise<Buffer | null>,
 ) => {
-    const logoBuffer = payload.logoUrl ? await getImage(payload.logoUrl) : null
+    const logoBuffer =
+        decodeDataUrl(payload.logoData) ??
+        (payload.logoUrl ? await getImage(payload.logoUrl) : null)
     const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right
 
     if (logoBuffer) {
@@ -208,8 +276,10 @@ const renderSteps = async (
                 })
         }
 
-        if (step.imageUrl) {
-            const imageBuffer = await getImage(step.imageUrl)
+        if (step.imageUrl || step.imageData) {
+            const imageBuffer =
+                decodeDataUrl(step.imageData) ??
+                (step.imageUrl ? await getImage(step.imageUrl) : null)
             if (imageBuffer) {
                 doc.moveDown(0.4)
                 doc.image(imageBuffer, {
