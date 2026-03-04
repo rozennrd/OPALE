@@ -1,6 +1,7 @@
 import React from 'react'
 import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
+import icPlus from '../../assets/ic-plus.png'
 import {
     AvailabilityFilter,
     CapacityOperator,
@@ -23,6 +24,7 @@ interface RoomsToolbarProps {
     selectionMode: boolean
     selectedCount: number
     onToggleSelectionMode: () => void
+    onCreateRequested: () => void
     onResetFilters: () => void
     hasActiveFilters: boolean
 }
@@ -50,6 +52,7 @@ export default function RoomsToolbar({
     selectionMode,
     selectedCount,
     onToggleSelectionMode,
+    onCreateRequested,
     onResetFilters,
     hasActiveFilters,
 }: RoomsToolbarProps) {
@@ -83,10 +86,26 @@ export default function RoomsToolbar({
                         </span>
                     )}
                 </button>
+
+                <ToolbarResetButton
+                    onClick={onResetFilters}
+                    disabled={!hasActiveFilters}
+                />
+
+                <button
+                    type="button"
+                    className="toolbar-add-btn rooms-toolbar-add-btn rooms-toolbar-add-primary"
+                    onClick={onCreateRequested}
+                    aria-label="Ajouter une salle"
+                    title="Ajouter une salle"
+                >
+                    <img src={icPlus} alt="" className="toolbar-add-icon" />
+                    <span className="toolbar-add-label">Ajouter une salle</span>
+                </button>
             </ToolbarRow>
 
             <ToolbarRow className="page-toolbar-row--filters rooms-toolbar-row rooms-toolbar-row--filters rooms-toolbar-filters">
-                <div className="toolbar-filter">
+                <div className="toolbar-filter rooms-toolbar-type-filter">
                     <label className="toolbar-filter-label">
                         Type
                         <select
@@ -131,11 +150,11 @@ export default function RoomsToolbar({
                     </div>
                 </div>
 
-                <div className="toolbar-filter toolbar-filter--chips">
+                <div className="toolbar-filter toolbar-filter--chips rooms-toolbar-availability-filter">
                     <span className="toolbar-filter-label">Disponibilité</span>
                     <div className="toolbar-toggle-chips">
                         {([
-                            { value: 'ALL', label: 'Les deux' },
+                            { value: 'ALL', label: 'Tous' },
                             { value: 'AVAILABLE', label: 'Disponible' },
                             { value: 'UNAVAILABLE', label: 'Non dispo' },
                         ] as { value: AvailabilityFilter; label: string }[]).map((option) => (
@@ -155,11 +174,16 @@ export default function RoomsToolbar({
                         ))}
                     </div>
                 </div>
-
-                <ToolbarResetButton
-                    onClick={onResetFilters}
-                    disabled={!hasActiveFilters}
-                />
+                <button
+                    type="button"
+                    className="toolbar-add-btn rooms-toolbar-add-btn rooms-toolbar-add-inline"
+                    onClick={onCreateRequested}
+                    aria-label="Ajouter une salle"
+                    title="Ajouter une salle"
+                >
+                    <img src={icPlus} alt="" className="toolbar-add-icon" />
+                    <span className="toolbar-add-label">Ajouter une salle</span>
+                </button>
             </ToolbarRow>
         </PageToolbar>
     )
