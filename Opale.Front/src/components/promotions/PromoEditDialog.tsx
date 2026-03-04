@@ -42,8 +42,9 @@ interface PromoEditDialogProps {
 
 // Helper to format date as dd/mm/yyyy
 const formatDateLabel = (iso: string): string => {
+    const datePart = iso.split('T')[0] // supprime l'heure si prÃ©sente
+    const [y, m, d] = datePart.split('-')
     if (!iso) return 'jj/mm/aaaa'
-    const [y, m, d] = (iso || '').split('-')
     if (!y || !m || !d) return 'jj/mm/aaaa'
     return `${d}/${m}/${y}`
 }
@@ -198,7 +199,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                             )}
                             {totals.specialtiesMismatch && (
                                 <p>
-                                    Le total des spécialités est {totals.specialtiesTotal} pour {totals.totalStudents}.
+                                    Le total des spï¿½cialitï¿½s est {totals.specialtiesTotal} pour {totals.totalStudents}.
                                 </p>
                             )}
                         </div>
@@ -211,7 +212,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                         <span className="promo-warning-icon" aria-hidden="true">&#9888;</span>
                         <div className="promo-warning-content">
                             <p>
-                                <strong>Attention :</strong> Les contraintes suivantes sont en dehors de la période de la promotion 
+                                <strong>Attention :</strong> Les contraintes suivantes sont en dehors de la pï¿½riode de la promotion 
                                 ({formatDateLabel(editingPromo.startDate)} - {formatDateLabel(editingPromo.endDate)}) :{' '}
                                 <strong>{constraintValidation.outOfPeriodTypes.join(', ')}</strong>
                             </p>
