@@ -98,6 +98,43 @@ const drawSectionLabel = (doc: PdfDoc, label: string) => {
     doc.moveDown(0.4)
 }
 
+const drawCenteredText = (
+    doc: PdfDoc,
+    text: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    options?: PDFKit.Mixins.TextOptions,
+) => {
+    doc.text(text, x, y + height / 2, {
+        ...options,
+        width,
+        baseline: 'middle',
+    })
+}
+
+const drawCenteredCapText = (
+    doc: PdfDoc,
+    text: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    options?: PDFKit.Mixins.TextOptions,
+) => {
+    const font = (doc as unknown as { _font?: { capHeight?: number; ascender?: number } })._font
+    const fontSize = (doc as unknown as { _fontSize?: number })._fontSize ?? 0
+    const capHeight = (font?.capHeight ?? font?.ascender ?? 0) / 1000 * fontSize
+    const baselineY = y + height / 2 + capHeight / 2
+
+    doc.text(text, x, baselineY, {
+        ...options,
+        width,
+        baseline: 'alphabetic',
+    })
+}
+
 const buildImageUrlCandidates = (url: string): string[] => {
     const candidates = [url]
     try {
@@ -179,7 +216,8 @@ const decodeDataUrl = (dataUrl?: string): Buffer | null => {
 }
 
 const computeTocLayout = (doc: PdfDoc, entryCount: number): TocLayout => {
-    const lineHeight = 18
+    doc.font('Helvetica').fontSize(12)
+    const lineHeight = Math.max(24, doc.currentLineHeight(true) + 8)
     const titleHeight = 28
     const availableHeight =
         doc.page.height - doc.page.margins.top - doc.page.margins.bottom - titleHeight - 12
@@ -236,14 +274,16 @@ const renderCover = async (
         stroke: COLORS.brand,
         radius: 14,
     })
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(12)
-        .fillColor(COLORS.primaryDark)
-        .text('Guide utilisateur - Export PDF', doc.page.margins.left, ribbonY + 10, {
-            align: 'center',
-            width: pageWidth,
-        })
+    doc.font('Helvetica-Bold').fontSize(12).fillColor(COLORS.primaryDark)
+    drawCenteredText(
+        doc,
+        'Guide utilisateur - Export PDF',
+        doc.page.margins.left,
+        ribbonY,
+        pageWidth,
+        ribbonHeight,
+        { align: 'center' },
+    )
     doc.y = ribbonY + ribbonHeight + SPACING.lg
 }
 
@@ -257,6 +297,7 @@ const renderToc = (
     const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right
     const pageNumberWidth = 40
     const titleWidth = pageWidth - pageNumberWidth - 8
+    const rowHeight = layout.lineHeight
 
     tocPages.forEach((pageNumber) => {
         doc.switchToPage(pageNumber - 1)
@@ -272,20 +313,25 @@ const renderToc = (
 
         for (let i = 0; i < layout.linesPerPage && entryIndex < entries.length; i += 1) {
             const entry = entries[entryIndex]
-            const lineY = y + i * layout.lineHeight
-
-            drawCard(doc, doc.page.margins.left, lineY - 2, pageWidth, 20, {
+            const rowY = y + i * layout.lineHeight
+            drawCard(doc, doc.page.margins.left, rowY, pageWidth, rowHeight, {
                 fill: COLORS.panel,
                 stroke: COLORS.border,
                 radius: 8,
             })
-            doc.fillColor(COLORS.text).text(entry.title, doc.page.margins.left + 8, lineY, {
-                width: titleWidth,
-            })
-            doc.fillColor(COLORS.muted).text(String(entry.page), doc.page.margins.left + titleWidth + 8, lineY, {
-                width: pageNumberWidth,
-                align: 'right',
-            })
+            doc.fillColor(COLORS.text)
+            drawCenteredText(doc, entry.title, doc.page.margins.left + 8, rowY, titleWidth, rowHeight)
+            const pageLabel = String(entry.page)
+            doc.fillColor(COLORS.muted)
+            drawCenteredText(
+                doc,
+                pageLabel,
+                doc.page.margins.left + titleWidth + 8,
+                rowY,
+                pageNumberWidth,
+                rowHeight,
+                { align: 'right' },
+            )
             entryIndex += 1
         }
 
@@ -331,10 +377,12 @@ const renderBulletList = (doc: PdfDoc, items?: string[]) => {
         return
     }
 
-    const textHeight = normalizedItems.reduce(
-        (total, item) => total + doc.heightOfString(item, { width: contentWidth - 32 }) + 4,
-        0,
-    )
+    const bulletText = normalizedItems.map((item) => `- ${item}`).join('\n')
+    const lineGap = 4
+    const textHeight = doc.heightOfString(bulletText, {
+        width: contentWidth - SPACING.lg,
+        lineGap,
+    })
     const cardHeight = textHeight + SPACING.lg
 
     ensureSpace(doc, cardHeight + SPACING.md)
@@ -345,13 +393,11 @@ const renderBulletList = (doc: PdfDoc, items?: string[]) => {
         radius: 10,
     })
 
-    let cursorY = startY + SPACING.sm
     const startX = doc.page.margins.left + SPACING.md
-    normalizedItems.forEach((item) => {
-        doc.font('Helvetica').fontSize(11).fillColor(COLORS.text).text(`- ${item}`, startX, cursorY, {
-            width: contentWidth - SPACING.lg,
-        })
-        cursorY += doc.heightOfString(item, { width: contentWidth - SPACING.lg }) + 4
+    const cursorY = startY + (cardHeight - textHeight) / 2
+    doc.font('Helvetica').fontSize(11).fillColor(COLORS.text).text(bulletText, startX, cursorY, {
+        width: contentWidth - SPACING.lg,
+        lineGap,
     })
     doc.y = startY + cardHeight + SPACING.sm
 }
@@ -383,14 +429,9 @@ const renderSteps = async (
                 .circle(startX + circleSize / 2, startY + circleSize / 2, circleSize / 2)
                 .fill()
                 .restore()
-            doc
-                .font('Helvetica-Bold')
-                .fontSize(9)
-                .fillColor(COLORS.primaryDark)
-                .text(String(i + 1), startX, startY + 4, {
-                    width: circleSize,
-                    align: 'center',
-                })
+            const stepLabel = String(i + 1)
+            doc.font('Helvetica-Bold').fontSize(9).fillColor(COLORS.primaryDark)
+            drawCenteredCapText(doc, stepLabel, startX, startY, circleSize, circleSize, { align: 'center' })
             doc.font('Helvetica').fontSize(11).fillColor(COLORS.text).text(text, textX, startY, {
                 width: textWidth,
             })
