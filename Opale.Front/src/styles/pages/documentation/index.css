@@ -145,6 +145,41 @@
         color: var(--muted);
     }
 
+    .documentation-export-filename {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        padding: 0.6rem 0.7rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--border-subtle, var(--border));
+        background: var(--panel-soft, #f6f7fb);
+    }
+
+    .documentation-export-filename-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted-strong, var(--muted));
+    }
+
+    .documentation-export-filename-input {
+        width: 100%;
+        padding: 0.65rem 0.85rem;
+        border-radius: 0.7rem;
+        border: 2px solid color-mix(in srgb, var(--primary) 35%, var(--border));
+        background: var(--panel);
+        color: var(--text);
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .documentation-export-filename-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 25%, transparent);
+    }
+
     .documentation-export-dialog-actions {
         display: flex;
         flex-wrap: wrap;

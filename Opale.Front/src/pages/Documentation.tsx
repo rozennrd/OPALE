@@ -129,6 +129,9 @@ export default function Documentation() {
     const [isExporting, setIsExporting] = useState(false)
     const [exportError, setExportError] = useState<string | null>(null)
     const [isExportDialogOpen, setIsExportDialogOpen] = useState(false)
+    const [exportFileName, setExportFileName] = useState<string>(
+        () => `OPALE-tutoriels-${new Date().toISOString().slice(0, 10)}.pdf`,
+    )
     const [expandedStepSections, setExpandedStepSections] = useState<
         Record<string, boolean>
     >({})
@@ -351,6 +354,17 @@ export default function Documentation() {
         setExportSelection(new Set())
     }
 
+    const buildDefaultExportFileName = (): string =>
+        `OPALE-tutoriels-${new Date().toISOString().slice(0, 10)}.pdf`
+
+    const normalizeExportFileName = (value: string): string => {
+        const trimmed = value.trim()
+        if (!trimmed) {
+            return buildDefaultExportFileName()
+        }
+        return trimmed.toLowerCase().endsWith('.pdf') ? trimmed : `${trimmed}.pdf`
+    }
+
     const buildExportPayload = async (): Promise<ExportPayload> => {
         const selectedIds = new Set(exportSelection)
         const imageCache = new Map<string, string>()
@@ -435,7 +449,7 @@ export default function Documentation() {
             const url = window.URL.createObjectURL(blob)
             const anchor = document.createElement('a')
             anchor.href = url
-            anchor.download = `OPALE-tutoriels-${new Date().toISOString().slice(0, 10)}.pdf`
+            anchor.download = normalizeExportFileName(exportFileName)
             document.body.appendChild(anchor)
             anchor.click()
             anchor.remove()
@@ -458,6 +472,16 @@ export default function Documentation() {
             <p className="documentation-export-dialog-intro">
                 Choisissez les tutoriels Ã  exporter. Un sommaire sera ajoutÃ© automatiquement.
             </p>
+            <label className="documentation-export-filename">
+                <span className="documentation-export-filename-label">Nom du PDF</span>
+                <input
+                    type="text"
+                    className="documentation-export-filename-input"
+                    value={exportFileName}
+                    onChange={(event) => setExportFileName(event.target.value)}
+                    placeholder={buildDefaultExportFileName()}
+                />
+            </label>
             <div className="documentation-export-dialog-actions">
                 <button type="button" className="btn-tertiary" onClick={selectAllTutorials}>
                     Tout sÃ©lectionner
@@ -544,6 +568,7 @@ export default function Documentation() {
                             className="btn-tertiary documentation-export-trigger"
                             onClick={() => {
                                 setExportError(null)
+                                setExportFileName(buildDefaultExportFileName())
                                 setIsExportDialogOpen(true)
                             }}
                         >
