@@ -43,6 +43,9 @@ type TocLayout = {
 }
 
 type PdfDoc = PDFKit.PDFDocument
+type PdfDocWithDest = PdfDoc & {
+    addNamedDestination?: (name: string, ...args: unknown[]) => void
+}
 
 const COLORS = {
     text: '#111827',
@@ -293,7 +296,7 @@ const renderCover = async (
 const renderToc = (
     doc: PdfDoc,
     layout: TocLayout,
-    entries: { title: string; page: number }[],
+    entries: { title: string; page: number; destination: string }[],
     tocPages: number[],
 ) => {
     let entryIndex = 0
@@ -324,7 +327,9 @@ const renderToc = (
                 radius: 8,
             })
             doc.fillColor(COLORS.text)
-            drawCenteredText(doc, entry.title, doc.page.margins.left + rowPadding, rowY, titleWidth, rowHeight)
+            drawCenteredText(doc, entry.title, doc.page.margins.left + rowPadding, rowY, titleWidth, rowHeight, {
+                goTo: entry.destination,
+            })
             const pageLabel = String(entry.page)
             doc.fillColor(COLORS.muted)
             drawCenteredText(
@@ -334,7 +339,7 @@ const renderToc = (
                 rowY,
                 pageNumberWidth,
                 rowHeight,
-                { align: 'right' },
+                { align: 'right', goTo: entry.destination },
             )
             entryIndex += 1
         }
@@ -586,12 +591,20 @@ export const generateTutorialPdf = async (payload: ExportPayload): Promise<Buffe
         tocPages.push(currentPageNumber)
     }
 
-    const tocEntries: { title: string; page: number }[] = []
+    const tocEntries: { title: string; page: number; destination: string }[] = []
 
-    for (const tutorial of payload.tutorials) {
+    for (const [index, tutorial] of payload.tutorials.entries()) {
         doc.addPage()
         currentPageNumber += 1
-        tocEntries.push({ title: tutorial.title, page: currentPageNumber })
+        const destination = `tuto-${index + 1}`
+        ;(doc as PdfDocWithDest).addNamedDestination?.(
+            destination,
+            'XYZ',
+            doc.page.margins.left,
+            doc.page.margins.top,
+            null,
+        )
+        tocEntries.push({ title: tutorial.title, page: currentPageNumber, destination })
         await renderTutorial(doc, tutorial, getImage)
 
         const pageRange = (doc as unknown as { bufferedPageRange?: () => { start: number; count: number } })
