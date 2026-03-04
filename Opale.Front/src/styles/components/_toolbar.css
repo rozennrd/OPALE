@@ -288,6 +288,11 @@
         box-shadow: var(--shadow-sm);
     }
 
+    .toolbar-add-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
     .toolbar-add-icon {
         width: 18px;
         height: 18px;

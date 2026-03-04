@@ -66,6 +66,7 @@ interface ToolbarAddButtonProps {
     title?: string
     iconSrc: string
     iconAlt?: string
+    disabled?: boolean
 }
 
 export const ToolbarAddButton: React.FC<ToolbarAddButtonProps> = ({
@@ -76,6 +77,7 @@ export const ToolbarAddButton: React.FC<ToolbarAddButtonProps> = ({
                                                                       title,
                                                                       iconSrc,
                                                                       iconAlt = '',
+                                                                      disabled = false,
                                                                   }) => {
     const buttonClassName = ['toolbar-add-btn', className].filter(Boolean).join(' ')
 
@@ -86,6 +88,7 @@ export const ToolbarAddButton: React.FC<ToolbarAddButtonProps> = ({
             onClick={onClick}
             aria-label={ariaLabel ?? label}
             title={title ?? label}
+            disabled={disabled}
         >
             <img src={iconSrc} alt={iconAlt} className="toolbar-add-icon" />
             <span className="toolbar-add-label">{label}</span>

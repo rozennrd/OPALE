@@ -105,6 +105,7 @@ export default function MatieresToolbar({
                     onClick={onCreateRequested}
                     label="Ajouter une matière"
                     iconSrc={icPlus}
+                    disabled
                 />
             </ToolbarRow>
 
@@ -192,3 +193,4 @@ export default function MatieresToolbar({
         </PageToolbar>
     )
 }
+
