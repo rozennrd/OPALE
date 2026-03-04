@@ -70,3 +70,12 @@ export async function addProf(payload: UpdateProfPayload): Promise<string> {
 
     return insertedId
 }
+
+export async function deleteProf(id: string): Promise<void> {
+    const res = await apiClient.delete<{ success?: boolean; message?: string }>(
+        `/deleteProf/${encodeURIComponent(id)}`,
+    )
+    if (!res.success) {
+        throw new Error(res.error?.message ?? 'Failed to delete teacher')
+    }
+}
