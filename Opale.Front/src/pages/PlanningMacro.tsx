@@ -28,11 +28,11 @@ export default function PlanningMacro(): React.ReactElement {
     }, []);
 
     const [macroItems, setMacroItems] = useState<ChecklistItem[]>([
-        { id: 'cycles-promos', label: 'Avoir créé tous les cycles et toutes les promos', status: 'ok', checked: true, warning: false },
-        { id: 'dates',         label: 'Avoir renseigné au moins date de début et de fin, avoir rempli les autres contraintes de dates', status: 'ok', checked: true },
+        { id: 'cycles-promos', label: 'Avoir créé tous les cycles et toutes les promos', status: 'ok', checked: false, warning: false },
+        { id: 'dates',         label: 'Avoir renseigné au moins date de début et de fin, avoir rempli les autres contraintes de dates', status: 'ok', checked: false },
         { id: 'events',        label: 'Avoir créé tous les événements exceptionnels', status: 'alert', checked: false },
-        { id: 'show-macro',    label: "Avoir activé l'affichage macro sur chaque événement", status: 'ok', checked: true },
-        { id: 'target',        label: 'Avoir correctement ciblé chaque événement (Junia ou externe)', status: 'ok', checked: true },
+        { id: 'show-macro',    label: "Avoir activé l'affichage macro sur chaque événement", status: 'ok', checked: false },
+        { id: 'target',        label: 'Avoir correctement ciblé chaque événement (Junia ou externe)', status: 'ok', checked: false },
     ])
 
     const [macroSectionsOpen, setMacroSectionsOpen] = useState<Record<string, boolean>>({
@@ -51,16 +51,16 @@ export default function PlanningMacro(): React.ReactElement {
     }, [hasPromosMismatch]);
 
     const [microItems, setMicroItems] = useState<ChecklistItem[]>([
-        { id: 'cycles-promos',  label: 'Avoir créé tous les cycles et toutes les promos', status: 'ok', checked: true },
-        { id: 'dates',          label: 'Avoir renseigné au moins date de début et de fin, avoir rempli les autres contraintes de dates', status: 'ok', checked: true },
+        { id: 'cycles-promos',  label: 'Avoir créé tous les cycles et toutes les promos', status: 'ok', checked: false },
+        { id: 'dates',          label: 'Avoir renseigné au moins date de début et de fin, avoir rempli les autres contraintes de dates', status: 'ok', checked: false },
         { id: 'constraints',    label: "Avoir renseigné les contraintes d'effectifs, de groupes et de spécialités", status: 'alert', checked: false },
         { id: 'maquettes',      label: "Avoir transmis (drag and drop) toutes les maquettes pédagogiques et avoir cliqué sur importer", status: 'alert', checked: false },
         { id: 'events',         label: 'Avoir créé tous les événements exceptionnels', status: 'alert', checked: false },
-        { id: 'show-micro',     label: "Avoir activé l'affichage micro sur chaque événement", status: 'ok', checked: true },
+        { id: 'show-micro',     label: "Avoir activé l'affichage micro sur chaque événement", status: 'ok', checked: false },
         { id: 'target',         label: "Avoir correctement ciblé chaque événement (Junia ou externe), si Junia avoir ciblé correctement la promo concernée si une promo est concernée", status: 'alert', checked: false },
-        { id: 'teachers',       label: 'Avoir créé tous les enseignants et renseigné correctement leurs infos, notamment période de disponibilité et type', status: 'ok', checked: true },
-        { id: 'rooms',          label: 'Avoir toutes les salles bien renseignées (type, capacité et disponibilité globale)', status: 'ok', checked: true },
-        { id: 'matieres',       label: "Avoir toutes les matières bien présentes après l'importation des maquettes pédagogiques", status: 'ok', checked: true },
+        { id: 'teachers',       label: 'Avoir créé tous les enseignants et renseigné correctement leurs infos, notamment période de disponibilité et type', status: 'ok', checked: false },
+        { id: 'rooms',          label: 'Avoir toutes les salles bien renseignées (type, capacité et disponibilité globale)', status: 'ok', checked: false },
+        { id: 'matieres',       label: "Avoir toutes les matières bien présentes après l'importation des maquettes pédagogiques", status: 'ok', checked: false },
         { id: 'volumes',        label: 'Avoir correctement attribué les profs et leurs volumes horaires à chaque matière', status: 'alert', checked: false },
     ])
 

@@ -29,6 +29,10 @@
     .badge {
         width: 28px;
         height: 28px;
+        min-width: 28px;
+        min-height: 28px;
+        box-sizing: border-box;
+        flex: 0 0 28px;
         border-radius: 8px;
         display: inline-flex;
         align-items: center;
