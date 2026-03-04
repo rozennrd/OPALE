@@ -102,32 +102,26 @@ export const useRoomsFilters = (rooms: Room[]) => {
     }, [filteredRooms])
 
     const handleSearchChange = (value: string) => {
-        console.log('[ROOMS] Filter by name (mock)', { value })
         setSearchValue(value)
     }
 
     const handleTypeFilterChange = (value: RoomTypeFilter) => {
-        console.log('[ROOMS] Filter by type (mock)', { value })
         setTypeFilter(value)
     }
 
     const handleCapacityOperatorChange = (value: CapacityOperator) => {
-        console.log('[ROOMS] Filter by capacity operator (mock)', { value })
         setCapacityOperator(value)
     }
 
     const handleCapacityValueChange = (value: string) => {
-        console.log('[ROOMS] Filter by capacity value (mock)', { value })
         setCapacityValue(value)
     }
 
     const handleAvailabilityFilterChange = (value: AvailabilityFilter) => {
-        console.log('[ROOMS] Filter by availability (mock)', { value })
         setAvailabilityFilter(value)
     }
 
     const resetFilters = () => {
-        console.log('[ROOMS] Reset filters (mock)')
         setSearchValue(DEFAULT_ROOMS_FILTERS.searchValue)
         setTypeFilter(DEFAULT_ROOMS_FILTERS.typeFilter)
         setCapacityOperator(DEFAULT_ROOMS_FILTERS.capacityOperator)

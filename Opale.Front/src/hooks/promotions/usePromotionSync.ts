@@ -127,7 +127,6 @@ export const usePromotionSync = () => {
 
             // Create new events
             if (newEvents.length > 0) {
-                console.log(`Creating ${newEvents.length} new events`)
                 for (const newEvent of newEvents) {
 
                     if (!newEvent.concerne) {newEvent.concerne = {}}
@@ -149,14 +148,12 @@ export const usePromotionSync = () => {
                     originalEvent.datetime_end !== event.datetime_end ||
                     originalEvent.nom !== event.nom
                 )) {
-                    console.log(`Updating event ${event.id}`)
                     await eventsApi.updateEvent(event.id!, event)
                 }
             }
 
             // Delete removed events
             for (const event of deletedEvents) {
-                console.log(`Deleting event ${event.id}`)
                 await eventsApi.deleteEvent(event.id)
             }
 

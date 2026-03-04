@@ -139,8 +139,6 @@ export const useRoomsData = () => {
         const idsSet = new Set(ids)
         if (idsSet.size === 0) return
 
-        console.log('[ROOMS] Delete rooms', { ids: Array.from(idsSet) })
-
         Array.from(idsSet).forEach(async (id) => {
             const response = await sallesApi.deleteSalle(id)
             if (!response.success) {
@@ -176,7 +174,6 @@ export const useRoomsData = () => {
             isAvailable: true,
         }
 
-        console.log('[ROOMS] Add room', newRoom)
         setRooms((prevRooms) => [...prevRooms, newRoom])
         setPendingNewRoomId(newRoomId)
         setSelectedRoom(newRoom)
@@ -241,7 +238,6 @@ export const useRoomsData = () => {
     }
 
     const deleteSingleRoom = (roomId: string) => {
-        console.log('[ROOMS] Delete single room', { roomId })
         deleteRoomsByIds([roomId])
     }
 

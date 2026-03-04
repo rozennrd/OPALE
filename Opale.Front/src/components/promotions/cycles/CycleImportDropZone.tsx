@@ -16,7 +16,6 @@ interface CycleImportDropzoneProps {
 }
 
 const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
-                                                                     cycleId,
                                                                      selectedFiles,
                                                                      onIncomingFiles,
                                                                      onRemoveFile,
@@ -55,12 +54,6 @@ const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
             )
             return
         }
-
-        console.log(
-            '[CycleImportDropzone] Fichiers Excel reçus pour le cycle',
-            cycleId,
-            excelFiles,
-        )
 
         if (onIncomingFiles) {
             onIncomingFiles(excelFiles)

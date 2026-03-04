@@ -74,8 +74,6 @@ export default function Matieres() {
 
         ;(async () => {
             try {
-                console.log('[MATIERES] fetching matieres + promotions + cycles + profs')
-
                 const [backendMatieres, promosRes, cyclesRes, profs, enseignementsRes] = await Promise.all([
                     getMatieres(),                 // Array backend matieres
                     promotionsApi.getPromotions(), // ApiResponse<BackendPromotion[]>
@@ -83,9 +81,6 @@ export default function Matieres() {
                     getProfsData(),                // ApiResponse<BackendTeacher[]>
                     getEnseignements(),            // ApiResponse<BackendEnseignement[]>
                 ])
-
-                console.log('[MATIERES] backendMatieres length:', backendMatieres?.length)
-                console.log('[MATIERES] backendMatieres first:', backendMatieres?.[0])
 
                 if (!promosRes.success) throw new Error(promosRes.error?.message ?? 'Promotions fetch failed')
                 if (!cyclesRes.success) throw new Error(cyclesRes.error?.message ?? 'Cycles fetch failed')
@@ -113,12 +108,6 @@ export default function Matieres() {
                 setTeacherIdsByMatiereId(map)
                 const backendPromos = promosRes.data ?? []
                 const backendCycles = cyclesRes.data ?? []
-
-                console.log('[MATIERES] backendPromos length:', backendPromos.length)
-                console.log('[MATIERES] backendCycles length:', backendCycles.length)
-
-                console.log('[MATIERES] example matiere id:', matieres?.[0]?.id)
-                console.log('[MATIERES] example enseignement matiereId:', enseignements?.[0]?.id_matiere)
 
                 const promotionLabels = backendPromos
                     .map((p) => p.nom)
@@ -340,7 +329,6 @@ export default function Matieres() {
     }
 
     const reloadMatieres = async () => {
-        console.log('[MATIERES] reloadMatieres()')
         const backendMatieres = await getMatieres()
         const promosRes = await promotionsApi.getPromotions()
         if (!promosRes.success) return
@@ -354,8 +342,6 @@ export default function Matieres() {
 
         setMatieres(frontMatieres)
     }
-
-    console.log('Teacher option :', teacherOptions)
 
     return (
         <>

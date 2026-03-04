@@ -47,8 +47,6 @@ export default function EventCard({
             if (onToggleSelect) onToggleSelect(event.id)
             return
         }
-
-        console.log('[EVENTS] Click event card', event)
          if (onSelect) onSelect(event)
     }
 

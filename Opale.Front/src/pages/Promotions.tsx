@@ -96,8 +96,6 @@ export default function Promotions() {
             // TODO: Update cycles state to reflect changes
             // setCycles(prev => updateCyclePromotion(prev, updatedPromo))
 
-            // TODO: Show success notification
-            console.log('Promotion saved successfully')
         } catch (error) {
             console.error('Failed to save promotion:', error)
             // TODO: Show error notification to user

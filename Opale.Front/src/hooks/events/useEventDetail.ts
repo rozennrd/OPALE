@@ -86,7 +86,6 @@ export const useEventDetail = (
         setSnapshot(initial)
         setDraft((prev) => (prev.id === event.id ? prev : initial))
         setHasChanges(false)
-        console.log('built initial draft for event ' + event)
     }, [event])
 
     useEffect(() => {

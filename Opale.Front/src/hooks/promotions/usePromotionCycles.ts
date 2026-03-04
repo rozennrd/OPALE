@@ -1,10 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Cycle, Promotion } from '../../models'
-
-import {
-    hasPromoMismatch,
-    uid,
-} from '../../utils/promoUtils'
+import {hasPromoMismatch} from '../../utils/promoUtils'
 import { cyclesApi } from '../../services/api/cyclesApi'
 import { promotionsApi } from '../../services/api/promotionsApi'
 import {
@@ -221,10 +217,6 @@ export function usePromotionCycles() {
             // Refresh the data from backend
             await loadCycles()
 
-            console.log('[Promotions] Promotion ajoutée avec succès:', {
-                cycleId,
-                label: trimmedLabel,
-            })
         } catch (err) {
             console.error('Error adding promotion:', err)
             setError('Erreur lors de l\'ajout de la promotion')

@@ -82,7 +82,6 @@ export function usePromotionEditing(cycles: Cycle[]) {
             setRemovedGroupIds([])
             setRemovedSpecialtyIds([])
             setOriginalEvents(events)
-            console.log("promotion reloaded successfully")
         } catch (error) {
             console.error('Error opening promotion:', error)
         } finally {

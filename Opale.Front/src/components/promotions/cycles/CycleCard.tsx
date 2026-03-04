@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import icTrash from '../../../assets/ic-trash.png'
-import icWarning from '../../../assets/ic-warning.png'
 import icModif from '../../../assets/ic-modif.png'
 import icPlus from '../../../assets/ic-plus.png'
 import { hasPromoMismatch } from '../../../utils/promoUtils'
@@ -187,17 +186,8 @@ const CycleCard: React.FC<CycleCardProps> = ({
                     setPreviewData(response.data)
                     setIsPreviewWarningsVisible(true)
                     const detections = response.data.metadata.sectionSemesterDetections || []
-                    if (detections.length > 0) {
-                        console.group('[Maquette Preview] Détection semestres par contexte de section')
-                        detections.forEach((detection) => {
-                            console.log(
-                                `[${detection.sheetName}] ligne ${detection.rowNumber} -> semestres ${detection.semestres.join(', ')}`,
-                                { rawText: detection.rawText },
-                            )
-                        })
-                        console.groupEnd()
-                    } else {
-                        console.info('[Maquette Preview] Aucune détection de semestres de section trouvée.')
+                    if (detections.length < 0) {
+                        console.warn('[Maquette Preview] Aucune détection de semestres de section trouvée.')
                     }
                     return
                 }
