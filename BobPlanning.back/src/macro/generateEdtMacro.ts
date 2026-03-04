@@ -104,7 +104,8 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
     const cDiff =
       (cycleIndexMap[a.id_cycle] ?? 0) - (cycleIndexMap[b.id_cycle] ?? 0);
     if (cDiff !== 0) return cDiff;
-    return new Date(a.date_start).getTime() - new Date(b.date_start).getTime();
+    // Tri alphanumérique sur le nom dans le même cycle
+    return a.nom.localeCompare(b.nom, 'fr', { numeric: true, sensitivity: 'base' });
   });
 
   //
@@ -311,6 +312,9 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
           }
         } else if (t.includes('entreprise')) {
           rowData[promo.nom] = active.type;
+        } else if (t.includes('fermeture')) {
+          // "Fermeture" sur un cycle Initial → afficher "Vacances"
+          rowData[promo.nom] = promo.type === 'Initial' ? 'VACANCES' : active.type;
         } else {
           // Période inconnue → cours
           rowData[promo.nom] = '';
@@ -373,12 +377,19 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
     }
 
     // Events liés à une promo → écrire dans la colonne de la promo
-    // Events liés à une promo → écrire dans la colonne de la promo
     eventsThisWeek.forEach((ev: EventMacro) => {
       if (ev.promotions && ev.promotions.length > 0) {
         ev.promotions.forEach((promoId: string) => {
           const promo = sortedPromos.find((p) => p.id === promoId);
           if (promo) {
+            // Si la cellule affiche déjà VACANCES, on n'écrase pas avec un event Fermeture
+            if (
+              rowData[promo.nom] === 'VACANCES' &&
+              ev.nom.toLowerCase().includes('fermeture')
+            ) {
+              return;
+            }
+
             const existing = rowData[promo.nom] ?? '';
             const cleanName = ev.nom.split(' - ')[0];
 
@@ -415,7 +426,8 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
     //
     // ────────── AJOUT DE LA LIGNE DANS EXCEL ──────────
     //
-    const row = worksheet.addRow(rowData);
+    worksheet.addRow(rowData);
+    const row = worksheet.lastRow!;
 
     // Fond violet — N° semaine + date lundi (chaque ligne data)
     row.getCell('weekNumber').fill = {
@@ -607,7 +619,15 @@ export const generateEdtMacro = async (data: EdtMacroData) => {
   //
   // ────────── EXPORT EXCEL ──────────
   //
-  const filePath = path.join(__dirname, '../../files', 'EdtMacro.xlsx');
+  const outputDir = path.join(__dirname, '../../files');
+
+  // Crée le dossier 'files' s'il n'existe pas
+  const fs = await import('fs');
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  const filePath = path.join(outputDir, 'EdtMacro.xlsx');
   await workbook.xlsx.writeFile(filePath);
 
   return filePath;
