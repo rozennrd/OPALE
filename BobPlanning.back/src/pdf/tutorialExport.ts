@@ -8,6 +8,7 @@ type ExportStep = {
     imageData?: string
     imageAlt?: string
     imageCaption?: string
+    imageHighlights?: ExportImageHighlight[]
 }
 
 type ExportSection = {
@@ -34,6 +35,16 @@ type RichTextSpan = {
 }
 
 type RichTextLine = RichTextSpan[]
+
+type ExportImageHighlight = {
+    left: string
+    top: string
+    width: string
+    height: string
+    label?: string
+    labelLeft?: string
+    labelTop?: string
+}
 
 export type ExportPayload = {
     title?: string
@@ -263,6 +274,116 @@ const normalizeRichTextLines = (value?: RichTextLine[] | string[]): RichTextLine
 
 const richTextToPlainText = (spans: RichTextLine): string =>
     spans.map((span) => span.text).join('')
+
+const parseHighlightValue = (value: string | number | undefined, reference: number): number => {
+    if (value === undefined || value === null) {
+        return 0
+    }
+
+    if (typeof value === 'number') {
+        return value
+    }
+
+    const trimmed = value.trim()
+    if (!trimmed) {
+        return 0
+    }
+
+    if (trimmed.endsWith('%')) {
+        const percent = Number.parseFloat(trimmed)
+        return Number.isNaN(percent) ? 0 : (percent / 100) * reference
+    }
+
+    if (trimmed.endsWith('rem')) {
+        const remValue = Number.parseFloat(trimmed)
+        return Number.isNaN(remValue) ? 0 : remValue * 16
+    }
+
+    const parsed = Number.parseFloat(trimmed)
+    return Number.isNaN(parsed) ? 0 : parsed
+}
+
+const drawImageHighlights = (
+    doc: PdfDoc,
+    imageBuffer: Buffer,
+    imageX: number,
+    imageY: number,
+    imageWidth: number,
+    imageHeight: number,
+    highlights: ExportImageHighlight[],
+) => {
+    if (highlights.length === 0) {
+        return
+    }
+
+    doc.save()
+    doc.fillColor('#09111f')
+    doc.opacity(0.42)
+    doc.rect(imageX, imageY, imageWidth, imageHeight).fill()
+    doc.restore()
+
+    highlights.forEach((highlight) => {
+        const highlightX = imageX + parseHighlightValue(highlight.left, imageWidth)
+        const highlightY = imageY + parseHighlightValue(highlight.top, imageHeight)
+        const highlightWidth = parseHighlightValue(highlight.width, imageWidth)
+        const highlightHeight = parseHighlightValue(highlight.height, imageHeight)
+
+        if (highlightWidth <= 0 || highlightHeight <= 0) {
+            return
+        }
+
+        doc.save()
+        doc.rect(highlightX, highlightY, highlightWidth, highlightHeight).clip()
+        doc.image(imageBuffer, imageX, imageY, { width: imageWidth })
+        doc.restore()
+
+        const radius = Math.min(10, Math.min(highlightWidth, highlightHeight) / 6)
+        doc.save()
+        doc.lineWidth(2)
+        doc.strokeColor(COLORS.primary)
+        doc.roundedRect(highlightX, highlightY, highlightWidth, highlightHeight, radius).stroke()
+        if (highlightWidth > 4 && highlightHeight > 4) {
+            doc.lineWidth(1)
+            doc.strokeColor(COLORS.white)
+            doc.roundedRect(
+                highlightX + 1,
+                highlightY + 1,
+                highlightWidth - 2,
+                highlightHeight - 2,
+                Math.max(2, radius - 1),
+            ).stroke()
+        }
+        doc.restore()
+
+        if (highlight.label) {
+            doc.save()
+            doc.font('Helvetica-Bold').fontSize(9)
+            const labelPaddingX = 6
+            const labelPaddingY = 3
+            const labelWidth = doc.widthOfString(highlight.label) + labelPaddingX * 2
+            const labelHeight = doc.currentLineHeight(false) + labelPaddingY * 2
+            const labelOffsetX = highlight.labelLeft
+                ? parseHighlightValue(highlight.labelLeft, highlightWidth)
+                : 7
+            const labelBaseY = highlight.labelTop
+                ? highlightY + parseHighlightValue(highlight.labelTop, highlightHeight)
+                : highlightY - 6
+            const labelX = highlightX + labelOffsetX
+            const labelY = labelBaseY - labelHeight
+
+            doc.fillColor(COLORS.panel)
+            doc.roundedRect(labelX, labelY, labelWidth, labelHeight, 10).fill()
+            doc.strokeColor(COLORS.border)
+            doc.lineWidth(1)
+            doc.roundedRect(labelX, labelY, labelWidth, labelHeight, 10).stroke()
+            doc.fillColor(COLORS.text)
+            doc.text(highlight.label, labelX + labelPaddingX, labelY + labelPaddingY, {
+                width: labelWidth - labelPaddingX * 2,
+            })
+            doc.restore()
+        }
+    })
+}
 
 const renderRichTextLine = (
     doc: PdfDoc,
@@ -588,9 +709,23 @@ const renderSteps = async (
                         radius: 10,
                     },
                 )
-                doc.image(imageBuffer, doc.page.margins.left + (maxImageWidth - renderedWidth) / 2, imageCardY + SPACING.sm, {
+                const imageX = doc.page.margins.left + (maxImageWidth - renderedWidth) / 2
+                const imageY = imageCardY + SPACING.sm
+                doc.image(imageBuffer, imageX, imageY, {
                     width: renderedWidth,
                 })
+
+                if (step.imageHighlights && step.imageHighlights.length > 0) {
+                    drawImageHighlights(
+                        doc,
+                        imageBuffer,
+                        imageX,
+                        imageY,
+                        renderedWidth,
+                        renderedHeight,
+                        step.imageHighlights,
+                    )
+                }
                 doc.y = imageCardY + imageCardHeight + SPACING.sm
             }
 

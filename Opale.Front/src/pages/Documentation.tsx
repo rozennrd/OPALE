@@ -56,6 +56,16 @@ type RichTextSpan = {
     link?: string
 }
 
+type ExportImageHighlight = {
+    left: string
+    top: string
+    width: string
+    height: string
+    label?: string
+    labelLeft?: string
+    labelTop?: string
+}
+
 type ExportStep = {
     text: RichTextSpan[]
     subSteps?: RichTextSpan[][]
@@ -63,6 +73,7 @@ type ExportStep = {
     imageData?: string
     imageAlt?: string
     imageCaption?: string
+    imageHighlights?: ExportImageHighlight[]
 }
 
 type ExportSection = {
@@ -313,6 +324,7 @@ export default function Documentation() {
                 imageData,
                 imageAlt: stepEntry.imageAlt,
                 imageCaption: stepEntry.imageCaption,
+                imageHighlights: getStepHighlights(stepEntry),
             })
         }
 
