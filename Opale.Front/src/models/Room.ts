@@ -1,6 +1,15 @@
 // src/models/Room.ts
 
-export type RoomType = 'TD' | 'TP_ELECTRONIQUE' | 'TP_NUMERIQUE' | 'PROJET' | 'AUTRE'
+export type RoomType =
+    | 'Cours'
+    | 'Informatique'
+    | 'Projet'
+    | 'Rassemblement'
+    | 'Reunion'
+    | 'Associatif'
+    | 'Electronique'
+    | 'Fablab'
+    | 'Reseau'
 
 export interface Room {
     id: string
