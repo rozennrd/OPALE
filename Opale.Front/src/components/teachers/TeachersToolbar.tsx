@@ -66,7 +66,7 @@ export default function TeachersToolbar({
                 <div className="page-toolbar-row--filters teachers-toolbar-filters">
                     <div className="toolbar-filter teachers-toolbar-date-filter teachers-toolbar-date-filter--from">
                         <label className="toolbar-filter-label">
-                            À partir du
+                            Dispo à partir de...
                             <DateInput
                                 value={dateFrom}
                                 onChange={onDateFromChange}
