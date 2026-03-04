@@ -70,12 +70,6 @@ export default function EventsToolbar({
                     placeholder="Rechercher un événement..."
                 />
 
-                <ToolbarResetButton
-                    className="events-toolbar-reset-inline"
-                    onClick={onResetFilters}
-                    disabled={!hasActiveFilters}
-                />
-
                 <button
                     type="button"
                     className={[
@@ -96,6 +90,12 @@ export default function EventsToolbar({
                         </span>
                     )}
                 </button>
+
+                <ToolbarResetButton
+                    className="events-toolbar-reset-inline"
+                    onClick={onResetFilters}
+                    disabled={!hasActiveFilters}
+                />
 
                 <button
                     type="button"
@@ -176,11 +176,6 @@ export default function EventsToolbar({
                     </label>
                 </div>
 
-                <ToolbarResetButton
-                    className="events-toolbar-reset"
-                    onClick={onResetFilters}
-                    disabled={!hasActiveFilters}
-                />
             </ToolbarRow>
         </PageToolbar>
     )

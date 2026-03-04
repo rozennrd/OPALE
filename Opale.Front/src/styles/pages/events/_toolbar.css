@@ -21,7 +21,7 @@
     }
 
     .events-toolbar-reset-inline {
-        display: none;
+        display: inline-flex;
     }
 
     @media (max-width: 1736px) {
@@ -65,13 +65,6 @@
             min-width: 180px;
         }
 
-        .events-toolbar-reset-inline {
-            display: inline-flex;
-        }
-
-        .events-toolbar-reset {
-            display: none;
-        }
     }
 
     @media (max-width: 1089px) and (min-width: 1025px) {
