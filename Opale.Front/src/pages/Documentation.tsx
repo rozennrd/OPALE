@@ -2,6 +2,8 @@
 import { useSearchParams } from 'react-router-dom'
 import PageHeader from '../components/common/PageHeader'
 import SectionCard from '../components/common/SectionCard'
+import ConfirmDialog from '../components/common/ConfirmDialog'
+import logoFull from '../assets/logo/logo-full.png'
 import { TUTORIAL_CONTENT } from './tuto/content'
 import { TAB_ITEMS, TUTORIAL_ITEMS } from './tuto/items'
 import type { TutorialId, TutorialImageHighlight, TutorialTab } from './tuto/types'
@@ -15,6 +17,8 @@ import {
     isTutorialInTab,
     isTutorialStepObject,
 } from './tuto/utils'
+import { DEFAULT_API_CONFIG } from '../services/base/types'
+import { getTokenFromLocalStorage } from '../constants/tokenStorage'
 
 type DocumentationSectionKey = 'selector' | 'viewer'
 
@@ -38,6 +42,35 @@ const getHighlightLabelStyle = (
               }
             : {}),
     }
+type ExportStep = {
+    text: string
+    subSteps?: string[]
+    imageUrl?: string
+    imageAlt?: string
+    imageCaption?: string
+}
+
+type ExportSection = {
+    title: string
+    steps: ExportStep[]
+}
+
+type ExportTutorial = {
+    id: TutorialId
+    title: string
+    summary: string
+    objective: string
+    expectedResult: string
+    tips: string[]
+    steps: ExportStep[]
+    stepSections?: ExportSection[]
+}
+
+type ExportPayload = {
+    title: string
+    date: string
+    logoUrl?: string
+    tutorials: ExportTutorial[]
 }
 
 export default function Documentation() {
@@ -63,6 +96,12 @@ export default function Documentation() {
         selector: true,
         viewer: true,
     })
+    const [exportSelection, setExportSelection] = useState<Set<TutorialId>>(
+        () => new Set([initialTutorialId]),
+    )
+    const [isExporting, setIsExporting] = useState(false)
+    const [exportError, setExportError] = useState<string | null>(null)
+    const [isExportDialogOpen, setIsExportDialogOpen] = useState(false)
     const [expandedStepSections, setExpandedStepSections] = useState<
         Record<string, boolean>
     >({})
@@ -110,6 +149,241 @@ export default function Documentation() {
         }))
     }
 
+    const resolveAssetUrl = (source?: string): string | undefined => {
+        if (!source) {
+            return undefined
+        }
+
+        try {
+            return new URL(source, window.location.origin).toString()
+        } catch {
+            return source
+        }
+    }
+
+    const nodeToText = (node: React.ReactNode): string => {
+        if (node === null || node === undefined || node === false) {
+            return ''
+        }
+
+        if (typeof node === 'string' || typeof node === 'number') {
+            return String(node)
+        }
+
+        if (Array.isArray(node)) {
+            return node.map((child) => nodeToText(child)).join('')
+        }
+
+        if (React.isValidElement(node)) {
+            const element = node as React.ReactElement<{ href?: string; children?: React.ReactNode }>
+            const childrenText = nodeToText(element.props.children)
+            if (element.type === 'a') {
+                return element.props.href ? `${childrenText} (${element.props.href})` : childrenText
+            }
+            return childrenText
+        }
+
+        return ''
+    }
+
+    const toggleExportSelection = (tutorialId: TutorialId) => {
+        setExportSelection((current) => {
+            const next = new Set(current)
+            if (next.has(tutorialId)) {
+                next.delete(tutorialId)
+            } else {
+                next.add(tutorialId)
+            }
+            return next
+        })
+    }
+
+    const selectAllTutorials = () => {
+        setExportSelection(new Set(TUTORIAL_ITEMS.map((item) => item.id)))
+    }
+
+    const clearExportSelection = () => {
+        setExportSelection(new Set())
+    }
+
+    const buildExportPayload = (): ExportPayload => {
+        const selectedIds = new Set(exportSelection)
+        const tutorials: ExportTutorial[] = TUTORIAL_ITEMS.filter((item) =>
+            selectedIds.has(item.id),
+        ).map((item) => {
+            const content = TUTORIAL_CONTENT[item.id]
+            const steps = content.steps
+                .map((stepEntry) => {
+                    if (!isTutorialStepObject(stepEntry)) {
+                        const text = nodeToText(stepEntry).trim()
+                        return {
+                            text,
+                        }
+                    }
+
+                    return {
+                        text: nodeToText(stepEntry.text).trim(),
+                        subSteps: stepEntry.subSteps
+                            ?.map((subStep) => nodeToText(subStep).trim())
+                            .filter((text) => text.length > 0),
+                        imageUrl: resolveAssetUrl(stepEntry.imageSrc),
+                        imageAlt: stepEntry.imageAlt,
+                        imageCaption: stepEntry.imageCaption,
+                    }
+                })
+                .filter((step) => step.text.length > 0 || step.imageUrl)
+
+            const stepSections = content.stepSections?.map((section) => ({
+                title: section.title,
+                steps: section.steps
+                    .map((stepEntry) => {
+                        if (!isTutorialStepObject(stepEntry)) {
+                            const text = nodeToText(stepEntry).trim()
+                            return {
+                                text,
+                            }
+                        }
+
+                        return {
+                            text: nodeToText(stepEntry.text).trim(),
+                            subSteps: stepEntry.subSteps
+                                ?.map((subStep) => nodeToText(subStep).trim())
+                                .filter((text) => text.length > 0),
+                            imageUrl: resolveAssetUrl(stepEntry.imageSrc),
+                            imageAlt: stepEntry.imageAlt,
+                            imageCaption: stepEntry.imageCaption,
+                        }
+                    })
+                    .filter((step) => step.text.length > 0 || step.imageUrl),
+            }))
+
+            return {
+                id: item.id,
+                title: item.title,
+                summary: item.summary,
+                objective: content.objective,
+                expectedResult: content.expectedResult,
+                tips: content.tips ?? [],
+                steps,
+                stepSections,
+            }
+        })
+
+        const exportDate = new Date().toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+        })
+
+        return {
+            title: 'Documentation OPALE',
+            date: exportDate,
+            logoUrl: resolveAssetUrl(logoFull),
+            tutorials,
+        }
+    }
+
+    const handleExportPdf = async (onSuccess?: () => void) => {
+        if (exportSelection.size === 0 || isExporting) {
+            return
+        }
+
+        setIsExporting(true)
+        setExportError(null)
+
+        try {
+            const payload = buildExportPayload()
+            const token = getTokenFromLocalStorage()
+            const response = await fetch(
+                `${DEFAULT_API_CONFIG.baseUrl}/documentation/export`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'x-access-token': token } : {}),
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(payload),
+                },
+            )
+
+            if (!response.ok) {
+                const errorPayload = await response.json().catch(() => ({}))
+                throw new Error(
+                    errorPayload?.error || errorPayload?.message || 'Export PDF impossible.',
+                )
+            }
+
+            const blob = await response.blob()
+            const url = window.URL.createObjectURL(blob)
+            const anchor = document.createElement('a')
+            anchor.href = url
+            anchor.download = `OPALE-tutoriels-${new Date().toISOString().slice(0, 10)}.pdf`
+            document.body.appendChild(anchor)
+            anchor.click()
+            anchor.remove()
+            window.URL.revokeObjectURL(url)
+            if (onSuccess) {
+                onSuccess()
+            }
+        } catch (error) {
+            console.error(error)
+            setExportError(
+                error instanceof Error ? error.message : "Une erreur est survenue lors de l'export.",
+            )
+        } finally {
+            setIsExporting(false)
+        }
+    }
+
+    const exportDialogContent = (
+        <div className="documentation-export-dialog">
+            <p className="documentation-export-dialog-intro">
+                Choisissez les tutoriels Ã  exporter. Un sommaire sera ajoutÃ© automatiquement.
+            </p>
+            <div className="documentation-export-dialog-actions">
+                <button type="button" className="btn-tertiary" onClick={selectAllTutorials}>
+                    Tout sÃ©lectionner
+                </button>
+                <button type="button" className="btn-tertiary" onClick={clearExportSelection}>
+                    Tout dÃ©sÃ©lectionner
+                </button>
+            </div>
+            <div className="documentation-export-dialog-groups">
+                {TAB_ITEMS.map((tabItem) => {
+                    const tabTutorials = TUTORIAL_ITEMS.filter((item) => item.tab === tabItem.key)
+
+                    return (
+                        <div key={tabItem.key} className="documentation-export-group">
+                            <h4 className="documentation-export-group-title">{tabItem.label}</h4>
+                            <div className="documentation-export-list">
+                                {tabTutorials.map((item) => (
+                                    <label key={item.id} className="documentation-export-item">
+                                        <input
+                                            type="checkbox"
+                                            className="documentation-export-checkbox"
+                                            checked={exportSelection.has(item.id)}
+                                            onChange={() => toggleExportSelection(item.id)}
+                                        />
+                                        <span className="documentation-export-item-text">
+                                            <span className="documentation-export-item-title">
+                                                {item.title}
+                                            </span>
+                                            <span className="documentation-export-item-summary">
+                                                {item.summary}
+                                            </span>
+                                        </span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+                    )
+                })}
+            </div>
+            {exportError && <p className="documentation-export-error">{exportError}</p>}
+        </div>
+    )
+
     return (
         <>
             <PageHeader
@@ -125,23 +399,39 @@ export default function Documentation() {
                     onToggle={() => toggleSection('selector')}
                     wide
                 >
-                    <div className="documentation-tabs" role="tablist" aria-label="Type de tutoriel">
-                        {TAB_ITEMS.map((tabItem) => {
-                            const isActive = tabItem.key === activeTab
+                    <div className="documentation-tabs-row">
+                        <div
+                            className="documentation-tabs"
+                            role="tablist"
+                            aria-label="Type de tutoriel"
+                        >
+                            {TAB_ITEMS.map((tabItem) => {
+                                const isActive = tabItem.key === activeTab
 
-                            return (
-                                <button
-                                    key={tabItem.key}
-                                    type="button"
-                                    role="tab"
-                                    aria-selected={isActive}
-                                    className={`documentation-tab-btn ${isActive ? 'is-active' : ''}`}
-                                    onClick={() => handleTabChange(tabItem.key)}
-                                >
-                                    {tabItem.label}
-                                </button>
-                            )
-                        })}
+                                return (
+                                    <button
+                                        key={tabItem.key}
+                                        type="button"
+                                        role="tab"
+                                        aria-selected={isActive}
+                                        className={`documentation-tab-btn ${isActive ? 'is-active' : ''}`}
+                                        onClick={() => handleTabChange(tabItem.key)}
+                                    >
+                                        {tabItem.label}
+                                    </button>
+                                )
+                            })}
+                        </div>
+                        <button
+                            type="button"
+                            className="btn-tertiary documentation-export-trigger"
+                            onClick={() => {
+                                setExportError(null)
+                                setIsExportDialogOpen(true)
+                            }}
+                        >
+                            Exporter PDF
+                        </button>
                     </div>
 
                     <div className="documentation-cards-grid">
@@ -1555,6 +1845,22 @@ export default function Documentation() {
                     </div>
                 </SectionCard>
             </div>
+            <ConfirmDialog
+                open={isExportDialogOpen}
+                title="Exporter les tutoriels"
+                message={exportDialogContent}
+                confirmLabel={isExporting ? 'Export en cours...' : 'Exporter PDF'}
+                cancelLabel="Fermer"
+                confirmClassName="btn-primary"
+                cancelClassName="btn-tertiary"
+                confirmDisabled={exportSelection.size === 0 || isExporting}
+                onConfirm={() => {
+                    void handleExportPdf(() => setIsExportDialogOpen(false))
+                }}
+                onCancel={() => setIsExportDialogOpen(false)}
+                onRequestClose={() => setIsExportDialogOpen(false)}
+                cardClassName="documentation-export-dialog-card"
+            />
         </>
     )
 }

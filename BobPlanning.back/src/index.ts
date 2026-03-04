@@ -24,6 +24,7 @@ import disponibiliteRoutes from './api/routes/disponibiliteRoutes';
 import maquetteRoutes from './api/routes/maquetteRoutes';
 import eventRoutes from "./api/routes/eventRoutes";
 import localisationRoutes from "./api/routes/localisationRoutes";
+import documentationRoutes from './api/routes/documentationRoutes';
 
 require('dotenv').config();
 
@@ -73,6 +74,7 @@ app.use('/', enseignementRoutes);
 app.use('/', disponibiliteRoutes);
 app.use('/', localisationRoutes);
 app.use('/', maquetteRoutes);
+app.use('/', documentationRoutes);
 
 // Swagger options
 const swaggerOptions = {
