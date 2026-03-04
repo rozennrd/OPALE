@@ -938,6 +938,7 @@ export default function MatiereDetailCard({
                         onCancel={handleRequestClose}
                         onSave={handleSave}
                         onDelete={onDelete}
+                        hideCancel
                         saveLabel="Enregistrer"
                         cancelLabel="Annuler"
                         confirmTitle="Enregistrer la matière"

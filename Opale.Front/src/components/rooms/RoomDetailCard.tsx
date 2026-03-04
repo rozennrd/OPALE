@@ -387,7 +387,8 @@ export default function RoomDetailCard({
                         onCancel={handleRequestClose}
                         onSave={handleSave}
                         onAfterSaveConfirm={onClose}
-                        onDelete={onDelete}
+                        onDelete={isCreate ? undefined : onDelete}
+                        hideCancel
                         saveLabel={isCreate ? 'Créer' : 'Enregistrer'}
                         cancelLabel="Annuler"
                         confirmTitle={
