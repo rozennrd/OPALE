@@ -4,6 +4,7 @@ import PageHeader from '../components/common/PageHeader'
 import SectionCard from '../components/common/SectionCard'
 import ConfirmDialog from '../components/common/ConfirmDialog'
 import logoFull from '../assets/logo/logo-full.png'
+import logoFullDark from '../assets/logo/logo-full-dark.png'
 import { TUTORIAL_CONTENT } from './tuto/content'
 import { TAB_ITEMS, TUTORIAL_ITEMS } from './tuto/items'
 import type {
@@ -97,6 +98,7 @@ type ExportPayload = {
     date: string
     logoUrl?: string
     logoData?: string
+    theme?: 'light' | 'dark'
     tutorials: ExportTutorial[]
 }
 
@@ -132,6 +134,7 @@ export default function Documentation() {
     const [exportFileName, setExportFileName] = useState<string>(
         () => `OPALE-tutoriels-${new Date().toISOString().slice(0, 10)}.pdf`,
     )
+    const [exportTheme, setExportTheme] = useState<'light' | 'dark'>('light')
     const [expandedStepSections, setExpandedStepSections] = useState<
         Record<string, boolean>
     >({})
@@ -400,7 +403,7 @@ export default function Documentation() {
             year: 'numeric',
         })
 
-        const resolvedLogoUrl = resolveAssetUrl(logoFull)
+        const resolvedLogoUrl = resolveAssetUrl(exportTheme === 'dark' ? logoFullDark : logoFull)
         const logoData = resolvedLogoUrl
             ? await fetchImageData(resolvedLogoUrl, imageCache)
             : undefined
@@ -410,6 +413,7 @@ export default function Documentation() {
             date: exportDate,
             logoUrl: resolvedLogoUrl,
             logoData,
+            theme: exportTheme,
             tutorials,
         }
     }
@@ -482,6 +486,31 @@ export default function Documentation() {
                     placeholder={buildDefaultExportFileName()}
                 />
             </label>
+            <div className="documentation-export-theme">
+                <span className="documentation-export-theme-label">ThÃ¨me du PDF</span>
+                <div className="documentation-export-theme-options">
+                    <label className="documentation-export-theme-option">
+                        <input
+                            type="radio"
+                            name="export-theme"
+                            value="light"
+                            checked={exportTheme === 'light'}
+                            onChange={() => setExportTheme('light')}
+                        />
+                        Clair
+                    </label>
+                    <label className="documentation-export-theme-option">
+                        <input
+                            type="radio"
+                            name="export-theme"
+                            value="dark"
+                            checked={exportTheme === 'dark'}
+                            onChange={() => setExportTheme('dark')}
+                        />
+                        Sombre
+                    </label>
+                </div>
+            </div>
             <div className="documentation-export-dialog-actions">
                 <button type="button" className="btn-tertiary" onClick={selectAllTutorials}>
                     Tout sÃ©lectionner
@@ -569,6 +598,7 @@ export default function Documentation() {
                             onClick={() => {
                                 setExportError(null)
                                 setExportFileName(buildDefaultExportFileName())
+                                setExportTheme('light')
                                 setIsExportDialogOpen(true)
                             }}
                         >

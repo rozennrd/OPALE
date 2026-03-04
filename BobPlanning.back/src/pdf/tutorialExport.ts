@@ -51,6 +51,7 @@ export type ExportPayload = {
     date?: string
     logoUrl?: string
     logoData?: string
+    theme?: 'light' | 'dark'
     tutorials: ExportTutorial[]
 }
 
@@ -67,7 +68,25 @@ type PdfDocWithDest = PdfDoc & {
     addNamedDestination?: (name: string, ...args: unknown[]) => void
 }
 
-const COLORS = {
+type ThemeName = 'light' | 'dark'
+
+type ThemeColors = {
+    text: string
+    muted: string
+    primary: string
+    primaryDark: string
+    brand: string
+    panel: string
+    border: string
+    white: string
+    tipsPanel: string
+    tipsBorder: string
+    imagePanel: string
+    overlay: string
+    page: string
+}
+
+const LIGHT_COLORS: ThemeColors = {
     text: '#111827',
     muted: '#6b7280',
     primary: '#93c7a6',
@@ -76,7 +95,31 @@ const COLORS = {
     panel: '#f7f7f7',
     border: '#e5e7eb',
     white: '#ffffff',
+    tipsPanel: '#e7f7ee',
+    tipsBorder: '#9edcb7',
+    imagePanel: '#ffffff',
+    overlay: '#09111f',
+    page: '#ffffff',
 }
+
+const DARK_COLORS: ThemeColors = {
+    text: '#f8fafc',
+    muted: '#cbd5e1',
+    primary: '#93c7a6',
+    primaryDark: '#0a2c1b',
+    brand: '#2cd4d9',
+    panel: '#1f2937',
+    border: '#334155',
+    white: '#ffffff',
+    tipsPanel: '#0f2a1f',
+    tipsBorder: '#1d6b4a',
+    imagePanel: '#111827',
+    overlay: '#000000',
+    page: '#0f172a',
+}
+
+const getThemeColors = (theme?: ThemeName): ThemeColors =>
+    theme === 'dark' ? DARK_COLORS : LIGHT_COLORS
 
 const SPACING = {
     xs: 4,
@@ -102,22 +145,23 @@ const drawCard = (
     y: number,
     width: number,
     height: number,
+    colors: ThemeColors,
     options?: { fill?: string; stroke?: string; radius?: number },
 ) => {
-    const { fill = COLORS.panel, stroke = COLORS.border, radius = 10 } = options ?? {}
+    const { fill = colors.panel, stroke = colors.border, radius = 10 } = options ?? {}
     doc.save()
     doc.roundedRect(x, y, width, height, radius).fillAndStroke(fill, stroke)
     doc.restore()
 }
 
-const drawSectionLabel = (doc: PdfDoc, label: string) => {
+const drawSectionLabel = (doc: PdfDoc, label: string, colors: ThemeColors) => {
     const startX = doc.page.margins.left
     const labelHeight = 18
     ensureSpace(doc, labelHeight + SPACING.sm)
     doc
         .font('Helvetica-Bold')
         .fontSize(10)
-        .fillColor(COLORS.muted)
+        .fillColor(colors.muted)
         .text(label.toUpperCase(), startX, doc.y)
     doc.moveDown(0.4)
 }
@@ -136,6 +180,12 @@ const drawCenteredText = (
         width,
         baseline: 'middle',
     })
+}
+
+const fillPageBackground = (doc: PdfDoc, colors: ThemeColors) => {
+    doc.save()
+    doc.rect(0, 0, doc.page.width, doc.page.height).fill(colors.page)
+    doc.restore()
 }
 
 const drawCenteredCapText = (
@@ -311,13 +361,14 @@ const drawImageHighlights = (
     imageWidth: number,
     imageHeight: number,
     highlights: ExportImageHighlight[],
+    colors: ThemeColors,
 ) => {
     if (highlights.length === 0) {
         return
     }
 
     doc.save()
-    doc.fillColor('#09111f')
+    doc.fillColor(colors.overlay)
     doc.opacity(0.42)
     doc.rect(imageX, imageY, imageWidth, imageHeight).fill()
     doc.restore()
@@ -340,11 +391,11 @@ const drawImageHighlights = (
         const radius = Math.min(10, Math.min(highlightWidth, highlightHeight) / 6)
         doc.save()
         doc.lineWidth(2)
-        doc.strokeColor(COLORS.primary)
+        doc.strokeColor(colors.primary)
         doc.roundedRect(highlightX, highlightY, highlightWidth, highlightHeight, radius).stroke()
         if (highlightWidth > 4 && highlightHeight > 4) {
             doc.lineWidth(1)
-            doc.strokeColor(COLORS.white)
+            doc.strokeColor(colors.white)
             doc.roundedRect(
                 highlightX + 1,
                 highlightY + 1,
@@ -371,12 +422,12 @@ const drawImageHighlights = (
             const labelX = highlightX + labelOffsetX
             const labelY = labelBaseY - labelHeight
 
-            doc.fillColor(COLORS.panel)
+            doc.fillColor(colors.panel)
             doc.roundedRect(labelX, labelY, labelWidth, labelHeight, 10).fill()
-            doc.strokeColor(COLORS.border)
+            doc.strokeColor(colors.border)
             doc.lineWidth(1)
             doc.roundedRect(labelX, labelY, labelWidth, labelHeight, 10).stroke()
-            doc.fillColor(COLORS.text)
+            doc.fillColor(colors.text)
             doc.text(highlight.label, labelX + labelPaddingX, labelY + labelPaddingY, {
                 width: labelWidth - labelPaddingX * 2,
             })
@@ -461,6 +512,7 @@ const renderCover = async (
     doc: PdfDoc,
     payload: ExportPayload,
     getImage: (url: string) => Promise<Buffer | null>,
+    colors: ThemeColors,
 ) => {
     const logoBuffer =
         decodeDataUrl(payload.logoData) ??
@@ -477,7 +529,7 @@ const renderCover = async (
     doc
         .font('Helvetica-Bold')
         .fontSize(26)
-        .fillColor(COLORS.text)
+        .fillColor(colors.text)
         .text(normalizeText(payload.title) || 'Documentation OPALE', {
             align: 'center',
         })
@@ -486,7 +538,7 @@ const renderCover = async (
     doc
         .font('Helvetica')
         .fontSize(12)
-        .fillColor(COLORS.muted)
+        .fillColor(colors.muted)
         .text(normalizeText(payload.date) || new Date().toLocaleDateString('fr-FR'), {
             align: 'center',
         })
@@ -494,12 +546,12 @@ const renderCover = async (
     doc.moveDown(2)
     const ribbonY = doc.y
     const ribbonHeight = 36
-    drawCard(doc, doc.page.margins.left, ribbonY, pageWidth, ribbonHeight, {
-        fill: COLORS.brand,
-        stroke: COLORS.brand,
+    drawCard(doc, doc.page.margins.left, ribbonY, pageWidth, ribbonHeight, colors, {
+        fill: colors.brand,
+        stroke: colors.brand,
         radius: 14,
     })
-    doc.font('Helvetica-Bold').fontSize(12).fillColor(COLORS.primaryDark)
+    doc.font('Helvetica-Bold').fontSize(12).fillColor(colors.primaryDark)
     drawCenteredText(
         doc,
         'Guide utilisateur - Export PDF',
@@ -517,6 +569,7 @@ const renderToc = (
     layout: TocLayout,
     entries: { title: string; page: number; destination: string }[],
     tocPages: number[],
+    colors: ThemeColors,
 ) => {
     let entryIndex = 0
     const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right
@@ -529,28 +582,28 @@ const renderToc = (
         doc.switchToPage(pageNumber - 1)
         doc.x = doc.page.margins.left
         doc.y = doc.page.margins.top
-        doc.font('Helvetica-Bold').fontSize(20).fillColor(COLORS.text).text('Sommaire')
+        doc.font('Helvetica-Bold').fontSize(20).fillColor(colors.text).text('Sommaire')
 
         let y =
             doc.page.margins.top +
             layout.titleHeight
 
-        doc.font('Helvetica').fontSize(12).fillColor(COLORS.text)
+        doc.font('Helvetica').fontSize(12).fillColor(colors.text)
 
         for (let i = 0; i < layout.linesPerPage && entryIndex < entries.length; i += 1) {
             const entry = entries[entryIndex]
             const rowY = y + i * (layout.rowHeight + layout.rowGap)
-            drawCard(doc, doc.page.margins.left, rowY, pageWidth, rowHeight, {
-                fill: COLORS.panel,
-                stroke: COLORS.border,
+            drawCard(doc, doc.page.margins.left, rowY, pageWidth, rowHeight, colors, {
+                fill: colors.panel,
+                stroke: colors.border,
                 radius: 8,
             })
-            doc.fillColor(COLORS.text)
+            doc.fillColor(colors.text)
             drawCenteredText(doc, entry.title, doc.page.margins.left + rowPadding, rowY, titleWidth, rowHeight, {
                 goTo: entry.destination,
             })
             const pageLabel = String(entry.page)
-            doc.fillColor(COLORS.muted)
+            doc.fillColor(colors.muted)
             drawCenteredText(
                 doc,
                 pageLabel,
@@ -566,7 +619,7 @@ const renderToc = (
     })
 }
 
-const renderTextBlock = (doc: PdfDoc, title: string, text?: string) => {
+const renderTextBlock = (doc: PdfDoc, title: string, text: string | undefined, colors: ThemeColors) => {
     const normalized = normalizeText(text)
     if (!normalized) {
         return
@@ -579,19 +632,19 @@ const renderTextBlock = (doc: PdfDoc, title: string, text?: string) => {
 
     ensureSpace(doc, cardHeight + SPACING.md)
     const startY = doc.y
-    drawCard(doc, doc.page.margins.left, startY, contentWidth, cardHeight)
+    drawCard(doc, doc.page.margins.left, startY, contentWidth, cardHeight, colors)
 
     const startX = doc.page.margins.left + SPACING.md
     let cursorY = startY + SPACING.sm
-    doc.font('Helvetica-Bold').fontSize(10).fillColor(COLORS.muted).text(title.toUpperCase(), startX, cursorY)
+    doc.font('Helvetica-Bold').fontSize(10).fillColor(colors.muted).text(title.toUpperCase(), startX, cursorY)
     cursorY += titleHeight + SPACING.xs
-    doc.font('Helvetica').fontSize(11).fillColor(COLORS.text).text(normalized, startX, cursorY, {
+    doc.font('Helvetica').fontSize(11).fillColor(colors.text).text(normalized, startX, cursorY, {
         width: contentWidth - SPACING.lg,
     })
     doc.y = startY + cardHeight + SPACING.sm
 }
 
-const renderBulletList = (doc: PdfDoc, items?: string[]) => {
+const renderBulletList = (doc: PdfDoc, items: string[] | undefined, colors: ThemeColors) => {
     if (!items || items.length === 0) {
         return
     }
@@ -615,15 +668,15 @@ const renderBulletList = (doc: PdfDoc, items?: string[]) => {
 
     ensureSpace(doc, cardHeight + SPACING.md)
     const startY = doc.y
-    drawCard(doc, doc.page.margins.left, startY, contentWidth, cardHeight, {
-        fill: '#e7f7ee',
-        stroke: '#9edcb7',
+    drawCard(doc, doc.page.margins.left, startY, contentWidth, cardHeight, colors, {
+        fill: colors.tipsPanel,
+        stroke: colors.tipsBorder,
         radius: 10,
     })
 
     const startX = doc.page.margins.left + SPACING.md
     const cursorY = startY + (cardHeight - textHeight) / 2
-    doc.font('Helvetica').fontSize(11).fillColor(COLORS.text).text(bulletText, startX, cursorY, {
+    doc.font('Helvetica').fontSize(11).fillColor(colors.text).text(bulletText, startX, cursorY, {
         width: contentWidth - SPACING.lg,
         lineGap,
     })
@@ -634,6 +687,7 @@ const renderSteps = async (
     doc: PdfDoc,
     steps: ExportStep[],
     getImage: (url: string) => Promise<Buffer | null>,
+    colors: ThemeColors,
 ) => {
     const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right
     const maxImageWidth = pageWidth
@@ -647,7 +701,7 @@ const renderSteps = async (
         const textWidth = getContentWidth(doc) - circleSize - 8
 
         if (hasRichText(textSpans)) {
-            doc.font('Helvetica').fontSize(11).fillColor(COLORS.text)
+            doc.font('Helvetica').fontSize(11).fillColor(colors.text)
             const textHeight = doc.heightOfString(richTextToPlainText(textSpans), { width: textWidth })
             ensureSpace(doc, textHeight + circleSize + SPACING.sm)
 
@@ -656,14 +710,14 @@ const renderSteps = async (
             const circleY = textY + lineHeight / 2 - circleSize / 2
             doc
                 .save()
-                .fillColor(COLORS.primary)
+                .fillColor(colors.primary)
                 .circle(startX + circleSize / 2, circleY + circleSize / 2, circleSize / 2)
                 .fill()
                 .restore()
             const stepLabel = String(i + 1)
-            doc.font('Helvetica-Bold').fontSize(9).fillColor(COLORS.primaryDark)
+            doc.font('Helvetica-Bold').fontSize(9).fillColor(colors.primaryDark)
             drawCenteredCapText(doc, stepLabel, startX, circleY, circleSize, circleSize, { align: 'center' })
-            doc.font('Helvetica').fontSize(11).fillColor(COLORS.text)
+            doc.font('Helvetica').fontSize(11).fillColor(colors.text)
             renderRichTextLine(doc, textSpans, textX, textY, textWidth)
             const rowHeight = Math.max(circleSize, doc.y - textY)
             doc.y = textY + rowHeight + SPACING.sm
@@ -703,9 +757,10 @@ const renderSteps = async (
                     imageCardY,
                     maxImageWidth,
                     imageCardHeight,
+                    colors,
                     {
-                        fill: COLORS.white,
-                        stroke: COLORS.border,
+                        fill: colors.imagePanel,
+                        stroke: colors.border,
                         radius: 10,
                     },
                 )
@@ -724,6 +779,7 @@ const renderSteps = async (
                         renderedWidth,
                         renderedHeight,
                         step.imageHighlights,
+                        colors,
                     )
                 }
                 doc.y = imageCardY + imageCardHeight + SPACING.sm
@@ -733,7 +789,7 @@ const renderSteps = async (
                 doc
                     .font('Helvetica')
                     .fontSize(9)
-                    .fillColor(COLORS.muted)
+                    .fillColor(colors.muted)
                     .text(step.imageCaption, {
                         align: 'center',
                         paragraphGap: 6,
@@ -749,48 +805,52 @@ const renderTutorial = async (
     doc: PdfDoc,
     tutorial: ExportTutorial,
     getImage: (url: string) => Promise<Buffer | null>,
+    colors: ThemeColors,
 ) => {
     doc
         .font('Helvetica-Bold')
         .fontSize(18)
-        .fillColor(COLORS.text)
+        .fillColor(colors.text)
         .text(tutorial.title)
     doc.moveDown(0.3)
 
     if (tutorial.summary) {
-        doc.font('Helvetica').fontSize(11).fillColor(COLORS.muted).text(tutorial.summary, {
+        doc.font('Helvetica').fontSize(11).fillColor(colors.muted).text(tutorial.summary, {
             paragraphGap: 6,
         })
     }
 
     doc.moveDown(0.2)
-    renderTextBlock(doc, 'Objectif', tutorial.objective)
-    renderTextBlock(doc, 'Resultat attendu', tutorial.expectedResult)
+    renderTextBlock(doc, 'Objectif', tutorial.objective, colors)
+    renderTextBlock(doc, 'Resultat attendu', tutorial.expectedResult, colors)
 
     if (tutorial.tips && tutorial.tips.length > 0) {
-        drawSectionLabel(doc, "Points d'attention")
-        renderBulletList(doc, tutorial.tips)
+        drawSectionLabel(doc, "Points d'attention", colors)
+        renderBulletList(doc, tutorial.tips, colors)
     }
 
     if (tutorial.stepSections && tutorial.stepSections.length > 0) {
-        drawSectionLabel(doc, 'Fonctionnalites')
+        drawSectionLabel(doc, 'Fonctionnalites', colors)
         for (const section of tutorial.stepSections) {
             doc.moveDown(0.3)
-            doc.font('Helvetica-Bold').fontSize(12).fillColor(COLORS.text).text(section.title)
-            await renderSteps(doc, section.steps, getImage)
+            doc.font('Helvetica-Bold').fontSize(12).fillColor(colors.text).text(section.title)
+            await renderSteps(doc, section.steps, getImage, colors)
         }
     } else if (tutorial.steps && tutorial.steps.length > 0) {
-        drawSectionLabel(doc, 'Etapes')
-        await renderSteps(doc, tutorial.steps, getImage)
+        drawSectionLabel(doc, 'Etapes', colors)
+        await renderSteps(doc, tutorial.steps, getImage, colors)
     }
 }
 
 export const generateTutorialPdf = async (payload: ExportPayload): Promise<Buffer> => {
+    const colors = getThemeColors(payload.theme)
     const doc = new PDFDocument({
         size: 'A4',
         margin: 50,
         bufferPages: true,
     })
+    fillPageBackground(doc, colors)
+    doc.on('pageAdded', () => fillPageBackground(doc, colors))
 
     const buffers: Buffer[] = []
     const output = new Promise<Buffer>((resolve, reject) => {
@@ -817,7 +877,7 @@ export const generateTutorialPdf = async (payload: ExportPayload): Promise<Buffe
 
     let currentPageNumber = 1
 
-    await renderCover(doc, payload, getImage)
+    await renderCover(doc, payload, getImage, colors)
 
     const tocLayout = computeTocLayout(doc, payload.tutorials.length)
     const tocPages: number[] = []
@@ -841,7 +901,7 @@ export const generateTutorialPdf = async (payload: ExportPayload): Promise<Buffe
             null,
         )
         tocEntries.push({ title: tutorial.title, page: currentPageNumber, destination })
-        await renderTutorial(doc, tutorial, getImage)
+        await renderTutorial(doc, tutorial, getImage, colors)
 
         const pageRange = (doc as unknown as { bufferedPageRange?: () => { start: number; count: number } })
             .bufferedPageRange?.()
@@ -850,7 +910,7 @@ export const generateTutorialPdf = async (payload: ExportPayload): Promise<Buffe
         }
     }
 
-    renderToc(doc, tocLayout, tocEntries, tocPages)
+    renderToc(doc, tocLayout, tocEntries, tocPages, colors)
 
     doc.end()
     return output

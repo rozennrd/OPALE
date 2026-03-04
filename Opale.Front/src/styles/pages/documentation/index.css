@@ -180,6 +180,41 @@
         box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 25%, transparent);
     }
 
+    .documentation-export-theme {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .documentation-export-theme-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted-strong, var(--muted));
+    }
+
+    .documentation-export-theme-options {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+    }
+
+    .documentation-export-theme-option {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.6rem;
+        border-radius: 0.65rem;
+        border: 1px solid var(--border-subtle, var(--border));
+        background: var(--panel);
+        font-size: 0.85rem;
+        color: var(--text);
+    }
+
+    .documentation-export-theme-option input {
+        accent-color: var(--primary);
+    }
+
     .documentation-export-dialog-actions {
         display: flex;
         flex-wrap: wrap;
