@@ -238,6 +238,7 @@ export const useRoomsData = () => {
     return {
         rooms,
         selectedRoom,
+        pendingNewRoomId,
         setSelectedRoom,
         addRoom,
         updateRoom,

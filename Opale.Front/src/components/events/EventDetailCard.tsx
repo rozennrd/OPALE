@@ -244,6 +244,29 @@ export default function EventDetailCard({
         return `${start}${end}${location}`
     })()
 
+    const eventDisplayName = draft.name.trim() || 'sans titre'
+
+    const cancelCreateTitle = 'Création non enregistrée'
+    const cancelCreateMessage = (
+        <>
+            <p>
+                Vous êtes en train de créer l&apos;événement{' '}
+                <strong>{eventDisplayName}</strong>.
+            </p>
+            <p>Souhaitez-vous créer avant de fermer ?</p>
+        </>
+    )
+
+    const cancelEditTitle = 'Modifications non enregistrées'
+    const cancelEditMessage = (
+        <>
+            <p>Vous avez modifié cette fiche événement.</p>
+            <p>
+                Souhaitez-vous enregistrer les changements avant de fermer ?
+            </p>
+        </>
+    )
+
     const openErrorDialog = (message: string) => {
         setErrorMessage(message)
     }
@@ -602,7 +625,7 @@ export default function EventDetailCard({
                             saving
                                 ? 'Enregistrement...'
                                 : isCreate
-                                  ? 'Creer'
+                                  ? 'Créer'
                                   : 'Enregistrer'
                         }
                         deleteLabel="Supprimer"
@@ -619,13 +642,13 @@ export default function EventDetailCard({
                         deleteConfirmLabel="Supprimer"
                         confirmTitle={
                             isCreate
-                                ? 'Creer cet evenement'
+                                ? 'Créer cet événement'
                                 : 'Confirmer les modifications'
                         }
                         confirmMessage={
                             isCreate ? (
                                 <>
-                                    Vous etes sur le point de créer
+                                    Vous êtes sur le point de créer
                                     l&apos;événement{' '}
                                     <strong>
                                         {draft.name || 'sans titre'}
@@ -644,22 +667,20 @@ export default function EventDetailCard({
                                 </>
                             )
                         }
-                        confirmLabel={isCreate ? 'Creer' : 'Enregistrer'}
+                        confirmLabel={isCreate ? 'Créer' : 'Enregistrer'}
                         cancelLabel="Annuler"
-                        cancelDirtyTitle="Modifications non enregistrees"
+                        cancelDirtyTitle={
+                            isCreate ? cancelCreateTitle : cancelEditTitle
+                        }
                         cancelDirtyMessage={
-                            <>
-                                <p>Vous avez modifie cette fiche evenement.</p>
-                                <p>
-                                    Souhaitez-vous enregistrer les changements
-                                    avant de fermer ?
-                                </p>
-                            </>
+                            isCreate ? cancelCreateMessage : cancelEditMessage
                         }
                         cancelDirtyConfirmLabel={
-                            isCreate ? 'Creer et fermer' : 'Enregistrer et fermer'
+                            isCreate ? 'Fermer et créer' : 'Enregistrer et fermer'
                         }
-                        cancelDirtyDiscardLabel="Fermer sans enregistrer"
+                        cancelDirtyDiscardLabel={
+                            isCreate ? 'Fermer sans créer' : 'Fermer sans enregistrer'
+                        }
                         onBeforeSaveClick={() => {
                             if (isCreate && !isValid) {
                                 openErrorDialog(CREATE_EVENT_REQUIRED_FIELDS_ALERT)
@@ -677,20 +698,14 @@ export default function EventDetailCard({
 
             <ConfirmDialog
                 open={isConfirmOpen}
-                title="Modifications non enregistrees"
-                message={
-                    <>
-                        <p>Vous avez modifie cette fiche evenement.</p>
-                        <p>
-                            Souhaitez-vous enregistrer les changements avant de
-                            fermer ?
-                        </p>
-                    </>
-                }
+                title={isCreate ? cancelCreateTitle : cancelEditTitle}
+                message={isCreate ? cancelCreateMessage : cancelEditMessage}
                 confirmLabel={
-                    isCreate ? 'Creer et fermer' : 'Enregistrer et fermer'
+                    isCreate ? 'Fermer et créer' : 'Enregistrer et fermer'
                 }
-                cancelLabel="Fermer sans enregistrer"
+                cancelLabel={
+                    isCreate ? 'Fermer sans créer' : 'Fermer sans enregistrer'
+                }
                 confirmClassName="btn-primary"
                 cancelClassName="btn-danger"
                 onConfirm={handleConfirmSaveAndClose}
