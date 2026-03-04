@@ -1,4 +1,4 @@
-﻿﻿// src/pages/Rooms.tsx
+// src/pages/Rooms.tsx
 import RoomsSection from '../components/rooms/RoomsSection'
 import RoomDetailCard from '../components/rooms/RoomDetailCard'
 import PageHeader from '../components/common/PageHeader'
