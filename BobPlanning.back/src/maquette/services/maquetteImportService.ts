@@ -64,6 +64,21 @@ const getMappedOtherHours = (line: MaquetteMatiereLine): number => {
   return line.heures.visitesConferences + line.heures.autoGere;
 };
 
+const getPromotionNumberFromCode = (promotionCode: string): number | null => {
+  const matches = promotionCode.match(/\d{1,2}/g);
+  if (!matches || matches.length === 0) return null;
+  const value = Number(matches[matches.length - 1]);
+  return Number.isFinite(value) && value > 0 ? value : null;
+};
+
+const getSemestreForDb = (line: MaquetteMatiereLine): number => {
+  const semestres = [...line.semestres].sort((a, b) => a - b);
+  const semestreBase = semestres[0] ?? 1;
+  const promoNumber = getPromotionNumberFromCode(line.promotionCode);
+  if (!promoNumber) return Math.max(1, semestreBase);
+  return semestreBase === promoNumber * 2 ? 2 : 1;
+};
+
 const parseSchoolYearStartYear = (schoolYear: string | null): SchoolYearInfo => {
   // Accepte: "2024-2025", "24/25", "2024".
   if (schoolYear) {
@@ -244,7 +259,7 @@ const findExistingMatiere = async (
   promotionId: string,
 ): Promise<string | null> => {
   // Recherche de la ligne cible pour logique upsert.
-  const semestre = line.semestres[0] ?? 1;
+  const semestre = getSemestreForDb(line);
   const sql = `
     SELECT id
     FROM matiere
@@ -264,7 +279,7 @@ const insertMatiere = async (
   promotionId: string,
 ): Promise<void> => {
   // Insertion alignee sur le schema actuel de la table matiere.
-  const semestre = line.semestres[0] ?? 1;
+  const semestre = getSemestreForDb(line);
   const sql = `
     INSERT INTO matiere (
       nom, volume_horaire, id_promo, id_specialite,
@@ -296,7 +311,7 @@ const updateMatiere = async (
   promotionId: string,
 ): Promise<void> => {
   // Mise a jour de la ligne existante (idempotence import).
-  const semestre = line.semestres[0] ?? 1;
+  const semestre = getSemestreForDb(line);
   const sql = `
     UPDATE matiere
     SET nom = $2,
@@ -494,10 +509,11 @@ export const maquetteImportService = {
 
       for (const line of analyzed.matieres) {
         if (line.semestres.length > 1) {
+          const semestre = getSemestreForDb(line);
           warnings.push(
             `Matiere "${line.matiereNom}" multi-semestres (${line.semestres.join(
               ',',
-            )}) importee avec semestre=${line.semestres[0]}.`,
+            )}) importee avec semestre=${semestre}.`,
           );
         }
 
