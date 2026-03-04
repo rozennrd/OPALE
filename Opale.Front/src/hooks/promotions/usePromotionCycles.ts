@@ -15,6 +15,14 @@ import {
 import { CYCLE_TYPES } from '../../constants/cycleTypes'
 import { createEmptyConstraints } from './usePromotionConstraints'
 
+const sortPromotionsByLabel = (promotions: Promotion[]): Promotion[] => {
+    return [...promotions].sort((left, right) => {
+        const leftLabel = (left.label || '').trim()
+        const rightLabel = (right.label || '').trim()
+        return leftLabel.localeCompare(rightLabel, 'fr', { numeric: true, sensitivity: 'base' })
+    })
+}
+
 
 
 
@@ -54,7 +62,10 @@ export function usePromotionCycles() {
 
                 // Transform cycles with their associated promotions
                 const frontendCycles = backendCycles.map(bc =>
-                    transformBackendCycleToFrontend(bc, promotionsByCycle[bc.id] || [])
+                    transformBackendCycleToFrontend(
+                        bc,
+                        sortPromotionsByLabel(promotionsByCycle[bc.id] || []),
+                    )
                 )
 
                 setCycles(frontendCycles)

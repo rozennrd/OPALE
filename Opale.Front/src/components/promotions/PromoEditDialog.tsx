@@ -116,14 +116,22 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
         constraints: editingPromo.constraints,
     })
 
-    const handleSave = async () => {
-        await props.onSubmit()
+    const handleSave = async (): Promise<boolean> => {
+        try {
+            await props.onSubmit()
+            return true
+        } catch (error) {
+            console.error('Failed to save promotion:', error)
+            return false
+        }
     }
 
     const handleConfirmSaveAndClose = async () => {
         setOpenCloseConfirm(false)
-        await handleSave()
-        props.onClose()
+        const saved = await handleSave()
+        if (saved) {
+            props.onClose()
+        }
     }
 
     const handleDiscardAndClose = () => {
@@ -227,6 +235,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                     <ActionButtonsWithConfirm
                         onCancel={props.onClose}
                         onSave={handleSave}
+                        onAfterSaveConfirm={props.onClose}
                         hasChanges={props.hasChanges && !isSaveDisabled}
                         disabled={isSaveDisabled}
                         confirmMessage={

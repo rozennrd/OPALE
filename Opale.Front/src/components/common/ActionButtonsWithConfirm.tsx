@@ -44,6 +44,7 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
     confirmTitle = 'Confirmer les modifications',
     confirmMessage = 'Souhaitez-vous enregistrer les modifications ?',
     confirmLabel = 'Confirmer',
+    hasChanges = true,
     onDelete,
     deleteLabel = 'Supprimer',
     deleteTitle = 'Confirmer la suppression',
@@ -83,6 +84,14 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
         if (onAfterSaveConfirm) await Promise.resolve(onAfterSaveConfirm())
     }
 
+    const handleDirectSave = async () => {
+        if (!canSave()) return
+
+        const saveResult = await Promise.resolve(onSave())
+        if (saveResult === false) return
+        if (onAfterSaveConfirm) await Promise.resolve(onAfterSaveConfirm())
+    }
+
     const handleConfirmDelete = () => {
         if (!onDelete) return
 
@@ -106,7 +115,13 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
                 <button
                     type="button"
                     className="btn-primary"
-                    onClick={() => setOpenSaveConfirm(true)}
+                    onClick={() => {
+                        if (!hasChanges) {
+                            void handleDirectSave()
+                            return
+                        }
+                        setOpenSaveConfirm(true)
+                    }}
                     disabled={disabled}
                     style={{ opacity: disabled ? 0.5 : 1, cursor: disabled ? 'not-allowed' : 'pointer' }}
                 >
