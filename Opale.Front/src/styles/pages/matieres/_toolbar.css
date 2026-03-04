@@ -13,8 +13,57 @@
     }
 
     .matieres-toolbar-row--primary .matieres-toolbar-search {
-        flex: 1 1 320px;
-        min-width: min(320px, 100%);
+        flex: 1 1 100px;
+        min-width: 100px;
+    }
+
+    .matieres-toolbar-row--filters > .matieres-toolbar-semestre-filter {
+        min-width: 152px;
+        flex: 1 1 152px;
+    }
+
+    .matieres-toolbar-row--filters > .matieres-toolbar-cycle-filter,
+    .matieres-toolbar-row--filters > .matieres-toolbar-promotion-filter,
+    .matieres-toolbar-row--filters > .matieres-toolbar-teacher-filter {
+        min-width: 160px;
+        flex: 1 1 160px;
+    }
+
+    @media (max-width: 1225px) {
+        .matieres-toolbar-row--filters .matieres-toolbar-semestre-filter .toolbar-toggle-chips {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+
+    @media (max-width: 1211px) {
+        .matieres-toolbar-row--filters {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            column-gap: var(--toolbar-item-gap);
+            row-gap: var(--toolbar-item-gap);
+            align-items: end;
+        }
+
+        .matieres-toolbar-row--filters > .matieres-toolbar-semestre-filter {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .matieres-toolbar-row--filters > .matieres-toolbar-cycle-filter {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .matieres-toolbar-row--filters > .matieres-toolbar-promotion-filter {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .matieres-toolbar-row--filters > .matieres-toolbar-teacher-filter {
+            grid-column: 2;
+            grid-row: 2;
+        }
     }
 
 }
