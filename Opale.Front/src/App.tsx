@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Routes, Route, Navigate, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import Sidebar from './components/Sidebar.jsx'
 import Promotions from './pages/Promotions.jsx'
-import PlanningMacro from './pages/PlanningMacro.jsx'
+import Planning from './pages/Planning.tsx'
 import Placeholder from './pages/Placeholder.jsx'
 import Login from './pages/Login'
 import Rooms from './pages/Rooms'
@@ -69,7 +69,7 @@ export default function App() {
         <Routes>
             <Route element={<AppLayout />}>
                 <Route path="/" element={<Navigate to="/planning" replace />} />
-                <Route path="/planning" element={<PlanningMacro />} />
+                <Route path="/planning" element={<Planning />} />
                 <Route path="/promotions" element={<Promotions />} />
                 <Route path="/evenements" element={<Events />} />
                 <Route path="/teachers" element={<Teachers />} />
