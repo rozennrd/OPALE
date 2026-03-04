@@ -102,6 +102,26 @@ function getMonthLabel(dateStr: string): string {
     return label.charAt(0).toUpperCase() + label.slice(1)
 }
 
+const parseDateParts = (value: string): { y: number; m: number; d: number } | null => {
+    if (!value) return null
+    const [y, m, d] = value.split('-').map(Number)
+    if (!y || !m || !d) return null
+    return { y, m, d }
+}
+
+const getStartOfDay = (value: string): number | null => {
+    const parts = parseDateParts(value)
+    if (!parts) return null
+    return new Date(parts.y, parts.m - 1, parts.d, 0, 0, 0, 0).getTime()
+}
+
+const getEndOfDay = (value: string): number | null => {
+    const parts = parseDateParts(value)
+    if (!parts) return null
+    return new Date(parts.y, parts.m - 1, parts.d, 23, 59, 59, 999).getTime()
+}
+
+
 /**
  * Assure qu'on a toujours startDate/endDate exploitables côté liste.
  * (utile si certains retours API ont un champ optionnel ou vide)
@@ -229,23 +249,26 @@ export default function Events() {
             items = items.filter(
                 (evt) =>
                     evt.name.toLowerCase().includes(q) ||
-                    evt.location.toLowerCase().includes(q) ||
                     evt.description?.toLowerCase().includes(q),
             )
         }
 
         if (dateFrom) {
-            const min = new Date(dateFrom).getTime()
-            items = items.filter(
-                (evt) => new Date(evt.startDate).getTime() >= min,
-            )
+            const min = getStartOfDay(dateFrom)
+            if (min !== null) {
+                items = items.filter(
+                    (evt) => new Date(evt.startDate).getTime() >= min,
+                )
+            }
         }
 
         if (dateTo) {
-            const max = new Date(dateTo).getTime()
-            items = items.filter(
-                (evt) => new Date(evt.startDate).getTime() <= max,
-            )
+            const max = getEndOfDay(dateTo)
+            if (max !== null) {
+                items = items.filter(
+                    (evt) => new Date(evt.startDate).getTime() <= max,
+                )
+            }
         }
 
         if (target === 'JUNIA') {

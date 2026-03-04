@@ -35,12 +35,12 @@ interface EventsToolbarProps {
 
 const EVENT_TYPE_OPTIONS = [
     { value: 'ALL', label: 'Tous les types' },
-    { value: 'JOURNEE_PO', label: 'Journée Portes Ouvertes' },
-    { value: 'EXAMEN', label: 'Examen' },
-    { value: 'CONFERENCE', label: 'Conférence' },
-    { value: 'FORUM', label: 'Forum' },
-    { value: 'SALON', label: 'Salon' },
-    { value: 'AUTRE', label: 'Autre' },
+    { value: 'JPO', label: 'JPO' },
+    { value: 'Examen', label: 'Examen' },
+    { value: 'Conference', label: 'Conférence' },
+    { value: 'Forum', label: 'Forum' },
+    { value: 'Salon', label: 'Salon' },
+    { value: 'Autre', label: 'Autre' },
 ]
 
 export default function EventsToolbar({
