@@ -43,6 +43,61 @@ type TocLayout = {
 
 type PdfDoc = PDFKit.PDFDocument
 
+const COLORS = {
+    text: '#111827',
+    muted: '#6b7280',
+    primary: '#93c7a6',
+    primaryDark: '#0b3b24',
+    brand: '#2cd4d9',
+    panel: '#f7f7f7',
+    border: '#e5e7eb',
+    white: '#ffffff',
+}
+
+const SPACING = {
+    xs: 4,
+    sm: 8,
+    md: 12,
+    lg: 18,
+    xl: 24,
+}
+
+const getContentWidth = (doc: PdfDoc): number =>
+    doc.page.width - doc.page.margins.left - doc.page.margins.right
+
+const ensureSpace = (doc: PdfDoc, height: number) => {
+    const bottom = doc.page.height - doc.page.margins.bottom
+    if (doc.y + height > bottom) {
+        doc.addPage()
+    }
+}
+
+const drawCard = (
+    doc: PdfDoc,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    options?: { fill?: string; stroke?: string; radius?: number },
+) => {
+    const { fill = COLORS.panel, stroke = COLORS.border, radius = 10 } = options ?? {}
+    doc.save()
+    doc.roundedRect(x, y, width, height, radius).fillAndStroke(fill, stroke)
+    doc.restore()
+}
+
+const drawSectionLabel = (doc: PdfDoc, label: string) => {
+    const startX = doc.page.margins.left
+    const labelHeight = 18
+    ensureSpace(doc, labelHeight + SPACING.sm)
+    doc
+        .font('Helvetica-Bold')
+        .fontSize(10)
+        .fillColor(COLORS.muted)
+        .text(label.toUpperCase(), startX, doc.y)
+    doc.moveDown(0.4)
+}
+
 const buildImageUrlCandidates = (url: string): string[] => {
     const candidates = [url]
     try {
@@ -159,7 +214,7 @@ const renderCover = async (
     doc
         .font('Helvetica-Bold')
         .fontSize(26)
-        .fillColor('#111111')
+        .fillColor(COLORS.text)
         .text(normalizeText(payload.title) || 'Documentation OPALE', {
             align: 'center',
         })
@@ -168,10 +223,28 @@ const renderCover = async (
     doc
         .font('Helvetica')
         .fontSize(12)
-        .fillColor('#444444')
+        .fillColor(COLORS.muted)
         .text(normalizeText(payload.date) || new Date().toLocaleDateString('fr-FR'), {
             align: 'center',
         })
+
+    doc.moveDown(2)
+    const ribbonY = doc.y
+    const ribbonHeight = 36
+    drawCard(doc, doc.page.margins.left, ribbonY, pageWidth, ribbonHeight, {
+        fill: COLORS.brand,
+        stroke: COLORS.brand,
+        radius: 14,
+    })
+    doc
+        .font('Helvetica-Bold')
+        .fontSize(12)
+        .fillColor(COLORS.primaryDark)
+        .text('Guide utilisateur - Export PDF', doc.page.margins.left, ribbonY + 10, {
+            align: 'center',
+            width: pageWidth,
+        })
+    doc.y = ribbonY + ribbonHeight + SPACING.lg
 }
 
 const renderToc = (
@@ -187,26 +260,29 @@ const renderToc = (
 
     tocPages.forEach((pageNumber) => {
         doc.switchToPage(pageNumber - 1)
-        doc
-            .font('Helvetica-Bold')
-            .fontSize(20)
-            .fillColor('#111111')
-            .text('Sommaire', doc.page.margins.left, doc.page.margins.top)
+        doc.x = doc.page.margins.left
+        doc.y = doc.page.margins.top
+        doc.font('Helvetica-Bold').fontSize(20).fillColor(COLORS.text).text('Sommaire')
 
         let y =
             doc.page.margins.top +
             layout.titleHeight
 
-        doc.font('Helvetica').fontSize(12).fillColor('#111111')
+        doc.font('Helvetica').fontSize(12).fillColor(COLORS.text)
 
         for (let i = 0; i < layout.linesPerPage && entryIndex < entries.length; i += 1) {
             const entry = entries[entryIndex]
             const lineY = y + i * layout.lineHeight
 
-            doc.text(entry.title, doc.page.margins.left, lineY, {
+            drawCard(doc, doc.page.margins.left, lineY - 2, pageWidth, 20, {
+                fill: COLORS.panel,
+                stroke: COLORS.border,
+                radius: 8,
+            })
+            doc.fillColor(COLORS.text).text(entry.title, doc.page.margins.left + 8, lineY, {
                 width: titleWidth,
             })
-            doc.text(String(entry.page), doc.page.margins.left + titleWidth + 8, lineY, {
+            doc.fillColor(COLORS.muted).text(String(entry.page), doc.page.margins.left + titleWidth + 8, lineY, {
                 width: pageNumberWidth,
                 align: 'right',
             })
@@ -222,12 +298,23 @@ const renderTextBlock = (doc: PdfDoc, title: string, text?: string) => {
         return
     }
 
-    doc.moveDown(0.7)
-    doc.font('Helvetica-Bold').fontSize(11).fillColor('#111111').text(title.toUpperCase())
-    doc.moveDown(0.3)
-    doc.font('Helvetica').fontSize(11).fillColor('#111111').text(normalized, {
-        paragraphGap: 4,
+    const contentWidth = getContentWidth(doc)
+    const titleHeight = doc.heightOfString(title.toUpperCase(), { width: contentWidth - 24 })
+    const textHeight = doc.heightOfString(normalized, { width: contentWidth - 24 })
+    const cardHeight = titleHeight + textHeight + SPACING.lg
+
+    ensureSpace(doc, cardHeight + SPACING.md)
+    const startY = doc.y
+    drawCard(doc, doc.page.margins.left, startY, contentWidth, cardHeight)
+
+    const startX = doc.page.margins.left + SPACING.md
+    let cursorY = startY + SPACING.sm
+    doc.font('Helvetica-Bold').fontSize(10).fillColor(COLORS.muted).text(title.toUpperCase(), startX, cursorY)
+    cursorY += titleHeight + SPACING.xs
+    doc.font('Helvetica').fontSize(11).fillColor(COLORS.text).text(normalized, startX, cursorY, {
+        width: contentWidth - SPACING.lg,
     })
+    doc.y = startY + cardHeight + SPACING.sm
 }
 
 const renderBulletList = (doc: PdfDoc, items?: string[]) => {
@@ -235,15 +322,38 @@ const renderBulletList = (doc: PdfDoc, items?: string[]) => {
         return
     }
 
-    items
+    const contentWidth = getContentWidth(doc)
+    const normalizedItems = items
         .map((item) => normalizeText(item))
         .filter(Boolean)
-        .forEach((item) => {
-            doc.font('Helvetica').fontSize(11).fillColor('#111111').text(`- ${item}`, {
-                indent: 12,
-                paragraphGap: 4,
-            })
+
+    if (normalizedItems.length === 0) {
+        return
+    }
+
+    const textHeight = normalizedItems.reduce(
+        (total, item) => total + doc.heightOfString(item, { width: contentWidth - 32 }) + 4,
+        0,
+    )
+    const cardHeight = textHeight + SPACING.lg
+
+    ensureSpace(doc, cardHeight + SPACING.md)
+    const startY = doc.y
+    drawCard(doc, doc.page.margins.left, startY, contentWidth, cardHeight, {
+        fill: '#e7f7ee',
+        stroke: '#9edcb7',
+        radius: 10,
+    })
+
+    let cursorY = startY + SPACING.sm
+    const startX = doc.page.margins.left + SPACING.md
+    normalizedItems.forEach((item) => {
+        doc.font('Helvetica').fontSize(11).fillColor(COLORS.text).text(`- ${item}`, startX, cursorY, {
+            width: contentWidth - SPACING.lg,
         })
+        cursorY += doc.heightOfString(item, { width: contentWidth - SPACING.lg }) + 4
+    })
+    doc.y = startY + cardHeight + SPACING.sm
 }
 
 const renderSteps = async (
@@ -259,9 +369,33 @@ const renderSteps = async (
         const text = normalizeText(step.text)
 
         if (text) {
-            doc.font('Helvetica').fontSize(11).fillColor('#111111').text(`${i + 1}. ${text}`, {
-                paragraphGap: 4,
+            const circleSize = 18
+            const startX = doc.page.margins.left
+            const textX = startX + circleSize + 8
+            const textWidth = getContentWidth(doc) - circleSize - 8
+            const textHeight = doc.heightOfString(text, { width: textWidth })
+            ensureSpace(doc, textHeight + circleSize + SPACING.sm)
+
+            const startY = doc.y
+            doc
+                .save()
+                .fillColor(COLORS.primary)
+                .circle(startX + circleSize / 2, startY + circleSize / 2, circleSize / 2)
+                .fill()
+                .restore()
+            doc
+                .font('Helvetica-Bold')
+                .fontSize(9)
+                .fillColor(COLORS.primaryDark)
+                .text(String(i + 1), startX, startY + 4, {
+                    width: circleSize,
+                    align: 'center',
+                })
+            doc.font('Helvetica').fontSize(11).fillColor(COLORS.text).text(text, textX, startY, {
+                width: textWidth,
             })
+            const rowHeight = Math.max(circleSize, doc.y - startY)
+            doc.y = startY + rowHeight + SPACING.sm
         }
 
         if (step.subSteps && step.subSteps.length > 0) {
@@ -281,18 +415,39 @@ const renderSteps = async (
                 decodeDataUrl(step.imageData) ??
                 (step.imageUrl ? await getImage(step.imageUrl) : null)
             if (imageBuffer) {
-                doc.moveDown(0.4)
-                doc.image(imageBuffer, {
-                    width: maxImageWidth,
+                const imageSize = (doc as unknown as { openImage: (data: Buffer) => { width: number; height: number } })
+                    .openImage(imageBuffer)
+                const maxHeight = 380
+                const scale = Math.min(maxImageWidth / imageSize.width, maxHeight / imageSize.height, 1)
+                const renderedWidth = imageSize.width * scale
+                const renderedHeight = imageSize.height * scale
+
+                ensureSpace(doc, renderedHeight + SPACING.md)
+                const imageCardY = doc.y
+                const imageCardHeight = renderedHeight + SPACING.sm * 2
+                drawCard(
+                    doc,
+                    doc.page.margins.left,
+                    imageCardY,
+                    maxImageWidth,
+                    imageCardHeight,
+                    {
+                        fill: COLORS.white,
+                        stroke: COLORS.border,
+                        radius: 10,
+                    },
+                )
+                doc.image(imageBuffer, doc.page.margins.left + (maxImageWidth - renderedWidth) / 2, imageCardY + SPACING.sm, {
+                    width: renderedWidth,
                 })
-                doc.moveDown(0.2)
+                doc.y = imageCardY + imageCardHeight + SPACING.sm
             }
 
             if (step.imageCaption) {
                 doc
                     .font('Helvetica')
                     .fontSize(9)
-                    .fillColor('#444444')
+                    .fillColor(COLORS.muted)
                     .text(step.imageCaption, {
                         align: 'center',
                         paragraphGap: 6,
@@ -309,36 +464,37 @@ const renderTutorial = async (
     tutorial: ExportTutorial,
     getImage: (url: string) => Promise<Buffer | null>,
 ) => {
-    doc.font('Helvetica-Bold').fontSize(18).fillColor('#111111').text(tutorial.title)
-    doc.moveDown(0.4)
+    doc
+        .font('Helvetica-Bold')
+        .fontSize(18)
+        .fillColor(COLORS.text)
+        .text(tutorial.title)
+    doc.moveDown(0.3)
 
     if (tutorial.summary) {
-        doc.font('Helvetica').fontSize(11).fillColor('#111111').text(tutorial.summary, {
+        doc.font('Helvetica').fontSize(11).fillColor(COLORS.muted).text(tutorial.summary, {
             paragraphGap: 6,
         })
     }
 
+    doc.moveDown(0.2)
     renderTextBlock(doc, 'Objectif', tutorial.objective)
     renderTextBlock(doc, 'Resultat attendu', tutorial.expectedResult)
 
     if (tutorial.tips && tutorial.tips.length > 0) {
-        doc.moveDown(0.7)
-        doc.font('Helvetica-Bold').fontSize(11).fillColor('#111111').text("POINTS D'ATTENTION")
-        doc.moveDown(0.3)
+        drawSectionLabel(doc, "Points d'attention")
         renderBulletList(doc, tutorial.tips)
     }
 
     if (tutorial.stepSections && tutorial.stepSections.length > 0) {
-        doc.moveDown(0.8)
-        doc.font('Helvetica-Bold').fontSize(12).fillColor('#111111').text('FONCTIONNALITES')
+        drawSectionLabel(doc, 'Fonctionnalites')
         for (const section of tutorial.stepSections) {
-            doc.moveDown(0.6)
-            doc.font('Helvetica-Bold').fontSize(11).fillColor('#111111').text(section.title)
+            doc.moveDown(0.3)
+            doc.font('Helvetica-Bold').fontSize(12).fillColor(COLORS.text).text(section.title)
             await renderSteps(doc, section.steps, getImage)
         }
     } else if (tutorial.steps && tutorial.steps.length > 0) {
-        doc.moveDown(0.8)
-        doc.font('Helvetica-Bold').fontSize(12).fillColor('#111111').text('ETAPES')
+        drawSectionLabel(doc, 'Etapes')
         await renderSteps(doc, tutorial.steps, getImage)
     }
 }
