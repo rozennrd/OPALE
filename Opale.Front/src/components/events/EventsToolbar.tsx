@@ -1,6 +1,6 @@
 // src/components/events/EventsToolbar.tsx
 import { EventType } from '../../models/CampusEvent'
-import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
+import { PageToolbar, ToolbarAddButton, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 import icPlus from '../../assets/ic-plus.png'
 import DateInput from '../common/DateInput'
@@ -97,16 +97,12 @@ export default function EventsToolbar({
                     disabled={!hasActiveFilters}
                 />
 
-                <button
-                    type="button"
-                    className="toolbar-add-btn events-toolbar-add-btn"
+                <ToolbarAddButton
+                    className="events-toolbar-add-btn"
                     onClick={onCreateRequested}
-                    aria-label="Ajouter un événement"
-                    title="Ajouter un événement"
-                >
-                    <img src={icPlus} alt="" className="toolbar-add-icon" />
-                    <span className="toolbar-add-label">Ajouter un événement</span>
-                </button>
+                    label="Ajouter un événement"
+                    iconSrc={icPlus}
+                />
             </ToolbarRow>
 
             <ToolbarRow className="page-toolbar-row--filters events-toolbar-row events-toolbar-row--filters events-toolbar-filters">

@@ -1,7 +1,7 @@
 // src/components/matieres/MatieresToolbar.tsx
 
 import React from 'react'
-import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
+import { PageToolbar, ToolbarAddButton, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 import icPlus from '../../assets/ic-plus.png'
 
@@ -100,16 +100,12 @@ export default function MatieresToolbar({
                     disabled={!hasActiveFilters}
                 />
 
-                <button
-                    type="button"
-                    className="toolbar-add-btn matieres-toolbar-add-btn"
+                <ToolbarAddButton
+                    className="matieres-toolbar-add-btn"
                     onClick={onCreateRequested}
-                    aria-label="Ajouter une matière"
-                    title="Ajouter une matière"
-                >
-                    <img src={icPlus} alt="" className="toolbar-add-icon" />
-                    <span className="toolbar-add-label">Ajouter une matière</span>
-                </button>
+                    label="Ajouter une matière"
+                    iconSrc={icPlus}
+                />
             </ToolbarRow>
 
             <ToolbarRow className="page-toolbar-row--filters matieres-toolbar-row matieres-toolbar-row--filters">

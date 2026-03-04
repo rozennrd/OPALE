@@ -1,5 +1,5 @@
 import React from 'react'
-import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
+import { PageToolbar, ToolbarAddButton, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 import icPlus from '../../assets/ic-plus.png'
 import {
@@ -92,16 +92,12 @@ export default function RoomsToolbar({
                     disabled={!hasActiveFilters}
                 />
 
-                <button
-                    type="button"
-                    className="toolbar-add-btn rooms-toolbar-add-btn rooms-toolbar-add-primary"
+                <ToolbarAddButton
+                    className="rooms-toolbar-add-btn rooms-toolbar-add-primary"
                     onClick={onCreateRequested}
-                    aria-label="Ajouter une salle"
-                    title="Ajouter une salle"
-                >
-                    <img src={icPlus} alt="" className="toolbar-add-icon" />
-                    <span className="toolbar-add-label">Ajouter une salle</span>
-                </button>
+                    label="Ajouter une salle"
+                    iconSrc={icPlus}
+                />
             </ToolbarRow>
 
             <ToolbarRow className="page-toolbar-row--filters rooms-toolbar-row rooms-toolbar-row--filters rooms-toolbar-filters">
@@ -174,16 +170,12 @@ export default function RoomsToolbar({
                         ))}
                     </div>
                 </div>
-                <button
-                    type="button"
-                    className="toolbar-add-btn rooms-toolbar-add-btn rooms-toolbar-add-inline"
+                <ToolbarAddButton
+                    className="rooms-toolbar-add-btn rooms-toolbar-add-inline"
                     onClick={onCreateRequested}
-                    aria-label="Ajouter une salle"
-                    title="Ajouter une salle"
-                >
-                    <img src={icPlus} alt="" className="toolbar-add-icon" />
-                    <span className="toolbar-add-label">Ajouter une salle</span>
-                </button>
+                    label="Ajouter une salle"
+                    iconSrc={icPlus}
+                />
             </ToolbarRow>
         </PageToolbar>
     )

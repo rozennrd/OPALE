@@ -1,16 +1,4 @@
 @layer pages {
-    .events-toolbar {
-        --events-toolbar-row-gap: var(--toolbar-row-gap);
-    }
-
-    .events-toolbar-row {
-        row-gap: var(--events-toolbar-row-gap);
-    }
-
-    .events-toolbar-row--filters {
-        row-gap: var(--events-toolbar-row-gap);
-    }
-
     .events-toolbar-row--primary .toolbar-search {
         flex: 1 1 260px;
         min-width: 220px;
@@ -26,21 +14,22 @@
 
     @media (max-width: 1736px) {
         .events-toolbar-row--filters .events-toolbar-date-filter {
-            flex-basis: 130px;
-            min-width: 110px;
+            --toolbar-filter-flex: 1 1 130px;
+            --toolbar-filter-min: 110px;
         }
     }
 
     @media (max-width: 1477px) {
         .events-toolbar-row--filters .events-toolbar-type-filter {
-            flex-basis: 220px;
+            --toolbar-filter-flex: 1 1 220px;
+            --toolbar-filter-min: 220px;
         }
     }
 
     @media (max-width: 1437px) {
         .events-toolbar-row--filters .events-toolbar-target-filter {
-            flex-basis: 190px;
-            min-width: 190px;
+            --toolbar-filter-flex: 1 1 190px;
+            --toolbar-chips-min: 190px;
         }
 
         .events-toolbar-row--filters .events-toolbar-target-filter .toolbar-toggle-chips {
@@ -97,8 +86,8 @@
 
     @media (max-width: 1249px) {
         .events-toolbar-row--filters .events-toolbar-type-filter {
-            flex-basis: 200px;
-            min-width: 200px;
+            --toolbar-filter-flex: 1 1 200px;
+            --toolbar-filter-min: 200px;
         }
     }
 

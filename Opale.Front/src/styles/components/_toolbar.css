@@ -7,6 +7,13 @@
         flex-direction: column;
         --toolbar-item-gap: 0.75rem;
         --toolbar-row-gap: var(--toolbar-item-gap);
+        --toolbar-filter-min: 220px;
+        --toolbar-filter-basis: 260px;
+        --toolbar-filter-max: none;
+        --toolbar-filter-flex: 1 1 var(--toolbar-filter-basis);
+        --toolbar-chips-min: 260px;
+        --toolbar-chips-width: 100%;
+        --toolbar-chips-justify: space-between;
         row-gap: var(--toolbar-row-gap);
         padding: 0.75rem;
         border-radius: 1rem;
@@ -38,7 +45,6 @@
         row-gap: var(--toolbar-item-gap);
         align-items: end;
         width: 100%;
-        justify-content: space-between;
     }
 
     .page-toolbar-row--filters .toolbar-reset-button {
@@ -46,9 +52,10 @@
         justify-self: start;
     }
 
-    .page-toolbar-row--filters > .toolbar-filter {
-        flex: 0 1 260px;
-        min-width: 220px;
+    .page-toolbar-row--filters .toolbar-filter {
+        flex: var(--toolbar-filter-flex);
+        min-width: var(--toolbar-filter-min);
+        max-width: var(--toolbar-filter-max);
     }
 
     /* ============================
@@ -101,7 +108,7 @@
     }
 
     .toolbar-filter--chips {
-        min-width: 260px;
+        min-width: var(--toolbar-chips-min);
     }
 
     .toolbar-filter-label {
@@ -144,9 +151,9 @@
         padding: 0.2rem;
         border: 1px solid var(--border-subtle, var(--border));
         gap: 0.25rem;
-        width: 100%;
+        width: var(--toolbar-chips-width);
         max-width: 100%;
-        justify-content: space-between;
+        justify-content: var(--toolbar-chips-justify);
         flex-wrap: wrap;
         row-gap: 0.35rem;
     }
@@ -326,17 +333,10 @@
         }
     }
 
-    @media (max-width: 1225px) {
-        .toolbar-toggle-chips {
-            width: fit-content;
-            justify-content: flex-start;
-        }
-    }
-
     @media (max-width: 600px) {
         .toolbar-toggle-chips {
-            width: 100%;
-            justify-content: space-between;
+            width: var(--toolbar-chips-width);
+            justify-content: var(--toolbar-chips-justify);
         }
 
         .toolbar-toggle-chip {
@@ -345,9 +345,4 @@
         }
     }
 
-    @media (min-width: 1200px) and (max-width: 1400px) {
-        .page-toolbar-row--filters .toolbar-filter--chips {
-            grid-column: span 2;
-        }
-    }
 }

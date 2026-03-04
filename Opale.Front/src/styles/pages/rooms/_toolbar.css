@@ -7,18 +7,19 @@
     }
 
     .rooms-toolbar-row--filters > .rooms-toolbar-type-filter {
-        min-width: 190px;
-        flex: 0 1 190px;
+        --toolbar-filter-min: 190px;
+        --toolbar-filter-flex: 1 1 190px;
     }
 
     .rooms-toolbar-row--filters > .rooms-toolbar-capacity-filter {
-        min-width: calc(216px + 0.45rem);
-        flex: 0 1 calc(216px + 0.45rem);
+        --toolbar-filter-min: calc(216px + 0.45rem);
+        --toolbar-filter-flex: 1 1 calc(216px + 0.45rem);
     }
 
     .rooms-toolbar-row--filters > .rooms-toolbar-availability-filter {
-        min-width: 260px;
-        flex: 0 1 260px;
+        --toolbar-filter-min: 260px;
+        --toolbar-filter-flex: 1 1 260px;
+        --toolbar-chips-min: 260px;
     }
 
     .rooms-toolbar-add-inline {
@@ -51,34 +52,22 @@
         .rooms-toolbar-row--filters {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            column-gap: clamp(0.75rem, var(--toolbar-item-gap), 2rem);
-            row-gap: clamp(0.75rem, var(--toolbar-item-gap), 2rem);
+            column-gap: var(--toolbar-item-gap);
+            row-gap: var(--toolbar-item-gap);
             align-items: end;
         }
 
         .rooms-toolbar-row--filters > .rooms-toolbar-type-filter,
         .rooms-toolbar-row--filters > .rooms-toolbar-capacity-filter {
-            width: 100%;
-            max-width: none;
-        }
-
-        .rooms-toolbar-row--filters > .rooms-toolbar-type-filter {
-            min-width: 160px;
+            --toolbar-filter-min: 160px;
         }
 
         .rooms-toolbar-row--filters > .rooms-toolbar-capacity-filter {
-            min-width: 150px;
+            --toolbar-filter-min: 150px;
         }
 
         .rooms-toolbar-row--filters > .rooms-toolbar-availability-filter {
             grid-column: 1 / -1;
-            width: 100%;
-            max-width: none;
-        }
-
-        .rooms-toolbar-row--filters > .rooms-toolbar-availability-filter .toolbar-toggle-chips {
-            width: 100%;
-            justify-content: space-between;
         }
     }
 
@@ -86,37 +75,26 @@
         .rooms-toolbar-row--filters {
             display: grid;
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-            column-gap: clamp(0.75rem, var(--toolbar-item-gap), 2rem);
-            row-gap: clamp(0.75rem, var(--toolbar-item-gap), 2rem);
+            column-gap: var(--toolbar-item-gap);
+            row-gap: var(--toolbar-item-gap);
             align-items: end;
         }
 
         .rooms-toolbar-row--filters > .rooms-toolbar-type-filter {
             grid-column: 1;
             grid-row: 1;
-            width: 100%;
-            max-width: none;
-            min-width: 150px;
+            --toolbar-filter-min: 150px;
         }
 
         .rooms-toolbar-row--filters > .rooms-toolbar-capacity-filter {
             grid-column: 2;
             grid-row: 1;
-            width: 100%;
-            max-width: none;
-            min-width: 140px;
+            --toolbar-filter-min: 140px;
         }
 
         .rooms-toolbar-row--filters > .rooms-toolbar-availability-filter {
             grid-column: 1 / 3;
             grid-row: 2;
-            width: 100%;
-            max-width: none;
-        }
-
-        .rooms-toolbar-row--filters > .rooms-toolbar-availability-filter .toolbar-toggle-chips {
-            width: 100%;
-            justify-content: space-between;
         }
 
         .rooms-toolbar-add-primary {
@@ -132,12 +110,6 @@
 
         .rooms-toolbar-add-inline .toolbar-add-label {
             display: inline !important;
-        }
-    }
-
-    @media (max-width: 900px) {
-        .rooms-toolbar-capacity-filter {
-            min-width: 0;
         }
     }
 

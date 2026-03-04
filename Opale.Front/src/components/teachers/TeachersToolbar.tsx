@@ -1,6 +1,6 @@
 // src/components/teachers/TeachersToolbar.tsx
 import { TeachingMode } from '../../models/Teachers'
-import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
+import { PageToolbar, ToolbarAddButton, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 import icPlus from '../../assets/ic-plus.png'
 import DateInput from '../common/DateInput'
@@ -53,10 +53,6 @@ export default function TeachersToolbar({
     onResetFilters,
     hasActiveFilters,
 }: TeachersToolbarProps) {
-    const handleResetFilters = () => {
-        onResetFilters()
-    }
-
     return (
         <PageToolbar className="teachers-toolbar">
             <ToolbarRow className="page-toolbar-row--primary teachers-toolbar-row teachers-toolbar-row--primary">
@@ -67,7 +63,7 @@ export default function TeachersToolbar({
                     className="teachers-toolbar-search"
                 />
 
-                <div className="teachers-toolbar-filters">
+                <div className="page-toolbar-row--filters teachers-toolbar-filters">
                     <div className="toolbar-filter teachers-toolbar-date-filter teachers-toolbar-date-filter--from">
                         <label className="toolbar-filter-label">
                             À partir du
@@ -92,18 +88,14 @@ export default function TeachersToolbar({
                         </label>
                     </div>
 
-                    <button
-                        type="button"
-                        className="toolbar-add-btn teachers-toolbar-add-btn teachers-toolbar-add-inline"
+                    <ToolbarAddButton
+                        className="teachers-toolbar-add-btn teachers-toolbar-add-inline"
                         onClick={onCreateRequested}
-                        aria-label="Ajouter un enseignant"
-                        title="Ajouter un enseignant"
-                    >
-                        <img src={icPlus} alt="" className="toolbar-add-icon" />
-                        <span className="toolbar-add-label">Ajouter un enseignant</span>
-                    </button>
+                        label="Ajouter un enseignant"
+                        iconSrc={icPlus}
+                    />
 
-                    <div className="teachers-toolbar-mode-filter toolbar-filter--chips">
+                    <div className="toolbar-filter toolbar-filter--chips teachers-toolbar-mode-filter">
                         <span className="toolbar-filter-label">Type de cours</span>
                         <div className="toolbar-toggle-chips">
                             {MODE_OPTIONS.map((option) => (
@@ -187,20 +179,16 @@ export default function TeachersToolbar({
 
                 <ToolbarResetButton
                     className="teachers-toolbar-reset"
-                    onClick={handleResetFilters}
+                    onClick={onResetFilters}
                     disabled={!hasActiveFilters}
                 />
 
-                <button
-                    type="button"
-                    className="toolbar-add-btn teachers-toolbar-add-btn"
+                <ToolbarAddButton
+                    className="teachers-toolbar-add-btn"
                     onClick={onCreateRequested}
-                    aria-label="Ajouter un enseignant"
-                    title="Ajouter un enseignant"
-                >
-                    <img src={icPlus} alt="" className="toolbar-add-icon" />
-                    <span className="toolbar-add-label">Ajouter un enseignant</span>
-                </button>
+                    label="Ajouter un enseignant"
+                    iconSrc={icPlus}
+                />
             </ToolbarRow>
         </PageToolbar>
     )

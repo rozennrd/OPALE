@@ -5,35 +5,22 @@
         margin-top: 0.5rem;
     }
 
-    .matieres-toolbar-row {
-        display: flex;
-        align-items: center;
-        gap: var(--toolbar-item-gap);
-        flex-wrap: wrap;
-    }
-
     .matieres-toolbar-row--primary .matieres-toolbar-search {
         flex: 1 1 100px;
         min-width: 100px;
     }
 
     .matieres-toolbar-row--filters > .matieres-toolbar-semestre-filter {
-        min-width: 152px;
-        flex: 1 1 152px;
+        --toolbar-filter-min: 152px;
+        --toolbar-filter-flex: 1 1 152px;
+        --toolbar-chips-min: 152px;
     }
 
     .matieres-toolbar-row--filters > .matieres-toolbar-cycle-filter,
     .matieres-toolbar-row--filters > .matieres-toolbar-promotion-filter,
     .matieres-toolbar-row--filters > .matieres-toolbar-teacher-filter {
-        min-width: 160px;
-        flex: 1 1 160px;
-    }
-
-    @media (max-width: 1225px) {
-        .matieres-toolbar-row--filters .matieres-toolbar-semestre-filter .toolbar-toggle-chips {
-            width: 100%;
-            justify-content: space-between;
-        }
+        --toolbar-filter-min: 160px;
+        --toolbar-filter-flex: 1 1 160px;
     }
 
     @media (max-width: 1211px) {
