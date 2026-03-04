@@ -4,7 +4,7 @@ import TeacherSection from '../components/teachers/TeacherSection'
 import TeacherDetailCard from '../components/teachers/TeacherDetailCard'
 import SelectionToolbar from '../components/common/SelectionToolbar'
 
-import { getProfsData } from '../services/api/professorsApi'
+import { deleteProf, getProfsData } from '../services/api/professorsApi'
 import { getEnseignements } from '../services/api/enseignementsApi'
 import { getMatieres } from '../services/api/matieresApi'
 import { promotionsApi } from '../services/api/promotionsApi'
@@ -314,9 +314,16 @@ export default function Teachers() {
         ],
     )
 
-    const removeTeachersByIds = (ids: string[]) => {
+    const removeTeachersByIds = async (ids: string[]) => {
         const idsSet = new Set(ids)
         if (idsSet.size === 0) return
+
+        try {
+            await Promise.all(Array.from(idsSet).map((id) => deleteProf(id)))
+        } catch (error) {
+            console.error('[TEACHERS] delete failed:', error)
+            return
+        }
 
         setTeachers((prev) => prev.filter((teacher) => !idsSet.has(teacher.id)))
         pruneTeacherSelection(Array.from(idsSet))
@@ -328,12 +335,13 @@ export default function Teachers() {
     }
 
     const handleDeleteSingleTeacher = (teacherId: string) => {
-        removeTeachersByIds([teacherId])
+        void removeTeachersByIds([teacherId])
     }
 
     const handleDeleteSelected = () => {
-        removeTeachersByIds(selectedTeacherIds)
-        disableTeacherSelectionMode()
+        void removeTeachersByIds(selectedTeacherIds).then(() => {
+            disableTeacherSelectionMode()
+        })
     }
 
     const handleTeacherUpdated = (updatedTeacher: Teacher) => {
@@ -393,7 +401,7 @@ export default function Teachers() {
                             onClearSelection={clearTeacherSelection}
                             onDeleteSelected={handleDeleteSelected}
                             confirmTitle="Supprimer les enseignants sélectionnés"
-                            confirmMessage={`Vous allez supprimer ${selectedTeacherIds.length} enseignant${selectedTeacherIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                            confirmMessage={`Vous allez supprimer ${selectedTeacherIds.length} enseignant${selectedTeacherIds.length > 1 ? 's' : ''}. Cette action est définitive.`}
                     />
                 )}
 
