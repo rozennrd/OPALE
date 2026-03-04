@@ -26,7 +26,7 @@ export default function PlanningMacro(): React.ReactElement {
         setHasPromosMismatch(flag)
     }, []);
 
-    const [items, setItems] = useState<ChecklistItem[]>([
+    const [macroItems, setMacroItems] = useState<ChecklistItem[]>([
         { id: 'promos',    label: 'Toutes les promotions sont créées',                     status: 'ok',    checked: true,  warning: false },
         { id: 'periodes',  label: 'Toutes les périodes de présence ont été remplies',      status: 'ok',    checked: true  },
         { id: 'maquettes', label: 'Les maquettes de chaque promotion créée ont été ajoutées', status: 'ok',    checked: true  },
@@ -34,7 +34,7 @@ export default function PlanningMacro(): React.ReactElement {
     ])
 
     useEffect(() => {
-        setItems(prev =>
+        setMacroItems(prev =>
             prev.map(it =>
                 it.id === 'promos'
                     ? { ...it, warning: hasPromosMismatch }
@@ -43,12 +43,31 @@ export default function PlanningMacro(): React.ReactElement {
         )
     }, [hasPromosMismatch]);
 
-    const toggleItem = (index: number, checked: boolean): void => {
-        setItems(prev => {
+    const [microItems, setMicroItems] = useState<ChecklistItem[]>([
+        { id: 'teachers',     label: 'Tous les enseignants sont créés',                       status: 'ok',    checked: true  },
+        { id: 'rooms',        label: 'Toutes les salles sont créées',                          status: 'ok',    checked: true  },
+        { id: 'matieres',     label: 'Toutes les matières sont créées',                        status: 'ok',    checked: true  },
+        { id: 'constraints',  label: 'Les indisponibilités ont été renseignées',               status: 'alert', checked: false },
+    ])
+
+    const toggleMacroItem = (index: number, checked: boolean): void => {
+        setMacroItems(prev => {
             const next = [...prev]
             next[index] = { ...next[index], checked }
             return next
         })
+    }
+
+    const toggleMicroItem = (index: number, checked: boolean): void => {
+        setMicroItems(prev => {
+            const next = [...prev]
+            next[index] = { ...next[index], checked }
+            return next
+        })
+    }
+
+    const handleGenerateMicro = (): void => {
+        console.log('[CHECKLIST] generate micro')
     }
 
     const [isLoading, setIsLoading] = useState(false)
@@ -126,36 +145,57 @@ export default function PlanningMacro(): React.ReactElement {
     };
 
     return (
-        <>
+        <div className="planning-page">
             {/* TITRE & SOUS-TITRE */}
             <PageHeader
-                title="Génération du planning macro"
+                title="Génération des plannings"
                 subtitle="Cochez chaque point uniquement s’il a été renseigné."
             />
 
             {/* CONTENU DE LA PAGE */}
-            <Checklist items={items} onToggle={toggleItem} />
+            <div className="planning-columns">
+                <section className="planning-column planning-column--macro">
+                    <h2 className="planning-column-title">Macro</h2>
+                    <Checklist items={macroItems} onToggle={toggleMacroItem} />
 
-            <button
-                className="btn-primary btn-generate"
-                onClick={handleGenerate}
-                disabled={isLoading}
-            >
-                Générer le planning<br/>macro
-            </button>
+                    <div className="planning-column-actions">
+                        <button
+                            className="btn-primary btn-generate"
+                            onClick={handleGenerate}
+                            disabled={isLoading}
+                        >
+                            Générer le planning<br/>macro
+                        </button>
 
-            {isLoading && <p>Génération en cours...</p>}
-            {message && <p>{message}</p>}
+                        {isLoading && <p>Génération en cours...</p>}
+                        {message && <p>{message}</p>}
 
-            {fileReady && (
-                <button
-                    className="btn-primary"
-                    onClick={downloadEDTFile}
-                    style={{ marginTop: '1rem' }}
-                >
-                    Télécharger le fichier
-                </button>
-            )}
-        </>
+                        {fileReady && (
+                            <button
+                                className="btn-primary"
+                                onClick={downloadEDTFile}
+                                style={{ marginTop: '1rem' }}
+                            >
+                                Télécharger le fichier
+                            </button>
+                        )}
+                    </div>
+                </section>
+
+                <section className="planning-column planning-column--micro">
+                    <h2 className="planning-column-title">Micro</h2>
+                    <Checklist items={microItems} onToggle={toggleMicroItem} />
+
+                    <div className="planning-column-actions">
+                        <button
+                            className="btn-primary btn-generate"
+                            onClick={handleGenerateMicro}
+                        >
+                            Générer le planning<br/>micro
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
     )
 }

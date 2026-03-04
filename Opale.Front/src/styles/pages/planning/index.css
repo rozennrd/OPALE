@@ -1,0 +1,72 @@
+/* src/styles/pages/planning/index.css */
+
+@layer pages {
+    .planning-page {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+    }
+
+    .planning-columns {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 0;
+        row-gap: 24px;
+        align-items: stretch;
+        flex: 1;
+        min-height: 0;
+    }
+
+    .planning-column {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        height: 100%;
+        min-height: 0;
+        min-width: 0;
+    }
+
+    .planning-column--macro {
+        padding-right: 24px;
+        border-right: 2px solid var(--border);
+    }
+
+    .planning-column--micro {
+        padding-left: 24px;
+    }
+
+    .planning-column-title {
+        margin: 0;
+        font-family: 'Nunito', sans-serif;
+        font-size: clamp(20px, 2.6vw, 30px);
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .planning-column-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: auto;
+        padding-top: 12px;
+    }
+
+    @media (max-width: 900px) {
+        .planning-columns {
+            grid-template-columns: 1fr;
+        }
+
+        .planning-column--macro {
+            padding-right: 0;
+            border-right: none;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .planning-column--micro {
+            padding-left: 0;
+            padding-top: 20px;
+        }
+    }
+}

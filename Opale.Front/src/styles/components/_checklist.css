@@ -36,9 +36,14 @@
         font-weight: 800;
     }
 
-    .badge.ok    { background: var(--brand); color: var(--text-on-brand); }
-    .badge.alert { background: var(--amber); color: var(--text-on-amber); }
+    .badge.ok,
+    .badge.alert {
+        background: var(--amber);
+        color: var(--text-on-amber);
+    }
     .badge.checked {
+        background: var(--brand);
+        color: var(--text-on-brand);
         box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .06);
     }
 
