@@ -1,10 +1,6 @@
 package com.opale.micro_planning.infra.repositories;
 
-import com.opale.micro_planning.infra.models.Cours;
-import com.opale.micro_planning.infra.models.Event;
-import com.opale.micro_planning.infra.models.Matiere;
-import com.opale.micro_planning.infra.models.Professeur;
-import com.opale.micro_planning.infra.models.TypeCours;
+import com.opale.micro_planning.infra.models.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -24,7 +20,7 @@ public interface CoursRepository extends JpaRepository<Cours, java.util.UUID> {
 
     List<Cours> findByType(TypeCours type);
 
-    List<Cours> findByIsDistanciel(Boolean isDistanciel);
+    List<Cours> findByDistanciel(Boolean distanciel);
 
     List<Cours> findByProfesseurId(java.util.UUID professeurId);
 

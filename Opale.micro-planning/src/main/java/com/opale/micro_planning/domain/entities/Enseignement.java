@@ -11,14 +11,22 @@ public class Enseignement {
     private UUID id;
     private Matiere matiere;
     private Professeur professeur;
-    private int nbHeures;
+    private Integer heuresTd;
+    private Integer heuresTp;
+    private Integer heuresProjet;
+    private Integer heuresElearning;
+    private Integer heuresAutre;
 
 
-    public Enseignement(UUID id, Matiere matiere, Professeur professeur, int nbHeures) {
+    public Enseignement(UUID id, Matiere matiere, Professeur professeur, Integer heuresTd, Integer heuresTp, Integer heuresProjet, Integer heuresElearning, Integer heuresAutre) {
         this.id = id;
         this.matiere = matiere;
         this.professeur = professeur;
-        this.nbHeures = nbHeures;
+        this.heuresTd = heuresTd;
+        this.heuresTp = heuresTp;
+        this.heuresProjet = heuresProjet;
+        this.heuresElearning = heuresElearning;
+        this.heuresAutre = heuresAutre;
     }
 
     public UUID getId() {
@@ -33,12 +41,43 @@ public class Enseignement {
         return professeur;
     }
 
-    public int getNbHeures() {
-        return nbHeures;
+    public Integer getHeuresTd() {
+        return heuresTd;
+    }
+
+    public Integer getHeuresTp() {
+        return heuresTp;
+    }
+
+    public Integer getHeuresProjet() {
+        return heuresProjet;
+    }
+
+    public Integer getHeuresElearning() {
+        return heuresElearning;
+    }
+
+    public Integer getHeuresAutre() {
+        return heuresAutre;
+    }
+
+    /**
+     * Get total hours from all hour types
+     */
+    public int getTotalHeures() {
+        int total = 0;
+        if (heuresTd != null) total += heuresTd;
+        if (heuresTp != null) total += heuresTp;
+        if (heuresProjet != null) total += heuresProjet;
+        if (heuresElearning != null) total += heuresElearning;
+        if (heuresAutre != null) total += heuresAutre;
+        return total;
     }
 
     public ArrayList<Cours> breakIntoCourses(int defaultDuration, EnseignementBreakdownStrategy strategy) {
         ArrayList<Cours> coursesDurations = new ArrayList<>();
+        int nbHeures = getTotalHeures();
+        
         switch(strategy){
             case EGALIZE_COURSE_DURATION -> {
                 double nbOfCourses;

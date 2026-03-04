@@ -5,6 +5,7 @@ import com.opale.micro_planning.domain.entities.Matiere;
 import com.opale.micro_planning.domain.entities.Professeur;
 import com.opale.micro_planning.domain.entities.Promotion;
 import com.opale.micro_planning.domain.entities.Salle;
+import com.opale.micro_planning.infra.models.Cycle;
 import com.opale.micro_planning.infra.models.TypeProfesseur;
 import com.opale.micro_planning.infra.models.TypeSalle;
 import com.opale.micro_planning.infra_json.models.*;
@@ -20,10 +21,21 @@ public class JsonToDomainMapper {
 
     public static Promotion toDomainPromotion(PromotionJson json) {
         if (json == null) return null;
+        
+        // Create a minimal Cycle object if idCycle is present
+        Cycle cycle = null;
+        if (json.getIdCycle() != null) {
+            cycle = new Cycle();
+            cycle.setId(json.getIdCycle());
+        }
+        
         return Promotion.builder()
             .id(json.getId())
             .nom(json.getNom())
             .effectifs(json.getEffectifs())
+            .cycle(cycle)
+            .dateStart(json.getDateStart())
+            .dateEnd(json.getDateEnd())
             .build();
     }
 
@@ -33,33 +45,64 @@ public class JsonToDomainMapper {
             .nom(json.getNom())
             .volumeHoraire(json.getVolumeHoraire())
             .promotion(toDomainPromotion(json.getPromotion()))
+            .semestre(json.getSemestre())
+            .nbPartiels(json.getNbPartiels())
+            .nbEvalIntermediaire(json.getNbEvalIntermediaire())
+            .heuresTd(json.getHeuresTd())
+            .heuresTp(json.getHeuresTp())
             .build();
     }
 
     public static Professeur toDomainProfesseur(ProfesseurJson json) {
+        // Convert string type to TypeProfesseur enum
+        TypeProfesseur typeProfesseur = null;
+        if (json.getType() != null) {
+            try {
+                typeProfesseur = TypeProfesseur.valueOf(json.getType().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // If type doesn't match enum, leave as null
+            }
+        }
+        
         return Professeur.builder()
             .id(json.getId())
             .nom(json.getNom())
             .prenom(json.getPrenom())
             .email(json.getEmail())
-            // Note: TypeProfesseur enum conversion would go here if needed
+            .type(typeProfesseur)
+            .modaliteEnseignement(json.getModaliteEnseignement())
             .build();
     }
 
     public static Enseignement toDomainEnseignement(EnseignementJson json) {
+        // Map single nbHeures to heuresTd, other hour types remain null
         return new Enseignement(
             json.getId(),
             toDomainMatiere(json.getMatiere()),
             toDomainProfesseur(json.getProfesseur()),
-            json.getNbHeures()
+            json.getNbHeures(),  // heuresTd - default allocation
+            null,                // heuresTp
+            null,                // heuresProjet
+            null,                // heuresElearning
+            null                 // heuresAutre
         );
     }
 
     public static Salle toDomainSalle(SalleJson json) {
+        // Convert string type to TypeSalle enum
+        TypeSalle typeSalle = null;
+        if (json.getType() != null) {
+            try {
+                typeSalle = TypeSalle.valueOf(json.getType());
+            } catch (IllegalArgumentException e) {
+                // If type doesn't match enum, leave as null
+            }
+        }
+        
         return Salle.builder()
             .id(json.getId())
             .nom(json.getNom())
-            // TypeSalle enum conversion would go here if needed
+            .type(typeSalle)
             .capacite(json.getCapacite())
             .etage(json.getEtage())
             .build();

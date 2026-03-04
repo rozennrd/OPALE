@@ -41,5 +41,5 @@ public class Cours {
     private Matiere matiere;
 
     @Column(name = "is_distanciel", nullable = false)
-    private Boolean isDistanciel = false;
+    private Boolean distanciel = false;
 }

@@ -3,13 +3,16 @@ package com.opale.micro_planning.api.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opale.micro_planning.app.dtos.SchedulingRequest;
 import com.opale.micro_planning.app.dtos.SchedulingResult;
-import com.opale.micro_planning.app.services.JsonSchedulingService;
+
 import com.opale.micro_planning.app.services.ExcelExportService;
+import com.opale.micro_planning.infra_json.services.JsonAccessDataService;
+import com.opale.micro_planning.infra_json.services.JsonSchedulingService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -21,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SchedulingController.class)
+@ActiveProfiles("test")
 class SchedulingControllerJsonTest {
 
     @Autowired
@@ -31,6 +35,9 @@ class SchedulingControllerJsonTest {
 
     @MockBean
     private JsonSchedulingService jsonSchedulingService;
+
+    @MockBean
+    private JsonAccessDataService jsonAccessDataService;
 
     @MockBean
     private ExcelExportService excelExportService;
@@ -54,7 +61,7 @@ class SchedulingControllerJsonTest {
             "Scheduling completed successfully"
         );
 
-        when(jsonSchedulingService.schedulePromotion(request)).thenReturn(expectedResult);
+        when(jsonSchedulingService.schedulePromotion(any(SchedulingRequest.class))).thenReturn(expectedResult);
 
         // When & Then
         mockMvc.perform(post("/api/scheduling/json/schedule")
@@ -84,7 +91,7 @@ class SchedulingControllerJsonTest {
 
         byte[] excelData = "fake excel data".getBytes();
 
-        when(jsonSchedulingService.schedulePromotion(request)).thenReturn(successfulResult);
+        when(jsonSchedulingService.schedulePromotion(any(SchedulingRequest.class))).thenReturn(successfulResult);
         when(excelExportService.exportScheduleToExcel(any(SchedulingResult.class), any(String.class)))
             .thenReturn(excelData);
 
@@ -111,7 +118,7 @@ class SchedulingControllerJsonTest {
         SchedulingResult failedResult = new SchedulingResult(
             null, false, null, 0, "No feasible schedule found");
 
-        when(jsonSchedulingService.schedulePromotion(request)).thenReturn(failedResult);
+        when(jsonSchedulingService.schedulePromotion(any(SchedulingRequest.class))).thenReturn(failedResult);
 
         // When & Then
         mockMvc.perform(post("/api/scheduling/json/schedule/export")

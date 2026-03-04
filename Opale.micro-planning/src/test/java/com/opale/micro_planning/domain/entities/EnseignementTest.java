@@ -34,7 +34,12 @@ class EnseignementTest {
                 UUID.randomUUID(),
                 matiere,
                 professeur,
-                10 // nbHeures
+                10, // nbHeures,
+                0,
+                0,
+                0,
+                0
+
         );
     }
 
@@ -47,7 +52,11 @@ class EnseignementTest {
                 UUID.randomUUID(),
                 matiere,
                 professeur,
-                8
+                8,
+                0,
+                0,
+                0,
+                0
         );
 
         // When
@@ -84,7 +93,11 @@ class EnseignementTest {
                 UUID.randomUUID(),
                 matiere,
                 professeur,
-                4
+                4,
+                0,
+                0,
+                0,
+                0
         );
 
         // When
@@ -124,7 +137,11 @@ class EnseignementTest {
                 UUID.randomUUID(),
                 matiere,
                 professeur,
-                8
+                8,
+                0,
+                0,
+                0,
+                0
         );
 
         // When
@@ -173,6 +190,10 @@ class EnseignementTest {
                 UUID.randomUUID(),
                 matiere,
                 professeur,
+                0,
+                0,
+                0,
+                0,
                 0
         );
 
@@ -190,7 +211,11 @@ class EnseignementTest {
                 UUID.randomUUID(),
                 matiere,
                 professeur,
-                5
+                8,
+                0,
+                0,
+                0,
+                0
         );
 
         // When: EGALIZE should eventually find 1.0 hour (5 courses of 1h)
@@ -199,7 +224,7 @@ class EnseignementTest {
         // Then
         assertEquals(2, result.size());
         for (Cours cours : result) {
-            assertEquals(2.5, cours.getDuration());
+            assertEquals(4, cours.getDuration());
         }
     }
 }

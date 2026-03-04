@@ -25,19 +25,15 @@ public class InfrastructureToDomainMapper {
     }
 
     public static Enseignement toDomainEnseignement(com.opale.micro_planning.infra.models.Enseignement infraEnseignement) {
-        // Calculate total hours from individual hour fields
-        int totalHeures = 0;
-        if (infraEnseignement.getHeuresTd() != null) totalHeures += infraEnseignement.getHeuresTd();
-        if (infraEnseignement.getHeuresTp() != null) totalHeures += infraEnseignement.getHeuresTp();
-        if (infraEnseignement.getHeuresProjet() != null) totalHeures += infraEnseignement.getHeuresProjet();
-        if (infraEnseignement.getHeuresElearning() != null) totalHeures += infraEnseignement.getHeuresElearning();
-        if (infraEnseignement.getHeuresAutre() != null) totalHeures += infraEnseignement.getHeuresAutre();
-
         return new Enseignement(
                 infraEnseignement.getId(),
                 toDomainMatiere(infraEnseignement.getMatiere()),
                 toDomainProfesseur(infraEnseignement.getProfesseur()),
-                totalHeures
+                infraEnseignement.getHeuresTd(),
+                infraEnseignement.getHeuresTp(),
+                infraEnseignement.getHeuresProjet(),
+                infraEnseignement.getHeuresElearning(),
+                infraEnseignement.getHeuresAutre()
         );
     }
 

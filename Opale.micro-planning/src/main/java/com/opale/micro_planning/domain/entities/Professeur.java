@@ -1,5 +1,6 @@
 package com.opale.micro_planning.domain.entities;
 
+import com.opale.micro_planning.infra.models.ModaliteEnseignement;
 import com.opale.micro_planning.infra.models.TypeProfesseur;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +15,7 @@ public class Professeur {
     private String prenom;
     private String email;
     private TypeProfesseur type;
-    private Boolean distanciel;
+    private ModaliteEnseignement modaliteEnseignement;
 
     // Converter methods
     public com.opale.micro_planning.infra.models.Professeur toInfra() {
@@ -24,7 +25,7 @@ public class Professeur {
         infra.setPrenom(this.prenom);
         infra.setEmail(this.email);
         infra.setType(this.type);
-        infra.setDistanciel(this.distanciel);
+        infra.setModaliteEnseignement(this.modaliteEnseignement);
         return infra;
     }
 
@@ -35,7 +36,7 @@ public class Professeur {
             .prenom(infra.getPrenom())
             .email(infra.getEmail())
             .type(infra.getType())
-            .distanciel(infra.getDistanciel())
+            .modaliteEnseignement(infra.getModaliteEnseignement())
             .build();
     }
 }

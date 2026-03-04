@@ -25,7 +25,7 @@ public class Cours   {
     private final Boolean showMicro = true;
     private final Boolean isBlocking = true;
     private final Boolean isExceptional = false;
-    private final Boolean isDistanciel = false;
+    private Boolean distanciel = false;
 
     private double duration; //in hours
 

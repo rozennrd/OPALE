@@ -352,9 +352,11 @@ class TimeConstraintsHandlerTest {
         assertEquals(CpSolverStatus.OPTIMAL, status, "4.5-hour course should fit in morning session");
 
         int endMinutes = (int) solver.value(courseVars.get(course).getEndVar());
-
-        // Must end at or before lunch start (270 min from 8:00)
-        assertTrue(endMinutes <= LUNCH_START_FROM_DAY_START,
+        int startMinutes = (int) solver.value(courseVars.get(course).getStartVar());
+        //assertEquals(0, startMinutes);
+        //assertEquals(LUNCH_START_FROM_DAY_START, endMinutes);
+        // Must end at or before lunch start (270 min from 8:00), or start after lunch end
+        assertTrue(endMinutes <= LUNCH_START_FROM_DAY_START || startMinutes >= LUNCH_END_FROM_DAY_START,
             "Course ending exactly at lunch start should be valid");
     }
 

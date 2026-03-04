@@ -20,7 +20,8 @@ public class MatiereJson {
     @JsonProperty("volume_horaire")
     private Double volumeHoraire;
     
-    private PromotionJson promotion; // Nested object (unlike flat ID in enseignement)
+    private PromotionJson promotion; // Nested object
+    
     private Integer semestre;
     
     @JsonProperty("nb_partiels")

@@ -41,13 +41,18 @@ public class Professeur {
     @Column(name = "email_perso")
     private String emailPerso;
 
+    @Size(max = 20)
+    @Column(name = "telephone")
+    private String telephone;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private TypeProfesseur type;
 
-    @Column(name = "distanciel", nullable = false)
-    private Boolean distanciel = false;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "modalite_enseignement")
+    private ModaliteEnseignement modaliteEnseignement;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "campus_origin")

@@ -30,7 +30,7 @@ public class Salle {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
+    @Column(name = "type_principal", nullable = false)
     private TypeSalle type;
 
     @Min(0)

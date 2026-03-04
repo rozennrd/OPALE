@@ -1,5 +1,6 @@
 package com.opale.micro_planning.infra.repositories;
 
+import com.opale.micro_planning.infra.models.ModaliteEnseignement;
 import com.opale.micro_planning.infra.models.Professeur;
 import com.opale.micro_planning.infra.models.TypeProfesseur;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +16,7 @@ public interface ProfesseurRepository extends JpaRepository<Professeur, java.uti
 
     List<Professeur> findByType(TypeProfesseur type);
 
-    List<Professeur> findByDistanciel(Boolean distanciel);
+    List<Professeur> findByModaliteEnseignement(ModaliteEnseignement modaliteEnseignement);
 
     boolean existsByEmail(String email);
 }

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
+@ActiveProfiles("test")
 class SchedulingServiceIntegrationTest {
 
     @Autowired
@@ -25,6 +26,9 @@ class SchedulingServiceIntegrationTest {
 
     @Autowired
     private PromotionRepository promotionRepository;
+
+    @Autowired
+    private CycleRepository cycleRepository;
 
     @Autowired
     private MatiereRepository matiereRepository;
@@ -42,53 +46,56 @@ class SchedulingServiceIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        // Create test promotion
+        // Create and save Cycle FIRST
+        Cycle cycle = new Cycle();
+        cycle.setNom("Test Cycle");
+        cycle.setType(TypeCycle.INITIAL);
+        cycle = cycleRepository.save(cycle);
+
+        // Create test promotion (let JPA generate the ID)
         Promotion promotion = new Promotion();
-        promotion.setId(UUID.randomUUID());
         promotion.setNom("Test Promotion");
         promotion.setEffectifs(30);
-        promotion.setCycle(new Cycle(UUID.randomUUID(), "Test Cycle", TypeCycle.INITIAL));
+        promotion.setCycle(cycle);
 
         promotion = promotionRepository.save(promotion);
         testPromotionId = promotion.getId();
 
-        // Create test professor
+        // Create test professor (let JPA generate the ID)
         Professeur professeur = new Professeur();
-        professeur.setId(UUID.randomUUID());
         professeur.setNom("Dupont");
         professeur.setPrenom("Jean");
         professeur.setEmail("jean.dupont@test.com");
+        professeur.setType(TypeProfesseur.Permanent);
         professeur = professeurRepository.save(professeur);
 
-        // Create test subject/matiere
+        // Create test subject/matiere (let JPA generate the ID, set all required fields)
         Matiere matiere = new Matiere();
-        matiere.setId(UUID.randomUUID());
         matiere.setNom("Test Subject");
         matiere.setVolumeHoraire(40.0);
         matiere.setPromotion(promotion);
+        matiere.setSemestre(1);
+        matiere.setNbPartiels(1);
         matiere = matiereRepository.save(matiere);
 
-        // Create enseignement
+        // Create enseignement (let JPA generate the ID)
         Enseignement enseignement = new Enseignement();
-        enseignement.setId(UUID.randomUUID());
         enseignement.setMatiere(matiere);
         enseignement.setProfesseur(professeur);
-        enseignement.setNbHeures(8); // Will create 2 courses of 4 hours each
+        enseignement.setHeuresTd(8); // Will create 2 courses of 4 hours each
         enseignementRepository.save(enseignement);
 
-        // Create test rooms
+        // Create test rooms (let JPA generate the ID)
         Salle salle1 = new Salle();
-        salle1.setId(UUID.randomUUID());
         salle1.setNom("Room A");
-        salle1.setType(TypeSalle.TD);
+        salle1.setType(TypeSalle.Cours);
         salle1.setCapacite(40);
         salle1.setEtage(1);
         salleRepository.save(salle1);
 
         Salle salle2 = new Salle();
-        salle2.setId(UUID.randomUUID());
         salle2.setNom("Room B");
-        salle2.setType(TypeSalle.TD);
+        salle2.setType(TypeSalle.Cours);
         salle2.setCapacite(40);
         salle2.setEtage(1);
         salleRepository.save(salle2);
@@ -128,10 +135,10 @@ class SchedulingServiceIntegrationTest {
             LocalDate.of(2024, 1, 12)
         );
 
+        SchedulingResult result = schedulingService.schedulePromotion(request);
+
         // When & Then
-        assertThrows(Exception.class, () ->
-            schedulingService.schedulePromotion(request)
-        );
+        assertEquals(0, result.getTotalCourses());
     }
 
     @Test

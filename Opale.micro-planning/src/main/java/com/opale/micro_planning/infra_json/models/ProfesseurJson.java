@@ -1,5 +1,6 @@
 package com.opale.micro_planning.infra_json.models;
 
+import com.opale.micro_planning.infra.models.ModaliteEnseignement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,5 +19,5 @@ public class ProfesseurJson {
     private String prenom;
     private String email;
     private String type; // Will be converted to enum
-    private Boolean distancel; // Note: JSON has "distanciel"
+    private ModaliteEnseignement modaliteEnseignement; // Note: JSON has "distanciel"
 }

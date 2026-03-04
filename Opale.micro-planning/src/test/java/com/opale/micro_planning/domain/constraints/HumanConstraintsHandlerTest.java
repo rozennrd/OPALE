@@ -87,7 +87,7 @@ class HumanConstraintsHandlerTest {
     }
 
     private void createCourseVariables(Cours course) {
-        int durationMinutes = (int) course.getDuration() * 60;
+        int durationMinutes = (int) (course.getDuration() * 60);
         int numDays = availableDays.size();
         int numRooms = availableRooms.size();
 

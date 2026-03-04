@@ -70,19 +70,19 @@ class SchedulingServiceTest {
         testEnseignement.setId(UUID.randomUUID());
         testEnseignement.setMatiere(testMatiere);
         testEnseignement.setProfesseur(professeur);
-        testEnseignement.setNbHeures(8);
+        testEnseignement.setHeuresTd(8);
 
         testSalle1 = new Salle();
         testSalle1.setId(UUID.randomUUID());
         testSalle1.setNom("Room A");
-        testSalle1.setType(TypeSalle.TD);
+        testSalle1.setType(TypeSalle.Cours);
         testSalle1.setCapacite(40);
         testSalle1.setEtage(1);
 
         testSalle2 = new Salle();
         testSalle2.setId(UUID.randomUUID());
         testSalle2.setNom("Room B");
-        testSalle2.setType(TypeSalle.TD);
+        testSalle2.setType(TypeSalle.Cours);
         testSalle2.setCapacite(40);
         testSalle2.setEtage(1);
     }
@@ -90,7 +90,7 @@ class SchedulingServiceTest {
     @Test
     void schedulePromotion_WithValidData_ReturnsSuccessfulResult() {
         // Given
-        when(matiereRepository.findByPromotionIdAndSemestre(testPromotionId, null))
+        when(matiereRepository.findByPromotionId(testPromotionId))
             .thenReturn(List.of(testMatiere));
         when(enseignementRepository.findByMatiere(testMatiere))
             .thenReturn(List.of(testEnseignement));
@@ -122,7 +122,7 @@ class SchedulingServiceTest {
     @Test
     void schedulePromotion_WithEmptyMatieres_ReturnsSuccessfulResult() {
         // Given - no matieres for the promotion
-        when(matiereRepository.findByPromotionIdAndSemestre(testPromotionId, null))
+        when(matiereRepository.findByPromotionId(testPromotionId))
             .thenReturn(List.of());
         when(salleRepository.findAll())
             .thenReturn(List.of(testSalle1, testSalle2));
@@ -146,7 +146,7 @@ class SchedulingServiceTest {
     @Test
     void schedulePromotion_WithRepositoryException_ThrowsSchedulingException() {
         // Given - repository throws exception
-        when(matiereRepository.findByPromotionIdAndSemestre(testPromotionId, null))
+        when(matiereRepository.findByPromotionId(testPromotionId))
             .thenThrow(new RuntimeException("Database error"));
 
         SchedulingRequest request = new SchedulingRequest(
@@ -168,7 +168,7 @@ class SchedulingServiceTest {
     void schedulePromotion_WithSchedulingFailure_ReturnsFailureResult() {
         // Given - setup data that will cause scheduling to fail
         // (This is hard to mock precisely, but we can test the failure handling)
-        when(matiereRepository.findByPromotionIdAndSemestre(testPromotionId, null))
+        when(matiereRepository.findByPromotionId(testPromotionId))
             .thenReturn(List.of(testMatiere));
         when(enseignementRepository.findByMatiere(testMatiere))
             .thenReturn(List.of(testEnseignement));
@@ -201,13 +201,13 @@ class SchedulingServiceTest {
 
         assertNotNull(domainEnseignement);
         assertEquals(testEnseignement.getId(), domainEnseignement.getId());
-        assertEquals(8, domainEnseignement.getNbHeures());
+        assertEquals(8, domainEnseignement.getHeuresTd());
     }
 
     @Test
     void schedulePromotion_DataFlow_Integration() {
         // Given - complete data flow test
-        when(matiereRepository.findByPromotionIdAndSemestre(testPromotionId, null))
+        when(matiereRepository.findByPromotionId(testPromotionId))
             .thenReturn(List.of(testMatiere));
         when(enseignementRepository.findByMatiere(testMatiere))
             .thenReturn(List.of(testEnseignement));

@@ -336,17 +336,26 @@ class LunchConstraintsHandlerTest {
 
         // When
         List<IntVar> penalties = handler.addConstraints(model, null, data);
+        // Minimize penalties
+        if (!penalties.isEmpty()) {
+            IntVar totalPenalty = model.newIntVar(0, penalties.size() * 10L, "total_penalty");
+            model.addEquality(totalPenalty, LinearExpr.sum(penalties.toArray(new IntVar[0])));
+            model.minimize(totalPenalty);
+        }
+
 
         // Then
         CpSolver solver = new CpSolver();
         CpSolverStatus status = solver.solve(model);
 
+
         assertEquals(CpSolverStatus.OPTIMAL, status);
 
         int endMinutes = (int) solver.value(courseVars.get(course).getEndVar());
-        
+        int startMinutes = (int) solver.value(courseVars.get(course).getStartVar());
+        assertEquals(270, endMinutes );
         // Course ending at 12:30 is valid (270 min from 8:00)
-        assertTrue(endMinutes <= 270 || endMinutes >= 330,
+        assertTrue(endMinutes <= 270 || startMinutes >= 330,
             "Course should end at/before 12:30 or start after 13:30");
     }
 

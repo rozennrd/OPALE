@@ -31,20 +31,21 @@ public class RoomConstraintsHandler implements BaseConstraintHandler {
             IntVar roomVar = entry.getValue().getRoomVar();
 
             // Si distanciel, pas de contrainte de capacité, on skip.
-            if (!course.getIsDistanciel()) {
-                // Get the number of students in this course
-                int courseSize = course.getMatiere().getPromotion().getEffectifs();
-
-                // For each room, add a constraint if the course tries to use that room
-                for (int roomIndex = 0; roomIndex < data.availableRooms.size(); roomIndex++) {
-                    Salle room = data.availableRooms.get(roomIndex);
-                    if (courseSize > room.getCapacite()) {
-                        // Cette salle est trop petite, ce cours ne peut pas s'y mettre
-                        model.addDifferent(roomVar, roomIndex);
-                    }
-                }
+            if (course.getDistanciel() != null && course.getDistanciel()) {
+                continue; // Distance courses don't need room capacity constraints
             }
 
+            // Get the number of students in this course
+            int courseSize = course.getMatiere().getPromotion().getEffectifs();
+
+            // For each room, add a constraint if the course tries to use that room
+            for (int roomIndex = 0; roomIndex < data.availableRooms.size(); roomIndex++) {
+                Salle room = data.availableRooms.get(roomIndex);
+                if (courseSize > room.getCapacite()) {
+                    // Cette salle est trop petite, ce cours ne peut pas s'y mettre
+                    model.addDifferent(roomVar, roomIndex);
+                }
+            }
         }
     }
 

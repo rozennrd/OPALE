@@ -24,7 +24,7 @@ import java.util.UUID;
 @CrossOrigin(origins = "*") // Configure as needed for your frontend
 public class SchedulingController {
 
-    private SchedulingService schedulingService;
+    private final SchedulingService schedulingService;
     private final JsonSchedulingService jsonSchedulingService;
     private final JsonAccessDataService jsonAccessDataService;
     private final ExcelExportService excelExportService;

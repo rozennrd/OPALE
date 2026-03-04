@@ -20,7 +20,7 @@ public interface MatiereRepository extends JpaRepository<Matiere, java.util.UUID
 
     List<Matiere> findBySemestre(Integer semestre);
 
-    List<Matiere> findByPromotionIdAndSemestre(java.util.UUID promotionId, Integer semestre);
+    List<Matiere> findByPromotionId(java.util.UUID promotionId);
 
     List<Matiere> findBySpecialiteIdAndSemestre(java.util.UUID specialiteId, Integer semestre);
 }

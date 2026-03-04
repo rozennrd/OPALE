@@ -39,7 +39,8 @@ public class SchedulingService {
     public SchedulingResult schedulePromotion(SchedulingRequest request) {
         try {
             // 1. Fetch data from infra layer
-            var matieres = matiereRepository.findByPromotionIdAndSemestre(request.getPromotionId(), null);
+            var matieres = matiereRepository.findByPromotionId(request.getPromotionId());
+            
             var infraEnseignements = new ArrayList<com.opale.micro_planning.infra.models.Enseignement>();
             var infraSalles = salleRepository.findAll();
 
