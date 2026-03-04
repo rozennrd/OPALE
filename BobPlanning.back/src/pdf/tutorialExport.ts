@@ -37,7 +37,8 @@ export type ExportPayload = {
 type TocLayout = {
     pages: number
     linesPerPage: number
-    lineHeight: number
+    rowHeight: number
+    rowGap: number
     titleHeight: number
 }
 
@@ -217,17 +218,19 @@ const decodeDataUrl = (dataUrl?: string): Buffer | null => {
 
 const computeTocLayout = (doc: PdfDoc, entryCount: number): TocLayout => {
     doc.font('Helvetica').fontSize(12)
-    const lineHeight = Math.max(24, doc.currentLineHeight(true) + 8)
+    const rowHeight = Math.max(26, doc.currentLineHeight(true) + 6)
+    const rowGap = 6
     const titleHeight = 28
     const availableHeight =
         doc.page.height - doc.page.margins.top - doc.page.margins.bottom - titleHeight - 12
-    const linesPerPage = Math.max(1, Math.floor(availableHeight / lineHeight))
+    const linesPerPage = Math.max(1, Math.floor(availableHeight / (rowHeight + rowGap)))
     const pages = Math.max(1, Math.ceil(entryCount / linesPerPage))
 
     return {
         pages,
         linesPerPage,
-        lineHeight,
+        rowHeight,
+        rowGap,
         titleHeight,
     }
 }
@@ -295,9 +298,10 @@ const renderToc = (
 ) => {
     let entryIndex = 0
     const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right
-    const pageNumberWidth = 40
-    const titleWidth = pageWidth - pageNumberWidth - 8
-    const rowHeight = layout.lineHeight
+    const rowPadding = 12
+    const pageNumberWidth = 36
+    const titleWidth = pageWidth - pageNumberWidth - rowPadding * 2
+    const rowHeight = layout.rowHeight
 
     tocPages.forEach((pageNumber) => {
         doc.switchToPage(pageNumber - 1)
@@ -313,20 +317,20 @@ const renderToc = (
 
         for (let i = 0; i < layout.linesPerPage && entryIndex < entries.length; i += 1) {
             const entry = entries[entryIndex]
-            const rowY = y + i * layout.lineHeight
+            const rowY = y + i * (layout.rowHeight + layout.rowGap)
             drawCard(doc, doc.page.margins.left, rowY, pageWidth, rowHeight, {
                 fill: COLORS.panel,
                 stroke: COLORS.border,
                 radius: 8,
             })
             doc.fillColor(COLORS.text)
-            drawCenteredText(doc, entry.title, doc.page.margins.left + 8, rowY, titleWidth, rowHeight)
+            drawCenteredText(doc, entry.title, doc.page.margins.left + rowPadding, rowY, titleWidth, rowHeight)
             const pageLabel = String(entry.page)
             doc.fillColor(COLORS.muted)
             drawCenteredText(
                 doc,
                 pageLabel,
-                doc.page.margins.left + titleWidth + 8,
+                doc.page.margins.left + pageWidth - pageNumberWidth - rowPadding,
                 rowY,
                 pageNumberWidth,
                 rowHeight,
@@ -589,6 +593,12 @@ export const generateTutorialPdf = async (payload: ExportPayload): Promise<Buffe
         currentPageNumber += 1
         tocEntries.push({ title: tutorial.title, page: currentPageNumber })
         await renderTutorial(doc, tutorial, getImage)
+
+        const pageRange = (doc as unknown as { bufferedPageRange?: () => { start: number; count: number } })
+            .bufferedPageRange?.()
+        if (pageRange) {
+            currentPageNumber = pageRange.start + pageRange.count - 1
+        }
     }
 
     renderToc(doc, tocLayout, tocEntries, tocPages)
