@@ -431,21 +431,23 @@ const renderSteps = async (
             const textHeight = doc.heightOfString(text, { width: textWidth })
             ensureSpace(doc, textHeight + circleSize + SPACING.sm)
 
-            const startY = doc.y
+            const textY = doc.y
+            const lineHeight = doc.currentLineHeight(false)
+            const circleY = textY + lineHeight / 2 - circleSize / 2
             doc
                 .save()
                 .fillColor(COLORS.primary)
-                .circle(startX + circleSize / 2, startY + circleSize / 2, circleSize / 2)
+                .circle(startX + circleSize / 2, circleY + circleSize / 2, circleSize / 2)
                 .fill()
                 .restore()
             const stepLabel = String(i + 1)
             doc.font('Helvetica-Bold').fontSize(9).fillColor(COLORS.primaryDark)
-            drawCenteredCapText(doc, stepLabel, startX, startY, circleSize, circleSize, { align: 'center' })
-            doc.font('Helvetica').fontSize(11).fillColor(COLORS.text).text(text, textX, startY, {
+            drawCenteredCapText(doc, stepLabel, startX, circleY, circleSize, circleSize, { align: 'center' })
+            doc.font('Helvetica').fontSize(11).fillColor(COLORS.text).text(text, textX, textY, {
                 width: textWidth,
             })
-            const rowHeight = Math.max(circleSize, doc.y - startY)
-            doc.y = startY + rowHeight + SPACING.sm
+            const rowHeight = Math.max(circleSize, doc.y - textY)
+            doc.y = textY + rowHeight + SPACING.sm
         }
 
         if (step.subSteps && step.subSteps.length > 0) {
