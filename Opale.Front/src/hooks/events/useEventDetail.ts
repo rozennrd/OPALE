@@ -76,6 +76,11 @@ export const useEventDetail = (
     const [hasChanges, setHasChanges] = useState(false)
     const [saving, setSaving] = useState(false)
 
+    const normalizeForCompare = (value: EventDraft) => {
+        const { selectedSalleIds, ...rest } = value
+        return rest
+    }
+
     useEffect(() => {
         const initial = buildInitialDraft(event)
         setSnapshot(initial)
@@ -85,8 +90,8 @@ export const useEventDetail = (
     }, [event])
 
     useEffect(() => {
-        const current = JSON.stringify(draft)
-        const base = JSON.stringify(snapshot)
+        const current = JSON.stringify(normalizeForCompare(draft))
+        const base = JSON.stringify(normalizeForCompare(snapshot))
         setHasChanges(current !== base)
 
     }, [draft, snapshot])
