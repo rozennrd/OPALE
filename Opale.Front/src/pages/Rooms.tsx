@@ -141,7 +141,6 @@ export default function Rooms() {
                             floor={floor}
                             rooms={roomsByFloor[floor] || []}
                             onSelectRoom={setSelectedRoom}
-                            onAddRoom={addRoom}
                             selectionMode={selectionMode}
                             selectedRoomIds={selectedRoomIdsSet}
                             onToggleRoomSelection={toggleRoomSelection}
