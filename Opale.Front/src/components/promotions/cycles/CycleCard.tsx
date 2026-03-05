@@ -615,6 +615,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                         <tr>
                                             <td colSpan={2} className="maquette-preview-summary-fullrow">
                                                 <span>Feuilles détectées</span>
+                                                {' : '}
                                                 <strong>{previewData.metadata.feuilles.join(', ') || '-'}</strong>
                                             </td>
                                         </tr>

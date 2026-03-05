@@ -147,6 +147,20 @@
         color: #b91c1c; /* rouge bien visible */
     }
 
+    .promo-info {
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: rgba(59, 130, 246, 0.12);
+        border: 1px solid rgba(59, 130, 246, 0.35);
+        color: #1d4ed8;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .promo-info p {
+        margin: 0;
+    }
+
     /* Warnings (meme format que la card matiere) */
     .promo-warning {
         margin-top: 12px;
