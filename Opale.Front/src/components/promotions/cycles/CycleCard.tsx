@@ -73,6 +73,31 @@ const fileKey = (file: File): string => {
     return `${file.name}-${file.size}-${file.lastModified}`
 }
 
+const getPromotionNumberFromCode = (promotionCode?: string | null): number | null => {
+    if (!promotionCode) return null
+    const matches = promotionCode.match(/\d{1,2}/g)
+    if (!matches || matches.length === 0) return null
+    const value = Number(matches[matches.length - 1])
+    return Number.isFinite(value) && value > 0 ? value : null
+}
+
+const mapSemestreToYearSemestre = (semestre: number, promoNumber: number | null): number => {
+    if (!Number.isFinite(semestre) || semestre <= 0) return 1
+    if (!promoNumber) return semestre % 2 === 0 ? 2 : 1
+    return semestre === promoNumber * 2 ? 2 : 1
+}
+
+const formatSemestresForDisplay = (semestres: number[], promotionCode?: string | null): string => {
+    if (!semestres || semestres.length === 0) return '-'
+    const promoNumber = getPromotionNumberFromCode(promotionCode)
+    const mapped = Array.from(
+        new Set(
+            semestres.map((semestre) => mapSemestreToYearSemestre(semestre, promoNumber)),
+        ),
+    ).sort((a, b) => a - b)
+    return mapped.map((value) => `S${value}`).join(', ')
+}
+
 const isCommunSpecialite = (value: string | null | undefined): boolean => {
     if (!value) return false
 
@@ -724,9 +749,10 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                                     <td>{matiere.ueNom || '-'}</td>
                                                     <td>{matiere.matiereNom || '-'}</td>
                                                     <td>
-                                                        {matiere.semestres?.length
-                                                            ? [...matiere.semestres].sort((left, right) => left - right).join(', ')
-                                                            : '-'}
+                                                        {formatSemestresForDisplay(
+                                                            matiere.semestres ?? [],
+                                                            matiere.promotionCode,
+                                                        )}
                                                     </td>
                                                     {shouldShowSpecialiteColumn && (
                                                         <td>{matiere.specialiteLabel || matiere.specialiteCode || '-'}</td>
