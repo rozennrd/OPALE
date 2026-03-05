@@ -273,6 +273,37 @@ export function useEvents() {
         }
     }
 
+    const deleteEvents = async (eventIds: string[]) => {
+        const ids = Array.from(new Set(eventIds.filter(Boolean)))
+
+        if (ids.length === 0) {
+            return { success: true as const, deletedIds: [] as string[] }
+        }
+
+        const deletedIds: string[] = []
+
+        for (const id of ids) {
+            try {
+                const response = await eventsApi.deleteEvent(id)
+
+                if (!response.success) {
+                    throw new Error(response.error?.message ?? `Erreur lors de la suppression de l'événement ${id}`)
+                }
+
+                deletedIds.push(id)
+            } catch (err) {
+                console.error('[EVENTS] Error deleting event:', { id, err })
+                return {
+                    success: false as const,
+                    error: getErrorMessage(err),
+                    deletedIds,
+                }
+            }
+        }
+
+        return { success: true as const, deletedIds }
+    }
+
     return {
         events,
         salles,
@@ -280,6 +311,7 @@ export function useEvents() {
         error,
         createEvent,
         updateEvent,
+        deleteEvents,
         refreshEvents: loadEvents,
     }
 }
