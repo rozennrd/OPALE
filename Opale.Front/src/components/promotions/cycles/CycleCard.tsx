@@ -123,16 +123,15 @@ const emptyImportCounters = (): Required<
     skippedExamEvents: 0,
 })
 
-const EVALUATION_COLUMNS: Array<{
-    type: 'INTERMEDIAIRE' | 'FINALE' | 'CONTROLE_CONTINU' | 'TRAVAUX_PRATIQUES' | 'PROJET' | 'AUTRE'
-    label: string
-}> = [
-    { type: 'INTERMEDIAIRE', label: 'Interm.' },
-    { type: 'FINALE', label: 'Finale' },
-    { type: 'CONTROLE_CONTINU', label: 'CC' },
-    { type: 'TRAVAUX_PRATIQUES', label: 'TP' },
-    { type: 'PROJET', label: 'Projet' },
-    { type: 'AUTRE', label: 'Autre' },
+const HOURS_KEYS: Array<keyof NonNullable<MaquetteAnalyzeResponse['matieres']>[number]['heures']> = [
+    'coursMagistral',
+    'coursInteractif',
+    'td',
+    'tp',
+    'projet',
+    'elearning',
+    'visitesConferences',
+    'autoGere',
 ]
 
 const CycleCard: React.FC<CycleCardProps> = ({
@@ -446,12 +445,18 @@ const CycleCard: React.FC<CycleCardProps> = ({
         })
     ), [previewMatieresToDisplay])
 
-    const getEvaluationCountByType = (
+    const getTotalEvaluations = (
         row: NonNullable<MaquetteAnalyzeResponse['matieres']>[number],
-        type: 'INTERMEDIAIRE' | 'FINALE' | 'CONTROLE_CONTINU' | 'TRAVAUX_PRATIQUES' | 'PROJET' | 'AUTRE',
+    ): number => row.evaluations?.length ?? 0
+
+    const getTotalHours = (
+        row: NonNullable<MaquetteAnalyzeResponse['matieres']>[number],
     ): number => {
-        if (!row.evaluations || row.evaluations.length === 0) return 0
-        return row.evaluations.filter((evaluation) => evaluation.type === type).length
+        const hours = row.heures
+        if (!hours) return 0
+        const total = Number(hours.total)
+        if (Number.isFinite(total) && total > 0) return total
+        return HOURS_KEYS.reduce((sum, key) => sum + (Number(hours[key]) || 0), 0)
     }
 
     return (
@@ -717,29 +722,15 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                     <table className="maquette-preview-grid">
                                         <thead>
                                             <tr>
-                                                <th rowSpan={2}>Promo</th>
-                                                <th rowSpan={2}>UE</th>
-                                                <th rowSpan={2}>Matière</th>
-                                                <th rowSpan={2}>Semestres</th>
+                                                <th>Promo</th>
+                                                <th>UE</th>
+                                                <th>Matière</th>
+                                                <th className="maquette-preview-grid-center">Semestres</th>
                                                 {shouldShowSpecialiteColumn && (
-                                                    <th rowSpan={2}>Spécialité</th>
+                                                    <th>Spécialité</th>
                                                 )}
-                                                <th
-                                                    colSpan={EVALUATION_COLUMNS.length}
-                                                    className="maquette-preview-grid-group"
-                                                >
-                                                    Épreuves
-                                                </th>
-                                            </tr>
-                                            <tr>
-                                                {EVALUATION_COLUMNS.map((column) => (
-                                                    <th
-                                                        key={column.type}
-                                                        className={`evaluation-col evaluation-col--${column.type.toLowerCase()}`}
-                                                    >
-                                                        {column.label}
-                                                    </th>
-                                                ))}
+                                                <th className="maquette-preview-grid-center">Total heures</th>
+                                                <th className="maquette-preview-grid-center">Total épreuves</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -748,7 +739,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                                     <td>{matiere.promotionCode || '-'}</td>
                                                     <td>{matiere.ueNom || '-'}</td>
                                                     <td>{matiere.matiereNom || '-'}</td>
-                                                    <td>
+                                                    <td className="maquette-preview-grid-center">
                                                         {formatSemestresForDisplay(
                                                             matiere.semestres ?? [],
                                                             matiere.promotionCode,
@@ -757,14 +748,12 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                                     {shouldShowSpecialiteColumn && (
                                                         <td>{matiere.specialiteLabel || matiere.specialiteCode || '-'}</td>
                                                     )}
-                                                    {EVALUATION_COLUMNS.map((column) => (
-                                                        <td
-                                                            key={`${matiere.matiereNom}-${column.type}-${index}`}
-                                                            className={`evaluation-col evaluation-col--${column.type.toLowerCase()}`}
-                                                        >
-                                                            {getEvaluationCountByType(matiere, column.type)}
-                                                        </td>
-                                                    ))}
+                                                    <td className="maquette-preview-grid-center">
+                                                        {getTotalHours(matiere)}
+                                                    </td>
+                                                    <td className="maquette-preview-grid-center">
+                                                        {getTotalEvaluations(matiere)}
+                                                    </td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -787,4 +776,6 @@ const CycleCard: React.FC<CycleCardProps> = ({
 }
 
 export default CycleCard
+
+
 

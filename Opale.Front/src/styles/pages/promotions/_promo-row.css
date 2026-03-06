@@ -515,6 +515,10 @@
         vertical-align: middle;
     }
 
+    .maquette-preview-grid .maquette-preview-grid-center {
+        text-align: center;
+    }
+
     .maquette-preview-grid thead tr:first-child th {
         position: sticky;
         top: 0;
