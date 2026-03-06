@@ -156,6 +156,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
     const [isPreviewWarningsVisible, setIsPreviewWarningsVisible] = useState(true)
 
     const [isImporting, setIsImporting] = useState(false)
+    const [hasImported, setHasImported] = useState(false)
     const [importFeedback, setImportFeedback] = useState<{
         variant: ImportFeedbackVariant
         message: string
@@ -323,6 +324,10 @@ const CycleCard: React.FC<CycleCardProps> = ({
 
             const failedSuffix =
                 failedFiles.length > 0 ? ` Échec : ${failedFiles.join(', ')}.` : ''
+
+            if (successCount > 0) {
+                setHasImported(true)
+            }
 
             setImportFeedback({
                 variant,
@@ -544,6 +549,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                     selectedFiles={selectedFiles}
                     isImporting={isImporting}
                     importFeedback={importFeedback}
+                    hideImportButton={hasImported}
                     onIncomingFiles={handleIncomingFiles}
                     onRemoveFile={handleRemoveValidatedFile}
                     onImportRequested={handleImportRequested}
@@ -776,6 +782,8 @@ const CycleCard: React.FC<CycleCardProps> = ({
 }
 
 export default CycleCard
+
+
 
 
 
