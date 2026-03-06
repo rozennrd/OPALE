@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Cycle, Promotion } from '../../models'
-import {hasPromoMismatch} from '../../utils/promoUtils'
+import { getAcademicYearRange, hasPromoMismatch } from '../../utils/promoUtils'
 import { cyclesApi } from '../../services/api/cyclesApi'
 import { promotionsApi } from '../../services/api/promotionsApi'
 import {
@@ -105,8 +105,7 @@ export function usePromotionCycles() {
 
             // 2. Create the promotions
             const promotionPromises = []
-            const now = new Date()
-            const oneYearFromNow = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000)
+            const { startDate, endDate } = getAcademicYearRange()
 
             for (let i = 1; i <= formData.promotionCount; i++) {
                 const promotionData = transformFrontendPromotionToBackendCreate({
@@ -114,8 +113,8 @@ export function usePromotionCycles() {
                     label: `${formData.name} ${i}`,
                     students: 0,
                     isApprentissage: formData.type === "apprentissage",
-                    startDate: now.toISOString(),
-                    endDate: oneYearFromNow.toISOString(),
+                    startDate,
+                    endDate,
                     groups: [],
                     specialties: [],
                     constraints: {
@@ -197,15 +196,14 @@ export function usePromotionCycles() {
             setError('')
 
             // Create promotion with default dates
-            const now = new Date()
-            const oneYearFromNow = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000)
+            const { startDate, endDate } = getAcademicYearRange()
 
             const promotionData = transformFrontendPromotionToBackendCreate({
                 id: '',
                 label: trimmedLabel,
                 students: 0,
-                startDate: now.toISOString(),
-                endDate: oneYearFromNow.toISOString(),
+                startDate,
+                endDate,
                 isApprentissage: false,
                 groups: [],
                 specialties: [],
