@@ -157,6 +157,18 @@
         text-align: center;
     }
 
+    .teacher-subject-hours {
+        min-width: 64px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--panel-soft);
+        font-size: 0.8rem;
+        color: var(--muted);
+        text-align: center;
+        white-space: nowrap;
+    }
+
     .teacher-subject-sep {
         text-align: center;
         font-size: 0.8rem;

@@ -125,6 +125,7 @@ export default function TeacherDetailCard({
                     />
 
                     <TeacherSubjectsColumn
+                        teacherId={teacherDraft.id}
                         subjects={teacherDraft.subjects}
                         onSubjectChange={handleSubjectChange}
                         onAddSubject={handleAddSubject}
