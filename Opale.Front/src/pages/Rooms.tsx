@@ -87,6 +87,8 @@ export default function Rooms() {
         new Set(rooms.map((room) => room.floor)),
     ).sort((a, b) => a - b)
 
+    const hasVisibleRooms = visibleRoomIds.length > 0
+
     const isCreatingSelectedRoom = !!selectedRoom && pendingNewRoomId === selectedRoom.id
     
     const handleCreateRequested = () => {
@@ -134,17 +136,23 @@ export default function Rooms() {
                 )}
 
                 <div className="rooms-sections">
-                    {floors.map((floor) => (
-                        <RoomsSection
-                            key={floor}
-                            floor={floor}
-                            rooms={roomsByFloor[floor] || []}
-                            onSelectRoom={setSelectedRoom}
-                            selectionMode={selectionMode}
-                            selectedRoomIds={selectedRoomIdsSet}
-                            onToggleRoomSelection={toggleRoomSelection}
-                        />
-                    ))}
+                    {hasVisibleRooms ? (
+                        floors.map((floor) => (
+                            <RoomsSection
+                                key={floor}
+                                floor={floor}
+                                rooms={roomsByFloor[floor] || []}
+                                onSelectRoom={setSelectedRoom}
+                                selectionMode={selectionMode}
+                                selectedRoomIds={selectedRoomIdsSet}
+                                onToggleRoomSelection={toggleRoomSelection}
+                            />
+                        ))
+                    ) : (
+                        <div className="rooms-empty-state">
+                            Aucune salle ne correspond aux filtres selectionnes.
+                        </div>
+                    )}
                 </div>
             </div>
 
