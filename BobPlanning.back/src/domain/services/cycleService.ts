@@ -26,12 +26,28 @@ export const cycleService = {
   },
 
   async addCycle(dto: CreateCycleDTO): Promise<{ id: string }> {
-    const id = await cycleRepository.insert(dto.nom, dto.type);
+    const nom = dto.nom.trim();
+    const existing = await cycleRepository.getByName(nom);
+    if (existing) {
+      const err: any = new Error("Un cycle avec ce nom existe deja.");
+      err.statusCode = 409;
+      throw err;
+    }
+
+    const id = await cycleRepository.insert(nom, dto.type);
     return { id };
   },
 
   async updateCycle(dto: CycleDTO): Promise<void> {
-    const updated = await cycleRepository.update(dto.id, dto.nom, dto.type);
+    const nom = dto.nom.trim();
+    const existing = await cycleRepository.getByName(nom, dto.id);
+    if (existing) {
+      const err: any = new Error("Un cycle avec ce nom existe deja.");
+      err.statusCode = 409;
+      throw err;
+    }
+
+    const updated = await cycleRepository.update(dto.id, nom, dto.type);
     if (!updated) {
       const err: any = new Error(`Cycle avec l'ID ${dto.id} non trouvé`);
       err.statusCode = 404;

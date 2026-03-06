@@ -14,6 +14,14 @@ export const cycleRepository = {
     return result.rows[0] ?? null;
   },
 
+  async getByName(nom: string, excludeId?: string): Promise<CycleDAO | null> {
+    const baseSql = "SELECT id, nom, type FROM cycle WHERE lower(trim(nom)) = lower(trim($1))";
+    const sql = excludeId ? `${baseSql} AND id <> $2` : baseSql;
+    const params = excludeId ? [nom, excludeId] : [nom];
+    const result = await pool.query(sql, params);
+    return result.rows[0] ?? null;
+  },
+
   async getTypes(): Promise<{ type: string }[]> {
     const sql = "SELECT unnest(enum_range(NULL::type_cycle)) AS type";
     const result = await pool.query(sql);
