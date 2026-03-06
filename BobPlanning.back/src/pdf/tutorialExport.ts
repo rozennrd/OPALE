@@ -1,5 +1,7 @@
 import PDFDocument from 'pdfkit'
 import axios from 'axios'
+import fs from 'fs'
+import path from 'path'
 
 type ExportStep = {
     text?: RichTextLine | string
@@ -121,6 +123,20 @@ const DARK_COLORS: ThemeColors = {
 const getThemeColors = (theme?: ThemeName): ThemeColors =>
     theme === 'dark' ? DARK_COLORS : LIGHT_COLORS
 
+const ARIAL_REGULAR_PATH = path.resolve(__dirname, 'fonts', 'arial.ttf')
+const ARIAL_BOLD_PATH = path.resolve(__dirname, 'fonts', 'arialbd.ttf')
+const HAS_ARIAL_FONTS = fs.existsSync(ARIAL_REGULAR_PATH) && fs.existsSync(ARIAL_BOLD_PATH)
+
+const FONTS = (HAS_ARIAL_FONTS
+    ? {
+          regular: 'Arial',
+          bold: 'Arial-Bold',
+      }
+    : {
+          regular: 'Helvetica',
+          bold: 'Helvetica-Bold',
+      }) as const
+
 const SPACING = {
     xs: 4,
     sm: 8,
@@ -159,7 +175,7 @@ const drawSectionLabel = (doc: PdfDoc, label: string, colors: ThemeColors) => {
     const labelHeight = 18
     ensureSpace(doc, labelHeight + SPACING.sm)
     doc
-        .font('Helvetica-Bold')
+        .font(FONTS.bold)
         .fontSize(10)
         .fillColor(colors.muted)
         .text(label.toUpperCase(), startX, doc.y)
@@ -232,8 +248,6 @@ const buildImageUrlCandidates = (url: string): string[] => {
                 candidates.push(fallback.toString())
             })
         }
-    } catch {
-        // ignore invalid URLs, return original
     }
 
     return Array.from(new Set(candidates))
@@ -408,7 +422,7 @@ const drawImageHighlights = (
 
         if (highlight.label) {
             doc.save()
-            doc.font('Helvetica-Bold').fontSize(9)
+            doc.font(FONTS.bold).fontSize(9)
             const labelPaddingX = 6
             const labelPaddingY = 3
             const labelWidth = doc.widthOfString(highlight.label) + labelPaddingX * 2
@@ -451,7 +465,7 @@ const renderRichTextLine = (
 
     cleaned.forEach((span, index) => {
         const isLast = index === cleaned.length - 1
-        doc.font(span.bold ? 'Helvetica-Bold' : 'Helvetica')
+        doc.font(span.bold ? FONTS.bold : FONTS.regular)
         if (index === 0) {
             doc.text(span.text, x, y, {
                 ...options,
@@ -490,7 +504,7 @@ const decodeDataUrl = (dataUrl?: string): Buffer | null => {
 }
 
 const computeTocLayout = (doc: PdfDoc, entryCount: number): TocLayout => {
-    doc.font('Helvetica').fontSize(12)
+    doc.font(FONTS.regular).fontSize(12)
     const rowHeight = Math.max(26, doc.currentLineHeight(true) + 6)
     const rowGap = 6
     const titleHeight = 28
@@ -527,7 +541,7 @@ const renderCover = async (
     }
 
     doc
-        .font('Helvetica-Bold')
+        .font(FONTS.bold)
         .fontSize(26)
         .fillColor(colors.text)
         .text(normalizeText(payload.title) || 'Documentation OPALE', {
@@ -536,7 +550,7 @@ const renderCover = async (
 
     doc.moveDown(0.6)
     doc
-        .font('Helvetica')
+        .font(FONTS.regular)
         .fontSize(12)
         .fillColor(colors.muted)
         .text(normalizeText(payload.date) || new Date().toLocaleDateString('fr-FR'), {
@@ -551,7 +565,7 @@ const renderCover = async (
         stroke: colors.brand,
         radius: 14,
     })
-    doc.font('Helvetica-Bold').fontSize(12).fillColor(colors.primaryDark)
+    doc.font(FONTS.bold).fontSize(12).fillColor(colors.primaryDark)
     drawCenteredText(
         doc,
         'Guide utilisateur - Export PDF',
@@ -582,13 +596,13 @@ const renderToc = (
         doc.switchToPage(pageNumber - 1)
         doc.x = doc.page.margins.left
         doc.y = doc.page.margins.top
-        doc.font('Helvetica-Bold').fontSize(20).fillColor(colors.text).text('Sommaire')
+        doc.font(FONTS.bold).fontSize(20).fillColor(colors.text).text('Sommaire')
 
         let y =
             doc.page.margins.top +
             layout.titleHeight
 
-        doc.font('Helvetica').fontSize(12).fillColor(colors.text)
+        doc.font(FONTS.regular).fontSize(12).fillColor(colors.text)
 
         for (let i = 0; i < layout.linesPerPage && entryIndex < entries.length; i += 1) {
             const entry = entries[entryIndex]
@@ -636,9 +650,9 @@ const renderTextBlock = (doc: PdfDoc, title: string, text: string | undefined, c
 
     const startX = doc.page.margins.left + SPACING.md
     let cursorY = startY + SPACING.sm
-    doc.font('Helvetica-Bold').fontSize(10).fillColor(colors.muted).text(title.toUpperCase(), startX, cursorY)
+    doc.font(FONTS.bold).fontSize(10).fillColor(colors.muted).text(title.toUpperCase(), startX, cursorY)
     cursorY += titleHeight + SPACING.xs
-    doc.font('Helvetica').fontSize(11).fillColor(colors.text).text(normalized, startX, cursorY, {
+    doc.font(FONTS.regular).fontSize(11).fillColor(colors.text).text(normalized, startX, cursorY, {
         width: contentWidth - SPACING.lg,
     })
     doc.y = startY + cardHeight + SPACING.sm
@@ -676,7 +690,7 @@ const renderBulletList = (doc: PdfDoc, items: string[] | undefined, colors: Them
 
     const startX = doc.page.margins.left + SPACING.md
     const cursorY = startY + (cardHeight - textHeight) / 2
-    doc.font('Helvetica').fontSize(11).fillColor(colors.text).text(bulletText, startX, cursorY, {
+    doc.font(FONTS.regular).fontSize(11).fillColor(colors.text).text(bulletText, startX, cursorY, {
         width: contentWidth - SPACING.lg,
         lineGap,
     })
@@ -701,7 +715,7 @@ const renderSteps = async (
         const textWidth = getContentWidth(doc) - circleSize - 8
 
         if (hasRichText(textSpans)) {
-            doc.font('Helvetica').fontSize(11).fillColor(colors.text)
+            doc.font(FONTS.regular).fontSize(11).fillColor(colors.text)
             const textHeight = doc.heightOfString(richTextToPlainText(textSpans), { width: textWidth })
             ensureSpace(doc, textHeight + circleSize + SPACING.sm)
 
@@ -715,9 +729,9 @@ const renderSteps = async (
                 .fill()
                 .restore()
             const stepLabel = String(i + 1)
-            doc.font('Helvetica-Bold').fontSize(9).fillColor(colors.primaryDark)
+            doc.font(FONTS.bold).fontSize(9).fillColor(colors.primaryDark)
             drawCenteredCapText(doc, stepLabel, startX, circleY, circleSize, circleSize, { align: 'center' })
-            doc.font('Helvetica').fontSize(11).fillColor(colors.text)
+            doc.font(FONTS.regular).fontSize(11).fillColor(colors.text)
             renderRichTextLine(doc, textSpans, textX, textY, textWidth)
             const rowHeight = Math.max(circleSize, doc.y - textY)
             doc.y = textY + rowHeight + SPACING.sm
@@ -787,7 +801,7 @@ const renderSteps = async (
 
             if (step.imageCaption) {
                 doc
-                    .font('Helvetica')
+                    .font(FONTS.regular)
                     .fontSize(9)
                     .fillColor(colors.muted)
                     .text(step.imageCaption, {
@@ -808,14 +822,14 @@ const renderTutorial = async (
     colors: ThemeColors,
 ) => {
     doc
-        .font('Helvetica-Bold')
+        .font(FONTS.bold)
         .fontSize(18)
         .fillColor(colors.text)
         .text(tutorial.title)
     doc.moveDown(0.3)
 
     if (tutorial.summary) {
-        doc.font('Helvetica').fontSize(11).fillColor(colors.muted).text(tutorial.summary, {
+        doc.font(FONTS.regular).fontSize(11).fillColor(colors.muted).text(tutorial.summary, {
             paragraphGap: 6,
         })
     }
@@ -833,7 +847,7 @@ const renderTutorial = async (
         drawSectionLabel(doc, 'Fonctionnalites', colors)
         for (const section of tutorial.stepSections) {
             doc.moveDown(0.3)
-            doc.font('Helvetica-Bold').fontSize(12).fillColor(colors.text).text(section.title)
+            doc.font(FONTS.bold).fontSize(12).fillColor(colors.text).text(section.title)
             await renderSteps(doc, section.steps, getImage, colors)
         }
     } else if (tutorial.steps && tutorial.steps.length > 0) {
@@ -849,6 +863,10 @@ export const generateTutorialPdf = async (payload: ExportPayload): Promise<Buffe
         margin: 50,
         bufferPages: true,
     })
+    if (HAS_ARIAL_FONTS) {
+        doc.registerFont(FONTS.regular, ARIAL_REGULAR_PATH)
+        doc.registerFont(FONTS.bold, ARIAL_BOLD_PATH)
+    }
     fillPageBackground(doc, colors)
     doc.on('pageAdded', () => fillPageBackground(doc, colors))
 
