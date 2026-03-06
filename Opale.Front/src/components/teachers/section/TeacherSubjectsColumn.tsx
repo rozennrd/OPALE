@@ -1,4 +1,4 @@
-// src/components/teachers/section/TeacherSubjectsColumn.tsx
+﻿// src/components/teachers/section/TeacherSubjectsColumn.tsx
 import { useEffect, useMemo, useState } from 'react'
 import { Teacher } from '../../../models/Teachers'
 import { getMatieres } from '../../../services/api/matieresApi'
@@ -45,8 +45,8 @@ const TeacherSubjectsColumn = ({
                     getEnseignements(),
                 ])
 
-                // on force aussi le chargement de /getEnseignements demandé (même si
-                // la correspondance matière/promo est portée par les matières)
+                // on force aussi le chargement de /getEnseignements demandÃ© (mÃªme si
+                // la correspondance matiÃ¨re/promo est portÃ©e par les matiÃ¨res)
                 void enseignementsRes
 
                 if (!mounted) return
@@ -190,7 +190,7 @@ const TeacherSubjectsColumn = ({
 
     return (
         <div className="teacher-detail-col">
-            <h4>Matières enseignées</h4>
+            <h4>MatiÃ¨res enseignÃ©es</h4>
 
             {subjects && subjects.length > 0 ? (
                 <ul className="teacher-subjects-edit-list">
@@ -215,31 +215,31 @@ const TeacherSubjectsColumn = ({
                                 return (
                                     <>
                                         <select
-                                            className="teacher-subject-input teacher-subject-input-name"
-                                            value={subject.name}
-                                            onChange={(e) =>
-                                                handleMatiereChange(index, e.target.value)
-                                            }
-                                        >
-                                            <option value="">Sélectionner une matière</option>
-                                            {matiereOptions.map((matiereName) => (
-                                                <option key={matiereName} value={matiereName}>
-                                                    {matiereName}
-                                                </option>
-                                            ))}
-                                        </select>
-
-                                        <select
                                             className="teacher-subject-input teacher-subject-input-promo"
                                             value={subject.promo}
                                             onChange={(e) =>
                                                 handlePromoChange(index, e.target.value)
                                             }
                                         >
-                                            <option value="">Sélectionner une promo</option>
+                                            <option value="">SÃ©lectionner une promo</option>
                                             {promoOptions.map((promoLabel) => (
                                                 <option key={promoLabel} value={promoLabel}>
                                                     {promoLabel}
+                                                </option>
+                                            ))}
+                                        </select>
+
+                                        <select
+                                            className="teacher-subject-input teacher-subject-input-name"
+                                            value={subject.name}
+                                            onChange={(e) =>
+                                                handleMatiereChange(index, e.target.value)
+                                            }
+                                        >
+                                            <option value="">SÃ©lectionner une matiÃ¨re</option>
+                                            {matiereOptions.map((matiereName) => (
+                                                <option key={matiereName} value={matiereName}>
+                                                    {matiereName}
                                                 </option>
                                             ))}
                                         </select>
@@ -251,16 +251,16 @@ const TeacherSubjectsColumn = ({
                                 type="button"
                                 className="teacher-subject-remove"
                                 onClick={() => onRemoveSubject(index)}
-                                aria-label="Supprimer cette matière"
+                                aria-label="Supprimer cette matiÃ¨re"
                             >
-                                ×
+                                Ã—
                             </button>
                         </li>
                     ))}
                 </ul>
             ) : (
                 <p className="teacher-detail-muted">
-                    Aucune matière associée pour l’instant.
+                    Aucune matiÃ¨re associÃ©e pour lâ€™instant.
                 </p>
             )}
 
@@ -269,7 +269,7 @@ const TeacherSubjectsColumn = ({
                 className="teacher-subject-add-btn"
                 onClick={onAddSubject}
             >
-                + Ajouter une matière
+                + Ajouter une matiÃ¨re
             </button>
         </div>
     )
