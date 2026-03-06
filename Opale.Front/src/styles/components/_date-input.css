@@ -300,6 +300,16 @@
         font-weight: 600;
     }
 
+    .calendar-time-item--disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+    }
+
+    .calendar-time-item--disabled:hover {
+        background: transparent;
+        border-color: transparent;
+    }
+
     @media (max-width: 720px) {
         .calendar-popover {
             flex-direction: column;

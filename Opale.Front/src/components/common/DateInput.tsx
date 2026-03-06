@@ -50,6 +50,24 @@ const extractTime = (value: string): string => {
     return /^\d{2}:\d{2}$/.test(trimmedTime) ? trimmedTime : ''
 }
 
+const timeToMinutes = (value: string): number | null => {
+    if (!value) return null
+    const parts = value.split(':')
+    if (parts.length < 2) return null
+    const hour = Number(parts[0])
+    const minute = Number(parts[1])
+    if (Number.isNaN(hour) || Number.isNaN(minute)) return null
+    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null
+    return hour * 60 + minute
+}
+
+const minutesToTime = (value: number): string => {
+    const clamped = Math.max(0, Math.min(1439, value))
+    const hour = Math.floor(clamped / 60)
+    const minute = clamped % 60
+    return `${pad2(hour)}:${pad2(minute)}`
+}
+
 const dateToNumber = (isoDate: string): number => {
     const [y, m, d] = isoDate.split('-').map((part) => Number(part))
     return y * 10000 + m * 100 + d
@@ -165,8 +183,51 @@ const DateInput: React.FC<DateInputProps> = ({
 
     const minDate = extractDate(min ?? '')
     const maxDate = extractDate(max ?? '')
+    const minTime = extractTime(min ?? '')
+    const maxTime = extractTime(max ?? '')
     const minKey = minDate ? dateToNumber(minDate) : null
     const maxKey = maxDate ? dateToNumber(maxDate) : null
+    const minTimeMinutes = timeToMinutes(minTime)
+    const maxTimeMinutes = timeToMinutes(maxTime)
+
+    const getTimeBoundsForDate = (isoDate: string | null) => {
+        if (mode !== 'datetime' || !isoDate) {
+            return { minBound: null, maxBound: null }
+        }
+
+        let minBound: number | null = null
+        let maxBound: number | null = null
+
+        if (minDate && isoDate === minDate && minTimeMinutes !== null) {
+            minBound = minTimeMinutes
+        }
+        if (maxDate && isoDate === maxDate && maxTimeMinutes !== null) {
+            maxBound = maxTimeMinutes
+        }
+
+        return { minBound, maxBound }
+    }
+
+    const clampTimeForDate = (isoDate: string | null, timeValue: string) => {
+        const { minBound, maxBound } = getTimeBoundsForDate(isoDate)
+        if (minBound === null && maxBound === null) {
+            return timeValue
+        }
+
+        const baseMinutes =
+            timeToMinutes(timeValue) ??
+            timeToMinutes(getDefaultTime()) ??
+            0
+        let nextMinutes = baseMinutes
+        if (minBound !== null && nextMinutes < minBound) {
+            nextMinutes = minBound
+        }
+        if (maxBound !== null && nextMinutes > maxBound) {
+            nextMinutes = maxBound
+        }
+
+        return minutesToTime(nextMinutes)
+    }
 
     useEffect(() => {
         if (timeFromValue) {
@@ -253,16 +314,22 @@ const DateInput: React.FC<DateInputProps> = ({
             return
         }
         const nextTime = time || getDefaultTime()
-        onChange(`${isoDate}T${nextTime}`)
+        const clampedTime = clampTimeForDate(isoDate, nextTime)
+        if (clampedTime !== time) {
+            setTime(clampedTime)
+        }
+        onChange(`${isoDate}T${clampedTime}`)
         if (shouldClose) closePicker()
     }
 
     const updateTime = (nextHour: string, nextMinute: string) => {
         const nextTime = `${nextHour}:${nextMinute}`
-        setTime(nextTime)
         const baseDate = selectedDate || todayIso
+        const clampedTime =
+            mode === 'datetime' ? clampTimeForDate(baseDate, nextTime) : nextTime
+        setTime(clampedTime)
         if (mode === 'datetime') {
-            onChange(`${baseDate}T${nextTime}`)
+            onChange(`${baseDate}T${clampedTime}`)
         }
     }
 
@@ -283,6 +350,44 @@ const DateInput: React.FC<DateInputProps> = ({
     }, [minuteStep])
 
     const [selectedHour, selectedMinute] = time.split(':')
+    const timeBounds = useMemo(
+        () => getTimeBoundsForDate(selectedDate),
+        [selectedDate, minDate, maxDate, minTimeMinutes, maxTimeMinutes, mode],
+    )
+
+    const isHourDisabled = (hour: string) => {
+        if (timeBounds.minBound === null && timeBounds.maxBound === null) {
+            return false
+        }
+        const hourValue = Number(hour)
+        if (Number.isNaN(hourValue)) return false
+        const minInHour = hourValue * 60
+        const maxInHour = minInHour + 59
+        if (timeBounds.minBound !== null && maxInHour < timeBounds.minBound) {
+            return true
+        }
+        if (timeBounds.maxBound !== null && minInHour > timeBounds.maxBound) {
+            return true
+        }
+        return false
+    }
+
+    const isMinuteDisabled = (minute: string) => {
+        if (timeBounds.minBound === null && timeBounds.maxBound === null) {
+            return false
+        }
+        const hourValue = Number(selectedHour || '00')
+        const minuteValue = Number(minute)
+        if (Number.isNaN(hourValue) || Number.isNaN(minuteValue)) return false
+        const candidate = hourValue * 60 + minuteValue
+        if (timeBounds.minBound !== null && candidate < timeBounds.minBound) {
+            return true
+        }
+        if (timeBounds.maxBound !== null && candidate > timeBounds.maxBound) {
+            return true
+        }
+        return false
+    }
 
     const handleDayClick = (
         isoDate: string,
@@ -439,44 +544,68 @@ const DateInput: React.FC<DateInputProps> = ({
                           <div className="calendar-time">
                               <div className="calendar-time-header">Heure</div>
                               <div className="calendar-time-column">
-                                  {hourOptions.map((hour) => (
-                                      <button
-                                          key={hour}
-                                          type="button"
-                                          className={[
-                                              'calendar-time-item',
-                                              hour === selectedHour
-                                                  ? 'calendar-time-item--active'
-                                                  : '',
-                                          ]
-                                              .filter(Boolean)
-                                              .join(' ')}
-                                          onClick={() => updateTime(hour, selectedMinute || '00')}
-                                      >
-                                          {hour}
-                                      </button>
-                                  ))}
+                                  {hourOptions.map((hour) => {
+                                      const disabled = isHourDisabled(hour)
+                                      return (
+                                          <button
+                                              key={hour}
+                                              type="button"
+                                              className={[
+                                                  'calendar-time-item',
+                                                  hour === selectedHour
+                                                      ? 'calendar-time-item--active'
+                                                      : '',
+                                                  disabled
+                                                      ? 'calendar-time-item--disabled'
+                                                      : '',
+                                              ]
+                                                  .filter(Boolean)
+                                                  .join(' ')}
+                                              onClick={() =>
+                                                  updateTime(
+                                                      hour,
+                                                      selectedMinute || '00',
+                                                  )
+                                              }
+                                              disabled={disabled}
+                                          >
+                                              {hour}
+                                          </button>
+                                      )
+                                  })}
                               </div>
 
                               <div className="calendar-time-header">Min</div>
                               <div className="calendar-time-column">
-                                  {minuteOptions.map((minute) => (
-                                      <button
-                                          key={minute}
-                                          type="button"
-                                          className={[
-                                              'calendar-time-item',
-                                              minute === selectedMinute
-                                                  ? 'calendar-time-item--active'
-                                                  : '',
-                                          ]
-                                              .filter(Boolean)
-                                              .join(' ')}
-                                          onClick={() => updateTime(selectedHour || '00', minute)}
-                                      >
-                                          {minute}
-                                      </button>
-                                  ))}
+                                  {minuteOptions.map((minute) => {
+                                      const disabled = isMinuteDisabled(minute)
+                                      return (
+                                          <button
+                                              key={minute}
+                                              type="button"
+                                              className={[
+                                                  'calendar-time-item',
+                                                  minute === selectedMinute
+                                                      ? 'calendar-time-item--active'
+                                                      : '',
+                                                  disabled
+                                                      ? 'calendar-time-item--disabled'
+                                                      : '',
+                                              ]
+                                                  .filter(Boolean)
+                                                  .join(' ')}
+                                              onClick={() =>
+                                                  updateTime(
+                                                      selectedHour || '00',
+                                                      minute,
+                                                  )
+                                              }
+                                              disabled={disabled}
+                                          >
+                                              {minute}
+                                          </button>
+                                      )
+                                  })}
                               </div>
                           </div>
                       )}
@@ -511,6 +640,16 @@ const DateInput: React.FC<DateInputProps> = ({
               document.body,
           )
         : null
+
+    useEffect(() => {
+        if (mode !== 'datetime') return
+        if (!selectedDate) return
+        const clampedTime = clampTimeForDate(selectedDate, time)
+        if (clampedTime !== time) {
+            setTime(clampedTime)
+            onChange(`${selectedDate}T${clampedTime}`)
+        }
+    }, [mode, selectedDate, time, minDate, maxDate, minTimeMinutes, maxTimeMinutes, onChange])
 
     return (
         <div className={['date-input', className].filter(Boolean).join(' ')} ref={wrapperRef}>
