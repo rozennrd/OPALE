@@ -33,11 +33,9 @@ const DateRangePill: React.FC<DateRangePillProps> = ({
         return `${d}/${m}/${y}`
     }
 
-    const formatRangeLabel = (range: DateRange): string =>
-        `${formatDateLabel(range.start)} - ${formatDateLabel(range.end)}`
-
     const rootClasses = [
         'date-range-pill',   // style générique
+        isEditing ? 'date-range-pill--editing' : 'date-range-pill--readonly',
         rootClassName,       // ex: "constraint-pill" pour les promos
         pillClass,           // ex: "constraint-pill-vacances"
     ]
@@ -74,7 +72,15 @@ const DateRangePill: React.FC<DateRangePillProps> = ({
                         />
                     </div>
                 ) : (
-                    formatRangeLabel(range)
+                    <span className="date-range-pill-dates">
+                        <span className="date-range-pill-date">
+                            {formatDateLabel(range.start)}
+                        </span>
+                        <span className="date-range-pill-separator">-</span>
+                        <span className="date-range-pill-date">
+                            {formatDateLabel(range.end)}
+                        </span>
+                    </span>
                 )}
             </button>
 
@@ -96,3 +102,4 @@ const DateRangePill: React.FC<DateRangePillProps> = ({
 }
 
 export default DateRangePill
+
