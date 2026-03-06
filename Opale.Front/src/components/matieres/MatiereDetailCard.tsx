@@ -50,6 +50,10 @@ interface TeacherAssignment {
 
 const makeRowId = () => `assign-${Math.random().toString(16).slice(2)}`
 const clamp0 = (v: HoursValue) => Math.max(0, Number(v) || 0)
+const formatHours = (value: number) => {
+    if (!Number.isFinite(value)) return '0'
+    return Number.isInteger(value) ? String(value) : value.toFixed(1)
+}
 
 export default function MatiereDetailCard({
                                               matiere,
@@ -76,6 +80,10 @@ export default function MatiereDetailCard({
     const [removedEnseignementIds, setRemovedEnseignementIds] = useState<string[]>([])
     const [volumeWarningMessage, setVolumeWarningMessage] = useState<string | null>(null)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+    const partielsCount = Math.max(0, Number(matiere.nb_partiels) || 0)
+    const evalInterCount = Math.max(0, Number(matiere.nb_eval_intermediaire) || 0)
+    const totalEpreuves = partielsCount + evalInterCount
 
     type CategoryKey = 'tdHours' | 'tpHours' | 'projectHours' | 'eLearningHours' | 'autresHours'
 
@@ -277,6 +285,35 @@ export default function MatiereDetailCard({
         () => assignments.reduce((acc, r) => acc + (Number.isFinite(Number(r.autresHours)) ? Number(r.autresHours) : 0), 0),
         [assignments],
     )
+
+    const unassignedByType = useMemo(
+        () => [
+            { key: 'TD', label: 'TD', value: Math.max(0, clamp0(tdHours) - assignedTD) },
+            { key: 'TP', label: 'TP', value: Math.max(0, clamp0(tpHours) - assignedTP) },
+            { key: 'PROJET', label: 'Projet', value: Math.max(0, clamp0(projectHours) - assignedProject) },
+            { key: 'ELEARNING', label: 'E-learning', value: Math.max(0, clamp0(eLearningHours) - assignedELearning) },
+            { key: 'AUTRES', label: 'Autres', value: Math.max(0, clamp0(autresHours) - assignedAutres) },
+        ],
+        [
+            tdHours,
+            tpHours,
+            projectHours,
+            eLearningHours,
+            autresHours,
+            assignedTD,
+            assignedTP,
+            assignedProject,
+            assignedELearning,
+            assignedAutres,
+        ],
+    )
+
+    const unassignedVisible = useMemo(
+        () => unassignedByType.filter((item) => item.value > 0),
+        [unassignedByType],
+    )
+
+    const hasUnassignedHours = unassignedVisible.length > 0
 
     const handleAddAssignment = () => {
         setAssignments((prev) => [
@@ -728,6 +765,38 @@ export default function MatiereDetailCard({
                                 </div>
                             </div>
 
+                            <div className="matiere-evaluations-summary">
+                                <div className="matiere-evaluations-main">
+                                    <span className="matiere-evaluations-label">Total epreuves</span>
+                                    <strong className="matiere-evaluations-value">{totalEpreuves}</strong>
+                                </div>
+                                <div className="matiere-evaluations-breakdown">
+                                    <div className="matiere-evaluations-item">
+                                        <span>Partiels</span>
+                                        <strong>{partielsCount}</strong>
+                                    </div>
+                                    <div className="matiere-evaluations-item">
+                                        <span>Evaluations intermediaires</span>
+                                        <strong>{evalInterCount}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            {hasUnassignedHours && (
+                                <div className="volume-warning matiere-unassigned-warning" role="status" aria-live="polite">
+                                    <span aria-hidden="true">!</span>
+                                    <div className="matiere-unassigned-content">
+                                        <span>Heures non attribuees :</span>
+                                        <div className="matiere-unassigned-list">
+                                            {unassignedVisible.map((item, index) => (
+                                                <span key={item.key} className="matiere-unassigned-item">
+                                                    {item.label} : <strong>{formatHours(item.value)}h</strong>
+                                                    {index < unassignedVisible.length - 1 ? ' | ' : ''}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                             {volumeWarningMessage && (
                                 <div className="volume-warning" role="status" aria-live="polite">
                                     <span aria-hidden="true">⚠</span>
@@ -996,3 +1065,8 @@ export default function MatiereDetailCard({
         </div>
     )
 }
+
+
+
+
+
