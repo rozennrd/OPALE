@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Room } from '../../models/Room'
 import { Salle, sallesApi } from '../../services/api/sallesApi'
+import type { ApiError } from '../../services/base/types'
 
 const ROOM_TYPE_VALUES: Room['mainType'][] = [
     'Cours',
@@ -105,6 +106,24 @@ const getNextRoomCode = (rooms: Room[], floor: Room['floor']): string => {
     return `J${floor}${Date.now().toString().slice(-2)}`
 }
 
+export type RoomSaveResult = { success: true } | { success: false; error: string }
+
+const getRoomSaveErrorMessage = (error?: ApiError): string => {
+    const message = error?.message?.toLowerCase() ?? ''
+
+    if (
+        message.includes('duplicate') ||
+        message.includes('unique') ||
+        message.includes('already') ||
+        message.includes('existe') ||
+        message.includes('existe deja')
+    ) {
+        return "Ce code de salle est deja utilise par une autre salle."
+    }
+
+    return error?.message ?? "Erreur lors de la sauvegarde de la salle."
+}
+
 export const useRoomsData = () => {
     const [rooms, setRooms] = useState<Room[]>([])
     const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
@@ -179,7 +198,7 @@ export const useRoomsData = () => {
         setSelectedRoom(newRoom)
     }
 
-    const updateRoom = async (updatedRoom: Room): Promise<boolean> => {
+    const updateRoom = async (updatedRoom: Room): Promise<RoomSaveResult> => {
         try {
             const payload = {
                 ...roomToCreatePayload(updatedRoom),
@@ -193,7 +212,10 @@ export const useRoomsData = () => {
 
                 if (!createResponse.success || !createResponse.data) {
                     console.error('[ROOMS] Failed to create room via API', createResponse.error)
-                    return false
+                    return {
+                        success: false,
+                        error: getRoomSaveErrorMessage(createResponse.error),
+                    }
                 }
 
                 const refreshResponse = await sallesApi.getAllSalles()
@@ -206,7 +228,7 @@ export const useRoomsData = () => {
                 }
 
                 setPendingNewRoomId(null)
-                return true
+                return { success: true }
             }
 
             const updateResponse = await sallesApi.updateSalle({
@@ -215,17 +237,23 @@ export const useRoomsData = () => {
             })
             if (!updateResponse.success) {
                 console.error('[ROOMS] Failed to update room via API', updateResponse.error)
-                return false
+                return {
+                    success: false,
+                    error: getRoomSaveErrorMessage(updateResponse.error),
+                }
             }
 
             setRooms((prevRooms) =>
                 prevRooms.map((room) => (room.id === updatedRoom.id ? updatedRoom : room)),
             )
             setSelectedRoom(updatedRoom)
-            return true
+            return { success: true }
         } catch (error) {
             console.error('[ROOMS] Unexpected error while saving room', error)
-            return false
+            return {
+                success: false,
+                error: "Erreur inattendue lors de la sauvegarde de la salle.",
+            }
         }
     }
 

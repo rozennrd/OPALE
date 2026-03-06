@@ -8,11 +8,12 @@ import DetailCardBody from '../common/DetailCardBody'
 import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
+import type { RoomSaveResult } from '../../hooks/rooms/useRoomsData'
 
 interface RoomDetailCardProps {
     room: Room
     onClose: () => void
-    onChange: (room: Room) => Promise<boolean> | boolean | void
+    onChange: (room: Room) => Promise<RoomSaveResult> | RoomSaveResult | boolean | void
     onDelete?: () => void
     isCreate?: boolean
 }
@@ -57,6 +58,7 @@ export default function RoomDetailCard({
     const [mainType, setMainType] = useState<RoomType>(room.mainType)
     const [types, setTypes] = useState<RoomType[]>(room.types)
     const [description, setDescription] = useState(room.description ?? '')
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     useEffect(() => {
         setName(room.name)
@@ -67,6 +69,7 @@ export default function RoomDetailCard({
         setMainType(room.mainType)
         setTypes(room.types)
         setDescription(room.description ?? '')
+        setErrorMessage(null)
     }, [room])
 
     const headerTitle = (fullName || name).trim() || room.name
@@ -145,7 +148,15 @@ export default function RoomDetailCard({
         }
 
         const result = await Promise.resolve(onChange(nextRoom))
+        if (result && typeof result === 'object' && 'success' in result) {
+            if (!result.success) {
+                setErrorMessage(result.error)
+                return false
+            }
+            return true
+        }
         if (result === false) {
+            setErrorMessage("Erreur lors de la sauvegarde de la salle.")
             return false
         }
         return true
@@ -456,6 +467,18 @@ export default function RoomDetailCard({
                 onConfirm={handleConfirmSaveAndClose}
                 onCancel={handleDiscardAndClose}
                 onRequestClose={handleConfirmDialogRequestClose}
+            />
+
+            <ConfirmDialog
+                open={!!errorMessage}
+                title="Erreur"
+                message={errorMessage ?? ''}
+                confirmLabel="OK"
+                cancelLabel="Fermer"
+                variant="danger"
+                onConfirm={() => setErrorMessage(null)}
+                onCancel={() => setErrorMessage(null)}
+                onRequestClose={() => setErrorMessage(null)}
             />
         </div>
     )
