@@ -312,7 +312,7 @@ const TeacherSubjectsColumn = ({
                 </ul>
             ) : (
                 <p className="teacher-detail-muted">
-                    Aucune matière associée pour l'instant.
+                    Aucune matière associée pour l&apos;instant.
                 </p>
             )}
 
