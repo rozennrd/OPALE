@@ -1,7 +1,7 @@
-/* src/styles/pages/teachers/_detail-modal.css */
+﻿/* src/styles/pages/teachers/_detail-modal.css */
 
 @layer pages {
-    /* ============ Overlay spécifique teacher ============ */
+    /* ============ Overlay spÃ©cifique teacher ============ */
 
     .teacher-detail-overlay {
         position: fixed;
@@ -13,22 +13,22 @@
         z-index: 2000;
     }
 
-    /* ============ Layout général de la card ============ */
-    /* Le fond / radius / shadow / padding sont gérés par .detail-card (CSS commun).
-       Ici on ne fait que spécialiser le layout interne pour les enseignants. */
+    /* ============ Layout gÃ©nÃ©ral de la card ============ */
+    /* Le fond / radius / shadow / padding sont gÃ©rÃ©s par .detail-card (CSS commun).
+       Ici on ne fait que spÃ©cialiser le layout interne pour les enseignants. */
 
     .teacher-detail-card {
-        width: min(1080px, 96vw); /* un peu plus large que la valeur générique si besoin */
+        width: min(1200px, 96vw); /* un peu plus large que la valeur gÃ©nÃ©rique si besoin */
     }
 
     .teacher-detail-columns {
         display: grid;
-        /* Col 1 la plus large, col 2 resserrée, col 3 confortable */
+        /* Col 1 la plus large, col 2 resserrÃ©e, col 3 confortable */
         grid-template-columns: 1.4fr 0.9fr 1.1fr;
         gap: 1.75rem;
         margin-top: 0.75rem;
 
-        /* Quand il y a beaucoup de disponibilités, le contenu central scrolle */
+        /* Quand il y a beaucoup de disponibilitÃ©s, le contenu central scrolle */
         flex: 1 1 auto;
         min-height: 0;
         overflow-y: auto;
@@ -52,7 +52,7 @@
 
     @media (max-width: 900px) {
         .teacher-detail-card {
-            width: min(1040px, 96vw);
+            width: min(1160px, 96vw);
         }
 
         .teacher-detail-columns {
@@ -61,7 +61,7 @@
         }
     }
 
-    /* ============ Colonne 1 : informations générales ============ */
+    /* ============ Colonne 1 : informations gÃ©nÃ©rales ============ */
 
     .teacher-detail-list {
         margin: 0;
@@ -112,7 +112,7 @@
         padding-right: 28px;
     }
 
-    /* ============ Colonne 2 : matières ============ */
+    /* ============ Colonne 2 : matiÃ¨res ============ */
 
     .teacher-subjects-edit-list {
         margin: 0.3rem 0 0.4rem;
@@ -145,11 +145,15 @@
 
     .teacher-subject-input-name {
         flex: 1.6;
+        max-width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .teacher-subject-input-promo {
         flex: 0.9;
-        max-width: 130px; /* évite que la 2ᵉ input s'étire trop */
+        max-width: 130px; /* Ã©vite que la 2áµ‰ input s'Ã©tire trop */
         text-align: center;
     }
 
@@ -208,10 +212,10 @@
         color: var(--muted);
     }
 
-    /* ============ Colonne 3 : dispos (styles principaux dans leurs fichiers dédiés) ============ */
-    /* Ici on ne redéfinit pas toute la grille des dispos, juste les tweaks dark theme plus bas. */
+    /* ============ Colonne 3 : dispos (styles principaux dans leurs fichiers dÃ©diÃ©s) ============ */
+    /* Ici on ne redÃ©finit pas toute la grille des dispos, juste les tweaks dark theme plus bas. */
 
-    /* ============ Thème sombre — corps de la card ============ */
+    /* ============ ThÃ¨me sombre â€” corps de la card ============ */
 
     [data-theme='dark'] .teacher-detail-input,
     [data-theme='dark'] .teacher-detail-select {
@@ -279,3 +283,4 @@
         color: var(--text);
     }
 }
+
