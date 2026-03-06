@@ -21,6 +21,7 @@ export default function Rooms() {
         closeDetail,
         deleteRoomsByIds,
         deleteSingleRoom,
+        validateRoomIdentity,
     } = useRoomsData()
 
     const {
@@ -155,6 +156,7 @@ export default function Rooms() {
                     onChange={updateRoom}
                     onDelete={() => handleDeleteSingleRoom(selectedRoom.id)}
                     isCreate={isCreatingSelectedRoom}
+                    validateRoomIdentity={validateRoomIdentity}
                 />
             )}
         </>
