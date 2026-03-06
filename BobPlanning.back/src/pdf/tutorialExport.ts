@@ -127,15 +127,15 @@ const ARIAL_REGULAR_PATH = path.resolve(__dirname, 'fonts', 'arial.ttf')
 const ARIAL_BOLD_PATH = path.resolve(__dirname, 'fonts', 'arialbd.ttf')
 const HAS_ARIAL_FONTS = fs.existsSync(ARIAL_REGULAR_PATH) && fs.existsSync(ARIAL_BOLD_PATH)
 
-const FONTS = (HAS_ARIAL_FONTS
-    ? {
+const FONTS = HAS_ARIAL_FONTS
+    ? ({
           regular: 'Arial',
           bold: 'Arial-Bold',
-      }
-    : {
+      } as const)
+    : ({
           regular: 'Helvetica',
           bold: 'Helvetica-Bold',
-      }) as const
+      } as const)
 
 const SPACING = {
     xs: 4,
@@ -233,11 +233,11 @@ const buildImageUrlCandidates = (url: string): string[] => {
         const isLocalHost =
             hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0'
 
-        if (isLocalHost) {
-            const fallbackHosts = [
-                process.env.PDF_ASSET_HOST,
-                'opale-new-frontend:5173',
-                'host.docker.internal:5173',
+    if (isLocalHost) {
+        const fallbackHosts = [
+            process.env.PDF_ASSET_HOST,
+            'opale-new-frontend:5173',
+            'host.docker.internal:5173',
             ]
                 .filter(Boolean)
                 .map(String)
@@ -248,6 +248,11 @@ const buildImageUrlCandidates = (url: string): string[] => {
                 candidates.push(fallback.toString())
             })
         }
+    } catch (error) {
+        console.warn('[PDF] Invalid image URL', {
+            url,
+            message: error instanceof Error ? error.message : String(error),
+        })
     }
 
     return Array.from(new Set(candidates))
