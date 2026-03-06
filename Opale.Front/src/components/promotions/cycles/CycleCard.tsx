@@ -16,7 +16,10 @@ import { Promotion } from "../../../models"
 
 interface CycleCardProps {
     cycle: Cycle
-    renameCycle: (cycleId: string, name: string) => void
+    renameCycle: (cycleId: string, name: string) => Promise<boolean>
+    renameError?: string
+    clearRenameError: (cycleId: string) => void
+    updateRenameValidation: (cycleId: string, name: string) => void
     removeCycle: (cycleId: string) => void
     openEditPromotion: (cycleId: string, promoId: string) => void
     removePromotion: (promoId: string) => void
@@ -137,6 +140,9 @@ const HOURS_KEYS: Array<keyof NonNullable<MaquetteAnalyzeResponse['matieres']>[n
 const CycleCard: React.FC<CycleCardProps> = ({
                                                  cycle,
                                                  renameCycle,
+                                                 renameError,
+                                                 clearRenameError,
+                                                 updateRenameValidation,
                                                  removeCycle,
                                                  openEditPromotion,
                                                  removePromotion,
@@ -165,6 +171,10 @@ const CycleCard: React.FC<CycleCardProps> = ({
     const previewRequestIdRef = useRef(0)
 
     const cycleHint = useMemo(() => inferCycleHint(cycle), [cycle])
+
+    useEffect(() => {
+        setCycleName(cycle.name)
+    }, [cycle.name])
 
     const openAddPromoDialog = () => {
         const nextIndex = (cycle.promotions?.length || 0) + 1
@@ -467,12 +477,34 @@ const CycleCard: React.FC<CycleCardProps> = ({
     return (
         <section className="card cycle-card">
             <div className="cycle-head">
-                <input
-                    className="cycle-name"
-                    value={cycleName}
-                    onChange={(event) => setCycleName(event.target.value)}
-                    onBlur={() => renameCycle(cycle.id, cycleName)}
-                />
+                <div className="cycle-name-wrapper">
+                    <input
+                        className="cycle-name"
+                        value={cycleName}
+                        onChange={(event) => {
+                            const nextValue = event.target.value
+                            setCycleName(nextValue)
+                            updateRenameValidation(cycle.id, nextValue)
+                        }}
+                        onFocus={() => {
+                            updateRenameValidation(cycle.id, cycleName)
+                        }}
+                        onBlur={() => {
+                            void (async () => {
+                                const success = await renameCycle(cycle.id, cycleName)
+                                if (!success) {
+                                    setCycleName(cycle.name)
+                                    updateRenameValidation(cycle.id, cycle.name)
+                                }
+                            })()
+                        }}
+                    />
+                    {renameError && (
+                        <div className="cycle-name-error" role="alert">
+                            {renameError}
+                        </div>
+                    )}
+                </div>
 
                 <div className="cycle-actions">
                     <button

@@ -27,6 +27,10 @@ export default function Promotions() {
         createCycleWithPromotions,
         removeCycle,
         renameCycle,
+        renameErrors,
+        clearRenameError,
+        updateRenameValidation,
+        validateCreateCycleName,
         removePromotion,
         addPromotionToCycle,
         refreshCycles,
@@ -115,6 +119,9 @@ export default function Promotions() {
                         key={cycle.id}
                         cycle={cycle}
                         renameCycle={renameCycle}
+                        renameError={renameErrors[cycle.id]}
+                        clearRenameError={clearRenameError}
+                        updateRenameValidation={updateRenameValidation}
                         removeCycle={removeCycle}
                         openEditPromotion={openEditPromotion}
                         removePromotion={removePromotion}
@@ -175,6 +182,8 @@ export default function Promotions() {
                 isOpen={isCreateModalOpen}
                 onSubmit={createCycleWithPromotions}
                 onClose={closeCreateModal}
+                errorMessage={error}
+                validateName={validateCreateCycleName}
             />
             </div></div>
     )
