@@ -1,4 +1,4 @@
-// src/components/teachers/TeacherDetailCard.tsx
+﻿// src/components/teachers/TeacherDetailCard.tsx
 import { Teacher } from '../../models/Teachers'
 import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import TeacherInfoColumn from './section/TeacherInfoColumn'
@@ -230,4 +230,6 @@ export default function TeacherDetailCard({
         </div>
     )
 }
+
+
 

@@ -45,8 +45,8 @@ const TeacherSubjectsColumn = ({
                     getEnseignements(),
                 ])
 
-                // on force aussi le chargement de /getEnseignements demandÃ© (mÃªme si
-                // la correspondance matiÃ¨re/promo est portÃ©e par les matiÃ¨res)
+                // on force aussi le chargement de /getEnseignements demandé (même si
+                // la correspondance matière/promo est portée par les matières)
                 void enseignementsRes
 
                 if (!mounted) return
@@ -190,7 +190,7 @@ const TeacherSubjectsColumn = ({
 
     return (
         <div className="teacher-detail-col">
-            <h4>MatiÃ¨res enseignÃ©es</h4>
+            <h4>Matières enseignées</h4>
 
             {subjects && subjects.length > 0 ? (
                 <ul className="teacher-subjects-edit-list">
@@ -221,7 +221,7 @@ const TeacherSubjectsColumn = ({
                                                 handlePromoChange(index, e.target.value)
                                             }
                                         >
-                                            <option value="">SÃ©lectionner une promo</option>
+                                            <option value="">Sélectionner une promo</option>
                                             {promoOptions.map((promoLabel) => (
                                                 <option key={promoLabel} value={promoLabel}>
                                                     {promoLabel}
@@ -236,7 +236,7 @@ const TeacherSubjectsColumn = ({
                                                 handleMatiereChange(index, e.target.value)
                                             }
                                         >
-                                            <option value="">SÃ©lectionner une matiÃ¨re</option>
+                                            <option value="">Sélectionner une matière</option>
                                             {matiereOptions.map((matiereName) => (
                                                 <option key={matiereName} value={matiereName}>
                                                     {matiereName}
@@ -251,16 +251,16 @@ const TeacherSubjectsColumn = ({
                                 type="button"
                                 className="teacher-subject-remove"
                                 onClick={() => onRemoveSubject(index)}
-                                aria-label="Supprimer cette matiÃ¨re"
+                                aria-label="Supprimer cette matière"
                             >
-                                Ã—
+                                ×
                             </button>
                         </li>
                     ))}
                 </ul>
             ) : (
                 <p className="teacher-detail-muted">
-                    Aucune matiÃ¨re associÃ©e pour lâ€™instant.
+                    Aucune matière associée pour l'instant.
                 </p>
             )}
 
@@ -269,10 +269,11 @@ const TeacherSubjectsColumn = ({
                 className="teacher-subject-add-btn"
                 onClick={onAddSubject}
             >
-                + Ajouter une matiÃ¨re
+                + Ajouter une matière
             </button>
         </div>
     )
 }
 
 export default TeacherSubjectsColumn
+
