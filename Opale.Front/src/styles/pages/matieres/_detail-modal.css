@@ -133,6 +133,12 @@
         min-width: 0;
     }
 
+    .matiere-hours-input.is-readonly {
+        cursor: pointer;
+        opacity: 0.7;
+        background: var(--panel);
+    }
+
     input[type='number'] {
         -moz-appearance: textfield;
         appearance: textfield;

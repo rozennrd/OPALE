@@ -412,6 +412,22 @@ export default function MatiereDetailCard({
         })
     }
 
+    const isKindEnabled = (row: TeacherAssignment, kind: TeachKind) => {
+        if (kind === 'TD') return row.tdEnabled
+        if (kind === 'TP') return row.tpEnabled
+        if (kind === 'PROJET') return row.projectEnabled
+        if (kind === 'E-LEARNING') return row.elearningEnabled
+        return row.autresEnabled
+    }
+
+    const ensureKindEnabled = (row: TeacherAssignment, kind: TeachKind) => {
+        if (!isKindEnabled(row, kind)) {
+            handleToggleKind(row.rowId, kind)
+        }
+    }
+
+    const isHoursActive = (value: HoursValue) => clamp0(value) > 0
+
     const assignmentsChanged = useMemo(() => {
         const norm = (a: TeacherAssignment) => ({
             enseignementId: a.enseignementId ?? '',
@@ -774,6 +790,12 @@ export default function MatiereDetailCard({
                                     const elearningChecked = row.elearningEnabled
                                     const autresChecked = row.autresEnabled
 
+                                    const tdActive = isHoursActive(row.tdHours)
+                                    const tpActive = isHoursActive(row.tpHours)
+                                    const projectActive = isHoursActive(row.projectHours)
+                                    const elearningActive = isHoursActive(row.elearningHours)
+                                    const autresActive = isHoursActive(row.autresHours)
+
                                     return (
                                         <div key={row.rowId} className="matiere-assign-row">
                                             <div className="matiere-assign-top">
@@ -806,18 +828,22 @@ export default function MatiereDetailCard({
                                                 {/* TD */}
                                                 <button
                                                     type="button"
-                                                    className={tdChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
+                                                    className={tdActive ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
                                                     onClick={() => handleToggleKind(row.rowId, 'TD')}
-                                                    aria-pressed={tdChecked}
+                                                    aria-pressed={tdActive}
                                                 >
                                                     TD
                                                 </button>
                                                 <input
-                                                    className="room-detail-input matiere-hours-input"
+                                                    className={`room-detail-input matiere-hours-input${
+                                                        tdChecked ? '' : ' is-readonly'
+                                                    }`}
                                                     type="number"
                                                     min={0}
                                                     value={row.tdHours}
-                                                    disabled={!tdChecked}
+                                                    readOnly={!tdChecked}
+                                                    aria-disabled={!tdChecked}
+                                                    onPointerDown={() => ensureKindEnabled(row, 'TD')}
                                                     onChange={(e) => {
                                                         const v = e.target.value
                                                         handleAssignmentChange(row.rowId, { tdHours: v === '' ? '' : Number(v) })
@@ -828,18 +854,22 @@ export default function MatiereDetailCard({
                                                 {/* TP */}
                                                 <button
                                                     type="button"
-                                                    className={tpChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
+                                                    className={tpActive ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'}
                                                     onClick={() => handleToggleKind(row.rowId, 'TP')}
-                                                    aria-pressed={tpChecked}
+                                                    aria-pressed={tpActive}
                                                 >
                                                     TP
                                                 </button>
                                                 <input
-                                                    className="room-detail-input matiere-hours-input"
+                                                    className={`room-detail-input matiere-hours-input${
+                                                        tpChecked ? '' : ' is-readonly'
+                                                    }`}
                                                     type="number"
                                                     min={0}
                                                     value={row.tpHours}
-                                                    disabled={!tpChecked}
+                                                    readOnly={!tpChecked}
+                                                    aria-disabled={!tpChecked}
+                                                    onPointerDown={() => ensureKindEnabled(row, 'TP')}
                                                     onChange={(e) => {
                                                         const v = e.target.value
                                                         handleAssignmentChange(row.rowId, { tpHours: v === '' ? '' : Number(v) })
@@ -851,19 +881,23 @@ export default function MatiereDetailCard({
                                                 <button
                                                     type="button"
                                                     className={
-                                                        projectChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'
+                                                        projectActive ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'
                                                     }
                                                     onClick={() => handleToggleKind(row.rowId, 'PROJET')}
-                                                    aria-pressed={projectChecked}
+                                                    aria-pressed={projectActive}
                                                 >
                                                     PROJET
                                                 </button>
                                                 <input
-                                                    className="room-detail-input matiere-hours-input"
+                                                    className={`room-detail-input matiere-hours-input${
+                                                        projectChecked ? '' : ' is-readonly'
+                                                    }`}
                                                     type="number"
                                                     min={0}
                                                     value={row.projectHours}
-                                                    disabled={!projectChecked}
+                                                    readOnly={!projectChecked}
+                                                    aria-disabled={!projectChecked}
+                                                    onPointerDown={() => ensureKindEnabled(row, 'PROJET')}
                                                     onChange={(e) => {
                                                         const v = e.target.value
                                                         handleAssignmentChange(row.rowId, {
@@ -877,19 +911,23 @@ export default function MatiereDetailCard({
                                                 <button
                                                     type="button"
                                                     className={
-                                                        elearningChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'
+                                                        elearningActive ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'
                                                     }
                                                     onClick={() => handleToggleKind(row.rowId, 'E-LEARNING')}
-                                                    aria-pressed={elearningChecked}
+                                                    aria-pressed={elearningActive}
                                                 >
                                                     E-LEARNING
                                                 </button>
                                                 <input
-                                                    className="room-detail-input matiere-hours-input"
+                                                    className={`room-detail-input matiere-hours-input${
+                                                        elearningChecked ? '' : ' is-readonly'
+                                                    }`}
                                                     type="number"
                                                     min={0}
                                                     value={row.elearningHours}
-                                                    disabled={!elearningChecked}
+                                                    readOnly={!elearningChecked}
+                                                    aria-disabled={!elearningChecked}
+                                                    onPointerDown={() => ensureKindEnabled(row, 'E-LEARNING')}
                                                     onChange={(e) => {
                                                         const v = e.target.value
                                                         handleAssignmentChange(row.rowId, {
@@ -903,19 +941,23 @@ export default function MatiereDetailCard({
                                                 <button
                                                     type="button"
                                                     className={
-                                                        autresChecked ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'
+                                                        autresActive ? 'matiere-kind-chip is-active' : 'matiere-kind-chip'
                                                     }
                                                     onClick={() => handleToggleKind(row.rowId, 'AUTRES')}
-                                                    aria-pressed={autresChecked}
+                                                    aria-pressed={autresActive}
                                                 >
                                                     AUTRES
                                                 </button>
                                                 <input
-                                                    className="room-detail-input matiere-hours-input"
+                                                    className={`room-detail-input matiere-hours-input${
+                                                        autresChecked ? '' : ' is-readonly'
+                                                    }`}
                                                     type="number"
                                                     min={0}
                                                     value={row.autresHours}
-                                                    disabled={!autresChecked}
+                                                    readOnly={!autresChecked}
+                                                    aria-disabled={!autresChecked}
+                                                    onPointerDown={() => ensureKindEnabled(row, 'AUTRES')}
                                                     onChange={(e) => {
                                                         const v = e.target.value
                                                         handleAssignmentChange(row.rowId, {
