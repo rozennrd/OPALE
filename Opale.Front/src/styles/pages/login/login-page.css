@@ -28,11 +28,34 @@
     display: none;
 }
 
-:root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .login-logo .login-logo-light {
+:root:is([data-theme='dark'], [data-theme='spock']) .login-logo .login-logo-light {
     display: none;
 }
 
-:root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .login-logo .login-logo-dark {
+:root:is([data-theme='dark'], [data-theme='spock']) .login-logo .login-logo-dark {
+    display: block;
+}
+
+.login-logo .login-logo-papillon-light,
+.login-logo .login-logo-papillon-dark {
+    display: none;
+}
+
+:root[data-theme='papillon-light'] .login-logo .login-logo-light,
+:root[data-theme='papillon-light'] .login-logo .login-logo-dark {
+    display: none;
+}
+
+:root[data-theme='papillon-light'] .login-logo .login-logo-papillon-light {
+    display: block;
+}
+
+:root[data-theme='papillon-dark'] .login-logo .login-logo-light,
+:root[data-theme='papillon-dark'] .login-logo .login-logo-dark {
+    display: none;
+}
+
+:root[data-theme='papillon-dark'] .login-logo .login-logo-papillon-dark {
     display: block;
 }
 

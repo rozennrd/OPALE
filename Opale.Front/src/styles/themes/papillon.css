@@ -8,12 +8,10 @@
     --primary-600: #58b5a9;
     --amber-400: #8ed1c5;
 
-    --papillon-butterflies: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='900'%20height='900'%20viewBox='0%200%20900%20900'%20fill='none'%3E%3Cg%20opacity='0.035'%20stroke='%236EC5B8'%20stroke-width='1.6'%3E%3Cellipse%20cx='360'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(-10%20360%20430)'/%3E%3Cellipse%20cx='540'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(10%20540%20430)'/%3E%3Cellipse%20cx='385'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(-8%20385%20560)'/%3E%3Cellipse%20cx='515'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(8%20515%20560)'/%3E%3Cpath%20d='M450%20350L450%20630'/%3E%3Ccircle%20cx='450'%20cy='340'%20r='6'/%3E%3C/g%3E%3Cg%20opacity='0.03'%20stroke='%23F08C7E'%20stroke-width='1.4'%20transform='translate(620,140)%20scale(0.5)'%3E%3Cellipse%20cx='360'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(-10%20360%20430)'/%3E%3Cellipse%20cx='540'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(10%20540%20430)'/%3E%3Cellipse%20cx='385'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(-8%20385%20560)'/%3E%3Cellipse%20cx='515'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(8%20515%20560)'/%3E%3Cpath%20d='M450%20350L450%20630'/%3E%3Ccircle%20cx='450'%20cy='340'%20r='6'/%3E%3C/g%3E%3C/svg%3E");
+    --papillon-butterflies: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='900'%20height='900'%20viewBox='0%200%20900%20900'%20fill='none'%3E%3Cg%20opacity='0.08'%20stroke='%236EC5B8'%20stroke-width='1.6'%3E%3Cellipse%20cx='360'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(-10%20360%20430)'/%3E%3Cellipse%20cx='540'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(10%20540%20430)'/%3E%3Cellipse%20cx='385'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(-8%20385%20560)'/%3E%3Cellipse%20cx='515'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(8%20515%20560)'/%3E%3Cpath%20d='M450%20350L450%20630'/%3E%3Ccircle%20cx='450'%20cy='340'%20r='6'/%3E%3C/g%3E%3Cg%20opacity='0.06'%20stroke='%23F08C7E'%20stroke-width='1.4'%20transform='translate(620,140)%20scale(0.5)'%3E%3Cellipse%20cx='360'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(-10%20360%20430)'/%3E%3Cellipse%20cx='540'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(10%20540%20430)'/%3E%3Cellipse%20cx='385'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(-8%20385%20560)'/%3E%3Cellipse%20cx='515'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(8%20515%20560)'/%3E%3Cpath%20d='M450%20350L450%20630'/%3E%3Ccircle%20cx='450'%20cy='340'%20r='6'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 900px 900px repeat;
 
     --bg:
-      radial-gradient(circle at 18% 0%, rgba(110, 197, 184, 0.18), transparent 55%),
-      radial-gradient(circle at 85% 12%, rgba(240, 140, 126, 0.12), transparent 60%),
-      var(--papillon-butterflies),
+      url('../textures/papillon-light.png') center / cover no-repeat,
       #f7faf9;
     --panel: #ffffff;
     --panel-soft: #eef4f2;
@@ -46,6 +44,9 @@
     --text-on-brand: #ffffff;
     --text-on-primary: #0f2d2a;
     --text-on-amber: #0f2d2a;
+
+    --papillon-outline: color-mix(in srgb, var(--border) 55%, transparent);
+    --papillon-outline-strong: color-mix(in srgb, var(--border) 75%, transparent);
   }
 
   :root[data-theme="papillon-dark"] {
@@ -58,9 +59,7 @@
     --papillon-butterflies: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='900'%20height='900'%20viewBox='0%200%20900%20900'%20fill='none'%3E%3Cg%20opacity='0.03'%20stroke='%237BD3C7'%20stroke-width='1.6'%3E%3Cellipse%20cx='360'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(-10%20360%20430)'/%3E%3Cellipse%20cx='540'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(10%20540%20430)'/%3E%3Cellipse%20cx='385'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(-8%20385%20560)'/%3E%3Cellipse%20cx='515'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(8%20515%20560)'/%3E%3Cpath%20d='M450%20350L450%20630'/%3E%3Ccircle%20cx='450'%20cy='340'%20r='6'/%3E%3C/g%3E%3Cg%20opacity='0.028'%20stroke='%23FF8A7A'%20stroke-width='1.4'%20transform='translate(620,140)%20scale(0.5)'%3E%3Cellipse%20cx='360'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(-10%20360%20430)'/%3E%3Cellipse%20cx='540'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(10%20540%20430)'/%3E%3Cellipse%20cx='385'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(-8%20385%20560)'/%3E%3Cellipse%20cx='515'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(8%20515%20560)'/%3E%3Cpath%20d='M450%20350L450%20630'/%3E%3Ccircle%20cx='450'%20cy='340'%20r='6'/%3E%3C/g%3E%3C/svg%3E");
 
     --bg:
-      radial-gradient(circle at 16% 0%, rgba(88, 196, 183, 0.18), transparent 55%),
-      radial-gradient(circle at 82% 12%, rgba(255, 138, 122, 0.12), transparent 60%),
-      var(--papillon-butterflies),
+      url('../textures/papillon-dark.png') center / cover no-repeat,
       #0f1416;
     --panel: #1f2628;
     --panel-soft: #171e20;
@@ -93,6 +92,9 @@
     --text-on-brand: #1b1110;
     --text-on-primary: #0b1616;
     --text-on-amber: #0b1616;
+
+    --papillon-outline: color-mix(in srgb, var(--border) 60%, transparent);
+    --papillon-outline-strong: color-mix(in srgb, var(--border) 80%, transparent);
   }
 }
 
@@ -134,9 +136,68 @@
 }
 
 @layer components {
+  :root:is([data-theme='papillon-light'], [data-theme='papillon-dark']) .sidebar,
+  :root:is([data-theme='papillon-light'], [data-theme='papillon-dark']) .main-card,
+  :root:is([data-theme='papillon-light'], [data-theme='papillon-dark']) .main-inner {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  :root:is([data-theme='papillon-light'], [data-theme='papillon-dark']) .page-header {
+    position: relative;
+    display: block;
+    margin-bottom: 1.2rem;
+    padding-bottom: 1.1rem;
+  }
+
+  :root:is([data-theme='papillon-light'], [data-theme='papillon-dark']) .page-header::after {
+    content: '';
+    position: absolute;
+    left: -60%;
+    right: -60%;
+    height: 44px;
+    bottom: -18px;
+    background: url('../textures/ornement-papillon.png') center / contain no-repeat;
+    opacity: 1;
+    pointer-events: none;
+  }
+
   :root:is([data-theme='papillon-light'], [data-theme='papillon-dark']) .theme-toggle-btn {
     background:
       linear-gradient(90deg, color-mix(in srgb, var(--primary) 14%, transparent), transparent);
     border-color: var(--border);
+  }
+
+  :root:is([data-theme='papillon-light'], [data-theme='papillon-dark']) :is(
+    .card,
+    .page-toolbar,
+    .toolbar-search,
+    .toolbar-filter-button,
+    .toolbar-filter-select,
+    .toolbar-filter-date,
+    .toolbar-toggle-chips,
+    .toolbar-selection-count-pill,
+    .entity-card
+  ) {
+    border-color: var(--papillon-outline-strong);
+    box-shadow: 0 0 0 1px var(--papillon-outline), var(--shadow-sm);
+  }
+
+  :root:is([data-theme='papillon-light'], [data-theme='papillon-dark']) .entity-card-aside {
+    border-left-color: var(--papillon-outline-strong);
+  }
+}
+
+@layer pages {
+  :root:is([data-theme='papillon-light'], [data-theme='papillon-dark']) :is(
+    .rooms-page,
+    .events-page,
+    .teachers-page,
+    .matieres-page,
+    .settings-page,
+    .documentation-page
+  ) {
+    background: transparent;
+    box-shadow: none;
   }
 }

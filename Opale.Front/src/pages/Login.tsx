@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 import logoFull from '../assets/logo/logo-full.png';
 import logoFullDark from '../assets/logo/logo-full-dark.png';
+import logoFullPapillonLight from '../assets/logo/logo-full-papillon-light.png';
+import logoFullPapillonDark from '../assets/logo/logo-full-papillon-dark.png';
 import ThemeToggle from '../components/ThemeToggle';
 import { LoginCredentials } from '../services/base/types';
 import { authService } from '../services/base/AuthService';
@@ -50,6 +52,8 @@ export default function Login(): React.ReactElement {
             <div className="login-logo">
                 <img className="login-logo-light" src={logoFull} alt="OPALE" />
                 <img className="login-logo-dark" src={logoFullDark} alt="OPALE" />
+                <img className="login-logo-papillon-light" src={logoFullPapillonLight} alt="OPALE" />
+                <img className="login-logo-papillon-dark" src={logoFullPapillonDark} alt="OPALE" />
             </div>
 
             <form onSubmit={handleSubmit} className="login-form">
