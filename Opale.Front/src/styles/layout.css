@@ -34,8 +34,8 @@
   .brand .logo-compact { display: none; width: 48px; height: auto; }
   .brand .logo-full-dark { display: none; }
 
-  :root:is([data-theme='dark'], [data-theme='spock']) .brand .logo-full-light { display: none; }
-  :root:is([data-theme='dark'], [data-theme='spock']) .brand .logo-full-dark { display: block; }
+  :root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .brand .logo-full-light { display: none; }
+  :root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .brand .logo-full-dark { display: block; }
 
   .nav { display: flex; flex-direction: column; gap: 8px; }
   .nav-btn {
@@ -100,8 +100,8 @@
     line-height: 1;
   }
 
-  :root:is([data-theme='dark'], [data-theme='spock']) .footer-icon-btn .footer-icon-light { display: none; }
-  :root:is([data-theme='dark'], [data-theme='spock']) .footer-icon-btn .footer-icon-dark { display: block; }
+  :root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .footer-icon-btn .footer-icon-light { display: none; }
+  :root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .footer-icon-btn .footer-icon-dark { display: block; }
 
   /* Sidebar compacte */
   @media (max-width: 860px) {

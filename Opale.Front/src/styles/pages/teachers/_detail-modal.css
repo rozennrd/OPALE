@@ -213,69 +213,70 @@
 
     /* ============ Thème sombre — corps de la card ============ */
 
-    [data-theme='dark'] .teacher-detail-input,
-    [data-theme='dark'] .teacher-detail-select {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-detail-input,
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-detail-select {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.15);
         color: var(--text);
     }
 
-    [data-theme='dark'] .teacher-subject-input {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-subject-input {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.15);
         color: var(--text);
     }
 
-    [data-theme='dark'] .teacher-subject-add-btn,
-    [data-theme='dark'] .teacher-period-add-btn {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-subject-add-btn,
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-period-add-btn {
         border-color: rgba(255, 255, 255, 0.2);
         color: var(--muted);
     }
 
-    [data-theme='dark'] .teacher-subject-add-btn:hover,
-    [data-theme='dark'] .teacher-period-add-btn:hover {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-subject-add-btn:hover,
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-period-add-btn:hover {
         background: rgba(255, 255, 255, 0.05);
         border-color: rgba(255, 255, 255, 0.3);
     }
 
-    [data-theme='dark'] .ta-cell.is-available {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .ta-cell.is-available {
         background: rgba(16, 185, 129, 0.35);
         border-color: rgba(16, 185, 129, 0.7);
     }
 
-    [data-theme='dark'] .ta-cell.is-unavailable {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .ta-cell.is-unavailable {
         background: rgba(239, 68, 68, 0.35);
         border-color: rgba(239, 68, 68, 0.7);
     }
 
-    [data-theme='dark'] .ta-day {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .ta-day {
         color: var(--text);
     }
 
-    [data-theme='dark'] .ta-label {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .ta-label {
         color: var(--text);
     }
 
-    [data-theme='dark'] .teacher-availability-legend {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-availability-legend {
         color: var(--muted);
     }
 
-    [data-theme='dark'] .teacher-period-pill {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-period-pill {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.15);
         color: var(--text);
     }
 
-    [data-theme='dark'] .teacher-period-pill.is-active {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-period-pill.is-active {
         background: rgba(129, 140, 248, 0.25);
         border-color: rgba(129, 140, 248, 0.7);
         box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.5);
     }
 
-    [data-theme='dark'] .constraint-date-input,
-    [data-theme='dark'] .teacher-period-range-pill input[type='date'] {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .constraint-date-input,
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-period-range-pill input[type='date'] {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.2);
         color: var(--text);
     }
 }
+

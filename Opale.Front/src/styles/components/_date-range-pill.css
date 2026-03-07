@@ -99,11 +99,11 @@
         opacity: 0.7;
     }
 
-    :root:is([data-theme='dark'], [data-theme='spock']) .date-range-pill {
+    :root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .date-range-pill {
         color: #000000;
     }
 
-    :root:is([data-theme='dark'], [data-theme='spock']) .date-range-pill .date-input-field {
+    :root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .date-range-pill .date-input-field {
         color: #000000;
     }
 }

@@ -8,7 +8,7 @@ const READING_KEY = 'opale-reading'
 const SPOCK_AUDIO_KEY = 'opale-spock-audio'
 const APPEARANCE_EVENT = 'opale:appearance-change'
 
-const THEMES = ['light', 'dark', 'spock'] as const
+const THEMES = ['light', 'dark', 'spock', 'papillon-light', 'papillon-dark'] as const
 const CVD_PROFILES = ['none', 'protan-deutan', 'tritan', 'achromatopsia'] as const
 const VISION_PROFILES = ['normal', 'low'] as const
 const READING_PROFILES = ['normal', 'dyslexia'] as const
@@ -262,7 +262,7 @@ function useAppearanceConsoleApi(state: AppearanceState, setters: AppearanceSett
                 setSpockAudio(true)
             },
             help: () =>
-                'window.opaleAppearance.setTheme("spock"), window.opaleAppearance.setCvd("protan-deutan"), window.opaleAppearance.setVision("low"), window.opaleAppearance.setReading("dyslexia"), window.opaleAppearance.setSpockAudio("off"), window.opaleAppearance.getState(), window.opaleAppearance.reset()',
+                'window.opaleAppearance.setTheme("spock" | "papillon-light" | "papillon-dark"), window.opaleAppearance.setCvd("protan-deutan"), window.opaleAppearance.setVision("low"), window.opaleAppearance.setReading("dyslexia"), window.opaleAppearance.setSpockAudio("off"), window.opaleAppearance.getState(), window.opaleAppearance.reset()',
         }
 
         return () => {
@@ -367,7 +367,11 @@ export function useTheme() {
     useSpockAudioFx(appearance.theme, appearance.spockAudio)
 
     const toggleTheme = () =>
-        appearance.setTheme((current) => (current === 'light' ? 'dark' : 'light'))
+        appearance.setTheme((current) => {
+            if (current === 'papillon-light') return 'papillon-dark'
+            if (current === 'papillon-dark') return 'papillon-light'
+            return current === 'light' ? 'dark' : 'light'
+        })
 
     return {
         theme: appearance.theme,

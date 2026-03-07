@@ -349,9 +349,9 @@
 
     /* Variante dark cohérente avec les events */
 
-    [data-theme='dark'] #room-name-input:focus,
-    [data-theme='dark'] #room-fullname-input:focus,
-    [data-theme='dark'] #room-capacity-input:focus {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) #room-name-input:focus,
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) #room-fullname-input:focus,
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) #room-capacity-input:focus {
         background: #252f42;
     }
 
@@ -422,46 +422,46 @@
        (le fond de .detail-card est géré en commun)
        ============================ */
 
-    [data-theme='dark'] .room-detail-input {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-detail-input {
         background: rgba(15, 23, 42, 0.85);
         border-color: var(--border-subtle);
         color: var(--text);
     }
 
-    [data-theme='dark'] .room-type-chip {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-chip {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.15);
         color: var(--text);
     }
 
-    [data-theme='dark'] .room-type-chip-selected {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-chip-selected {
         background: rgba(129, 140, 248, 0.25);
         border-color: rgba(129, 140, 248, 0.7);
         color: var(--text);
     }
 
-    [data-theme='dark'] .room-detail-textarea {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-detail-textarea {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.2);
         color: var(--text);
     }
 
-    [data-theme='dark'] .room-detail-availability-row {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-detail-availability-row {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.15);
     }
 
-    [data-theme='dark'] .room-availability-switch {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-availability-switch {
         background: #111827;
         border-color: rgba(255, 255, 255, 0.18);
     }
 
-    [data-theme='dark'] .room-availability-switch-track {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-availability-switch-track {
         background: rgba(148, 163, 184, 0.2);
         border-color: rgba(255, 255, 255, 0.18);
     }
 
-    [data-theme='dark'] .room-type-chip-dot {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-chip-dot {
         border-color: color-mix(in srgb, var(--text) 70%, transparent);
     }
 
@@ -502,33 +502,34 @@
 
     /* Dark theme – couleurs de pill uniquement */
 
-    [data-theme='dark'] .room-type-badge-header.room-type-td {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-badge-header.room-type-td {
         background: rgba(59, 130, 246, 0.22);
         border-color: rgba(59, 130, 246, 0.6);
         color: #bfdbfe;
     }
 
-    [data-theme='dark'] .room-type-badge-header.room-type-tp_electronique {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-badge-header.room-type-tp_electronique {
         background: rgba(16, 185, 129, 0.22);
         border-color: rgba(16, 185, 129, 0.6);
         color: #a7f3d0;
     }
 
-    [data-theme='dark'] .room-type-badge-header.room-type-tp_numerique {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-badge-header.room-type-tp_numerique {
         background: rgba(14, 165, 233, 0.22);
         border-color: rgba(14, 165, 233, 0.6);
         color: #bae6fd;
     }
 
-    [data-theme='dark'] .room-type-badge-header.room-type-projet {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-badge-header.room-type-projet {
         background: rgba(234, 179, 8, 0.24);
         border-color: rgba(234, 179, 8, 0.65);
         color: #fef3c7;
     }
 
-    [data-theme='dark'] .room-type-badge-header.room-type-autre {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-badge-header.room-type-autre {
         background: rgba(148, 163, 184, 0.24);
         border-color: rgba(148, 163, 184, 0.6);
         color: #e5e7eb;
     }
 }
+

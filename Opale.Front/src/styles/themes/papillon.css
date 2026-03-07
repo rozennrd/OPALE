@@ -1,0 +1,142 @@
+/* Papillon theme (activate via <html data-theme="papillon-light"> or "papillon-dark") */
+
+@layer tokens {
+  :root[data-theme="papillon-light"] {
+    --brand-500: #f08c7e;
+    --brand-600: #e77a6d;
+    --primary-500: #6ec5b8;
+    --primary-600: #58b5a9;
+    --amber-400: #8ed1c5;
+
+    --papillon-butterflies: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='900'%20height='900'%20viewBox='0%200%20900%20900'%20fill='none'%3E%3Cg%20opacity='0.035'%20stroke='%236EC5B8'%20stroke-width='1.6'%3E%3Cellipse%20cx='360'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(-10%20360%20430)'/%3E%3Cellipse%20cx='540'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(10%20540%20430)'/%3E%3Cellipse%20cx='385'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(-8%20385%20560)'/%3E%3Cellipse%20cx='515'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(8%20515%20560)'/%3E%3Cpath%20d='M450%20350L450%20630'/%3E%3Ccircle%20cx='450'%20cy='340'%20r='6'/%3E%3C/g%3E%3Cg%20opacity='0.03'%20stroke='%23F08C7E'%20stroke-width='1.4'%20transform='translate(620,140)%20scale(0.5)'%3E%3Cellipse%20cx='360'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(-10%20360%20430)'/%3E%3Cellipse%20cx='540'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(10%20540%20430)'/%3E%3Cellipse%20cx='385'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(-8%20385%20560)'/%3E%3Cellipse%20cx='515'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(8%20515%20560)'/%3E%3Cpath%20d='M450%20350L450%20630'/%3E%3Ccircle%20cx='450'%20cy='340'%20r='6'/%3E%3C/g%3E%3C/svg%3E");
+
+    --bg:
+      radial-gradient(circle at 18% 0%, rgba(110, 197, 184, 0.18), transparent 55%),
+      radial-gradient(circle at 85% 12%, rgba(240, 140, 126, 0.12), transparent 60%),
+      var(--papillon-butterflies),
+      #f7faf9;
+    --panel: #ffffff;
+    --panel-soft: #eef4f2;
+    --text: #1f2a2a;
+    --text-strong: #1b2525;
+    --muted: #5b6a69;
+
+    --brand: var(--brand-500);
+    --brand-hover: var(--brand-600);
+
+    --primary: var(--primary-500);
+    --primary-hover: var(--primary-600);
+
+    --surface-hover: rgba(110, 197, 184, 0.14);
+    --surface-active: rgba(110, 197, 184, 0.22);
+
+    --border: #d8e4e1;
+    --border-soft: color-mix(in srgb, var(--border) 72%, transparent);
+    --input-bg: #ffffff;
+    --scrollbar-thumb: rgba(31, 42, 42, 0.18);
+    --scrollbar-thumb-hover: rgba(31, 42, 42, 0.3);
+
+    --shadow-sm: 0 2px 6px rgba(31, 42, 42, 0.08);
+    --shadow-md: 0 6px 16px rgba(31, 42, 42, 0.12);
+    --shadow-lg: 0 10px 26px rgba(31, 42, 42, 0.16);
+
+    --add-cycle-border-width: 3px;
+    --add-cycle-border-color: #6ec5b8;
+
+    --text-on-brand: #ffffff;
+    --text-on-primary: #0f2d2a;
+    --text-on-amber: #0f2d2a;
+  }
+
+  :root[data-theme="papillon-dark"] {
+    --brand-500: #ff8a7a;
+    --brand-600: #ff9b8d;
+    --primary-500: #58c4b7;
+    --primary-600: #6dd1c5;
+    --amber-400: #7bd3c7;
+
+    --papillon-butterflies: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='900'%20height='900'%20viewBox='0%200%20900%20900'%20fill='none'%3E%3Cg%20opacity='0.03'%20stroke='%237BD3C7'%20stroke-width='1.6'%3E%3Cellipse%20cx='360'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(-10%20360%20430)'/%3E%3Cellipse%20cx='540'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(10%20540%20430)'/%3E%3Cellipse%20cx='385'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(-8%20385%20560)'/%3E%3Cellipse%20cx='515'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(8%20515%20560)'/%3E%3Cpath%20d='M450%20350L450%20630'/%3E%3Ccircle%20cx='450'%20cy='340'%20r='6'/%3E%3C/g%3E%3Cg%20opacity='0.028'%20stroke='%23FF8A7A'%20stroke-width='1.4'%20transform='translate(620,140)%20scale(0.5)'%3E%3Cellipse%20cx='360'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(-10%20360%20430)'/%3E%3Cellipse%20cx='540'%20cy='430'%20rx='120'%20ry='160'%20transform='rotate(10%20540%20430)'/%3E%3Cellipse%20cx='385'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(-8%20385%20560)'/%3E%3Cellipse%20cx='515'%20cy='560'%20rx='90'%20ry='120'%20transform='rotate(8%20515%20560)'/%3E%3Cpath%20d='M450%20350L450%20630'/%3E%3Ccircle%20cx='450'%20cy='340'%20r='6'/%3E%3C/g%3E%3C/svg%3E");
+
+    --bg:
+      radial-gradient(circle at 16% 0%, rgba(88, 196, 183, 0.18), transparent 55%),
+      radial-gradient(circle at 82% 12%, rgba(255, 138, 122, 0.12), transparent 60%),
+      var(--papillon-butterflies),
+      #0f1416;
+    --panel: #1f2628;
+    --panel-soft: #171e20;
+    --text: #e8f1f0;
+    --text-strong: #f3f9f8;
+    --muted: #a6b6b4;
+
+    --brand: var(--brand-500);
+    --brand-hover: var(--brand-600);
+
+    --primary: var(--primary-500);
+    --primary-hover: var(--primary-600);
+
+    --surface-hover: linear-gradient(90deg, rgba(88, 196, 183, 0.12), rgba(255, 138, 122, 0.08));
+    --surface-active: linear-gradient(90deg, rgba(88, 196, 183, 0.2), rgba(255, 138, 122, 0.16));
+
+    --border: #2f3a3d;
+    --border-soft: color-mix(in srgb, var(--border) 72%, transparent);
+    --input-bg: #141b1d;
+    --scrollbar-thumb: rgba(232, 241, 240, 0.25);
+    --scrollbar-thumb-hover: rgba(232, 241, 240, 0.4);
+
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.45);
+    --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.55);
+    --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.6);
+
+    --add-cycle-border-width: 3px;
+    --add-cycle-border-color: #58c4b7;
+
+    --text-on-brand: #1b1110;
+    --text-on-primary: #0b1616;
+    --text-on-amber: #0b1616;
+  }
+}
+
+@layer base {
+  :root[data-theme="papillon-dark"] {
+    color-scheme: dark;
+  }
+
+  :root:is([data-theme='papillon-light'], [data-theme='papillon-dark']) .card {
+    position: relative;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+  }
+
+  :root[data-theme='papillon-light'] .card::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border-radius: calc(var(--radius) - 5px);
+    border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  :root[data-theme='papillon-dark'] .card {
+    box-shadow:
+      var(--shadow-lg),
+      0 0 18px rgba(88, 196, 183, 0.12);
+  }
+
+  :root[data-theme='papillon-dark'] input[type="date"] {
+    color-scheme: dark;
+  }
+
+  :root[data-theme='papillon-dark'] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+  }
+}
+
+@layer components {
+  :root:is([data-theme='papillon-light'], [data-theme='papillon-dark']) .theme-toggle-btn {
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--primary) 14%, transparent), transparent);
+    border-color: var(--border);
+  }
+}

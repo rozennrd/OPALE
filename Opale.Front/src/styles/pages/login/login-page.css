@@ -28,11 +28,11 @@
     display: none;
 }
 
-:root:is([data-theme='dark'], [data-theme='spock']) .login-logo .login-logo-light {
+:root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .login-logo .login-logo-light {
     display: none;
 }
 
-:root:is([data-theme='dark'], [data-theme='spock']) .login-logo .login-logo-dark {
+:root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .login-logo .login-logo-dark {
     display: block;
 }
 
@@ -105,16 +105,16 @@
     font-size: 14px;
 }
 
-:root:is([data-theme='dark'], [data-theme='spock']) .login-theme-toggle .theme-toggle-btn {
+:root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .login-theme-toggle .theme-toggle-btn {
     color: var(--text);
 }
 
-:root:is([data-theme='dark'], [data-theme='spock']) .login-theme-toggle .theme-toggle-icon-inner,
-:root:is([data-theme='dark'], [data-theme='spock']) .login-theme-toggle .theme-toggle-toggle-thumb {
+:root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .login-theme-toggle .theme-toggle-icon-inner,
+:root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .login-theme-toggle .theme-toggle-toggle-thumb {
     background-color: var(--text);
 }
 
-:root:is([data-theme='dark'], [data-theme='spock']) .login-theme-toggle .theme-toggle-text {
+:root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .login-theme-toggle .theme-toggle-text {
     color: var(--text);
 }
 

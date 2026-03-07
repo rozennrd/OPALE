@@ -98,7 +98,7 @@
     }
 
     /* Thème sombre : fond légèrement plus clair que la card */
-    [data-theme='dark'] .cycle-import-dropzone {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .cycle-import-dropzone {
         background: #1e2836;
         border-color: #3f5170;
     }
@@ -561,3 +561,4 @@
         }
     }
 }
+
