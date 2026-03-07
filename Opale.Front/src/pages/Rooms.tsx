@@ -21,6 +21,7 @@ export default function Rooms() {
         closeDetail,
         deleteRoomsByIds,
         deleteSingleRoom,
+        validateRoomIdentity,
     } = useRoomsData()
 
     const {
@@ -86,6 +87,9 @@ export default function Rooms() {
     const floors = Array.from(
         new Set(rooms.map((room) => room.floor)),
     ).sort((a, b) => a - b)
+    const visibleFloors = Object.keys(roomsByFloor)
+        .map(Number)
+        .sort((a, b) => a - b)
 
     const hasVisibleRooms = visibleRoomIds.length > 0
 
@@ -137,7 +141,7 @@ export default function Rooms() {
 
                 <div className="rooms-sections">
                     {hasVisibleRooms ? (
-                        floors.map((floor) => (
+                        visibleFloors.map((floor) => (
                             <RoomsSection
                                 key={floor}
                                 floor={floor}
@@ -163,6 +167,7 @@ export default function Rooms() {
                     onChange={updateRoom}
                     onDelete={() => handleDeleteSingleRoom(selectedRoom.id)}
                     isCreate={isCreatingSelectedRoom}
+                    validateRoomIdentity={validateRoomIdentity}
                 />
             )}
         </>

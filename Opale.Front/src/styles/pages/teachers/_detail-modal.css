@@ -1,4 +1,4 @@
-/* src/styles/pages/teachers/_detail-modal.css */
+﻿/* src/styles/pages/teachers/_detail-modal.css */
 
 @layer pages {
     /* ============ Overlay spécifique teacher ============ */
@@ -18,7 +18,7 @@
        Ici on ne fait que spécialiser le layout interne pour les enseignants. */
 
     .teacher-detail-card {
-        width: min(1080px, 96vw); /* un peu plus large que la valeur générique si besoin */
+        width: min(1200px, 96vw); /* un peu plus large que la valeur générique si besoin */
     }
 
     .teacher-detail-columns {
@@ -52,7 +52,7 @@
 
     @media (max-width: 900px) {
         .teacher-detail-card {
-            width: min(1040px, 96vw);
+            width: min(1160px, 96vw);
         }
 
         .teacher-detail-columns {
@@ -145,12 +145,28 @@
 
     .teacher-subject-input-name {
         flex: 1.6;
+        max-width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .teacher-subject-input-promo {
         flex: 0.9;
-        max-width: 130px; /* évite que la 2ᵉ input s'étire trop */
+        max-width: 130px; /* Évite que la 2e input s'étire trop */
         text-align: center;
+    }
+
+    .teacher-subject-hours {
+        min-width: 64px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--panel-soft);
+        font-size: 0.8rem;
+        color: var(--muted);
+        text-align: center;
+        white-space: nowrap;
     }
 
     .teacher-subject-sep {
@@ -279,3 +295,4 @@
         color: var(--text);
     }
 }
+

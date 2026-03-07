@@ -10,6 +10,7 @@ interface MatiereBadgeProps {
     variant?: BadgeVariant
     title?: string
     subtitle?: string
+    centerLabel?: string
 }
 
 export default function MatiereBadge({
@@ -18,6 +19,7 @@ export default function MatiereBadge({
     variant = 'card',
     title,
     subtitle,
+    centerLabel,
 }: MatiereBadgeProps) {
     const rootClassName = [
         'matiere-badge',
@@ -36,6 +38,7 @@ export default function MatiereBadge({
             variant={variant}
             title={title}
             subtitle={subtitle}
+            centerLabel={centerLabel}
         />
     )
 }
