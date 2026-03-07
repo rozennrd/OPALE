@@ -22,7 +22,8 @@ POSTGRES_PASSWORD=thisIsOpale!
 ```
 
 ### 2. Backend
-- Add this `db.conf` file in `BobPlanning.back/src/database/config`:
+- Create `BobPlanning.back/src/database/config` directory.
+- Add this `db.conf` file in `BobPlanning.back/src/database/config` :
 ```env
 DB_HOST=localhost
 DB_USER=opale_user
@@ -45,11 +46,11 @@ DB_PASSWORD=thisIsOpale!
 - Install library → `npm i`
 
 ### 3. Frontend
-- Add this `.env` file in `BobPlanning.front`:
+- Add this `.env` file in `Opale.Front`:
 ```env
 VITE_RACINE_FETCHER_URL=http://localhost:3000
 ```
-- Go to `BobPlanning.front` → `cd .\BobPlanning.front`
+- Go to `Opale.Front` → `cd .\Opale.Front`
 - Install library → `npm i`
 
 
