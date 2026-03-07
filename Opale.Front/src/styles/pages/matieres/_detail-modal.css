@@ -1,6 +1,41 @@
 /* src/styles/pages/matieres/_detail-modal.css */
 
 @layer pages {
+    .detail-card-header .matiere-badge.matiere-badge-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-left {
+        grid-column: 1;
+        justify-self: start;
+        min-width: 0;
+    }
+
+    .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-center {
+        grid-column: 2;
+        justify-self: center;
+    }
+
+    .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-right {
+        grid-column: 3;
+        justify-self: end;
+    }
+
+    .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__center-label {
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        background: var(--panel);
+        border: 1px solid var(--border-subtle);
+        box-shadow: var(--shadow-sm, var(--shadow-md));
+        white-space: nowrap;
+        max-width: 240px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     .matiere-detail-card .detail-layout {
         grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
         gap: 4rem;
@@ -10,6 +45,30 @@
         .matiere-detail-card .detail-layout {
             grid-template-columns: 1fr;
             gap: 1.5rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .detail-card-header .matiere-badge.matiere-badge-header {
+            grid-template-columns: 1fr;
+            justify-items: start;
+            gap: 0.75rem;
+        }
+
+        .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-left,
+        .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-center,
+        .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-right {
+            grid-column: 1;
+        }
+
+        .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-right {
+            justify-self: start;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__center-label {
+            max-width: 100%;
         }
     }
 
