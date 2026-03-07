@@ -64,6 +64,12 @@ export interface MaquetteImportResponse {
   examEventsToCreate: unknown[]
 }
 
+export interface MaquetteSpecialtyMapping {
+  promotionId: string
+  detected: string
+  specialtyId: string
+}
+
 export interface MaquetteRequestOptions {
   cycleHint?: string
   promotionHint?: string
@@ -71,6 +77,7 @@ export interface MaquetteRequestOptions {
 
 export interface MaquetteImportOptions extends MaquetteRequestOptions {
   dryRun?: boolean
+  specialtyMappings?: MaquetteSpecialtyMapping[]
 }
 
 class MaquetteApi {
@@ -101,6 +108,9 @@ class MaquetteApi {
 
     if (options.cycleHint) formPayload.cycleHint = options.cycleHint
     if (options.promotionHint) formPayload.promotionHint = options.promotionHint
+    if (options.specialtyMappings && options.specialtyMappings.length > 0) {
+      formPayload.specialtyMappings = JSON.stringify(options.specialtyMappings)
+    }
 
     return apiClient.uploadFile<MaquetteImportResponse>(
       '/maquette/import',

@@ -126,6 +126,7 @@ export default function Promotions() {
                         openEditPromotion={openEditPromotion}
                         removePromotion={removePromotion}
                         addPromotion={addPromotionToCycle}
+                        refreshCycles={refreshCycles}
                     />
                 ))}
                 <button

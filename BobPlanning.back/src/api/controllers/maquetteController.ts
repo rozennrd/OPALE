@@ -24,6 +24,17 @@ const parseBoolean = (value: unknown): boolean => {
   return false;
 };
 
+const parseJsonArray = <T>(value: unknown): T[] | undefined => {
+  if (typeof value !== 'string' || value.trim().length === 0) return undefined;
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? (parsed as T[]) : undefined;
+  } catch (error) {
+    console.warn('[Maquette] specialtyMappings JSON invalide:', error);
+    return undefined;
+  }
+};
+
 export const maquetteController = {
   /**
    * Endpoint d'analyse:
@@ -70,6 +81,7 @@ export const maquetteController = {
         cycleHint: req.body?.cycleHint,
         promotionHint: req.body?.promotionHint,
         dryRun: parseBoolean(req.body?.dryRun),
+        specialtyMappings: parseJsonArray(req.body?.specialtyMappings),
       });
 
       res.status(200).json(result);

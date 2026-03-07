@@ -2,16 +2,17 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import icTrash from '../../../assets/ic-trash.png'
 import icModif from '../../../assets/ic-modif.png'
 import icPlus from '../../../assets/ic-plus.png'
-import { hasPromoMismatch } from '../../../utils/promoUtils'
-import { Cycle } from '../../../models'
+import { hasPromoMismatch, uid } from '../../../utils/promoUtils'
+import { Cycle, GroupSpecialtyItem, Promotion } from '../../../models'
 import CycleImportDropzone from './CycleImportDropZone'
 import ConfirmDialog from '../../common/ConfirmDialog'
 import {
     maquetteApi,
     MaquetteAnalyzeResponse,
     MaquetteImportResponse,
+    MaquetteSpecialtyMapping,
 } from '../../../services/api/maquetteApi'
-import { Promotion } from "../../../models"
+import { specialtiesApi } from '../../../services/api/specialtiesApi'
 
 
 interface CycleCardProps {
@@ -24,9 +25,41 @@ interface CycleCardProps {
     openEditPromotion: (cycleId: string, promoId: string) => void
     removePromotion: (promoId: string) => void
     addPromotion: (cycleId: string, label: string) => void
+    refreshCycles: () => Promise<void>
 }
 
 type ImportFeedbackVariant = 'success' | 'error' | 'info'
+
+interface DetectedSpecialtyItem {
+    key: string
+    promotionCode: string
+    promotionId: string | null
+    promotionLabel: string | null
+    detectedLabel: string
+    normalized: string
+}
+
+interface SpecialtyDraft {
+    id?: string
+    tempId?: string
+    idPromo: string
+    nom: string
+    effectifs: number
+}
+
+interface FileSpecialtyMapping {
+    confirmed: boolean
+    mapping: Record<string, string | null>
+}
+
+interface MappingModalState {
+    file: File
+    analysis: MaquetteAnalyzeResponse
+    detectedItems: DetectedSpecialtyItem[]
+    draftSpecialtiesByPromoId: Record<string, SpecialtyDraft[]>
+    originalSpecialtiesByPromoId: Record<string, GroupSpecialtyItem[]>
+    mapping: Record<string, string | null>
+}
 
 const normalize = (value: string): string => {
     return value
@@ -113,6 +146,23 @@ const isCommunSpecialite = (value: string | null | undefined): boolean => {
     )
 }
 
+const normalizePromoCode = (value: string): string =>
+    normalize(value).replace(/[^A-Z0-9]/g, '')
+
+const normalizeSpecialtyValue = (value: string): string =>
+    value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\u00a0/g, ' ')
+        .replace(/[\/\\_|-]/g, ' ')
+        .replace(/[\u2010-\u2015]/g, ' ')
+        .replace(/[\u2019']/g, ' ')
+        .replace(/[()[\]{}]/g, ' ')
+        .replace(/[.,;:!?%]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase()
+
 const emptyImportCounters = (): Required<
     Pick<
         MaquetteImportResponse,
@@ -147,12 +197,15 @@ const CycleCard: React.FC<CycleCardProps> = ({
                                                  openEditPromotion,
                                                  removePromotion,
                                                  addPromotion,
+                                                 refreshCycles,
                                              }) => {
     const [cycleName, setCycleName] = useState(cycle.name)
     const [isAddPromoOpen, setIsAddPromoOpen] = useState(false)
     const [promoName, setPromoName] = useState('')
 
     const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+    const [selectedFileAnalyses, setSelectedFileAnalyses] = useState<Record<string, MaquetteAnalyzeResponse>>({})
+    const [fileMappings, setFileMappings] = useState<Record<string, FileSpecialtyMapping>>({})
     const [previewQueue, setPreviewQueue] = useState<File[]>([])
     const [previewFile, setPreviewFile] = useState<File | null>(null)
     const [previewData, setPreviewData] = useState<MaquetteAnalyzeResponse | null>(null)
@@ -167,6 +220,10 @@ const CycleCard: React.FC<CycleCardProps> = ({
         variant: ImportFeedbackVariant
         message: string
     } | null>(null)
+
+    const [mappingModal, setMappingModal] = useState<MappingModalState | null>(null)
+    const [mappingSaving, setMappingSaving] = useState(false)
+    const [mappingError, setMappingError] = useState<string | null>(null)
 
     const previewRequestIdRef = useRef(0)
 
@@ -273,9 +330,26 @@ const CycleCard: React.FC<CycleCardProps> = ({
     }
 
     const handleRemoveValidatedFile = (fileToRemove: File) => {
+        const key = fileKey(fileToRemove)
         setSelectedFiles((previous) =>
             previous.filter((file) => fileKey(file) !== fileKey(fileToRemove)),
         )
+        setSelectedFileAnalyses((previous) => {
+            if (!previous[key]) return previous
+            const next = { ...previous }
+            delete next[key]
+            return next
+        })
+        setFileMappings((previous) => {
+            if (!previous[key]) return previous
+            const next = { ...previous }
+            delete next[key]
+            return next
+        })
+        setMappingModal((current) => {
+            if (!current || fileKey(current.file) !== key) return current
+            return null
+        })
     }
 
     const handleValidatePreview = () => {
@@ -286,6 +360,15 @@ const CycleCard: React.FC<CycleCardProps> = ({
             if (existing.has(fileKey(previewFile))) return previous
             return [...previous, previewFile]
         })
+        setSelectedFileAnalyses((previous) => ({
+            ...previous,
+            [fileKey(previewFile)]: previewData,
+        }))
+        setFileMappings((previous) => {
+            const next = { ...previous }
+            delete next[fileKey(previewFile)]
+            return next
+        })
 
         closePreview()
     }
@@ -294,7 +377,437 @@ const CycleCard: React.FC<CycleCardProps> = ({
         closePreview()
     }
 
-    const handleImportRequested = async () => {
+    const findPromotionByCode = (promotionCode: string): Promotion | null => {
+        const normalizedCode = normalizePromoCode(promotionCode || '')
+        if (!normalizedCode) return null
+
+        return (
+            cycle.promotions.find(
+                (promo) => normalizePromoCode(promo.label) === normalizedCode,
+            ) || null
+        )
+    }
+
+    const buildDetectedSpecialties = (
+        analysis: MaquetteAnalyzeResponse,
+    ): DetectedSpecialtyItem[] => {
+        const detectedByKey = new Map<string, DetectedSpecialtyItem>()
+
+        analysis.matieres.forEach((matiere) => {
+            const promotionCode = (matiere.promotionCode || '').trim()
+            if (!promotionCode) return
+
+            const rawSpecialty = (matiere.specialiteLabel || matiere.specialiteCode || '').trim()
+            if (!rawSpecialty) return
+
+            if (matiere.specialiteType === 'COMMUN' || isCommunSpecialite(rawSpecialty)) {
+                return
+            }
+
+            const normalized = normalizeSpecialtyValue(rawSpecialty)
+            if (!normalized) return
+
+            const key = `${promotionCode}||${normalized}`
+            const promotion = findPromotionByCode(promotionCode)
+            const detectedLabel = rawSpecialty
+
+            const existing = detectedByKey.get(key)
+            if (!existing) {
+                detectedByKey.set(key, {
+                    key,
+                    promotionCode,
+                    promotionId: promotion?.id ?? null,
+                    promotionLabel: promotion?.label ?? null,
+                    detectedLabel,
+                    normalized,
+                })
+                return
+            }
+
+            if (matiere.specialiteLabel && existing.detectedLabel !== detectedLabel) {
+                detectedByKey.set(key, {
+                    ...existing,
+                    detectedLabel,
+                })
+            }
+        })
+
+        return Array.from(detectedByKey.values()).sort((left, right) => {
+            const byPromo = left.promotionCode.localeCompare(right.promotionCode, 'fr', {
+                numeric: true,
+                sensitivity: 'base',
+            })
+            if (byPromo !== 0) return byPromo
+
+            return left.detectedLabel.localeCompare(right.detectedLabel, 'fr', {
+                numeric: true,
+                sensitivity: 'base',
+            })
+        })
+    }
+
+    const buildMappingModalState = (
+        file: File,
+        analysis: MaquetteAnalyzeResponse,
+    ): MappingModalState | null => {
+        const detectedItems = buildDetectedSpecialties(analysis)
+        if (detectedItems.length === 0) return null
+
+        const promoIds = Array.from(
+            new Set(detectedItems.map((item) => item.promotionId).filter(Boolean)),
+        ) as string[]
+
+        const draftSpecialtiesByPromoId: Record<string, SpecialtyDraft[]> = {}
+        const originalSpecialtiesByPromoId: Record<string, GroupSpecialtyItem[]> = {}
+
+        promoIds.forEach((promoId) => {
+            const promo = cycle.promotions.find((promotion) => promotion.id === promoId)
+            const specialties = (promo?.specialties || []).map((specialty) => ({
+                id: specialty.id ? String(specialty.id) : undefined,
+                idPromo: specialty.idPromo,
+                nom: specialty.nom,
+                effectifs: specialty.effectifs,
+            }))
+
+            draftSpecialtiesByPromoId[promoId] = specialties
+            originalSpecialtiesByPromoId[promoId] = (promo?.specialties || []).map((specialty) => ({
+                ...specialty,
+                id: specialty.id ? String(specialty.id) : specialty.id,
+            }))
+        })
+
+        const mapping: Record<string, string | null> = {}
+        detectedItems.forEach((item) => {
+            if (!item.promotionId) {
+                mapping[item.key] = null
+                return
+            }
+
+            const options = draftSpecialtiesByPromoId[item.promotionId] || []
+            const match = options.find(
+                (specialty) => normalizeSpecialtyValue(specialty.nom) === item.normalized,
+            )
+            mapping[item.key] = match ? (match.id ?? match.tempId ?? null) : null
+        })
+
+        return {
+            file,
+            analysis,
+            detectedItems,
+            draftSpecialtiesByPromoId,
+            originalSpecialtiesByPromoId,
+            mapping,
+        }
+    }
+
+    const findNextFileRequiringMapping = (
+        mappings: Record<string, FileSpecialtyMapping> = fileMappings,
+    ): File | null => {
+        for (const file of selectedFiles) {
+            const analysis = selectedFileAnalyses[fileKey(file)]
+            if (!analysis) continue
+            const detectedItems = buildDetectedSpecialties(analysis)
+            if (detectedItems.length === 0) continue
+
+            const existingMapping = mappings[fileKey(file)]
+            if (!existingMapping?.confirmed) {
+                return file
+            }
+        }
+
+        return null
+    }
+
+    const openMappingModalForFile = (file: File) => {
+        const analysis = selectedFileAnalyses[fileKey(file)]
+        if (!analysis) return
+        const modalState = buildMappingModalState(file, analysis)
+        if (!modalState) return
+        setMappingError(null)
+        setMappingModal(modalState)
+    }
+
+    const persistSpecialtyDrafts = async (
+        state: MappingModalState,
+    ): Promise<Record<string, string>> => {
+        const createdIdMap: Record<string, string> = {}
+        const errors: string[] = []
+
+        for (const [promoId, draftList] of Object.entries(state.draftSpecialtiesByPromoId)) {
+            const originalList = state.originalSpecialtiesByPromoId[promoId] || []
+            const originalById = new Map(
+                originalList
+                    .filter((specialty) => specialty.id)
+                    .map((specialty) => [String(specialty.id), specialty]),
+            )
+
+            for (const draft of draftList.filter((item) => item.tempId)) {
+                const name = draft.nom.trim()
+                if (!name) continue
+
+                const response = await specialtiesApi.addSpecialty({
+                    id_promo: promoId,
+                    id_groupe: null,
+                    nom: name,
+                    effectifs: draft.effectifs,
+                })
+
+                if (!response.success || !response.data?.insertedId) {
+                    errors.push(
+                        response.error?.message ||
+                        `Impossible d'ajouter la spÃ©cialitÃ© "${name}".`,
+                    )
+                    continue
+                }
+
+                createdIdMap[draft.tempId as string] = String(response.data.insertedId)
+            }
+
+            for (const draft of draftList.filter((item) => item.id)) {
+                const original = originalById.get(String(draft.id))
+                if (!original) continue
+
+                if (
+                    original.nom !== draft.nom ||
+                    Number(original.effectifs) !== Number(draft.effectifs)
+                ) {
+                    const response = await specialtiesApi.updateSpecialty({
+                        id: String(draft.id),
+                        id_promo: promoId,
+                        id_groupe: null,
+                        nom: draft.nom.trim(),
+                        effectifs: draft.effectifs,
+                    })
+
+                    if (!response.success) {
+                        errors.push(
+                            response.error?.message ||
+                            `Impossible de mettre Ã  jour la spÃ©cialitÃ© "${draft.nom}".`,
+                        )
+                    }
+                }
+            }
+
+            const draftIds = new Set(
+                draftList
+                    .filter((item) => item.id)
+                    .map((item) => String(item.id)),
+            )
+            const removed = originalList.filter(
+                (item) => item.id && !draftIds.has(String(item.id)),
+            )
+
+            for (const removedItem of removed) {
+                const response = await specialtiesApi.deleteSpecialty(String(removedItem.id))
+                if (!response.success) {
+                    errors.push(
+                        response.error?.message ||
+                        `Impossible de supprimer la spÃ©cialitÃ© "${removedItem.nom}".`,
+                    )
+                }
+            }
+        }
+
+        if (errors.length > 0) {
+            throw new Error(errors[0])
+        }
+
+        return createdIdMap
+    }
+
+    const buildSpecialtyMappingsPayload = (
+        file: File,
+        mappings: Record<string, FileSpecialtyMapping> = fileMappings,
+    ): MaquetteSpecialtyMapping[] => {
+        const analysis = selectedFileAnalyses[fileKey(file)]
+        if (!analysis) return []
+
+        const existingMapping = mappings[fileKey(file)]
+        if (!existingMapping?.mapping) return []
+
+        const detectedItems = buildDetectedSpecialties(analysis)
+        return detectedItems
+            .filter((item) => item.promotionId && existingMapping.mapping[item.key])
+            .map((item) => ({
+                promotionId: item.promotionId as string,
+                detected: item.detectedLabel,
+                specialtyId: existingMapping.mapping[item.key] as string,
+            }))
+    }
+
+    const continueImportFlow = async (
+        mappings: Record<string, FileSpecialtyMapping> = fileMappings,
+    ) => {
+        const nextFile = findNextFileRequiringMapping(mappings)
+        if (nextFile) {
+            openMappingModalForFile(nextFile)
+            return
+        }
+
+        await runImport(mappings)
+    }
+
+    const handleMappingSelectionChange = (detectedKey: string, value: string) => {
+        setMappingModal((previous) => {
+            if (!previous) return previous
+            return {
+                ...previous,
+                mapping: {
+                    ...previous.mapping,
+                    [detectedKey]: value || null,
+                },
+            }
+        })
+    }
+
+    const handleAddDraftSpecialty = (promoId: string, initialName: string = '') => {
+        setMappingModal((previous) => {
+            if (!previous) return previous
+            const nextList = [...(previous.draftSpecialtiesByPromoId[promoId] || [])]
+            nextList.push({
+                tempId: uid('new-specialty'),
+                idPromo: promoId,
+                nom: initialName,
+                effectifs: 1,
+            })
+
+            return {
+                ...previous,
+                draftSpecialtiesByPromoId: {
+                    ...previous.draftSpecialtiesByPromoId,
+                    [promoId]: nextList,
+                },
+            }
+        })
+    }
+
+    const handleSpecialtyNameChange = (promoId: string, index: number, value: string) => {
+        setMappingModal((previous) => {
+            if (!previous) return previous
+            const nextList = [...(previous.draftSpecialtiesByPromoId[promoId] || [])]
+            if (!nextList[index]) return previous
+            nextList[index] = { ...nextList[index], nom: value }
+
+            return {
+                ...previous,
+                draftSpecialtiesByPromoId: {
+                    ...previous.draftSpecialtiesByPromoId,
+                    [promoId]: nextList,
+                },
+            }
+        })
+    }
+
+    const handleSpecialtyEffectifsChange = (promoId: string, index: number, value: string) => {
+        setMappingModal((previous) => {
+            if (!previous) return previous
+            const nextList = [...(previous.draftSpecialtiesByPromoId[promoId] || [])]
+            if (!nextList[index]) return previous
+            nextList[index] = {
+                ...nextList[index],
+                effectifs: Number(value) || 0,
+            }
+
+            return {
+                ...previous,
+                draftSpecialtiesByPromoId: {
+                    ...previous.draftSpecialtiesByPromoId,
+                    [promoId]: nextList,
+                },
+            }
+        })
+    }
+
+    const handleRemoveDraftSpecialty = (promoId: string, index: number) => {
+        setMappingModal((previous) => {
+            if (!previous) return previous
+            const nextList = [...(previous.draftSpecialtiesByPromoId[promoId] || [])]
+            const removed = nextList.splice(index, 1)[0]
+            if (!removed) return previous
+
+            const mapping = { ...previous.mapping }
+            const removedKey = removed.id ?? removed.tempId
+            if (removedKey) {
+                Object.keys(mapping).forEach((key) => {
+                    if (mapping[key] === removedKey) {
+                        mapping[key] = null
+                    }
+                })
+            }
+
+            return {
+                ...previous,
+                mapping,
+                draftSpecialtiesByPromoId: {
+                    ...previous.draftSpecialtiesByPromoId,
+                    [promoId]: nextList,
+                },
+            }
+        })
+    }
+
+    const handleMappingConfirm = async () => {
+        if (!mappingModal || mappingSaving) return
+        setMappingSaving(true)
+        setMappingError(null)
+
+        try {
+            const createdIdMap = await persistSpecialtyDrafts(mappingModal)
+            const resolvedMapping: Record<string, string | null> = {}
+            Object.entries(mappingModal.mapping).forEach(([key, value]) => {
+                if (!value) {
+                    resolvedMapping[key] = null
+                    return
+                }
+                resolvedMapping[key] = createdIdMap[value] ?? value
+            })
+
+            const nextMappings = {
+                ...fileMappings,
+                [fileKey(mappingModal.file)]: {
+                    confirmed: true,
+                    mapping: resolvedMapping,
+                },
+            }
+            setFileMappings(nextMappings)
+
+            setMappingModal(null)
+            await refreshCycles()
+            await continueImportFlow(nextMappings)
+        } catch (error) {
+            setMappingError(
+                error instanceof Error
+                    ? error.message
+                    : "Impossible d'enregistrer les spÃ©cialitÃ©s.",
+            )
+        } finally {
+            setMappingSaving(false)
+        }
+    }
+
+    const handleMappingSkip = async () => {
+        if (!mappingModal) return
+        const nextMappings = {
+            ...fileMappings,
+            [fileKey(mappingModal.file)]: {
+                confirmed: true,
+                mapping: {},
+            },
+        }
+        setFileMappings(nextMappings)
+        setMappingModal(null)
+        setMappingError(null)
+        await continueImportFlow(nextMappings)
+    }
+
+    const handleMappingCancel = () => {
+        setMappingModal(null)
+        setMappingError(null)
+    }
+
+    const runImport = async (
+        mappings: Record<string, FileSpecialtyMapping> = fileMappings,
+    ) => {
         if (selectedFiles.length === 0) return
 
         setIsImporting(true)
@@ -310,9 +823,11 @@ const CycleCard: React.FC<CycleCardProps> = ({
 
         try {
             for (const file of selectedFiles) {
+                const specialtyMappings = buildSpecialtyMappingsPayload(file, mappings)
                 const response = await maquetteApi.import(file, {
                     cycleHint,
                     dryRun: false,
+                    specialtyMappings,
                 })
 
                 if (!response.success || !response.data) {
@@ -357,6 +872,18 @@ const CycleCard: React.FC<CycleCardProps> = ({
         } finally {
             setIsImporting(false)
         }
+    }
+
+    const handleImportRequested = async () => {
+        if (selectedFiles.length === 0 || isImporting) return
+
+        const nextFile = findNextFileRequiringMapping()
+        if (nextFile) {
+            openMappingModalForFile(nextFile)
+            return
+        }
+
+        await runImport()
     }
 
     const previewSpecialites = useMemo(() => {
@@ -459,6 +986,35 @@ const CycleCard: React.FC<CycleCardProps> = ({
             return !isCommunSpecialite(specialiteValue)
         })
     ), [previewMatieresToDisplay])
+
+    const mappingPromoIds = useMemo(() => {
+        if (!mappingModal) return []
+        return Object.keys(mappingModal.draftSpecialtiesByPromoId)
+    }, [mappingModal])
+
+    const mappingHasInvalidNames = useMemo(() => {
+        if (!mappingModal) return false
+        return Object.values(mappingModal.draftSpecialtiesByPromoId).some((list) =>
+            list.some((specialty) => !specialty.nom.trim() || specialty.effectifs <= 0),
+        )
+    }, [mappingModal])
+
+    const mappingSelectionsByPromo = useMemo(() => {
+        if (!mappingModal) return {} as Record<string, Set<string>>
+        const used: Record<string, Set<string>> = {}
+
+        mappingModal.detectedItems.forEach((item) => {
+            if (!item.promotionId) return
+            const selected = mappingModal.mapping[item.key]
+            if (!selected) return
+            if (!used[item.promotionId]) {
+                used[item.promotionId] = new Set()
+            }
+            used[item.promotionId].add(selected)
+        })
+
+        return used
+    }, [mappingModal])
 
     const getTotalEvaluations = (
         row: NonNullable<MaquetteAnalyzeResponse['matieres']>[number],
@@ -808,6 +1364,212 @@ const CycleCard: React.FC<CycleCardProps> = ({
                 onCancel={handleCancelPreview}
                 onRequestClose={handleCancelPreview}
                 confirmDisabled={previewLoading || !!previewError || !previewData}
+            />
+
+            <ConfirmDialog
+                open={Boolean(mappingModal)}
+                title="Associer les spÃ©cialitÃ©s dÃ©tectÃ©es"
+                message={mappingModal ? (
+                    <div className="maquette-specialty-map">
+                        <div className="maquette-specialty-map-header">
+                            <div className="maquette-specialty-map-file">
+                                Fichier : <strong>{mappingModal.file.name}</strong>
+                            </div>
+                            {mappingSaving && (
+                                <div className="maquette-specialty-map-status">
+                                    Enregistrement des spÃ©cialitÃ©s...
+                                </div>
+                            )}
+                            {mappingError && (
+                                <div className="maquette-specialty-map-error">
+                                    {mappingError}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="maquette-specialty-map-columns">
+                            <div className="maquette-specialty-map-column">
+                                <h4>SpÃ©cialitÃ©s dÃ©tectÃ©es</h4>
+                                {mappingModal.detectedItems.map((item) => {
+                                    const promoSpecialties = item.promotionId
+                                        ? (mappingModal.draftSpecialtiesByPromoId[item.promotionId] || [])
+                                        : []
+                                    const usedSelections = item.promotionId
+                                        ? mappingSelectionsByPromo[item.promotionId] || new Set()
+                                        : new Set()
+                                    const selectedValue = mappingModal.mapping[item.key] || ''
+
+                                    return (
+                                        <div className="maquette-specialty-map-row" key={item.key}>
+                                            <div className="maquette-specialty-map-promo">
+                                                <span className="maquette-specialty-map-promo-code">
+                                                    {item.promotionCode}
+                                                </span>
+                                                {item.promotionLabel && (
+                                                    <span className="maquette-specialty-map-promo-label">
+                                                        {item.promotionLabel}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="maquette-specialty-map-detected">
+                                                {item.detectedLabel}
+                                            </div>
+                                            <div className="maquette-specialty-map-select">
+                                                {item.promotionId ? (
+                                                    <select
+                                                        className="promo-edit-input"
+                                                        value={selectedValue}
+                                                        onChange={(event) =>
+                                                            handleMappingSelectionChange(
+                                                                item.key,
+                                                                event.target.value,
+                                                            )
+                                                        }
+                                                        disabled={mappingSaving}
+                                                    >
+                                                        <option value="">
+                                                            Tronc commun
+                                                        </option>
+                                                        {promoSpecialties.map((specialty) => {
+                                                            const optionValue =
+                                                                specialty.id || specialty.tempId || ''
+                                                            const isUsed =
+                                                                optionValue &&
+                                                                usedSelections.has(optionValue) &&
+                                                                optionValue !== selectedValue
+
+                                                            return (
+                                                                <option
+                                                                    key={optionValue}
+                                                                    value={optionValue}
+                                                                    disabled={isUsed}
+                                                                >
+                                                                    {specialty.nom}
+                                                                </option>
+                                                            )
+                                                        })}
+                                                    </select>
+                                                ) : (
+                                                    <span className="maquette-specialty-map-unknown">
+                                                        Promotion inconnue
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+
+                            <div className="maquette-specialty-map-column">
+                                <h4>SpÃ©cialitÃ©s dÃ©clarÃ©es (card promo)</h4>
+                                {mappingPromoIds.length === 0 && (
+                                    <div className="maquette-specialty-map-empty">
+                                        Aucune promotion associÃ©e aux spÃ©cialitÃ©s dÃ©tectÃ©es.
+                                    </div>
+                                )}
+                                {mappingPromoIds.map((promoId) => {
+                                    const promo = cycle.promotions.find(
+                                        (promotion) => promotion.id === promoId,
+                                    )
+                                    const specialties =
+                                        mappingModal.draftSpecialtiesByPromoId[promoId] || []
+
+                                    return (
+                                        <div className="maquette-specialty-map-group" key={promoId}>
+                                            <div className="maquette-specialty-map-group-head">
+                                                <div>
+                                                    <span className="maquette-specialty-map-group-title">
+                                                        Promotion
+                                                    </span>
+                                                    <strong>
+                                                        {promo?.label || promoId}
+                                                    </strong>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className="btn-tertiary"
+                                                    onClick={() => handleAddDraftSpecialty(promoId)}
+                                                    disabled={mappingSaving}
+                                                >
+                                                    + Ajouter
+                                                </button>
+                                            </div>
+
+                                            {specialties.length === 0 && (
+                                                <div className="maquette-specialty-map-empty">
+                                                    Aucune spÃ©cialitÃ© pour cette promotion.
+                                                </div>
+                                            )}
+
+                                            <div className="maquette-specialty-map-list">
+                                                {specialties.map((specialty, index) => (
+                                                    <div
+                                                        key={specialty.id || specialty.tempId}
+                                                        className="maquette-specialty-map-item"
+                                                    >
+                                                        <input
+                                                            type="text"
+                                                            className="promo-edit-input"
+                                                            value={specialty.nom}
+                                                            onChange={(event) =>
+                                                                handleSpecialtyNameChange(
+                                                                    promoId,
+                                                                    index,
+                                                                    event.target.value,
+                                                                )
+                                                            }
+                                                            disabled={mappingSaving}
+                                                        />
+                                                        <input
+                                                            type="number"
+                                                            min="1"
+                                                            className="promo-edit-input maquette-specialty-map-count"
+                                                            value={specialty.effectifs}
+                                                            onChange={(event) =>
+                                                                handleSpecialtyEffectifsChange(
+                                                                    promoId,
+                                                                    index,
+                                                                    event.target.value,
+                                                                )
+                                                            }
+                                                            disabled={mappingSaving}
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            className="btn-danger btn-icon-only"
+                                                            onClick={() =>
+                                                                handleRemoveDraftSpecialty(promoId, index)
+                                                            }
+                                                            disabled={mappingSaving}
+                                                            aria-label="Supprimer la spÃ©cialitÃ©"
+                                                            title="Supprimer"
+                                                        >
+                                                            <span className="btn-label">Supprimer</span>
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="maquette-specialty-map-note">
+                            Les spÃ©cialitÃ©s non associÃ©es seront importÃ©es en tronc commun.
+                        </div>
+                    </div>
+                ) : null}
+                confirmLabel="Appliquer & importer"
+                cancelLabel="Importer sans lier"
+                confirmClassName="btn-primary"
+                cancelClassName="btn-tertiary"
+                cardClassName="maquette-specialty-map-dialog"
+                onConfirm={handleMappingConfirm}
+                onCancel={handleMappingSkip}
+                onRequestClose={handleMappingCancel}
+                confirmDisabled={mappingSaving || mappingHasInvalidNames}
+                cancelDisabled={mappingSaving}
             />
         </section>
     )
