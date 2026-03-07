@@ -27,12 +27,27 @@
 .login-logo .login-logo-dark {
     display: none;
 }
-
-:root:is([data-theme='dark'], [data-theme='spock']) .login-logo .login-logo-light {
+.login-logo .login-logo-spock {
     display: none;
 }
 
-:root:is([data-theme='dark'], [data-theme='spock']) .login-logo .login-logo-dark {
+:root[data-theme='dark'] .login-logo .login-logo-light {
+    display: none;
+}
+
+:root[data-theme='dark'] .login-logo .login-logo-dark {
+    display: block;
+}
+
+:root[data-theme='spock'] .login-logo .login-logo-light {
+    display: none;
+}
+
+:root[data-theme='spock'] .login-logo .login-logo-dark {
+    display: none;
+}
+
+:root[data-theme='spock'] .login-logo .login-logo-spock {
     display: block;
 }
 
