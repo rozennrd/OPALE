@@ -6,6 +6,9 @@ import { hasPromoMismatch, uid } from '../../../utils/promoUtils'
 import { Cycle, GroupSpecialtyItem, Promotion } from '../../../models'
 import CycleImportDropzone from './CycleImportDropZone'
 import ConfirmDialog from '../../common/ConfirmDialog'
+import MaquettePreviewDialog from './MaquettePreviewDialog'
+import MaquetteSpecialtyMapDialog from './MaquetteSpecialtyMapDialog'
+import { DetectedSpecialtyItem, FileSpecialtyMapping, SpecialtyDraft } from './maquetteImportTypes'
 import {
     maquetteApi,
     MaquetteAnalyzeResponse,
@@ -29,28 +32,6 @@ interface CycleCardProps {
 }
 
 type ImportFeedbackVariant = 'success' | 'error' | 'info'
-
-interface DetectedSpecialtyItem {
-    key: string
-    promotionCode: string
-    promotionId: string | null
-    promotionLabel: string | null
-    detectedLabel: string
-    normalized: string
-}
-
-interface SpecialtyDraft {
-    id?: string
-    tempId?: string
-    idPromo: string
-    nom: string
-    effectifs: number
-}
-
-interface FileSpecialtyMapping {
-    confirmed: boolean
-    mapping: Record<string, string | null>
-}
 
 interface MappingModalState {
     file: File
@@ -1174,402 +1155,56 @@ const CycleCard: React.FC<CycleCardProps> = ({
                 onCancel={closeAddPromoDialog}
                 onRequestClose={closeAddPromoDialog}
             />
-
-            <ConfirmDialog
+            <MaquettePreviewDialog
                 open={Boolean(previewFile)}
                 title={cycle.name}
-                message={(
-                    <div className="maquette-preview-content">
-                        {previewFile && (
-                            <div className="maquette-preview-filename">
-                                Fichier: <strong>{previewFile.name}</strong>
-                            </div>
-                        )}
-
-                        {previewLoading && (
-                            <div className="maquette-preview-loading">
-                                Analyse de la maquette en cours...
-                            </div>
-                        )}
-
-                        {!previewLoading && previewError && (
-                            <div className="maquette-preview-error">
-                                {previewError}
-                            </div>
-                        )}
-
-                        {!previewLoading && !previewError && previewData && (
-                            <>
-                                <table className="maquette-preview-summary-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <div className="maquette-preview-summary-col">
-                                                    <div className="maquette-preview-summary-item">
-                                                        <span>Année scolaire</span>
-                                                        <strong>{previewData.metadata.anneeScolaire || '-'}</strong>
-                                                    </div>
-                                                    <div className="maquette-preview-summary-item">
-                                                        <span>Cycle détecté</span>
-                                                        <strong>{previewData.metadata.cycleCode || '-'}</strong>
-                                                    </div>
-                                                    <div className="maquette-preview-summary-item">
-                                                        <span>Promotions détectées</span>
-                                                        <strong>{previewData.metadata.promotions.join(', ') || '-'}</strong>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="maquette-preview-summary-col">
-                                                    <div className="maquette-preview-summary-item">
-                                                        <span>Spécialités détectées</span>
-                                                        <strong>{previewSpecialites}</strong>
-                                                    </div>
-                                                    <div className="maquette-preview-summary-item">
-                                                        <span>Nombre de matières extraites</span>
-                                                        <strong>{previewData.matieres.length}</strong>
-                                                    </div>
-                                                    <div className="maquette-preview-summary-item">
-                                                        <span>Nombre d&apos;avertissements</span>
-                                                        <strong>{previewData.warnings.length}</strong>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colSpan={2} className="maquette-preview-summary-fullrow">
-                                                <span>Feuilles détectées</span>
-                                                {' : '}
-                                                <strong>{previewData.metadata.feuilles.join(', ') || '-'}</strong>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                                {previewData.warnings.length > 0 && (
-                                    isPreviewWarningsVisible ? (
-                                        <div className="maquette-preview-warning-list">
-                                            <div className="maquette-preview-warning-head">
-                                                <strong>Avertissements</strong>
-                                                <button
-                                                    type="button"
-                                                    className="maquette-preview-warning-close"
-                                                    onClick={() => setIsPreviewWarningsVisible(false)}
-                                                    aria-label="Fermer les avertissements"
-                                                    title="Fermer"
-                                                >
-                                                    ×
-                                                </button>
-                                            </div>
-                                            <ul>
-                                                {previewData.warnings.slice(0, 5).map((warning, index) => (
-                                                    <li key={`${warning}-${index}`}>{warning}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            className="maquette-preview-warning-reopen btn-tertiary"
-                                            onClick={() => setIsPreviewWarningsVisible(true)}
-                                        >
-                                            Afficher les avertissements
-                                        </button>
-                                    )
-                                )}
-
-                                <div className="maquette-preview-promo-nav">
-                                    <button
-                                        type="button"
-                                        className="btn-tertiary maquette-preview-promo-nav-btn"
-                                        onClick={() => setPreviewPromotionIndex((current) => Math.max(0, current - 1))}
-                                        disabled={previewPromotions.length <= 1 || previewPromotionIndex === 0}
-                                    >
-                                        Promotion précédente
-                                    </button>
-                                    <div className="maquette-preview-promo-nav-label">
-                                        <span>Promotion affichée</span>
-                                        <strong>
-                                            {activePreviewPromotion || '-'} (
-                                            {previewPromotions.length > 0 ? previewPromotionIndex + 1 : 0}/
-                                            {previewPromotions.length})
-                                        </strong>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        className="btn-tertiary maquette-preview-promo-nav-btn"
-                                        onClick={() =>
-                                            setPreviewPromotionIndex((current) =>
-                                                Math.min(previewPromotions.length - 1, current + 1),
-                                            )
-                                        }
-                                        disabled={
-                                            previewPromotions.length <= 1 ||
-                                            previewPromotionIndex >= previewPromotions.length - 1
-                                        }
-                                    >
-                                        Promotion suivante
-                                    </button>
-                                </div>
-
-                                <div className="maquette-preview-grid-wrapper">
-                                    <table className="maquette-preview-grid">
-                                        <thead>
-                                            <tr>
-                                                <th>Promo</th>
-                                                <th>UE</th>
-                                                <th>Matière</th>
-                                                <th className="maquette-preview-grid-center">Semestres</th>
-                                                {shouldShowSpecialiteColumn && (
-                                                    <th>Spécialité</th>
-                                                )}
-                                                <th className="maquette-preview-grid-center">Total heures</th>
-                                                <th className="maquette-preview-grid-center">Total épreuves</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {previewMatieresToDisplay.map((matiere, index) => (
-                                                <tr key={`${matiere.promotionCode}-${matiere.matiereNom}-${index}`}>
-                                                    <td>{matiere.promotionCode || '-'}</td>
-                                                    <td>{matiere.ueNom || '-'}</td>
-                                                    <td>{matiere.matiereNom || '-'}</td>
-                                                    <td className="maquette-preview-grid-center">
-                                                        {formatSemestresForDisplay(
-                                                            matiere.semestres ?? [],
-                                                            matiere.promotionCode,
-                                                        )}
-                                                    </td>
-                                                    {shouldShowSpecialiteColumn && (
-                                                        <td>{matiere.specialiteLabel || matiere.specialiteCode || '-'}</td>
-                                                    )}
-                                                    <td className="maquette-preview-grid-center">
-                                                        {getTotalHours(matiere)}
-                                                    </td>
-                                                    <td className="maquette-preview-grid-center">
-                                                        {getTotalEvaluations(matiere)}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                )}
-                confirmLabel="Valider"
-                cancelLabel="Annuler"
-                cardClassName="maquette-preview-dialog"
+                previewFile={previewFile}
+                previewLoading={previewLoading}
+                previewError={previewError}
+                previewData={previewData}
+                previewSpecialites={previewSpecialites}
+                isPreviewWarningsVisible={isPreviewWarningsVisible}
+                onToggleWarnings={setIsPreviewWarningsVisible}
+                previewPromotions={previewPromotions}
+                previewPromotionIndex={previewPromotionIndex}
+                onPrevPromotion={() =>
+                    setPreviewPromotionIndex((current) => Math.max(0, current - 1))
+                }
+                onNextPromotion={() =>
+                    setPreviewPromotionIndex((current) =>
+                        Math.min(previewPromotions.length - 1, current + 1),
+                    )
+                }
+                activePreviewPromotion={activePreviewPromotion}
+                previewMatieresToDisplay={previewMatieresToDisplay}
+                shouldShowSpecialiteColumn={shouldShowSpecialiteColumn}
+                formatSemestresForDisplay={formatSemestresForDisplay}
+                getTotalHours={getTotalHours}
+                getTotalEvaluations={getTotalEvaluations}
                 onConfirm={handleValidatePreview}
                 onCancel={handleCancelPreview}
-                onRequestClose={handleCancelPreview}
                 confirmDisabled={previewLoading || !!previewError || !previewData}
             />
-
-            <ConfirmDialog
+            <MaquetteSpecialtyMapDialog
                 open={Boolean(mappingModal)}
-                title="Associer les spÃ©cialitÃ©s dÃ©tectÃ©es"
-                message={mappingModal ? (
-                    <div className="maquette-specialty-map">
-                        <div className="maquette-specialty-map-header">
-                            <div className="maquette-specialty-map-file">
-                                Fichier : <strong>{mappingModal.file.name}</strong>
-                            </div>
-                            {mappingSaving && (
-                                <div className="maquette-specialty-map-status">
-                                    Enregistrement des spÃ©cialitÃ©s...
-                                </div>
-                            )}
-                            {mappingError && (
-                                <div className="maquette-specialty-map-error">
-                                    {mappingError}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="maquette-specialty-map-columns">
-                            <div className="maquette-specialty-map-column">
-                                <h4>SpÃ©cialitÃ©s dÃ©tectÃ©es</h4>
-                                {mappingModal.detectedItems.map((item) => {
-                                    const promoSpecialties = item.promotionId
-                                        ? (mappingModal.draftSpecialtiesByPromoId[item.promotionId] || [])
-                                        : []
-                                    const usedSelections = item.promotionId
-                                        ? mappingSelectionsByPromo[item.promotionId] || new Set()
-                                        : new Set()
-                                    const selectedValue = mappingModal.mapping[item.key] || ''
-
-                                    return (
-                                        <div className="maquette-specialty-map-row" key={item.key}>
-                                            <div className="maquette-specialty-map-promo">
-                                                <span className="maquette-specialty-map-promo-code">
-                                                    {item.promotionCode}
-                                                </span>
-                                                {item.promotionLabel && (
-                                                    <span className="maquette-specialty-map-promo-label">
-                                                        {item.promotionLabel}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div className="maquette-specialty-map-detected">
-                                                {item.detectedLabel}
-                                            </div>
-                                            <div className="maquette-specialty-map-select">
-                                                {item.promotionId ? (
-                                                    <select
-                                                        className="promo-edit-input"
-                                                        value={selectedValue}
-                                                        onChange={(event) =>
-                                                            handleMappingSelectionChange(
-                                                                item.key,
-                                                                event.target.value,
-                                                            )
-                                                        }
-                                                        disabled={mappingSaving}
-                                                    >
-                                                        <option value="">
-                                                            Tronc commun
-                                                        </option>
-                                                        {promoSpecialties.map((specialty) => {
-                                                            const optionValue =
-                                                                specialty.id || specialty.tempId || ''
-                                                            const isUsed =
-                                                                optionValue &&
-                                                                usedSelections.has(optionValue) &&
-                                                                optionValue !== selectedValue
-
-                                                            return (
-                                                                <option
-                                                                    key={optionValue}
-                                                                    value={optionValue}
-                                                                    disabled={isUsed}
-                                                                >
-                                                                    {specialty.nom}
-                                                                </option>
-                                                            )
-                                                        })}
-                                                    </select>
-                                                ) : (
-                                                    <span className="maquette-specialty-map-unknown">
-                                                        Promotion inconnue
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-
-                            <div className="maquette-specialty-map-column">
-                                <h4>SpÃ©cialitÃ©s dÃ©clarÃ©es (card promo)</h4>
-                                {mappingPromoIds.length === 0 && (
-                                    <div className="maquette-specialty-map-empty">
-                                        Aucune promotion associÃ©e aux spÃ©cialitÃ©s dÃ©tectÃ©es.
-                                    </div>
-                                )}
-                                {mappingPromoIds.map((promoId) => {
-                                    const promo = cycle.promotions.find(
-                                        (promotion) => promotion.id === promoId,
-                                    )
-                                    const specialties =
-                                        mappingModal.draftSpecialtiesByPromoId[promoId] || []
-
-                                    return (
-                                        <div className="maquette-specialty-map-group" key={promoId}>
-                                            <div className="maquette-specialty-map-group-head">
-                                                <div>
-                                                    <span className="maquette-specialty-map-group-title">
-                                                        Promotion
-                                                    </span>
-                                                    <strong>
-                                                        {promo?.label || promoId}
-                                                    </strong>
-                                                </div>
-                                                <button
-                                                    type="button"
-                                                    className="btn-tertiary"
-                                                    onClick={() => handleAddDraftSpecialty(promoId)}
-                                                    disabled={mappingSaving}
-                                                >
-                                                    + Ajouter
-                                                </button>
-                                            </div>
-
-                                            {specialties.length === 0 && (
-                                                <div className="maquette-specialty-map-empty">
-                                                    Aucune spÃ©cialitÃ© pour cette promotion.
-                                                </div>
-                                            )}
-
-                                            <div className="maquette-specialty-map-list">
-                                                {specialties.map((specialty, index) => (
-                                                    <div
-                                                        key={specialty.id || specialty.tempId}
-                                                        className="maquette-specialty-map-item"
-                                                    >
-                                                        <input
-                                                            type="text"
-                                                            className="promo-edit-input"
-                                                            value={specialty.nom}
-                                                            onChange={(event) =>
-                                                                handleSpecialtyNameChange(
-                                                                    promoId,
-                                                                    index,
-                                                                    event.target.value,
-                                                                )
-                                                            }
-                                                            disabled={mappingSaving}
-                                                        />
-                                                        <input
-                                                            type="number"
-                                                            min="1"
-                                                            className="promo-edit-input maquette-specialty-map-count"
-                                                            value={specialty.effectifs}
-                                                            onChange={(event) =>
-                                                                handleSpecialtyEffectifsChange(
-                                                                    promoId,
-                                                                    index,
-                                                                    event.target.value,
-                                                                )
-                                                            }
-                                                            disabled={mappingSaving}
-                                                        />
-                                                        <button
-                                                            type="button"
-                                                            className="btn-danger btn-icon-only"
-                                                            onClick={() =>
-                                                                handleRemoveDraftSpecialty(promoId, index)
-                                                            }
-                                                            disabled={mappingSaving}
-                                                            aria-label="Supprimer la spÃ©cialitÃ©"
-                                                            title="Supprimer"
-                                                        >
-                                                            <span className="btn-label">Supprimer</span>
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </div>
-
-                        <div className="maquette-specialty-map-note">
-                            Les spÃ©cialitÃ©s non associÃ©es seront importÃ©es en tronc commun.
-                        </div>
-                    </div>
-                ) : null}
-                confirmLabel="Appliquer & importer"
-                cancelLabel="Importer sans lier"
-                confirmClassName="btn-primary"
-                cancelClassName="btn-tertiary"
-                cardClassName="maquette-specialty-map-dialog"
+                fileName={mappingModal?.file.name ?? null}
+                mappingSaving={mappingSaving}
+                mappingError={mappingError}
+                detectedItems={mappingModal?.detectedItems ?? []}
+                draftSpecialtiesByPromoId={mappingModal?.draftSpecialtiesByPromoId ?? {}}
+                mappingSelectionsByPromo={mappingSelectionsByPromo}
+                mapping={mappingModal?.mapping ?? {}}
+                mappingPromoIds={mappingPromoIds}
+                promotions={cycle.promotions}
+                confirmDisabled={mappingHasInvalidNames}
+                onSelectionChange={handleMappingSelectionChange}
+                onAddDraftSpecialty={handleAddDraftSpecialty}
+                onSpecialtyNameChange={handleSpecialtyNameChange}
+                onSpecialtyEffectifsChange={handleSpecialtyEffectifsChange}
+                onRemoveDraftSpecialty={handleRemoveDraftSpecialty}
                 onConfirm={handleMappingConfirm}
-                onCancel={handleMappingSkip}
-                onRequestClose={handleMappingCancel}
-                confirmDisabled={mappingSaving || mappingHasInvalidNames}
-                cancelDisabled={mappingSaving}
+                onSkip={handleMappingSkip}
+                onCancel={handleMappingCancel}
             />
         </section>
     )
