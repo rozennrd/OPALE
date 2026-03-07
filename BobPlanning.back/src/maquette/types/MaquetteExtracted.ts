@@ -111,6 +111,15 @@ export interface AnalyzeMaquetteOptions {
   promotionHint?: string | null;
 }
 
+export interface MaquetteSpecialtyMappingInput {
+  // Promotion cible (UUID base).
+  promotionId: string;
+  // Libelle detecte dans la maquette (code ou label brut).
+  detected: string;
+  // Specialite cible (UUID base).
+  specialtyId: string;
+}
+
 export interface ImportMaquetteResult {
   // Compteurs d'import matieres.
   insertedMatieres: number;

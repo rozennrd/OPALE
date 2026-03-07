@@ -18,6 +18,14 @@
         align-items: stretch;
     }
 
+    .rooms-empty-state {
+        padding: 1.25rem 1rem 1rem;
+        border-radius: 0.75rem;
+        background: var(--panel-soft);
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+
     .room-add-card {
         display: grid;
         place-items: center;

@@ -286,7 +286,7 @@ export default function EventDetailCard({
                 return
             }
             if (hasInvalidDates) {
-                window.alert(INVALID_EVENT_DATES_ALERT)
+                openErrorDialog(INVALID_EVENT_DATES_ALERT)
                 return
             }
             void saveDraft(true)
@@ -688,7 +688,7 @@ export default function EventDetailCard({
                                 return false
                             }
                             if (hasInvalidDates) {
-                                window.alert(INVALID_EVENT_DATES_ALERT)
+                                openErrorDialog(INVALID_EVENT_DATES_ALERT)
                                 return false
                             }
                             return true
