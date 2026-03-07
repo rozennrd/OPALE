@@ -8,6 +8,7 @@ import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 import MatiereBadge from './MatiereBadge'
 import { updateMatiere } from '../../services/api/matieresApi'
+import { specialtiesApi } from '../../services/api/specialtiesApi'
 import {
     addEnseignement,
     deleteEnseignement,
@@ -50,6 +51,23 @@ interface TeacherAssignment {
 
 const makeRowId = () => `assign-${Math.random().toString(16).slice(2)}`
 const clamp0 = (v: HoursValue) => Math.max(0, Number(v) || 0)
+const normalizeSpecialite = (value: string): string =>
+    value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toUpperCase()
+
+const isCommunSpecialite = (value: string | null | undefined): boolean => {
+    if (!value) return false
+
+    const normalized = normalizeSpecialite(value).replace(/\s+/g, ' ').trim()
+    return (
+        normalized === 'COMMUN' ||
+        normalized.startsWith('COMMUN ') ||
+        normalized.includes('TRONC COMMUN') ||
+        normalized.includes('TRON COMMUN')
+    )
+}
 
 export default function MatiereDetailCard({
                                               matiere,
@@ -68,6 +86,41 @@ export default function MatiereDetailCard({
     const [eLearningHours, setELearningHours] = useState<HoursValue>(matiere.heures_elearning ?? 0)
     const [autresHours, setAutresHours] = useState<HoursValue>(matiere.heures_autre ?? 0)
     const [ , setVolumeIncreaseMessage] = useState<string | null>(null)
+    const [specialiteName, setSpecialiteName] = useState<string | null>(null)
+
+    useEffect(() => {
+        let mounted = true
+        const rawId = (matiere.id_specialite ?? '').trim()
+
+        if (!rawId || isCommunSpecialite(rawId)) {
+            setSpecialiteName(null)
+            return () => {
+                mounted = false
+            }
+        }
+
+        ;(async () => {
+            try {
+                const res = await specialtiesApi.getSpecialtyById(rawId)
+                if (!mounted) return
+                const name = res.success ? res.data?.nom?.trim() : null
+                if (!name || isCommunSpecialite(name)) {
+                    setSpecialiteName(null)
+                    return
+                }
+                setSpecialiteName(name)
+            } catch (err) {
+                if (!mounted) return
+                console.error('[MATIERE_DETAIL] load specialty failed:', err)
+                setSpecialiteName(null)
+            }
+        })()
+
+        return () => {
+            mounted = false
+        }
+    }, [matiere.id_specialite])
+
 
     // --- right column (enseignements)
     const [loadingEns, setLoadingEns] = useState(false)
@@ -616,6 +669,7 @@ export default function MatiereDetailCard({
                         variant="header"
                         title="Détail matière"
                         subtitle={`${matiere.id_promo} · ${matiere.nom}`}
+                        centerLabel={specialiteName ? `Spé: ${specialiteName}` : undefined}
                         className="matiere-detail-header-badge"
                     />
                 </DetailCardHeader>
