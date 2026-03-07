@@ -91,6 +91,8 @@ export default function Rooms() {
         .map(Number)
         .sort((a, b) => a - b)
 
+    const hasVisibleRooms = visibleRoomIds.length > 0
+
     const isCreatingSelectedRoom = !!selectedRoom && pendingNewRoomId === selectedRoom.id
     
     const handleCreateRequested = () => {
@@ -138,7 +140,7 @@ export default function Rooms() {
                 )}
 
                 <div className="rooms-sections">
-                    {visibleRoomIds.length > 0 ? (
+                    {hasVisibleRooms ? (
                         visibleFloors.map((floor) => (
                             <RoomsSection
                                 key={floor}

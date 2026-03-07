@@ -9,6 +9,14 @@
         margin-top: 0.5rem;
     }
 
+    .rooms-empty-state {
+        padding: 1.25rem 1rem 1rem;
+        border-radius: 0.75rem;
+        background: var(--panel-soft);
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+
     /* tu peux garder rooms-section-body si tu en as besoin plus tard */
     .rooms-grid {
         display: grid;
