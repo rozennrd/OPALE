@@ -7,7 +7,7 @@ import screenPopupEventScreenshot from '../../../assets/tuto/event/screen-pop-up
 
 export const eventsTutorialContent: TutorialContent = {
     objective:
-        "Consulter et administrer les événements qui impactent directement ou indirectement l'école (Junia).",
+        "Consulter et administrer les événements exceptionnels qui impactent directement ou indirectement l'école (Junia).",
     expectedResult:
         'Les événements sont fiables, filtrés facilement, et correctement créés, modifiés ou supprimés.',
     steps: [],
@@ -28,13 +28,16 @@ export const eventsTutorialContent: TutorialContent = {
                         'Vue générale avec toolbar de recherche/filtrage et liste des événements.',
                 },
                 <>
+                    La toolbar en haut centralise les actions: <strong>recherche</strong>,{' '}
+                    <strong>filtres</strong>, <strong>création</strong> et{' '}
+                    <strong>suppression en mode sélection</strong>.
+                </>,
+                <>
                     Chaque ligne d'événement contient les <strong>informations principales</strong>: nom,
                     date, lieu et type d'événement.
                 </>,
                 <>
-                    La toolbar en haut centralise les actions: <strong>recherche</strong>,{' '}
-                    <strong>filtres</strong>, <strong>création</strong> et{' '}
-                    <strong>suppression en mode sélection</strong>.
+                    Cliquer sur un événement donne accès à ses <strong>informations détaillées</strong>.
                 </>,
             ],
         },
@@ -77,9 +80,11 @@ export const eventsTutorialContent: TutorialContent = {
                             Portes Ouvertes, Forum Entreprises).
                         </>,
                         <>
-                            <strong>Date de début</strong> et <strong>Date de fin</strong>: définir la plage
-                            réelle de l'événement. Vérifier la cohérence chronologique (<em>fin &gt;= début</em>).
-                        </>,
+                        <strong>Date de début</strong> et <strong>Date de fin</strong>: définir la plage
+                        réelle de l'événement. Vérifier la cohérence chronologique (<em>fin &gt;= début</em>).
+                        <br />
+                        <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
+                    </>,
                         <>
                             <strong>Salle / Lieu</strong>: préciser le lieu principal (campus, salle, adresse
                             ou site externe) pour faciliter l'organisation.
@@ -94,12 +99,12 @@ export const eventsTutorialContent: TutorialContent = {
                         </>,
                         <>
                             <strong>Promotions</strong>: rattacher les promotions impactées. Si l'événement est
-                            global, laisser le champ sans promotion cible.
+                            global, ce champ n'est pas affiché.
                         </>,
                         <>
-                            <strong>Macro planning</strong> / <strong>Micro planning</strong>: activer selon
-                            l'impact attendu dans les plannings.
-                        </>,
+                        <strong>Macro planning</strong> / <strong>Micro planning</strong>: activer selon
+                        l'impact attendu dans les plannings.
+                    </>,
                         <>
                             <strong>Description / commentaires</strong>: documenter le contexte, les objectifs
                             et les contraintes utiles pour l'équipe.
@@ -109,16 +114,48 @@ export const eventsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Cliquer sur <strong>Annuler</strong> ou <strong>Créer</strong> selon le résultat
-                            souhaité.
+                            Cliquer sur la <strong>croix</strong> en haut à droite ou appuyer sur{' '}
+                            <strong>Escape</strong> pour annuler la création. Cette action ouvre un pop-up de
+                            confirmation.
+                            <br />
+                            <em>Action commune</em> : voir le tuto{' '}
+                            <strong>Annuler ou enregistrer/créer</strong>.
                         </>
                     ),
                     subSteps: [
                         <>
-                            <strong>Annuler</strong>: ferme le pop-up <em>sans création</em>.
+                            Cliquer sur la <strong>croix</strong> en haut à droite ou appuyer sur{' '}
+                            <strong>Escape</strong> annule la fermeture et renvoie sur la{' '}
+                            <strong>carte de détail de création</strong> en conservant les informations.
                         </>,
                         <>
-                            <strong>Créer</strong>: enregistre le nouvel événement dans la liste.
+                            Cliquer sur <strong>Fermer sans créer</strong> ferme la carte de détail de création
+                            sans créer l'événement.
+                        </>,
+                        <>
+                            Cliquer sur <strong>Fermer et créer</strong> ferme la carte de détail de création
+                            et crée l'événement.
+                        </>,
+                    ],
+                },
+                {
+                    text: (
+                        <>
+                            Cliquer sur <strong>Créer</strong> pour créer le nouvel événement. Cette action
+                            ouvre un pop-up de confirmation.
+                            <br />
+                            <em>Action commune</em> : voir le tuto{' '}
+                            <strong>Annuler ou enregistrer/créer</strong>.
+                        </>
+                    ),
+                    subSteps: [
+                        <>
+                            Cliquer sur <strong>Annuler</strong>, la <strong>croix</strong> en haut à droite ou{' '}
+                            <strong>Escape</strong> renvoie sur le pop-up de création en conservant les
+                            informations saisies.
+                        </>,
+                        <>
+                            Cliquer sur <strong>Créer</strong> crée l'événement et ferme le pop-up de création.
                         </>,
                     ],
                 },
@@ -160,9 +197,11 @@ export const eventsTutorialContent: TutorialContent = {
                             périmètre.
                         </>,
                         <>
-                            <strong>Date de début</strong> et <strong>Date de fin</strong>: corriger les dates en
-                            cas de décalage ou d'extension de période.
-                        </>,
+                        <strong>Date de début</strong> et <strong>Date de fin</strong>: corriger les dates en
+                        cas de décalage ou d'extension de période.
+                        <br />
+                        <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
+                    </>,
                         <>
                             <strong>Salle / Lieu</strong>: actualiser la localisation si besoin logistique.
                         </>,
@@ -191,17 +230,55 @@ export const eventsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Cliquer sur <strong>Annuler</strong> ou <strong>Enregistrer</strong> pour finaliser
-                            la modification.
+                            Cliquer sur <strong>Supprimer</strong> ou <strong>Enregistrer</strong> selon le
+                            résultat souhaité.
                         </>
                     ),
                     subSteps: [
-                        <>
-                            <strong>Annuler</strong>: abandonne les modifications en cours.
-                        </>,
-                        <>
-                            <strong>Enregistrer</strong>: applique les changements sur l'événement.
-                        </>,
+                        {
+                            text: (
+                                <>
+                                    <strong>Supprimer</strong>: supprime l'événement affiché à l'écran. Cette
+                                    action ouvre un pop-up de confirmation.
+                                    <br />
+                                    <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
+                                </>
+                            ),
+                            subSteps: [
+                                <>
+                                    Cliquer sur <strong>Annuler</strong>, la <strong>croix</strong> en haut à
+                                    droite ou <strong>Escape</strong> annule la suppression et renvoie sur la{' '}
+                                    <strong>carte de détail de modification</strong> en conservant les
+                                    informations saisies.
+                                </>,
+                                <>
+                                    Cliquer sur <strong>Supprimer</strong> supprime définitivement l'événement.
+                                </>,
+                            ],
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Enregistrer</strong>: enregistre les modifications. Cette action
+                                    ouvre un pop-up de confirmation.
+                                    <br />
+                                    <em>Action commune</em> : voir le tuto{' '}
+                                    <strong>Annuler ou enregistrer/créer</strong>.
+                                </>
+                            ),
+                            subSteps: [
+                                <>
+                                    Cliquer sur <strong>Annuler</strong>, la <strong>croix</strong> en haut à
+                                    droite ou <strong>Escape</strong> renvoie sur la{' '}
+                                    <strong>carte de détail de modification</strong> en conservant les
+                                    informations saisies.
+                                </>,
+                                <>
+                                    Cliquer sur <strong>Enregistrer</strong> enregistre l'événement et ferme le
+                                    pop-up de modification.
+                                </>,
+                            ],
+                        },
                     ],
                 },
             ],
@@ -212,62 +289,18 @@ export const eventsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            <strong>Étape 1.1</strong>: depuis la vue principale, cliquer sur{' '}
-                            <strong>Sélectionner</strong> pour activer le mode de suppression.
-                        </>
-                    ),
-                    imageSrc: screenPageEventScreenshot,
-                    imageAlt: 'Accès au mode suppression depuis la page Événements',
-                    imageCaption: 'Le bouton Sélectionner ouvre les actions de suppression.',
-                    imageHighlight: {
-                        left: '83.0%',
-                        top: '20.65%',
-                        width: '9.5%',
-                        height: '6.1%',
-                        label: 'Accès suppression',
-                    },
-                },
-                {
-                    text: (
-                        <>
-                            Cliquer sur <strong>Sélectionner</strong>, cocher un ou plusieurs événements, puis
-                            cliquer sur <strong>Supprimer (n)</strong>.
+                            La suppression des événements se fait en <strong>mode sélection</strong> depuis la
+                            toolbar, ou depuis la <strong>carte de détail</strong> d'un événement en
+                            modification.
+                            <br />
+                            <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
                         </>
                     ),
                     imageSrc: screenPageEventSuppressionScreenshot,
                     imageAlt: "Mode suppression d'événements",
                     imageCaption:
                         'Mode sélection avec actions de suppression en lot (Supprimer n).',
-                    imageHighlights: [
-                        {
-                            left: '82.7%',
-                            top: '20.5%',
-                            width: '9.8%',
-                            height: '6.65%',
-                            label: 'Mode sélection',
-                        },
-                        {
-                            left: '86.5%',
-                            top: '36.8%',
-                            width: '8.8%',
-                            height: '6.4%',
-                            label: 'Supprimer (n)',
-                        },
-                    ],
-                    subSteps: [
-                        <>
-                            Le compteur <strong>(n)</strong> indique le nombre d'événements sélectionnés.
-                        </>,
-                        <>
-                            Utiliser <strong>Tout sélectionner</strong> ou <strong>Effacer</strong> pour ajuster
-                            rapidement la sélection.
-                        </>,
-                    ],
                 },
-                <>
-                    <strong>Étape 2 (à venir)</strong>: un pop-up de confirmation apparaîtra pour valider ou
-                    annuler la suppression.
-                </>,
             ],
         },
         {
@@ -276,70 +309,15 @@ export const eventsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            La barre d'outils centralise la <strong>recherche textuelle</strong>, les{' '}
-                            <strong>filtres</strong>, la <strong>création</strong> et le{' '}
-                            <strong>mode sélection</strong>.
+                            La barre d'outils permet d'utiliser la <strong>recherche</strong> et les{' '}
+                            <strong>filtres</strong> pour retrouver rapidement un événement.
+                            <br />
+                            <em>Action commune</em> : voir le tuto <strong>Rechercher et filtrer</strong>.
                         </>
                     ),
                     imageSrc: screenPageEventScreenshot,
                     imageAlt: "Barre d'outils de la page Événements",
                     imageCaption: 'Toolbar de recherche, filtres et actions.',
-                    imageHighlights: [
-                        {
-                            left: '22.0%',
-                            top: '20.6%',
-                            width: '61.3%',
-                            height: '5.7%',
-                            label: 'Recherche textuelle',
-                        },
-                        {
-                            left: '22.0%',
-                            top: '26.7%',
-                            width: '73.3%',
-                            height: '8.2%',
-                            label: 'Filtres',
-                            labelTop: '3.5rem',
-                        },
-                        {
-                            left: '83.5%',
-                            top: '20.6%',
-                            width: '9.0%',
-                            height: '5.7%',
-                            label: 'Sélection',
-                            labelLeft: '-0.5rem',
-                        },
-                        {
-                            left: '92.7%',
-                            top: '21.3%',
-                            width: '2.2%',
-                            height: '4.8%',
-                            label: 'Création',
-                            labelLeft: '-0.5rem',
-                        },
-                    ],
-                    subSteps: [
-                        <>
-                            <strong>Recherche textuelle</strong>: filtrer rapidement un événement par son nom.
-                        </>,
-                        <>
-                            <strong>Filtres par date</strong>: <em>À partir du</em> / <em>Jusqu'au</em>.
-                        </>,
-                        <>
-                            <strong>Filtres par cible</strong>: <em>Tous</em>, <em>Junia</em> ou{' '}
-                            <em>Externe</em>.
-                        </>,
-                        <>
-                            <strong>Filtre par type d'événement</strong> et bouton{' '}
-                            <strong>Réinitialiser les filtres</strong>.
-                        </>,
-                        <>
-                            Le bouton <strong>+</strong> ouvre la création d'événement.
-                        </>,
-                        <>
-                            Le bouton <strong>Sélectionner</strong> permet la suppression d'un ou plusieurs
-                            événements.
-                        </>,
-                    ],
                 },
             ],
         },
@@ -350,4 +328,3 @@ export const eventsTutorialContent: TutorialContent = {
         'Les réglages Macro/Micro planning influencent directement la qualité des plannings générés.',
     ],
 }
-
