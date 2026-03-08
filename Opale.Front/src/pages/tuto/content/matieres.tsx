@@ -313,7 +313,7 @@ export const matieresTutorialContent: TutorialContent = {
                             top: '28.5%',
                             width: '6.2%',
                             height: '4.3%',
-                            label: 'Reset filtres',
+                            label: 'Réinitialiser les filtres',
                             labelLeft: '-0.4rem',
                             labelTop: '2.5rem',
                         },
@@ -333,7 +333,7 @@ export const matieresTutorialContent: TutorialContent = {
                             <strong>Sélectionner</strong>: activer la suppression multiple.
                         </>,
                         <>
-                            <strong>Reset filtres</strong>: revenir à la vue complète.
+                            <strong>Réinitialiser les filtres</strong>: revenir à la vue complète.
                         </>,
                     ],
                 },

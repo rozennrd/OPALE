@@ -536,7 +536,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                 if (!response.success || !response.data?.insertedId) {
                     errors.push(
                         response.error?.message ||
-                        `Impossible d'ajouter la spÃ©cialitÃ© "${name}".`,
+                        `Impossible d'ajouter la spécialité "${name}".`,
                     )
                     continue
                 }
@@ -563,7 +563,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                     if (!response.success) {
                         errors.push(
                             response.error?.message ||
-                            `Impossible de mettre Ã  jour la spÃ©cialitÃ© "${draft.nom}".`,
+                            `Impossible de mettre à jour la spécialité "${draft.nom}".`,
                         )
                     }
                 }
@@ -583,7 +583,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                 if (!response.success) {
                     errors.push(
                         response.error?.message ||
-                        `Impossible de supprimer la spÃ©cialitÃ© "${removedItem.nom}".`,
+                        `Impossible de supprimer la spécialité "${removedItem.nom}".`,
                     )
                 }
             }
@@ -759,7 +759,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
             setMappingError(
                 error instanceof Error
                     ? error.message
-                    : "Impossible d'enregistrer les spÃ©cialitÃ©s.",
+                    : "Impossible d'enregistrer les spécialités.",
             )
         } finally {
             setMappingSaving(false)
@@ -1059,7 +1059,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
             <div className="promotions">
                 {cycle.promotions.length === 0 && (
                     <div className="empty">
-                        Aucune promotion affichee pour ce cycle.
+                        Aucune promotion affichée pour ce cycle.
                     </div>
                 )}
 

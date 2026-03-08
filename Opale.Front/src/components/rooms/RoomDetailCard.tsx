@@ -28,11 +28,11 @@ const ROOM_TYPE_LABELS: Record<RoomType, string> = {
     Informatique: 'Informatique',
     Projet: 'Projet',
     Rassemblement: 'Rassemblement',
-    Reunion: 'Reunion',
+    Reunion: 'Réunion',
     Associatif: 'Associatif',
-    Electronique: 'Electronique',
+    Electronique: 'Électronique',
     Fablab: 'Fablab',
-    Reseau: 'Reseau',
+    Reseau: 'Réseau',
 }
 
 const floorLabel = (floor: number): string => {

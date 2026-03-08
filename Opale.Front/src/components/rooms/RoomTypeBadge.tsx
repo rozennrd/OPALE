@@ -21,11 +21,11 @@ const TYPE_META: Record<RoomType, { icon: string; label: string; typeClass: stri
     Informatique: { icon: icTpn, label: 'Informatique', typeClass: 'tp_numerique' },
     Projet: { icon: icProjet, label: 'Projet', typeClass: 'projet' },
     Rassemblement: { icon: icAutre, label: 'Rassemblement', typeClass: 'autre' },
-    Reunion: { icon: icAutre, label: 'Reunion', typeClass: 'autre' },
+    Reunion: { icon: icAutre, label: 'Réunion', typeClass: 'autre' },
     Associatif: { icon: icAutre, label: 'Associatif', typeClass: 'autre' },
-    Electronique: { icon: icTpe, label: 'Electronique', typeClass: 'tp_electronique' },
+    Electronique: { icon: icTpe, label: 'Électronique', typeClass: 'tp_electronique' },
     Fablab: { icon: icProjet, label: 'Fablab', typeClass: 'projet' },
-    Reseau: { icon: icTpn, label: 'Reseau', typeClass: 'tp_numerique' },
+    Reseau: { icon: icTpn, label: 'Réseau', typeClass: 'tp_numerique' },
 }
 
 export default function RoomTypeBadge({

@@ -31,7 +31,7 @@ interface NavItem {
 const items: NavItem[] = [
     { to: '/planning', label: 'Planning', ic: icPlanning, code: 'OPS-01' },
     { to: '/promotions', label: 'Promotions', ic: icPromotions, code: 'CELL-03' },
-    { to: '/evenements', label: 'Evenements', ic: icEvenements, code: 'EVENT-12' },
+    { to: '/evenements', label: 'Événements', ic: icEvenements, code: 'EVENT-12' },
     { to: '/teachers', label: 'Enseignants', ic: icEnseignants, code: 'CREW-07' },
     { to: '/salles', label: 'Salles', ic: icSalles, code: 'DECK-04' },
     { to: '/matieres', label: 'Mati\u00e8res', ic: icMatieres, code: 'LAB-22' },
