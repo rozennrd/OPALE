@@ -1,5 +1,5 @@
 // src/components/promotions/CycleCreateDialog.tsx
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import { getCycleTypeDisplayName, CYCLE_TYPES } from '../../constants/cycleTypes'
 import { DUPLICATE_CYCLE_MESSAGE } from '../../hooks/promotions/usePromotionCycles'
@@ -58,6 +58,28 @@ const CycleCreateDialog: React.FC<CycleCreateDialogProps> = ({
         }
     }
 
+    const handleRequestClose = useCallback(() => {
+        onClose()
+    }, [onClose])
+
+    useEffect(() => {
+        if (!isOpen) return
+
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key !== 'Escape') return
+
+            const hasModal = document.querySelector('.modal-overlay')
+            if (hasModal) {
+                return
+            }
+
+            handleRequestClose()
+        }
+
+        window.addEventListener('keydown', onKeyDown)
+        return () => window.removeEventListener('keydown', onKeyDown)
+    }, [isOpen, handleRequestClose])
+
     if (!isOpen) return null
 
     const nameValidationMessage = validateName ? validateName(formData.name) : ''
@@ -67,6 +89,15 @@ const CycleCreateDialog: React.FC<CycleCreateDialogProps> = ({
     return (
         <div className="promo-edit-overlay">
             <div className="card promo-edit-card">
+                <button
+                    type="button"
+                    className="promo-edit-close"
+                    onClick={handleRequestClose}
+                    aria-label="Fermer la fenÍtre de crÈation"
+                >
+                    &times;
+                </button>
+
                 <h3 className="promo-edit-title">Cr√©er un nouveau cycle</h3>
 
                 <section className="promo-section promo-section-main">
@@ -150,3 +181,4 @@ const CycleCreateDialog: React.FC<CycleCreateDialogProps> = ({
 }
 
 export default CycleCreateDialog
+
