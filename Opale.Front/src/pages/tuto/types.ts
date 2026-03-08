@@ -5,6 +5,7 @@ export type TutorialTab = 'planning' | 'pages'
 export type TutorialId =
     | 'macro'
     | 'micro'
+    | 'planning'
     | 'promotions'
     | 'events'
     | 'teachers'

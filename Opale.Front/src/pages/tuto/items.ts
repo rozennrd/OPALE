@@ -1,4 +1,4 @@
-import type { TutorialItem, TutorialTab } from './types'
+﻿import type { TutorialItem, TutorialTab } from './types'
 
 export const TAB_ITEMS: Array<{ key: TutorialTab; label: string }> = [
     { key: 'planning', label: 'Flux planning' },
@@ -8,44 +8,51 @@ export const TAB_ITEMS: Array<{ key: TutorialTab; label: string }> = [
 export const TUTORIAL_ITEMS: TutorialItem[] = [
     {
         id: 'macro',
-        title: 'Générer un planning macro',
-        summary: 'Flux global de génération et validation du planning macro.',
+        title: 'GÃ©nÃ©rer un planning macro',
+        summary: 'Flux global de gÃ©nÃ©ration et validation du planning macro.',
         tab: 'planning',
     },
     {
         id: 'micro',
-        title: 'Générer un planning micro',
-        summary: 'Étapes de construction du planning micro à partir du macro.',
+        title: 'GÃ©nÃ©rer un planning micro',
+        summary: 'Ã‰tapes de construction du planning micro Ã  partir du macro.',
         tab: 'planning',
+    },
+    {
+        id: 'planning',
+        title: 'Tutoriel - Planning',
+        summary: 'Utiliser la page Planning et lancer les gÃ©nÃ©rations disponibles.',
+        tab: 'pages',
     },
     {
         id: 'promotions',
         title: 'Tutoriel - Promotions',
-        summary: 'Créer, modifier et organiser les promotions et leurs groupes.',
+        summary: 'CrÃ©er, modifier et organiser les promotions et leurs groupes.',
         tab: 'pages',
     },
     {
         id: 'events',
-        title: 'Tutoriel - Événements',
-        summary: 'Ajouter, ajuster et suivre les événements planifiés.',
+        title: 'Tutoriel - Ã‰vÃ©nements',
+        summary: 'Ajouter, ajuster et suivre les Ã©vÃ©nements planifiÃ©s.',
         tab: 'pages',
     },
     {
         id: 'teachers',
         title: 'Tutoriel - Enseignants',
-        summary: "Gérer les profils enseignants et leur mode d'intervention.",
+        summary: "GÃ©rer les profils enseignants et leur mode d'intervention.",
         tab: 'pages',
     },
     {
         id: 'rooms',
         title: 'Tutoriel - Salles',
-        summary: 'Configurer les salles et leurs caractéristiques pédagogiques.',
+        summary: 'Configurer les salles et leurs caractÃ©ristiques pÃ©dagogiques.',
         tab: 'pages',
     },
     {
         id: 'matieres',
-        title: 'Tutoriel - Matières',
-        summary: 'Administrer les matières et leurs paramètres associés.',
+        title: 'Tutoriel - MatiÃ¨res',
+        summary: 'Administrer les matiÃ¨res et leurs paramÃ¨tres associÃ©s.',
         tab: 'pages',
     },
 ]
+
