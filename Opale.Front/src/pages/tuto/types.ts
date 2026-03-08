@@ -43,7 +43,7 @@ export type TutorialStep = {
     imageCaption?: string
     imageHighlight?: TutorialImageHighlight
     imageHighlights?: TutorialImageHighlight[]
-    subSteps?: React.ReactNode[]
+    subSteps?: TutorialStepEntry[]
 }
 
 export type TutorialStepEntry = React.ReactNode | TutorialStep

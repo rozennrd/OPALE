@@ -284,14 +284,50 @@ export default function Documentation() {
                                                                                             (
                                                                                                 subStep,
                                                                                                 subStepIndex,
-                                                                                            ) => (
-                                                                                                <li
-                                                                                                    key={`${tutorialId}-section-${sectionIndex}-step-${stepIndex}-substep-${subStepIndex}`}
-                                                                                                    className="documentation-substep-item"
-                                                                                                >
-                                                                                                    {subStep}
-                                                                                                </li>
-                                                                                            ),
+                                                                                            ) => {
+                                                                                                const subStepText =
+                                                                                                    getStepText(
+                                                                                                        subStep,
+                                                                                                    )
+                                                                                                const hasSubStepText =
+                                                                                                    hasRenderableNode(
+                                                                                                        subStepText,
+                                                                                                    )
+                                                                                                const nestedSubSteps =
+                                                                                                    getVisibleSubSteps(
+                                                                                                        subStep,
+                                                                                                    )
+
+                                                                                                return (
+                                                                                                    <li
+                                                                                                        key={`${tutorialId}-section-${sectionIndex}-step-${stepIndex}-substep-${subStepIndex}`}
+                                                                                                        className="documentation-substep-item"
+                                                                                                    >
+                                                                                                        {hasSubStepText &&
+                                                                                                            subStepText}
+                                                                                                        {nestedSubSteps.length >
+                                                                                                            0 && (
+                                                                                                            <ol className="documentation-substep-list documentation-subsubstep-list">
+                                                                                                                {nestedSubSteps.map(
+                                                                                                                    (
+                                                                                                                        nestedSubStep,
+                                                                                                                        nestedSubStepIndex,
+                                                                                                                    ) => (
+                                                                                                                        <li
+                                                                                                                            key={`${tutorialId}-section-${sectionIndex}-step-${stepIndex}-substep-${subStepIndex}-subsubstep-${nestedSubStepIndex}`}
+                                                                                                                            className="documentation-substep-item documentation-subsubstep-item"
+                                                                                                                        >
+                                                                                                                            {getStepText(
+                                                                                                                                nestedSubStep,
+                                                                                                                            )}
+                                                                                                                        </li>
+                                                                                                                    ),
+                                                                                                                )}
+                                                                                                            </ol>
+                                                                                                        )}
+                                                                                                    </li>
+                                                                                                )
+                                                                                            },
                                                                                         )}
                                                                                     </ol>
                                                                                 )}
@@ -446,14 +482,42 @@ export default function Documentation() {
                                                             {visibleSubSteps.length > 0 && (
                                                                 <ol className="documentation-substep-list">
                                                                     {visibleSubSteps.map(
-                                                                        (subStep, subStepIndex) => (
-                                                                            <li
-                                                                                key={`${selectedTutorial.id}-step-${index}-substep-${subStepIndex}`}
-                                                                                className="documentation-substep-item"
-                                                                            >
-                                                                                {subStep}
-                                                                            </li>
-                                                                        ),
+                                                                        (subStep, subStepIndex) => {
+                                                                            const subStepText =
+                                                                                getStepText(subStep)
+                                                                            const hasSubStepText =
+                                                                                hasRenderableNode(subStepText)
+                                                                            const nestedSubSteps =
+                                                                                getVisibleSubSteps(subStep)
+
+                                                                            return (
+                                                                                <li
+                                                                                    key={`${selectedTutorial.id}-step-${index}-substep-${subStepIndex}`}
+                                                                                    className="documentation-substep-item"
+                                                                                >
+                                                                                    {hasSubStepText && subStepText}
+                                                                                    {nestedSubSteps.length > 0 && (
+                                                                                        <ol className="documentation-substep-list documentation-subsubstep-list">
+                                                                                            {nestedSubSteps.map(
+                                                                                                (
+                                                                                                    nestedSubStep,
+                                                                                                    nestedSubStepIndex,
+                                                                                                ) => (
+                                                                                                    <li
+                                                                                                        key={`${selectedTutorial.id}-step-${index}-substep-${subStepIndex}-subsubstep-${nestedSubStepIndex}`}
+                                                                                                        className="documentation-substep-item documentation-subsubstep-item"
+                                                                                                    >
+                                                                                                        {getStepText(
+                                                                                                            nestedSubStep,
+                                                                                                        )}
+                                                                                                    </li>
+                                                                                                ),
+                                                                                            )}
+                                                                                        </ol>
+                                                                                    )}
+                                                                                </li>
+                                                                            )
+                                                                        },
                                                                     )}
                                                                 </ol>
                                                             )}
