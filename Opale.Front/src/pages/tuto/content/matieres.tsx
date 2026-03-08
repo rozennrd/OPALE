@@ -286,9 +286,34 @@ export const matieresTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            La barre d'outils permet d'utiliser la <strong>recherche</strong> et les{' '}
-                            <strong>filtres</strong> pour retrouver rapidement une matiÃ¨re.
-                            <br />
+                            La barre d'outils contient :
+                            <ul>
+                                <li>
+                                    <strong>Recherche</strong> de matiÃ¨re.
+                                </li>
+                                <li>
+                                    <strong>SÃ©lectionner / Quitter sÃ©lection</strong> avec compteur des
+                                    Ã©lÃ©ments sÃ©lectionnÃ©s.
+                                </li>
+                                <li>
+                                    <strong>RÃ©initialiser les filtres</strong>.
+                                </li>
+                                <li>
+                                    <strong>Ajouter une matiÃ¨re</strong> (bouton prÃ©sent, non disponible).
+                                </li>
+                                <li>
+                                    <strong>Filtre Semestre</strong> : Tous, S1, S2.
+                                </li>
+                                <li>
+                                    <strong>Filtre Cycles</strong> (liste dÃ©roulante).
+                                </li>
+                                <li>
+                                    <strong>Filtre Promotions</strong> (liste dÃ©roulante).
+                                </li>
+                                <li>
+                                    <strong>Filtre Enseignants</strong> (liste dÃ©roulante).
+                                </li>
+                            </ul>
                             <em>Action commune</em> : voir le tuto <strong>Rechercher et filtrer</strong>.
                         </>
                     ),

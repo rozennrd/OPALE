@@ -293,9 +293,32 @@ export const roomsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            La barre d'outils permet d'utiliser la <strong>recherche</strong> et les{' '}
-                            <strong>filtres</strong> pour retrouver rapidement une salle.
-                            <br />
+                            La barre d'outils contient :
+                            <ul>
+                                <li>
+                                    <strong>Recherche</strong> de salle.
+                                </li>
+                                <li>
+                                    <strong>SÃ©lectionner / Quitter sÃ©lection</strong> avec compteur des
+                                    Ã©lÃ©ments sÃ©lectionnÃ©s.
+                                </li>
+                                <li>
+                                    <strong>RÃ©initialiser les filtres</strong>.
+                                </li>
+                                <li>
+                                    <strong>Ajouter une salle</strong>.
+                                </li>
+                                <li>
+                                    <strong>Filtre Type</strong> : Tous les types, Cours, Informatique, Projet,
+                                    Rassemblement, RÃ©union, Associatif, Ã‰lectronique, Fablab, RÃ©seau.
+                                </li>
+                                <li>
+                                    <strong>Filtre CapacitÃ©</strong> : opÃ©rateur (Tous, &gt;, &lt;, =) + valeur.
+                                </li>
+                                <li>
+                                    <strong>Filtre DisponibilitÃ©</strong> : Tous, Disponible, Non dispo.
+                                </li>
+                            </ul>
                             <em>Action commune</em> : voir le tuto <strong>Rechercher et filtrer</strong>.
                         </>
                     ),

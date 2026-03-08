@@ -364,9 +364,35 @@ export const teachersTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            La barre d'outils permet d'utiliser la <strong>recherche</strong> et les{' '}
-                            <strong>filtres</strong> pour retrouver rapidement un enseignant.
-                            <br />
+                            La barre d'outils contient :
+                            <ul>
+                                <li>
+                                    <strong>Recherche</strong> d'enseignant.
+                                </li>
+                                <li>
+                                    <strong>Filtres de disponibilitÃ©</strong> : Dispo Ã  partir du / Jusqu'au.
+                                </li>
+                                <li>
+                                    <strong>Filtre Type de cours</strong> : Tous, PrÃ©sentiel, Hybride,
+                                    Distanciel.
+                                </li>
+                                <li>
+                                    <strong>Filtre Promotion</strong> (liste dÃ©roulante).
+                                </li>
+                                <li>
+                                    <strong>Filtre MatiÃ¨res</strong> (liste dÃ©roulante).
+                                </li>
+                                <li>
+                                    <strong>SÃ©lectionner / Quitter sÃ©lection</strong> avec compteur des
+                                    Ã©lÃ©ments sÃ©lectionnÃ©s.
+                                </li>
+                                <li>
+                                    <strong>RÃ©initialiser les filtres</strong>.
+                                </li>
+                                <li>
+                                    <strong>Ajouter un enseignant</strong>.
+                                </li>
+                            </ul>
                             <em>Action commune</em> : voir le tuto <strong>Rechercher et filtrer</strong>.
                         </>
                     ),

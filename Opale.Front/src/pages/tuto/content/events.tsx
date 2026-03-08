@@ -309,9 +309,32 @@ export const eventsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            La barre d'outils permet d'utiliser la <strong>recherche</strong> et les{' '}
-                            <strong>filtres</strong> pour retrouver rapidement un événement.
-                            <br />
+                            La barre d'outils contient :
+                            <ul>
+                                <li>
+                                    <strong>Recherche</strong> d'événement.
+                                </li>
+                                <li>
+                                    <strong>Sélectionner / Quitter sélection</strong> avec compteur des éléments
+                                    sélectionnés.
+                                </li>
+                                <li>
+                                    <strong>Réinitialiser les filtres</strong>.
+                                </li>
+                                <li>
+                                    <strong>Ajouter un événement</strong>.
+                                </li>
+                                <li>
+                                    <strong>Filtres de dates</strong> : À partir du / Jusqu'au.
+                                </li>
+                                <li>
+                                    <strong>Filtre Cible</strong> : Tous, Junia, Externe.
+                                </li>
+                                <li>
+                                    <strong>Filtre Type d'événement</strong> : Tous les types, JPO, Examen,
+                                    Conférence, Forum, Salon, Autre.
+                                </li>
+                            </ul>
                             <em>Action commune</em> : voir le tuto <strong>Rechercher et filtrer</strong>.
                         </>
                     ),
