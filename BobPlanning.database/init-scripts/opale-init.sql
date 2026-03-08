@@ -10,7 +10,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 
 CREATE TYPE type_professeur AS ENUM ('Permanent', 'Intervenant', 'Invite');
-CREATE TYPE type_salle      AS ENUM ('Cours', 'Informatique', 'Projet', 'Rassemblement', 'Associatif', 'Reunion', 'Electronique', 'Fablab', 'Reseau');
+CREATE TYPE type_salle      AS ENUM ('Cours', 'Informatique', 'Projet', 'Rassemblement', 'Associatif', 'Reunion', 'Electronique', 'Fablab', 'Reseau', 'Autre');
 CREATE TYPE type_event      AS ENUM ('Cours', 'Entreprise', 'Examen', 'Reunion', 'Fermeture', 'Soutenance', 'JPO', 'Stage', 'Mobilite', 'PFE', 'Rattrapage', 'Conference', 'Rentrée', 'Réunion parents', 'Journée Immersion', 'Concours', 'Salon', 'Fin des cours', 'Autre');
 CREATE TYPE type_cours      AS ENUM ('Cours_TD', 'Cours_TD_DIST', 'Cours_TP', 'Cours_TP_DIST', 'E-Learning', 'Entreprise', 'Examen', 'Projet', 'Rattrapage', 'Associatif', 'Conférence', 'Stage', 'Encadrement', 'Auto-géré', 'Autre');
 CREATE TYPE type_cycle      AS ENUM ('Initial', 'Apprentissage');
@@ -322,22 +322,26 @@ CREATE INDEX idx_matiere_specialite     ON matiere (id_specialite);
 -- ==============================================================
 --
 -- Déchargement des données de la table `Utilisateurs`
+-- Note : utilisateur Daminou, mdp Daminou
+-- utilisateur test, mdp test
 --
 INSERT INTO utilisateurs (login, email, password, date_blocage, tentatives_echouees) VALUES
-    ('Daminou', 'Daminou', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533',  '2025-02-17 15:36:41', 0);
+    ('Daminou', 'Daminou', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533',  null, 0),
+    ('test', 'test', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',  null, 0);
+
 
 
 -- Déchargement des données de la table `cycle`
--- Attention : A enlever une fois que la base de donnée sera correctement intégrée
+-- Attention : À enlever une fois que la base de donnée sera correctement intégrée
 --
 INSERT INTO cycle (nom, type) VALUES
                                   ('Cycle Préparatoire', 'Initial'),
-                                  ('Cycle Ingénieur',   'Initial'),
-                                  ('Cycle Ingénieur', 'Apprentissage');
+                                  ('Cycle Ingénieur - Initial',   'Initial'),
+                                  ('Cycle Ingénieur - Apprentissage', 'Apprentissage');
 
 
 -- Déchargement des données de la table `promotions`
--- Attention : A enlever une fois que la base de donnée sera correctement intégrée
+-- todo : À enlever une fois que la base de donnée sera correctement intégrée
 --
 INSERT INTO promotion (nom, effectifs, id_cycle, date_start, date_end) VALUES
                                                                            ('ADI1',   20,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
@@ -350,3 +354,25 @@ INSERT INTO promotion (nom, effectifs, id_cycle, date_start, date_end) VALUES
                                                                            ('ISEN3',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
                                                                            ('ISEN4',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
                                                                            ('ISEN5',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30');
+-- Étage 0
+INSERT INTO salle (nom, nom_complet, type_principal, types_secondaires, etage, description) VALUES
+    ('J001', 'J001_Projet', 'Projet', ARRAY['Projet'], 0, 'Espace projet polyvalent au rez-de-chaussée.'),
+    ('J005', NULL, 'Cours', ARRAY['Cours'], 0, 'Salle de TD classique (tableaux + vidéoprojecteur).');
+
+-- Étage 1
+INSERT INTO salle (nom, nom_complet, type_principal, types_secondaires, etage, description, utilisable) VALUES
+                                                                                                ('J101', 'J101_TP Numérique', 'Informatique', ARRAY['Informatique', 'Cours'], 1, 'Salle orientée TP numérique (PC fixes).', true),
+                                                                                                ('J109', 'J109_ClassLab', 'Informatique', ARRAY['Informatique'], 1, 'ClassLab numérique (machines récentes, dual-screen).', true),
+                                                                                                ('J120', NULL, 'Cours', ARRAY['Cours'], 1, 'Salle de TD modulable.', true);
+
+-- Étage 2
+INSERT INTO salle (nom, nom_complet, type_principal, types_secondaires, etage, description, utilisable) VALUES
+                                                                                                ('J201', NULL, 'Electronique', ARRAY['Electronique'], 2, 'TP électronique (paillasses, alims, oscilloscopes).', true),
+                                                                                                ('J210', NULL, 'Electronique', ARRAY['Electronique', 'Projet'], 2, 'Salle mixte TP électronique / mini-projets.', true),
+                                                                                                ('J220', 'J220_Salle Polyvalente', 'Autre', ARRAY['Autre', 'Cours'], 2, 'Polyvalente (réu, soutenances, ateliers).', true);
+
+INSERT INTO professeur (NOM, PRENOM, EMAIL, EMAIL_PERSO, TELEPHONE, TYPE, MODALITE_ENSEIGNEMENT, CAMPUS_ORIGIN) VALUES
+                                                                                                                    ("Pirog", "Antoine", "antoine.pirog@junia.com", "antoine.pirog@junia.com", "0625252525", "Permanent", "Présentiel", "Bordeaux"),
+                                                                                                                    ("Chatrie", "Frédéric", "frederic.chatrie@junia.com", "frederic.chatrie@junia.com", "0626252525", "Permanent", "Présentiel", "Bordeaux"),
+                                                                                                                    ("Viot", "Lucas", "lucas.viot@junia.com", "lucas.viot@junia.com", "0626352525", "Permanent", "Présentiel", "Bordeaux"),
+                                                                                                                    ("Mokrani", "Cyril", "cyril.mokrani@junia.com", null, "0626352625", "Intervenant", "Présentiel", "Bordeaux"),
