@@ -154,7 +154,7 @@ export default function Rooms() {
                         ))
                     ) : (
                         <div className="rooms-empty-state">
-                            Aucune salle ne correspond aux filtres selectionnes.
+                            Aucune salle ne correspond aux filtres sélectionnés.
                         </div>
                     )}
                 </div>

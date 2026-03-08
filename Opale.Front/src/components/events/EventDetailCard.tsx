@@ -76,7 +76,7 @@ function getSalleIdsForLocation(location: string, salles: Salle[]): string[] {
 }
 
 const CREATE_EVENT_REQUIRED_FIELDS_ALERT =
-    'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de creer cet evenement.'
+    'Merci de remplir tous les champs obligatoires (nom, dates, lieu, type, cible) avant de créer cet événement.'
 const INVALID_EVENT_DATES_ALERT =
     "La date/heure de fin doit être strictement postérieure à la date/heure de début."
 
@@ -230,7 +230,7 @@ export default function EventDetailCard({
     }
 
     const headerTitle =
-        draft.name || (isCreate ? 'Nouvel evenement' : 'Evenement sans titre')
+        draft.name || (isCreate ? 'Nouvel événement' : 'Événement sans titre')
 
     const headerSubtitle = (() => {
         const start = formatDate(draft.startDate)
@@ -240,7 +240,7 @@ export default function EventDetailCard({
             draft.startDate !== draft.endDate
                 ? ` -> ${formatDate(draft.endDate)}`
                 : ''
-        const location = draft.location ? ` Â· ${draft.location}` : ''
+        const location = draft.location ? ` · ${draft.location}` : ''
         return `${start}${end}${location}`
     })()
 
@@ -299,7 +299,7 @@ export default function EventDetailCard({
             <DetailCardBody className="event-detail-card">
                 <DetailCardHeader
                     onClose={handleRequestClose}
-                    closeAriaLabel="Fermer la fiche evenement"
+                    closeAriaLabel="Fermer la fiche événement"
                     closeButtonClassName="event-detail-close"
                     headerClassName="event-detail-header-badge"
                 >
@@ -314,7 +314,7 @@ export default function EventDetailCard({
 
                 <section className="event-detail-section event-detail-section-left">
                     <h3 className="event-detail-section-title">
-                        Informations generales
+                        Informations générales
                     </h3>
 
                     <dl className="event-detail-info-list">
@@ -333,7 +333,7 @@ export default function EventDetailCard({
                         </div>
 
                         <div className="event-detail-info-row">
-                            <dt>Date de debut</dt>
+                            <dt>Date de début</dt>
                             <dd>
                                 <DateInput
                                     mode="datetime"
@@ -472,7 +472,7 @@ export default function EventDetailCard({
                                             <span className="event-detail-multiselect-value">
                                                 {selectedPromotionLabels.length > 0
                                                     ? selectedPromotionLabels.join(', ')
-                                                    : 'Selectionnez une ou plusieurs promotions'}
+                                                    : 'Sélectionnez une ou plusieurs promotions'}
                                             </span>
                                             <span
                                                 className={
@@ -534,7 +534,7 @@ export default function EventDetailCard({
                                     </div>
                                     {draft.concernedPromotionIds.length === 0 && (
                                         <small className="event-detail-input-help">
-                                            Selectionnez une ou plusieurs promotions.
+                                            Sélectionnez une ou plusieurs promotions.
                                         </small>
                                     )}
                                 </dd>
@@ -595,7 +595,7 @@ export default function EventDetailCard({
                             </dd>
                         </div>
 
-                        {/* NOTE: toggleSalle est disponible si tu ajoutes une UI de sÃ©lection des salles */}
+                        {/* NOTE: toggleSalle est disponible si tu ajoutes une UI de sélection des salles */}
                         {/* toggleSalle('room-id') */}
                     </dl>
                 </section>
@@ -606,7 +606,7 @@ export default function EventDetailCard({
                     </h3>
                     <textarea
                         className="event-detail-textarea"
-                        placeholder="Notes sur l evenement, objectifs, intervenants, public vise..."
+                        placeholder="Notes sur l'événement, objectifs, intervenants, public visé..."
                         value={draft.description}
                         onChange={(e) =>
                             updateField('description', e.target.value)
@@ -630,11 +630,11 @@ export default function EventDetailCard({
                                   : 'Enregistrer'
                         }
                         deleteLabel="Supprimer"
-                        deleteTitle="Supprimer cet evenement"
+                        deleteTitle="Supprimer cet événement"
                         deleteMessage={
                             <>
                                 Vous allez supprimer{' '}
-                                <strong>{draft.name || 'cet evenement'}</strong>
+                                <strong>{draft.name || 'cet événement'}</strong>
                                 .
                                 <br />
                                 Confirmer ?

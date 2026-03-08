@@ -571,7 +571,7 @@ export default function MatiereDetailCard({
 
         const matRes = await updateMatiere(matierePayload)
         if (!matRes.success) {
-            setErrorMessage(matRes.error?.message ?? 'Erreur lors de la sauvegarde matière')
+            setErrorMessage(matRes.error?.message ?? 'Erreur lors de la sauvegarde de la matière.')
             return
         }
 
@@ -804,7 +804,7 @@ export default function MatiereDetailCard({
 
                                 <div className="room-detail-field">
                                     <label className="room-detail-field-label" htmlFor="matiere-elearning">
-                                        Volume E-Learning (h)
+                                        Volume e-learning (h)
                                     </label>
                                     <input
                                         id="matiere-elearning"
@@ -837,7 +837,7 @@ export default function MatiereDetailCard({
 
                             <div className="matiere-evaluations-summary">
                                 <div className="matiere-evaluations-main">
-                                    <span className="matiere-evaluations-label">Total epreuves</span>
+                                    <span className="matiere-evaluations-label">Total des épreuves</span>
                                     <strong className="matiere-evaluations-value">{totalEpreuves}</strong>
                                 </div>
                                 <div className="matiere-evaluations-breakdown">
@@ -846,7 +846,7 @@ export default function MatiereDetailCard({
                                         <strong>{partielsCount}</strong>
                                     </div>
                                     <div className="matiere-evaluations-item">
-                                        <span>Evaluations intermediaires</span>
+                                        <span>Évaluations intermédiaires</span>
                                         <strong>{evalInterCount}</strong>
                                     </div>
                                 </div>
@@ -855,7 +855,7 @@ export default function MatiereDetailCard({
                                 <div className="volume-warning matiere-unassigned-warning" role="status" aria-live="polite">
                                     <span aria-hidden="true">!</span>
                                     <div className="matiere-unassigned-content">
-                                        <span>Heures non attribuees :</span>
+                                        <span>Heures non attribuées :</span>
                                         <div className="matiere-unassigned-list">
                                             {unassignedVisible.map((item, index) => (
                                                 <span key={item.key} className="matiere-unassigned-item">
@@ -885,8 +885,8 @@ export default function MatiereDetailCard({
                                     <p className="room-detail-hint-xsmall">
                                         TD assigné : <strong>{assignedTD}h</strong> · TP assigné :{' '}
                                         <strong>{assignedTP}h</strong> · Projet assigné :{' '}
-                                        <strong>{assignedProject}h</strong> · E-learning assigné :{' '}
-                                        <strong>{assignedELearning}h</strong> · Autres assigné :{' '}
+                                        <strong>{assignedProject}h</strong> · e-learning assigné :{' '}
+                                        <strong>{assignedELearning}h</strong> · Autres assignés :{' '}
                                         <strong>{assignedAutres}h</strong>
                                         {loadingEns ? ' · Chargement…' : ''}
                                     </p>

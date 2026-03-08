@@ -391,7 +391,7 @@ export default function Events() {
         if (!selectedEvent) {
             return {
                 success: false,
-                error: "Aucun evenement selectionne.",
+                error: "Aucun événement sélectionné.",
             }
         }
 
@@ -488,9 +488,9 @@ export default function Events() {
 
     return (
         <>
-            <h1 className="page-title">Evenements</h1>
+            <h1 className="page-title">Événements</h1>
             <p className="page-sub">
-                Vue consolidee des evenements Junia et externes.
+                Vue consolidée des événements Junia et externes.
             </p>
 
             <div className="events-page">
@@ -521,8 +521,8 @@ export default function Events() {
                             onSelectAll={() => selectAllEvents(visibleEventIds)}
                             onClearSelection={clearEventSelection}
                             onDeleteSelected={handleDeleteSelected}
-                            confirmTitle="Supprimer les evenements selectionnes"
-                            confirmMessage={`Vous allez supprimer ${selectedEventIds.length} evenement${selectedEventIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                            confirmTitle="Supprimer les événements sélectionnés"
+                            confirmMessage={`Vous allez supprimer ${selectedEventIds.length} événement${selectedEventIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
                         />
                     )}
 
@@ -568,8 +568,8 @@ export default function Events() {
                             </div>
                         ) : (
                             <div className="events-empty-state">
-                                Aucun evenement ne correspond aux filtres
-                                selectionnes.
+                                Aucun événement ne correspond aux filtres
+                                sélectionnés.
                             </div>
                         )}
                     </div>

@@ -48,7 +48,7 @@ const MaquetteSpecialtyMapDialog: React.FC<MaquetteSpecialtyMapDialogProps> = ({
 }) => (
     <ConfirmDialog
         open={open}
-        title="Associer les spÃ©cialitÃ©s dÃ©tectÃ©es"
+        title="Associer les spécialités détectées"
         message={(
             <div className="maquette-specialty-map">
                 <div className="maquette-specialty-map-header">
@@ -59,7 +59,7 @@ const MaquetteSpecialtyMapDialog: React.FC<MaquetteSpecialtyMapDialogProps> = ({
                     )}
                     {mappingSaving && (
                         <div className="maquette-specialty-map-status">
-                            Enregistrement des spÃ©cialitÃ©s...
+                            Enregistrement des spécialités...
                         </div>
                     )}
                     {mappingError && (
@@ -71,7 +71,7 @@ const MaquetteSpecialtyMapDialog: React.FC<MaquetteSpecialtyMapDialogProps> = ({
 
                 <div className="maquette-specialty-map-columns">
                     <div className="maquette-specialty-map-column">
-                        <h4>SpÃ©cialitÃ©s dÃ©tectÃ©es</h4>
+                        <h4>Spécialités détectées</h4>
                         {detectedItems.map((item) => {
                             const promoSpecialties = item.promotionId
                                 ? (draftSpecialtiesByPromoId[item.promotionId] || [])
@@ -140,10 +140,10 @@ const MaquetteSpecialtyMapDialog: React.FC<MaquetteSpecialtyMapDialogProps> = ({
                     </div>
 
                     <div className="maquette-specialty-map-column">
-                        <h4>SpÃ©cialitÃ©s dÃ©clarÃ©es (card promo)</h4>
+                        <h4>Spécialités déclarées (card promo)</h4>
                         {mappingPromoIds.length === 0 && (
                             <div className="maquette-specialty-map-empty">
-                                Aucune promotion associÃ©e aux spÃ©cialitÃ©s dÃ©tectÃ©es.
+                                Aucune promotion associée aux spécialités détectées.
                             </div>
                         )}
                         {mappingPromoIds.map((promoId) => {
@@ -173,7 +173,7 @@ const MaquetteSpecialtyMapDialog: React.FC<MaquetteSpecialtyMapDialogProps> = ({
 
                                     {specialties.length === 0 && (
                                         <div className="maquette-specialty-map-empty">
-                                            Aucune spÃ©cialitÃ© pour cette promotion.
+                                            Aucune spécialité pour cette promotion.
                                         </div>
                                     )}
 
@@ -217,7 +217,7 @@ const MaquetteSpecialtyMapDialog: React.FC<MaquetteSpecialtyMapDialogProps> = ({
                                                         onRemoveDraftSpecialty(promoId, index)
                                                     }
                                                     disabled={mappingSaving}
-                                                    aria-label="Supprimer la spÃ©cialitÃ©"
+                                                    aria-label="Supprimer la spécialité"
                                                     title="Supprimer"
                                                 >
                                                     <span className="btn-label">Supprimer</span>
@@ -232,7 +232,7 @@ const MaquetteSpecialtyMapDialog: React.FC<MaquetteSpecialtyMapDialogProps> = ({
                 </div>
 
                 <div className="maquette-specialty-map-note">
-                    Les spÃ©cialitÃ©s non associÃ©es seront importÃ©es en tronc commun.
+                    Les spécialités non associées seront importées en tronc commun.
                 </div>
             </div>
         )}

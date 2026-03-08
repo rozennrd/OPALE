@@ -330,7 +330,7 @@ export const eventsTutorialContent: TutorialContent = {
                         </>,
                         <>
                             <strong>Filtre par type d'événement</strong> et bouton{' '}
-                            <strong>Reset filtres</strong>.
+                            <strong>Réinitialiser les filtres</strong>.
                         </>,
                         <>
                             Le bouton <strong>+</strong> ouvre la création d'événement.

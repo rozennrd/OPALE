@@ -84,15 +84,15 @@ const MaquettePreviewDialog: React.FC<MaquettePreviewDialogProps> = ({
                                     <td>
                                         <div className="maquette-preview-summary-col">
                                             <div className="maquette-preview-summary-item">
-                                                <span>AnnÃ©e scolaire</span>
+                                                <span>Année scolaire</span>
                                                 <strong>{previewData.metadata.anneeScolaire || '-'}</strong>
                                             </div>
                                             <div className="maquette-preview-summary-item">
-                                                <span>Cycle dÃ©tectÃ©</span>
+                                                <span>Cycle détecté</span>
                                                 <strong>{previewData.metadata.cycleCode || '-'}</strong>
                                             </div>
                                             <div className="maquette-preview-summary-item">
-                                                <span>Promotions dÃ©tectÃ©es</span>
+                                                <span>Promotions détectées</span>
                                                 <strong>{previewData.metadata.promotions.join(', ') || '-'}</strong>
                                             </div>
                                         </div>
@@ -100,11 +100,11 @@ const MaquettePreviewDialog: React.FC<MaquettePreviewDialogProps> = ({
                                     <td>
                                         <div className="maquette-preview-summary-col">
                                             <div className="maquette-preview-summary-item">
-                                                <span>SpÃ©cialitÃ©s dÃ©tectÃ©es</span>
+                                                <span>Spécialités détectées</span>
                                                 <strong>{previewSpecialites}</strong>
                                             </div>
                                             <div className="maquette-preview-summary-item">
-                                                <span>Nombre de matiÃ¨res extraites</span>
+                                                <span>Nombre de matières extraites</span>
                                                 <strong>{previewData.matieres.length}</strong>
                                             </div>
                                             <div className="maquette-preview-summary-item">
@@ -116,7 +116,7 @@ const MaquettePreviewDialog: React.FC<MaquettePreviewDialogProps> = ({
                                 </tr>
                                 <tr>
                                     <td colSpan={2} className="maquette-preview-summary-fullrow">
-                                        <span>Feuilles dÃ©tectÃ©es</span>
+                                        <span>Feuilles détectées</span>
                                         {' : '}
                                         <strong>{previewData.metadata.feuilles.join(', ') || '-'}</strong>
                                     </td>
@@ -136,7 +136,7 @@ const MaquettePreviewDialog: React.FC<MaquettePreviewDialogProps> = ({
                                             aria-label="Fermer les avertissements"
                                             title="Fermer"
                                         >
-                                            Ã—
+                                            ×
                                         </button>
                                     </div>
                                     <ul>
@@ -163,10 +163,10 @@ const MaquettePreviewDialog: React.FC<MaquettePreviewDialogProps> = ({
                                 onClick={onPrevPromotion}
                                 disabled={previewPromotions.length <= 1 || previewPromotionIndex === 0}
                             >
-                                Promotion prÃ©cÃ©dente
+                                Promotion précédente
                             </button>
                             <div className="maquette-preview-promo-nav-label">
-                                <span>Promotion affichÃ©e</span>
+                                <span>Promotion affichée</span>
                                 <strong>
                                     {activePreviewPromotion || '-'} (
                                     {previewPromotions.length > 0 ? previewPromotionIndex + 1 : 0}/
@@ -192,13 +192,13 @@ const MaquettePreviewDialog: React.FC<MaquettePreviewDialogProps> = ({
                                     <tr>
                                         <th>Promo</th>
                                         <th>UE</th>
-                                        <th>MatiÃ¨re</th>
+                                        <th>Matière</th>
                                         <th className="maquette-preview-grid-center">Semestres</th>
                                         {shouldShowSpecialiteColumn && (
-                                            <th>SpÃ©cialitÃ©</th>
+                                            <th>Spécialité</th>
                                         )}
                                         <th className="maquette-preview-grid-center">Total heures</th>
-                                        <th className="maquette-preview-grid-center">Total Ã©preuves</th>
+                                        <th className="maquette-preview-grid-center">Total des épreuves</th>
                                     </tr>
                                 </thead>
                                 <tbody>

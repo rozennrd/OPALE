@@ -489,7 +489,7 @@ export default function Teachers() {
                         </>
                     ) : (
                         <div className="teacher-empty-state">
-                            Aucun enseignant ne correspond aux filtres selectionnes.
+                            Aucun enseignant ne correspond aux filtres sélectionnés.
                         </div>
                     )}
                 </div>
