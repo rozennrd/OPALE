@@ -77,6 +77,8 @@ export const promotionsTutorialContent: TutorialContent = {
                     subSteps: [
                         <>
                             Champ <strong>Nom du cycle</strong>: saisir un nom clair (ex: ADI, CIR).
+                            <br />
+                            On ne peut pas donner un nom de cycle existant
                         </>,
                         <>
                             Champ <strong>Type de formation</strong>: choisir via la liste déroulante{' '}
