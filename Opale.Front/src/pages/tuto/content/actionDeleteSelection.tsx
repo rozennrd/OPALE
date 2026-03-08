@@ -1,27 +1,30 @@
-import type { TutorialContent } from '../types'
+﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
 
 export const actionDeleteSelectionTutorialContent: TutorialContent = {
     objective:
-        'Supprimer un ou plusieurs Ã©lÃ©ments via le mode sÃ©lection.',
+        'Supprimer un ou plusieurs éléments.',
     expectedResult:
-        'Les Ã©lÃ©ments sÃ©lectionnÃ©s sont supprimÃ©s.',
+        'Les éléments ciblés sont supprimés.',
     steps: [
         <>
-            Cliquer sur <strong>SÃ©lectionner</strong> dans la barre d'outils pour activer le mode sÃ©lection.
+            <strong>Suppression en mode sélection</strong> : cliquer sur <strong>Sélectionner</strong> dans la barre d'outils.
         </>,
         <>
-            Cocher un ou plusieurs Ã©lÃ©ments dans la liste.
+            Cocher un ou plusieurs éléments dans la liste, puis cliquer sur <strong>Supprimer (n)</strong>.
         </>,
         <>
-            Cliquer sur <strong>Supprimer (n)</strong>.
+            Confirmer la suppression si une fenêtre de confirmation s'affiche.
         </>,
         <>
-            Confirmer la suppression si une fenÃªtre de confirmation s'affiche.
+            <strong>Suppression depuis une fiche</strong> : quand c'est disponible, cliquer sur
+            <strong> Supprimer</strong> dans la fiche de détail.
         </>,
     ],
     tips: [
-        "Le compteur (n) indique le nombre d'Ã©lÃ©ments sÃ©lectionnÃ©s.",
-        "DÃ©sactive le mode sÃ©lection pour revenir Ã  la consultation.",
+        'Disponible sur : Événements, Enseignants, Salles, Matières.',
+        "Le compteur (n) indique le nombre d'éléments sélectionnés.",
+        'Désactive le mode sélection pour revenir à la consultation.',
     ],
 }
+

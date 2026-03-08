@@ -1,24 +1,33 @@
-import type { TutorialContent } from '../types'
+﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
 
 export const actionCancelSaveTutorialContent: TutorialContent = {
     objective:
-        'Annuler ou enregistrer une fiche en crÃ©ation ou modification.',
+        'Annuler ou enregistrer/créer une fiche en création ou modification.',
     expectedResult:
-        'Les changements sont soit enregistrÃ©s, soit abandonnÃ©s proprement.',
+        'Les changements sont soit enregistrés, soit abandonnés proprement.',
     steps: [
         <>
-            Cliquer sur <strong>Annuler</strong> pour fermer la fiche sans sauvegarder.
+            Utiliser la <strong>croix</strong> en haut à droite pour annuler la fiche sans sauvegarder.
         </>,
         <>
-            Cliquer sur <strong>Enregistrer</strong> ou <strong>CrÃ©er</strong> pour valider les modifications.
+            La touche <strong>Escape</strong> du clavier fait la même action.
         </>,
         <>
-            Si une fenÃªtre de confirmation apparaÃ®t, choisir l'option adaptÃ©e (enregistrer ou fermer sans enregistrer).
+            Quand il est présent, le bouton <strong>Annuler</strong> ferme aussi la fiche sans sauvegarder.
+        </>,
+        <>
+            Cliquer sur <strong>Enregistrer</strong> ou <strong>Créer</strong> pour valider les modifications.
+        </>,
+        <>
+            Si une fenêtre de confirmation apparaît, choisir l'option adaptée (enregistrer ou fermer sans enregistrer).
         </>,
     ],
     tips: [
-        "Une confirmation peut s'afficher si des modifications ne sont pas sauvegardÃ©es.",
-        "Les libellÃ©s peuvent varier selon la page (CrÃ©er, Enregistrer).",
+        "Une confirmation peut s'afficher si des modifications ne sont pas sauvegardées.",
+        "Les libellés peuvent varier selon la page (Créer, Enregistrer).",
+        "Le bouton Annuler n'est pas toujours présent selon la page.",
     ],
 }
+
+
