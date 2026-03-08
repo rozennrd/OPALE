@@ -6,8 +6,8 @@ import popupEditPromotionScreenshot from '../../../assets/tuto/promo/screen-pop-
 import type { TutorialContent } from '../types'
 
 export const promotionsTutorialContent: TutorialContent = {
-    objective: 'Créer et maintenir les promotions avec leurs structures pédagogiques.',
-    expectedResult: 'La promotion est complète, structurée et exploitable par les modules de planning.',
+    objective: 'Créer et maintenir les cycles et promotions avec leurs structures pédagogiques.',
+    expectedResult: 'Les cycles et promotions sont complets, structurés et exploitables par les modules de planning.',
     steps: [],
     stepSections: [
         {
@@ -70,7 +70,7 @@ export const promotionsTutorialContent: TutorialContent = {
                     },
                 },
                 {
-                    text: <>Dans le pop-up, renseigner les <strong>champs obligatoires</strong> du cycle.</>,
+                    text: <>Renseigner les <strong>champs obligatoires</strong> du cycle.</>,
                     imageSrc: popupCreateCycleScreenshot,
                     imageAlt: "Pop-up de création d'un cycle dans OPALE",
                     imageCaption: 'Le pop-up de création contient les champs obligatoires du cycle.',
@@ -85,26 +85,37 @@ export const promotionsTutorialContent: TutorialContent = {
                         <>
                             Champ <strong>Nombre de promotions</strong>: saisir le nombre d'années du cycle
                             (ex: <strong>3</strong> pour un cycle en 3 ans).
+                            <br />
+                            Les promotions sont créées automatiquement avec le nom du cycle, puis
+                            incrémentées de <strong>1</strong> jusqu'au nombre d'années.
                         </>,
                     ],
                 },
                 {
-                    text: <>Choisir le bouton adapté en bas du pop-up selon le résultat souhaité.</>,
+                    text: (
+                        <>
+                            Cliquer sur <strong>Enregistrer</strong> ou <strong>Annuler</strong> selon le
+                            résultat souhaité.
+                        </>
+                    ),
                     subSteps: [
                         <>
-                            <strong>Annuler</strong>: ferme le pop-up <em>sans enregistrer</em> les
-                            informations saisies.
+                            <strong>Enregistrer</strong>: crée le cycle.
                         </>,
                         <>
-                            <strong>Enregistrer</strong>: valide la création du cycle et ajoute une nouvelle
-                            carte sur la page Promotions.
+                            <strong>Annuler</strong>: ferme le pop-up sans créer le cycle. Possible aussi de
+                            cliquer sur la <strong>croix</strong> en haut à droite ou d'appuyer sur{' '}
+                            <strong>Escape</strong>.
+                            <br />
+                            <em>Action commune</em> : voir le tuto{' '}
+                            <strong>Annuler ou enregistrer/créer</strong>.
                         </>,
                     ],
                 },
             ],
         },
         {
-            title: 'Ajouter une promotion au sein d\'un cycle',
+            title: "Ajouter une promotion au sein d'un cycle",
             steps: [
                 {
                     text: (
@@ -128,7 +139,7 @@ export const promotionsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Dans le pop-up <strong>Ajouter une promotion</strong>, renseigner uniquement le{' '}
+                            Renseigner le pop-up <strong>Ajouter une promotion</strong> avec le{' '}
                             <strong>nom de la promotion</strong>.
                         </>
                     ),
@@ -137,11 +148,10 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageCaption: 'Le pop-up demande uniquement le nom de la promotion.',
                     subSteps: [
                         <>
-                            Saisir le <strong>nom de la promotion</strong> avec la convention choisie.
-                        </>,
-                        <>
+                            Renseigner le <strong>nom de la promotion</strong> avec la convention choisie.
+                            <br />
                             <em>Conseil</em>: garder un <strong>même système de nommage</strong> au sein d'un
-                            cycle (ex: AP4, AP5, AP6) pour faciliter la lecture des plannings.
+                            cycle (ex: AP3, AP4, AP5) pour faciliter la lecture des plannings.
                         </>,
                     ],
                 },
@@ -154,7 +164,11 @@ export const promotionsTutorialContent: TutorialContent = {
                     ),
                     subSteps: [
                         <>
-                            <strong>Annuler</strong>: ferme le pop-up sans création de promotion.
+                            <strong>Annuler</strong>: ferme le pop-up sans création de promotion. Possible
+                            aussi d'appuyer sur <strong>Escape</strong>.
+                            <br />
+                            <em>Action commune</em> : voir le tuto{' '}
+                            <strong>Annuler ou enregistrer/créer</strong>.
                         </>,
                         <>
                             <strong>Ajouter</strong>: valide la création et affiche la promotion dans la carte
@@ -165,7 +179,7 @@ export const promotionsTutorialContent: TutorialContent = {
             ],
         },
         {
-            title: 'Modifier les informations d\'une promotion',
+            title: "Modifier les informations d'une promotion",
             steps: [
                 {
                     text: (
@@ -200,24 +214,40 @@ export const promotionsTutorialContent: TutorialContent = {
                         <>
                             <strong>Partie 1 - Informations principales</strong>: nom de la promotion, nombre
                             d'étudiants, date de début, date de fin.
+                            <br />
+                            Vérifier que les dates affichées par défaut sont celles déjà enregistrées pour la promotion.
+                            Si elles sont vides, renseigner la date de début et la date de fin.
+                            <br />
+                            <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
                         </>,
                         <>
                             <strong>Partie 2 - Groupes</strong>: créer autant de groupes que souhaité pour les
                             matières communes, puis définir le nombre d'étudiants par groupe (ex: 40
                             étudiants répartis en 2 groupes de 20).
+                            <br />
+                            Cliquer sur <strong>+ Ajouter un groupe</strong>.
                         </>,
                         <>
                             <strong>Partie 3 - Spécialités</strong>: créer les spécialités de la promotion
                             (ex: cybersécurité, dev) et définir le nombre d'élèves dans chaque spécialité.
                             Les spécialités sont <strong>indépendantes</strong> des groupes.
+                            <br />
+                            Cliquer sur <strong>+ Ajouter une spécialité</strong>.
                         </>,
                         <>
                             <strong>Partie 4 - Contraintes académiques</strong>: définir les plages de dates de{' '}
                             <strong>Entreprise</strong> (ou <strong>Vacances</strong> pour un parcours
                             initial), <strong>Stages</strong>, <strong>International</strong>,{' '}
                             <strong>Partiels</strong> et <strong>Rattrapages</strong>.
-                        </>,
-                        <>
+                            <br />
+                            Repérer le message <strong>Info : Les vacances scolaires sont déjà récupérées via l'API.
+                            Inutile de les ajouter manuellement.</strong> pour les cycles initiaux.
+                            <br />
+                            Cliquer sur <strong>+</strong> pour ajouter une période et sur <strong>-</strong> pour
+                            supprimer la période.
+                            <br />
+                            <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
+                            <br />
                             Définir correctement ces périodes est essentiel pour afficher clairement le
                             planning macro et éviter de poser des cours sur ces plages en planning micro.
                         </>,
@@ -226,76 +256,221 @@ export const promotionsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Cliquer sur <strong>Annuler</strong> ou <strong>Enregistrer</strong> pour
-                            finaliser la modification.
+                            Cliquer sur <strong>Enregistrer</strong> pour enregistrer les modifications.
                         </>
                     ),
                     subSteps: [
                         <>
-                            <strong>Annuler</strong>: ferme le pop-up sans appliquer les changements.
+                            Si aucune modification n'a été faite, cliquer sur <strong>Enregistrer</strong> fait
+                            quitter automatiquement.
                         </>,
                         <>
-                            <strong>Enregistrer</strong>: applique les modifications sur la promotion.
+                            Si des modifications ont été faites, cliquer sur <strong>Enregistrer</strong> ouvre
+                            un pop-up de confirmation.
+                            <br />
+                            <strong>Enregistrer</strong>: enregistre les modifications et fait quitter.
+                            <br />
+                            <strong>Annuler</strong>, la <strong>croix</strong> en haut à droite, ou{' '}
+                            <strong>Escape</strong>: revient sur la <strong>carte de détail</strong>. Rien n'est
+                            enregistré, les modifications restent visibles.
+                            <br />
+                            <em>Action commune</em> : voir le tuto{' '}
+                            <strong>Annuler ou enregistrer/créer</strong>.
+                        </>,
+                    ],
+                },
+                {
+                    text: (
+                        <>
+                            Cliquer sur la <strong>croix</strong> en haut à droite ou appuyer sur{' '}
+                            <strong>Escape</strong> pour quitter la fenêtre.
+                        </>
+                    ),
+                    subSteps: [
+                        <>
+                            Si aucune modification n'a été faite, le pop-up de modification se ferme.
                         </>,
                         <>
-                            Ces informations sont très importantes pour générer des plannings macro et micro
-                            fiables.
+                            Si des modifications ont été faites, un pop-up de confirmation s'ouvre.
+                            <br />
+                            <strong>Annuler</strong>, la <strong>croix</strong> en haut à droite, ou{' '}
+                            <strong>Escape</strong>: revient sur la <strong>carte de détail</strong>, les
+                            modifications restent visibles.
+                            <br />
+                            <strong>Fermer sans enregistrer</strong>: ferme le pop-up sans enregistrer.
+                            <br />
+                            <strong>Enregistrer et fermer</strong>: enregistre et ferme le pop-up.
                         </>,
                     ],
                 },
             ],
         },
         {
-            title: 'Supprimer un cycle ou une promotion',
+            title: 'Importer une ou plusieurs maquettes',
             steps: [
                 {
                     text: (
                         <>
-                            Cliquer sur l'icône <strong>poubelle</strong> (ou le bouton{' '}
-                            <strong>Supprimer</strong> si les icônes sont désactivées), soit au niveau du{' '}
-                            <strong>cycle</strong>, soit au niveau d'une <strong>promotion</strong>.
+                            Importer une ou plusieurs maquettes Excel en utilisant l'une des méthodes
+                            suivantes.
                         </>
                     ),
-                    imageSrc: promoPageScreenshot,
-                    imageAlt: 'Zone des boutons de suppression cycle et promotion',
-                    imageCaption:
-                        "Les boutons de suppression du cycle et d'une promotion sont situés sur la même colonne d'actions.",
-                    imageHighlights: [
-                        {
-                            left: '41.5%',
-                            top: '15.5%',
-                            width: '4.1%',
-                            height: '7.0%',
-                            label: 'Suppression cycle',
-                        },
-                        {
-                            left: '40.6%',
-                            top: '32.5%',
-                            width: '4.1%',
-                            height: '7.0%',
-                            label: 'Suppression promotion',
-                        },
-                    ],
                     subSteps: [
                         <>
-                            <strong>Corbeille du cycle</strong> (en haut de la carte): supprime le cycle
-                            complet et son contenu associé.
+                            Méthode 1 : faire un <strong>drag and drop</strong> d'une ou plusieurs maquettes
+                            Excel dans la zone dédiée du cycle cible. Les fichiers acceptés sont{' '}
+                            <strong>uniquement</strong> des fichiers Excel.
                         </>,
                         <>
-                            <strong>Corbeille d'une promotion</strong> (sur la ligne promotion): supprime
-                            uniquement la promotion cible.
+                            Méthode 2 : cliquer sur la zone de <strong>drag and drop</strong> pour ouvrir
+                            l'explorateur de fichiers.
+                            <br />
+                            Sélectionner un ou plusieurs fichiers Excel, puis cliquer sur <strong>Ouvrir</strong>.
+                            <br />
+                            L'explorateur affiche uniquement les fichiers Excel et les dossiers.
                         </>,
                     ],
                 },
+                {
+                    text: (
+                        <>
+                            Vérifier la prévisualisation de la maquette.
+                        </>
+                    ),
+                    subSteps: [
+                        <>
+                            Vérifier dans le premier tableau : <strong>Année scolaire</strong>,{' '}
+                            <strong>Cycle détecté</strong>, <strong>Promotions détectées</strong>,{' '}
+                            <strong>Spécialités détectées</strong>, <strong>Nombre de matières extraites</strong>,{' '}
+                            <strong>Nombre d'avertissements</strong> et <strong>Feuilles détectées</strong>.
+                            <br />
+                            <em>Action commune</em> : vérifier dans le second tableau : <strong>Promo</strong>,{' '}
+                            <strong>UE</strong>, <strong>Matière</strong>, <strong>Semestres</strong>,{' '}
+                            <strong>Spécialité</strong> (si disponible), <strong>Total heures</strong> et{' '}
+                            <strong>Total des épreuves</strong>.
+                            <br />
+                            <em>Action commune</em> : si plusieurs promotions sont détectées, utiliser{' '}
+                            <strong>Promotion précédente</strong> et <strong>Promotion suivante</strong>. Ces
+                            éléments sont des <strong>boutons</strong>. Le centre affiche le nom de la
+                            promotion et l'index <strong>(n/x)</strong>.
+                        </>,
+                    ],
+                },
+                {
+                    text: (
+                        <>
+                            Cliquer sur <strong>Annuler</strong> (ou la <strong>croix</strong> /{' '}
+                            <strong>Escape</strong>) ou sur <strong>Valider</strong>.
+                            <br />
+                            <em>Action commune</em> : voir le tuto{' '}
+                            <strong>Annuler ou enregistrer/créer</strong>.
+                            <br />
+                            Si <strong>Valider</strong> est sélectionné, le nom du fichier apparaît dans la
+                            zone de <strong>drag and drop</strong>.
+                            <br />
+                            Vous pouvez prévisualiser d'autres maquettes sans supprimer celles déjà validées.
+                            <br />
+                            Cliquer sur la <strong>croix</strong> d'un fichier pour le retirer.
+                        </>
+                    ),
+                },
+                {
+                    text: (
+                        <>
+                            Cliquer sur <strong>Importer la maquette</strong> une fois toutes les maquettes
+                            sélectionnées.
+                        </>
+                    ),
+                    subSteps: [
+                        {
+                            text: (
+                                <>
+                                    Si des spécialités sont détectées, un pop-up d'association s'ouvre. Sinon,
+                                    l'import démarre directement.
+                                </>
+                            ),
+                            subSteps: [
+                                <>Vérifier que le nom du fichier apparaît en sous-titre du pop-up.</>,
+                                <>
+                                    Repérer : à gauche les <strong>spécialités détectées</strong>, à droite les{' '}
+                                    <strong>spécialités déclarées</strong> (issues des promotions).
+                                </>,
+                                <>
+                                    Pour chaque spécialité détectée, sélectionner la spécialité déclarée via la
+                                    liste déroulante.
+                                </>,
+                                <>
+                                    Vous pouvez <strong>ajouter</strong>, <strong>supprimer</strong> ou{' '}
+                                    <strong>modifier</strong> le nom et les effectifs des spécialités déclarées.
+                                    Ces changements sont enregistrés dans le détail de la promotion concernée.
+                                </>,
+                                <>
+                                    Si une spécialité détectée n'est pas liée, ses matières sont importées en{' '}
+                                    <strong>tronc commun</strong>.
+                                </>,
+                                <>
+                                    Cliquer sur <strong>Importer sans lier</strong> pour importer toutes les
+                                    matières en tronc commun.
+                                </>,
+                                <>
+                                    Cliquer sur <strong>Appliquer & importer</strong> pour appliquer les liaisons.
+                                </>,
+                                <>
+                                    Cliquer sur la <strong>croix</strong> ou appuyer sur <strong>Escape</strong>{' '}
+                                    annule l'association et revient à l'étape <strong>4</strong> (Importer la
+                                    maquette).
+                                </>,
+                            ],
+                        },
+                    ],
+                },
+                <>
+                    Attendre quelques instants : un message de récap apparaît dans la zone de{' '}
+                    <strong>drag and drop</strong>.
+                </>,
+            ],
+        },
+        {
+            title: 'Supprimer un cycle',
+            steps: [
+                <>
+                    Cliquer sur l'icône <strong>poubelle</strong> (ou le bouton{' '}
+                    <strong>Supprimer</strong> si les icônes sont désactivées) sur la carte du cycle.
+                </>,
+                <>
+                    <strong>Corbeille du cycle</strong> (en haut de la carte): supprime le cycle complet et
+                    son contenu associé.
+                </>,
                 <>
                     <strong>Étape 2 (à venir)</strong>: un pop-up de confirmation apparaîtra pour valider ou
                     annuler la suppression.
+                    <br />
+                    <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
+                </>,
+            ],
+        },
+        {
+            title: 'Supprimer une promotion',
+            steps: [
+                <>
+                    Cliquer sur l'icône <strong>poubelle</strong> (ou le bouton{' '}
+                    <strong>Supprimer</strong> si les icônes sont désactivées) sur la ligne promotion.
+                </>,
+                <>
+                    <strong>Corbeille d'une promotion</strong> (sur la ligne promotion): supprime uniquement
+                    la promotion cible.
+                </>,
+                <>
+                    <strong>Étape 2 (à venir)</strong>: un pop-up de confirmation apparaîtra pour valider ou
+                    annuler la suppression.
+                    <br />
+                    <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
                 </>,
             ],
         },
     ],
     tips: [
-        'Nommer les groupes de façon stable pour faciliter les imports futurs.',
+        'Nommer de façon stable les cycles, promotions, spécialités et groupes pour faciliter les imports futurs.',
         'Revérifier les contraintes avant de lancer une génération de planning.',
     ],
 }
