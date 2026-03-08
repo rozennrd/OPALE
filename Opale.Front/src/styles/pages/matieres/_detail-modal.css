@@ -119,6 +119,75 @@
         animation: volumeFadeIn 180ms ease-out;
     }
 
+    .matiere-evaluations-summary {
+        margin-top: 0.6rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        align-items: flex-start;
+        padding: 0.6rem 0.8rem;
+        border: 1px solid var(--border-subtle);
+        border-radius: 0.8rem;
+        background: var(--panel-soft);
+    }
+
+    .matiere-evaluations-main {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .matiere-evaluations-label {
+        color: var(--muted);
+        font-weight: 600;
+    }
+
+    .matiere-evaluations-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    .matiere-evaluations-breakdown {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        color: var(--muted);
+    }
+
+    .matiere-evaluations-item {
+        display: flex;
+        align-items: baseline;
+        gap: 0.4rem;
+    }
+
+    .matiere-unassigned-warning {
+        margin-top: 10px;
+    }
+
+    .matiere-unassigned-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .matiere-unassigned-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem 0.6rem;
+    }
+
+    .matiere-unassigned-item strong {
+        font-weight: 700;
+    }
+
+    .matiere-evaluations-breakdown strong {
+        color: var(--text);
+        font-weight: 600;
+    }
+
     @keyframes volumeFadeIn {
         from {
             opacity: 0;
