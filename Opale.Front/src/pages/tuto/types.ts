@@ -1,11 +1,17 @@
 import type React from 'react'
 
-export type TutorialTab = 'planning' | 'pages'
+export type TutorialTab = 'planning' | 'pages' | 'actions'
 
 export type TutorialId =
     | 'macro'
     | 'micro'
     | 'planning'
+    | 'action-create'
+    | 'action-edit'
+    | 'action-cancel-save'
+    | 'action-delete-selection'
+    | 'action-search-filter'
+    | 'date-selector'
     | 'promotions'
     | 'events'
     | 'teachers'

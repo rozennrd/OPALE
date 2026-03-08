@@ -3,6 +3,7 @@
 export const TAB_ITEMS: Array<{ key: TutorialTab; label: string }> = [
     { key: 'planning', label: 'Flux planning' },
     { key: 'pages', label: 'Par page' },
+    { key: 'actions', label: 'Action commune' },
 ]
 
 export const TUTORIAL_ITEMS: TutorialItem[] = [
@@ -23,6 +24,42 @@ export const TUTORIAL_ITEMS: TutorialItem[] = [
         title: 'Tutoriel - Planning',
         summary: 'Utiliser la page Planning et lancer les gÃ©nÃ©rations disponibles.',
         tab: 'pages',
+    },
+    {
+        id: 'action-create',
+        title: 'CrÃ©er un Ã©lÃ©ment',
+        summary: 'Utiliser le bouton + pour crÃ©er (hors Promotions).',
+        tab: 'actions',
+    },
+    {
+        id: 'action-edit',
+        title: 'Modifier un Ã©lÃ©ment',
+        summary: "Ouvrir une fiche existante pour l'Ã©dition.",
+        tab: 'actions',
+    },
+    {
+        id: 'action-cancel-save',
+        title: 'Annuler ou enregistrer',
+        summary: 'GÃ©rer les actions Annuler / Enregistrer.',
+        tab: 'actions',
+    },
+    {
+        id: 'action-delete-selection',
+        title: 'Supprimer en mode sÃ©lection',
+        summary: 'SÃ©lectionner plusieurs Ã©lÃ©ments puis supprimer.',
+        tab: 'actions',
+    },
+    {
+        id: 'action-search-filter',
+        title: 'Rechercher et filtrer',
+        summary: 'Utiliser la recherche, les filtres et la rÃ©initialisation.',
+        tab: 'actions',
+    },
+    {
+        id: 'date-selector',
+        title: 'SÃ©lecteur de date',
+        summary: 'Saisir une date avec ou sans heures/minutes.',
+        tab: 'actions',
     },
     {
         id: 'promotions',
@@ -55,4 +92,5 @@ export const TUTORIAL_ITEMS: TutorialItem[] = [
         tab: 'pages',
     },
 ]
+
 

@@ -22,7 +22,10 @@ export default function Documentation() {
     const [searchParams] = useSearchParams()
     const tabParam = searchParams.get('tab')
     const tutorialParam = searchParams.get('tutorial')
-    const initialTab: TutorialTab = tabParam === 'pages' || tabParam === 'planning' ? tabParam : 'planning'
+    const initialTab: TutorialTab =
+        tabParam === 'pages' || tabParam === 'planning' || tabParam === 'actions'
+            ? tabParam
+            : 'planning'
     const tutorialParamIsValid =
         tutorialParam !== null && TUTORIAL_ITEMS.some((item) => item.id === tutorialParam)
     const initialTutorialId =
