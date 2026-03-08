@@ -141,6 +141,13 @@ export default function Documentation() {
                     </div>
                 </SectionCard>
 
+                {selectedTutorial?.id === 'micro' && (
+                    <div className="documentation-warning" role="note" aria-live="polite">
+                        <strong>Attention :</strong> ce tutoriel est une <strong>esquisse</strong> avec les grandes
+                        Ã©tapes. Il faudra le mettre Ã  jour une fois la fonctionnalitÃ© intÃ©grÃ©e.
+                    </div>
+                )}
+
                 <SectionCard
                     id="documentation-viewer"
                     title={selectedTutorial?.title ?? 'Tutoriel'}

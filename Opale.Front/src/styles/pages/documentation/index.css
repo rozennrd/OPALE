@@ -96,6 +96,20 @@
         line-height: 1.35;
     }
 
+    .documentation-warning {
+        border: 1px solid color-mix(in srgb, #f2c94c 65%, var(--border));
+        background: color-mix(in srgb, #f2c94c 18%, var(--panel-soft));
+        color: var(--text);
+        border-radius: 0.75rem;
+        padding: 0.65rem 0.8rem;
+        font-size: 0.88rem;
+        line-height: 1.45;
+    }
+
+    .documentation-warning strong {
+        font-weight: 700;
+    }
+
     .documentation-viewer {
         border: 1px dashed var(--border-subtle, var(--border));
         border-radius: 0.85rem;
