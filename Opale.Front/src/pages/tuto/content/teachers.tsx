@@ -39,13 +39,13 @@ export const teachersTutorialContent: TutorialContent = {
                     <strong>Vacataires</strong>: intervenants externes à Junia.
                 </>,
                 <>
+                    La toolbar en haut centralise la <strong>recherche</strong>, les <strong>filtres</strong>, la{' '}
+                    <strong>création</strong> et la <strong>suppression en mode sélection</strong>.
+                </>,
+                <>
                     Chaque carte enseignant contient les informations clés (<strong>nom</strong>,{' '}
                     <strong>téléphone</strong>, <strong>mode d'intervention</strong>) et sert de point d'accès
                     pour la consultation/détail.
-                </>,
-                <>
-                    La toolbar en haut centralise la <strong>recherche</strong>, les <strong>filtres</strong>, la{' '}
-                    <strong>création</strong> et la <strong>suppression en mode sélection</strong>.
                 </>,
             ],
         },
@@ -100,11 +100,20 @@ export const teachersTutorialContent: TutorialContent = {
                         <>
                             <strong>Matières enseignées</strong>: ajouter les matières enseignées puis associer,
                             si nécessaire, les promotions cibles.
+                            <br />
+                            <em>Conseil</em>: pour attribuer ou désattribuer une matière, se référer à la
+                            section <strong>Attribuer des matières à un enseignant</strong>.
+                            <br />
+                            <em>Note</em> : voir le tuto <strong>Attribuer des matières à un enseignant</strong>.
                         </>,
                         <>
                             <strong>Disponibilités</strong>: créer une ou plusieurs périodes, définir la plage de
                             dates, puis renseigner la grille <strong>Matin / Après-midi</strong> du{' '}
                             <strong>Lundi au Vendredi</strong>.
+                            <br />
+                            <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
+                            <br />
+                            <em>Note</em> : voir le tuto <strong>Ajouter des périodes de disponibilités</strong>.
                         </>,
                         <>
                             Vérifier la légende <em>Disponible</em> / <em>Non disponible</em> pour éviter les
@@ -115,16 +124,48 @@ export const teachersTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Cliquer sur <strong>Annuler</strong> ou <strong>Enregistrer</strong> pour finaliser.
+                            Cliquer sur la <strong>croix</strong> en haut à droite ou appuyer sur{' '}
+                            <strong>Escape</strong> pour annuler la création. Cette action ouvre un pop-up de
+                            confirmation.
+                            <br />
+                            <em>Action commune</em> : voir le tuto{' '}
+                            <strong>Annuler ou enregistrer/créer</strong>.
                         </>
                     ),
                     subSteps: [
                         <>
-                            <strong>Annuler</strong>: ferme le pop-up <em>sans sauvegarde</em>.
+                            Cliquer sur la <strong>croix</strong> en haut à droite ou appuyer sur{' '}
+                            <strong>Escape</strong> annule la fermeture et renvoie sur la{' '}
+                            <strong>carte de détail de création</strong> en conservant les informations.
                         </>,
                         <>
-                            <strong>Enregistrer</strong>: valide la fiche enseignant et la rend disponible dans la
-                            liste.
+                            Cliquer sur <strong>Fermer sans créer</strong> ferme la carte de détail de création
+                            sans créer l'enseignant.
+                        </>,
+                        <>
+                            Cliquer sur <strong>Fermer et créer</strong> ferme la carte de détail de création
+                            et crée l'enseignant.
+                        </>,
+                    ],
+                },
+                {
+                    text: (
+                        <>
+                            Cliquer sur <strong>Créer</strong> pour créer le nouvel enseignant. Cette action
+                            ouvre un pop-up de confirmation.
+                            <br />
+                            <em>Action commune</em> : voir le tuto{' '}
+                            <strong>Annuler ou enregistrer/créer</strong>.
+                        </>
+                    ),
+                    subSteps: [
+                        <>
+                            Cliquer sur <strong>Annuler</strong>, la <strong>croix</strong> en haut à droite ou{' '}
+                            <strong>Escape</strong> renvoie sur le pop-up de création en conservant les
+                            informations saisies.
+                        </>,
+                        <>
+                            Cliquer sur <strong>Créer</strong> crée l'enseignant et ferme le pop-up de création.
                         </>,
                     ],
                 },
@@ -174,33 +215,127 @@ export const teachersTutorialContent: TutorialContent = {
                         <>
                             Ajuster les <strong>matières enseignées</strong> et les promotions associées selon
                             la charge pédagogique réelle.
+                            <br />
+                            <em>Conseil</em>: pour attribuer ou désattribuer une matière, se référer à la
+                            section <strong>Attribuer des matières à un enseignant</strong>.
+                            <br />
+                            <em>Note</em> : voir le tuto <strong>Attribuer des matières à un enseignant</strong>.
                         </>,
                         <>
                             Actualiser les <strong>disponibilités</strong> (périodes, grille hebdomadaire) pour
                             garantir des plannings fiables.
-                        </>,
-                        <>
-                            En mode édition, le bouton <strong>Supprimer</strong> peut être affiché selon les
-                            règles de la page.
+                            <br />
+                            <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
+                            <br />
+                            <em>Note</em> : voir le tuto <strong>Ajouter des périodes de disponibilités</strong>.
                         </>,
                     ],
                 },
                 {
                     text: (
                         <>
-                            Cliquer sur <strong>Annuler</strong> ou <strong>Enregistrer</strong> pour valider
-                            l'édition.
+                            Cliquer sur <strong>Supprimer</strong> ou <strong>Enregistrer</strong> selon le
+                            résultat souhaité.
                         </>
                     ),
                     subSteps: [
-                        <>
-                            <strong>Annuler</strong>: abandonne les modifications en cours.
-                        </>,
-                        <>
-                            <strong>Enregistrer</strong>: applique les changements sur la fiche enseignant.
-                        </>,
+                        {
+                            text: (
+                                <>
+                                    <strong>Supprimer</strong>: supprime l'enseignant affiché à l'écran. Cette
+                                    action ouvre un pop-up de confirmation.
+                                    <br />
+                                    <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
+                                </>
+                            ),
+                            subSteps: [
+                                <>
+                                    Cliquer sur <strong>Annuler</strong>, la <strong>croix</strong> en haut à
+                                    droite ou <strong>Escape</strong> annule la suppression et renvoie sur la{' '}
+                                    <strong>carte de détail de modification</strong> en conservant les
+                                    informations saisies.
+                                </>,
+                                <>
+                                    Cliquer sur <strong>Supprimer</strong> supprime définitivement l'enseignant.
+                                </>,
+                            ],
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Enregistrer</strong>: enregistre les modifications. Cette action
+                                    ouvre un pop-up de confirmation.
+                                    <br />
+                                    <em>Action commune</em> : voir le tuto{' '}
+                                    <strong>Annuler ou enregistrer/créer</strong>.
+                                </>
+                            ),
+                            subSteps: [
+                                <>
+                                    Cliquer sur <strong>Annuler</strong>, la <strong>croix</strong> en haut à
+                                    droite ou <strong>Escape</strong> renvoie sur la{' '}
+                                    <strong>carte de détail de modification</strong> en conservant les
+                                    informations saisies.
+                                </>,
+                                <>
+                                    Cliquer sur <strong>Enregistrer</strong> enregistre l'enseignant et ferme
+                                    le pop-up de modification.
+                                </>,
+                            ],
+                        },
                     ],
                 },
+            ],
+        },
+        {
+            title: 'Attribuer des matières à un enseignant',
+            steps: [
+                <>
+                    Sur la <strong>carte de détail</strong>, lors d'une création ou d'une modification, cliquer
+                    sur <strong>Ajouter une matière</strong>.
+                </>,
+                <>
+                    Sélectionner la <strong>promotion</strong> voulue.
+                </>,
+                <>
+                    Sélectionner la <strong>matière</strong> voulue. La liste de matières affiche uniquement les
+                    matières de la promotion sélectionnée. Si aucune promotion n'est sélectionnée, toutes les
+                    matières disponibles sont proposées. Si une matière est choisie sans promotion, la promotion
+                    associée à cette matière est automatiquement sélectionnée.
+                    <br />
+                    Le champ <strong>NA</strong> à droite du nom de la matière affiche le nombre d'heures
+                    attribuées à l'enseignant une fois les heures renseignées depuis la page Matières.
+                </>,
+            ],
+        },
+        {
+            title: 'Ajouter des périodes de disponibilités',
+            steps: [
+                <>
+                    Depuis la <strong>carte de détail</strong> (création ou modification), cliquer sur{' '}
+                    <strong>Ajouter une période de disponibilité</strong>.
+                </>,
+                <>
+                    Renseigner la <strong>date de début</strong> et la <strong>date de fin</strong> de la
+                    période.
+                    <br />
+                    <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
+                    <br />
+                    Une période de disponibilité peut couvrir une longue période tant que les
+                    disponibilités par demi-journée du <strong>Lundi au Vendredi</strong> ne changent pas.
+                </>,
+                <>
+                    Une fois toutes les périodes créées, cliquer sur <strong>Enregistrer</strong> ou{' '}
+                    <strong>Créer</strong> selon le contexte.
+                    <br />
+                    <em>Action commune</em> : voir le tuto{' '}
+                    <strong>Annuler ou enregistrer/créer</strong>.
+                </>,
+                <>
+                    Si on revient sur la carte de détail via la modification, les périodes de disponibilités
+                    sont découpées en semaines. Il est alors possible de modifier la disponibilité par
+                    demi-journée, semaine par semaine.
+                </>,
             ],
         },
         {
@@ -209,61 +344,18 @@ export const teachersTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            <strong>Étape 1.1</strong>: cliquer sur <strong>Sélectionner</strong> depuis la toolbar
-                            pour activer le mode suppression.
-                        </>
-                    ),
-                    imageSrc: screenPageProfScreenshot,
-                    imageAlt: 'Activation du mode suppression enseignant',
-                    imageCaption: 'Le bouton Sélectionner active les actions de suppression en lot.',
-                    imageHighlight: {
-                        left: '76.7%',
-                        top: '19.8%',
-                        width: '9.7%',
-                        height: '5.9%',
-                        label: 'Mode sélection',
-                    },
-                },
-                {
-                    text: (
-                        <>
-                            Cocher un ou plusieurs enseignants, puis cliquer sur <strong>Supprimer (n)</strong>.
+                            La suppression des enseignants se fait en <strong>mode sélection</strong> depuis la
+                            toolbar, ou depuis la <strong>carte de détail</strong> d'un enseignant en
+                            modification.
+                            <br />
+                            <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
                         </>
                     ),
                     imageSrc: screenPageProfSuppressionScreenshot,
                     imageAlt: "Suppression d'enseignants en mode sélection",
                     imageCaption:
                         'Le mode sélection permet une suppression unitaire ou multiple des enseignants.',
-                    imageHighlights: [
-                        {
-                            left: '76.7%',
-                            top: '19.8%',
-                            width: '9.7%',
-                            height: '5.9%',
-                            label: 'Sélection active',
-                        },
-                        {
-                            left: '86.6%',
-                            top: '29.35%',
-                            width: '8.9%',
-                            height: '6.0%',
-                            label: 'Supprimer (n)',
-                        },
-                    ],
-                    subSteps: [
-                        <>
-                            Le compteur <strong>(n)</strong> indique le nombre d'enseignants sélectionnés.
-                        </>,
-                        <>
-                            Les actions <strong>Tout sélectionner</strong> et <strong>Effacer</strong> facilitent
-                            l'ajustement de la sélection avant suppression.
-                        </>,
-                    ],
                 },
-                <>
-                    <strong>Étape 2 (à venir)</strong>: un pop-up de confirmation apparaîtra pour valider ou
-                    annuler la suppression.
-                </>,
             ],
         },
         {
@@ -272,92 +364,21 @@ export const teachersTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            La barre d'outils regroupe les fonctions de <strong>recherche</strong>,{' '}
-                            <strong>filtrage</strong> et <strong>actions rapides</strong>.
+                            La barre d'outils permet d'utiliser la <strong>recherche</strong> et les{' '}
+                            <strong>filtres</strong> pour retrouver rapidement un enseignant.
+                            <br />
+                            <em>Action commune</em> : voir le tuto <strong>Rechercher et filtrer</strong>.
                         </>
                     ),
                     imageSrc: screenPageProfScreenshot,
                     imageAlt: "Barre d'outils de la page Enseignants",
                     imageCaption: 'Toolbar de recherche, filtres, sélection et création.',
-                    imageHighlights: [
-                        {
-                            left: '22.1%',
-                            top: '19.8%',
-                            width: '30.4%',
-                            height: '5.8%',
-                            label: 'Recherche',
-                        },
-                        {
-                            left: '52.8%',
-                            top: '19.8%',
-                            width: '9.0%',
-                            height: '5.8%',
-                            label: 'Filtre matières',
-                            labelLeft: '-0.4rem',
-                        },
-                        {
-                            left: '61.9%',
-                            top: '19.8%',
-                            width: '15.3%',
-                            height: '5.8%',
-                            label: 'Filtres de mode',
-                            labelTop: '3rem',
-                        },
-                        {
-                            left: '77.4%',
-                            top: '19.8%',
-                            width: '8.9%',
-                            height: '5.8%',
-                            label: 'Sélection',
-                            labelLeft: '-0.4rem',
-                        },
-                        {
-                            left: '86.5%',
-                            top: '19.8%',
-                            width: '6.0%',
-                            height: '5.8%',
-                            label: 'Réinitialisation des filtres',
-                            labelLeft: '-3rem',
-                            labelTop: '3rem',
-                        },
-                        {
-                            left: '92.3%',
-                            top: '19.7%',
-                            width: '2.7%',
-                            height: '5.4%',
-                            label: 'Création',
-                            labelLeft: '-1.8rem',
-                        },
-                    ],
-                    subSteps: [
-                        <>
-                            <strong>Recherche textuelle</strong>: filtrer rapidement un enseignant par nom ou
-                            prénom.
-                        </>,
-                        <>
-                            <strong>Filtre Matières</strong>: afficher uniquement les enseignants rattachés à une
-                            matière donnée.
-                        </>,
-                        <>
-                            <strong>Filtres de mode</strong>: <em>Tous</em>, <em>Présentiel</em>,{' '}
-                            <em>Hybride</em>, <em>Distanciel</em>.
-                        </>,
-                        <>
-                            <strong>Sélectionner</strong>: activer le mode de suppression multiple.
-                        </>,
-                        <>
-                            <strong>Réinitialiser les filtres</strong>: revenir rapidement à la vue complète.
-                        </>,
-                        <>
-                            Le bouton <strong>+</strong> ouvre le pop-up de création d'un enseignant.
-                        </>,
-                    ],
                 },
             ],
         },
     ],
     tips: [
-        'Utiliser un format de nommage stable (Nom Prénom) pour éviter les doublons.',
+        "Utiliser un format de nommage stable (Nom Prénom) pour éviter les doublons. Les adresses email sont uniques, c'est ce qui permet d'empêcher la création de doublons.",
         'Maintenir à jour les disponibilités avant toute génération de planning.',
         "Vérifier le rattachement et le campus d'origine pour anticiper les contraintes logistiques.",
     ],
