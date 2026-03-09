@@ -1,9 +1,12 @@
 ﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
-import screenPageEventScreenshot from '../../../assets/tuto/event/page-event-junia.png'
-import screenPageEventSuppressionScreenshot from '../../../assets/tuto/event/page-event-junia.png'
-import screenPopupEventModifScreenshot from '../../../assets/tuto/event/page-event-junia-update.png'
-import screenPopupEventScreenshot from '../../../assets/tuto/event/page-event-junia-add.png'
+import pageEventJuniaScreenshot from '../../../assets/tuto/event/page-event-junia.png'
+import pageEventJuniaAddScreenshot from '../../../assets/tuto/event/page-event-junia-add.png'
+import pageEventExterneAddScreenshot from '../../../assets/tuto/event/page-event-externe-add.png'
+import pageEventJuniaUpdateScreenshot from '../../../assets/tuto/event/page-event-junia-update.png'
+import pageEventJuniaDroplistSalleScreenshot from '../../../assets/tuto/event/page-event-junia-droplist-salle.png'
+import pageEventJuniaDroplistTypeScreenshot from '../../../assets/tuto/event/page-event-junia-droplist-type.png'
+import pageEventJuniaDroplistPromoScreenshot from '../../../assets/tuto/event/page-event-junia-droplist-promo.png'
 
 export const eventsTutorialContent: TutorialContent = {
     objective:
@@ -22,7 +25,7 @@ export const eventsTutorialContent: TutorialContent = {
                             <strong>Junia</strong> et <strong>externes</strong>, regroupés par mois.
                         </>
                     ),
-                    imageSrc: screenPageEventScreenshot,
+                    imageSrc: pageEventJuniaScreenshot,
                     imageAlt: 'Vue générale de la page Événements dans OPALE',
                     imageCaption:
                         'Vue générale avec toolbar de recherche/filtrage et liste des événements.',
@@ -51,7 +54,7 @@ export const eventsTutorialContent: TutorialContent = {
                             <u>création d'un événement</u>.
                         </>
                     ),
-                    imageSrc: screenPageEventScreenshot,
+                    imageSrc: pageEventJuniaScreenshot,
                     imageAlt: "Bouton + de création d'un événement",
                     imageCaption: "Le bouton + ouvre le pop-up de création d'un événement.",
                     imageHighlight: {
@@ -71,40 +74,74 @@ export const eventsTutorialContent: TutorialContent = {
                             réutilisé dans le tutoriel de <strong>modification</strong>.
                         </>
                     ),
-                    imageSrc: screenPopupEventScreenshot,
+                    imageSrc: pageEventJuniaAddScreenshot,
                     imageAlt: "Pop-up de création/modification d'événement",
                     imageCaption: "Formulaire de création/modification d'événement.",
+                    imagePlacement: 'beforeSubSteps',
                     subSteps: [
                         <>
                             <strong>Nom</strong>: saisir un intitulé clair et reconnaissable (ex: Journée
                             Portes Ouvertes, Forum Entreprises).
                         </>,
                         <>
-                        <strong>Date de début</strong> et <strong>Date de fin</strong>: définir la plage
-                        réelle de l'événement. Vérifier la cohérence chronologique (<em>fin &gt;= début</em>).
-                        <br />
-                        <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
-                    </>,
-                        <>
-                            <strong>Salle / Lieu</strong>: préciser le lieu principal (campus, salle, adresse
-                            ou site externe) pour faciliter l'organisation.
+                            <strong>Date de début</strong> et <strong>Date de fin</strong>: définir la plage
+                            réelle de l'événement. Vérifier la cohérence chronologique (
+                            <em>fin &gt;= début</em>).
+                            <br />
+                            <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
                         </>,
+                        {
+                            text: (
+                                <>
+                                    <strong>Salle / Lieu</strong>: préciser le lieu principal (campus, salle,
+                                    adresse ou site externe) pour faciliter l'organisation.
+                                </>
+                            ),
+                            imageSrc: pageEventJuniaDroplistSalleScreenshot,
+                            imageAlt: "Sélection de la salle ou du lieu de l'événement",
+                            imageCaption: "Liste déroulante des salles/lieux disponibles.",
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Type</strong>: choisir la catégorie de l'événement (ex: salon/expo,
+                                    journée portes ouvertes, forum, autre événement).
+                                </>
+                            ),
+                            imageSrc: pageEventJuniaDroplistTypeScreenshot,
+                            imageAlt: "Sélection du type d'événement",
+                            imageCaption: "Liste déroulante des types d'événement.",
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Cible</strong>: sélectionner <em>Junia</em> et/ou <em>Externe</em>{' '}
+                                    selon le public concerné.
+                                    <br />
+                                    Si la cible est <strong>Junia</strong>, l'en-tête de la carte est{' '}
+                                    <strong>violet</strong>. Si la cible est <strong>Externe</strong>, l'en-tête
+                                    de la carte est <strong>bleu</strong>.
+                                </>
+                            ),
+                            imageSrc: pageEventExterneAddScreenshot,
+                            imageAlt: "Sélection de la cible de l'événement",
+                            imageCaption: "La couleur de l'en-tête varie selon la cible choisie.",
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Promotions</strong>: rattacher les promotions impactées. Si
+                                    l'événement est global, ce champ n'est pas affiché.
+                                </>
+                            ),
+                            imageSrc: pageEventJuniaDroplistPromoScreenshot,
+                            imageAlt: "Sélection des promotions concernées",
+                            imageCaption: "Liste déroulante des promotions impactées.",
+                        },
                         <>
-                            <strong>Type</strong>: choisir la catégorie de l'événement (ex: salon/expo,
-                            journée portes ouvertes, forum, autre événement).
+                            <strong>Macro planning</strong> / <strong>Micro planning</strong>: activer selon
+                            l'impact attendu dans les plannings.
                         </>,
-                        <>
-                            <strong>Cible</strong>: sélectionner <em>Junia</em> et/ou <em>Externe</em> selon le
-                            public concerné.
-                        </>,
-                        <>
-                            <strong>Promotions</strong>: rattacher les promotions impactées. Si l'événement est
-                            global, ce champ n'est pas affiché.
-                        </>,
-                        <>
-                        <strong>Macro planning</strong> / <strong>Micro planning</strong>: activer selon
-                        l'impact attendu dans les plannings.
-                    </>,
                         <>
                             <strong>Description / commentaires</strong>: documenter le contexte, les objectifs
                             et les contraintes utiles pour l'équipe.
@@ -170,7 +207,7 @@ export const eventsTutorialContent: TutorialContent = {
                             Cliquer sur la ligne de l'événement à modifier pour ouvrir le pop-up d'édition.
                         </>
                     ),
-                    imageSrc: screenPageEventScreenshot,
+                    imageSrc: pageEventJuniaScreenshot,
                     imageAlt: "Accès à la modification d'un événement",
                     imageCaption: "La ligne événement ouvre le pop-up de modification.",
                     imageHighlight: {
@@ -188,9 +225,10 @@ export const eventsTutorialContent: TutorialContent = {
                             avec des valeurs déjà renseignées. Mettre à jour uniquement ce qui a évolué.
                         </>
                     ),
-                    imageSrc: screenPopupEventModifScreenshot,
+                    imageSrc: pageEventJuniaUpdateScreenshot,
                     imageAlt: "Pop-up de modification d'événement",
                     imageCaption: 'Même formulaire que la création, utilisé en édition.',
+                    imagePlacement: 'beforeSubSteps',
                     subSteps: [
                         <>
                             <strong>Nom</strong>: ajuster l'intitulé si l'événement change de format ou de
@@ -296,7 +334,7 @@ export const eventsTutorialContent: TutorialContent = {
                             <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
                         </>
                     ),
-                    imageSrc: screenPageEventSuppressionScreenshot,
+                    imageSrc: pageEventJuniaScreenshot,
                     imageAlt: "Mode suppression d'événements",
                     imageCaption:
                         'Mode sélection avec actions de suppression en lot (Supprimer n).',
@@ -338,7 +376,7 @@ export const eventsTutorialContent: TutorialContent = {
                             <em>Action commune</em> : voir le tuto <strong>Rechercher et filtrer</strong>.
                         </>
                     ),
-                    imageSrc: screenPageEventScreenshot,
+                    imageSrc: pageEventJuniaScreenshot,
                     imageAlt: "Barre d'outils de la page Événements",
                     imageCaption: 'Toolbar de recherche, filtres et actions.',
                 },
