@@ -43,6 +43,12 @@ export type TutorialStep = {
     imageCaption?: string
     imageHighlight?: TutorialImageHighlight
     imageHighlights?: TutorialImageHighlight[]
+    imagePlacement?: 'beforeSubSteps' | 'afterSubSteps'
+    imageAfterSrc?: string
+    imageAfterAlt?: string
+    imageAfterCaption?: string
+    imageAfterHighlight?: TutorialImageHighlight
+    imageAfterHighlights?: TutorialImageHighlight[]
     subSteps?: TutorialStepEntry[]
 }
 

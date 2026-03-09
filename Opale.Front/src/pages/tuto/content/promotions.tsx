@@ -3,8 +3,14 @@
 import popupAddPromotionScreenshot from '../../../assets/tuto/promo/page-promo-add-promo.png'
 import popupCreateCycleScreenshot from '../../../assets/tuto/promo/page-promo-add-cycle.png'
 import popupEditPromotionScreenshot from '../../../assets/tuto/promo/page-promo-update-promo.png'
+import popupEditPromotionDetailsScreenshot from '../../../assets/tuto/promo/page-promo-update-promo.png'
+import popupEditPromotionFullScreenshot from '../../../assets/tuto/promo/page-promo-update-promo-full.png'
+import promoSelectMaquetteScreenshot from '../../../assets/tuto/promo/page-promo-select-maquette.png'
+import promoPrevisualiserMaquetteScreenshot from '../../../assets/tuto/promo/page-promo-previsualiser-maquette.png'
+import promoMaquetterSelectionnerScreenshot from '../../../assets/tuto/promo/page-promo-maquetter-selectionner.png'
+import promoLierSpeScreenshot from '../../../assets/tuto/promo/page-promo-lier-spe.png'
+import promoLierSpeDroplistScreenshot from '../../../assets/tuto/promo/page-promo-lier-spe-droplist.png'
 import type { TutorialContent } from '../types'
-
 export const promotionsTutorialContent: TutorialContent = {
     objective: 'Créer et maintenir les cycles et promotions avec leurs structures pédagogiques.',
     expectedResult: 'Les cycles et promotions sont complets, structurés et exploitables par les modules de planning.',
@@ -21,14 +27,21 @@ export const promotionsTutorialContent: TutorialContent = {
                         </>
                     ),
                     imageSrc: promoPageScreenshot,
-                    imageAlt: 'Capture de la page Promotions dans OPALE',
+                    imageAlt: "Capture de la page Promotions dans OPALE",
                     imageCaption:
                         'Vue générale de la page Promotions avec cycles existants et zone de création.',
                 },
-                <>
-                    La page est structurée avec <strong>une carte par cycle</strong>. Chaque carte est
-                    indépendante des autres.
-                </>,
+                {
+                    text: (
+                        <>
+                            La page est structurée avec <strong>une carte par cycle</strong>. Chaque carte est
+                            indépendante des autres.
+                        </>
+                    ),
+                    imageSrc: popupEditPromotionDetailsScreenshot,
+                    imageAlt: "Carte de cycle sur la page Promotions",
+                    imageCaption: "Chaque cycle est affiché dans une carte indépendante.",
+                },
                 <>
                     Depuis une carte, vous pouvez <strong>supprimer le cycle</strong> via l'icône corbeille
                     du cycle.
@@ -60,7 +73,7 @@ export const promotionsTutorialContent: TutorialContent = {
                     ),
                     imageSrc: promoPageScreenshot,
                     imageAlt: "Zone pour ouvrir le pop-up de création d'un cycle sur la page Promotions",
-                    imageCaption: 'Cette zone ouvre le pop-up contenant les champs de création du cycle.',
+                    imageCaption: "Cette zone ouvre le pop-up contenant les champs de création du cycle.",
                     imageHighlight: {
                         left: '19.6%',
                         top: '72.8%',
@@ -73,7 +86,7 @@ export const promotionsTutorialContent: TutorialContent = {
                     text: <>Renseigner les <strong>champs obligatoires</strong> du cycle.</>,
                     imageSrc: popupCreateCycleScreenshot,
                     imageAlt: "Pop-up de création d'un cycle dans OPALE",
-                    imageCaption: 'Le pop-up de création contient les champs obligatoires du cycle.',
+                    imageCaption: "Le pop-up de création contient les champs obligatoires du cycle.",
                     subSteps: [
                         <>
                             Champ <strong>Nom du cycle</strong>: saisir un nom clair (ex: ADI, CIR).
@@ -81,7 +94,7 @@ export const promotionsTutorialContent: TutorialContent = {
                             On ne peut pas donner un nom de cycle existant.
                         </>,
                         <>
-                            Champ <strong>Type de formation</strong>: choisir via la liste déroulante{' '}
+                            Champ <strong>Type de formation</strong>: choisir via la liste déroulante
                             <em>Formation Initiale</em> ou <em>Formation en apprentissage</em>.
                         </>,
                         <>
@@ -96,21 +109,28 @@ export const promotionsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Cliquer sur <strong>Enregistrer</strong> ou <strong>Annuler</strong> selon le
-                            résultat souhaité.
+                            Cliquer sur la <strong>croix</strong> en haut à droite ou sur la touche
+                            <strong>Escape</strong> du clavier ferme le pop-up de création.
+                            Attention, pas de message de confirmation d'action.
+                        </>
+                    ),
+                },
+                {
+                    text: (
+                        <>
+                            Cliquer sur <strong>Enregistrer</strong> ouvre un pop-up de confirmation.
+                            <br />
+                            <em>Action commune</em> : voir le tuto <strong>Annuler ou enregistrer/créer</strong>.
                         </>
                     ),
                     subSteps: [
                         <>
-                            <strong>Enregistrer</strong>: crée le cycle.
+                            <strong>Annuler</strong>, la <strong>croix</strong> en haut à droite ou
+                            <strong>Escape</strong> renvoie sur le pop-up de création en conservant les
+                            informations saisies.
                         </>,
                         <>
-                            <strong>Annuler</strong>: ferme le pop-up sans créer le cycle. Possible aussi de
-                            cliquer sur la <strong>croix</strong> en haut à droite ou d'appuyer sur{' '}
-                            <strong>Escape</strong>.
-                            <br />
-                            <em>Action commune</em> : voir le tuto{' '}
-                            <strong>Annuler ou enregistrer/créer</strong>.
+                            <strong>Créer</strong> crée le cycle et ferme le pop-up de création.
                         </>,
                     ],
                 },
@@ -127,7 +147,7 @@ export const promotionsTutorialContent: TutorialContent = {
                         </>
                     ),
                     imageSrc: promoPageScreenshot,
-                    imageAlt: 'Bouton Ajouter une promotion sur une carte de cycle',
+                    imageAlt: "Bouton Ajouter une promotion sur une carte de cycle",
                     imageCaption:
                         "Le bouton Ajouter une promotion ouvre le pop-up d'ajout pour le cycle sélectionné.",
                     imageHighlight: {
@@ -146,8 +166,8 @@ export const promotionsTutorialContent: TutorialContent = {
                         </>
                     ),
                     imageSrc: popupAddPromotionScreenshot,
-                    imageAlt: 'Pop-up Ajouter une promotion dans OPALE',
-                    imageCaption: 'Le pop-up demande uniquement le nom de la promotion.',
+                    imageAlt: "Pop-up Ajouter une promotion dans OPALE",
+                    imageCaption: "Le pop-up demande uniquement le nom de la promotion.",
                     subSteps: [
                         <>
                             Renseigner le <strong>nom de la promotion</strong> avec la convention choisie.
@@ -167,7 +187,8 @@ export const promotionsTutorialContent: TutorialContent = {
                     subSteps: [
                         <>
                             <strong>Annuler</strong>: ferme le pop-up sans création de promotion. Possible
-                            aussi d'appuyer sur <strong>Escape</strong>.
+                            aussi d'appuyer sur <strong>Escape</strong> ou sur la <strong>croix</strong> en haut
+                            à droite.
                             <br />
                             <em>Action commune</em> : voir le tuto{' '}
                             <strong>Annuler ou enregistrer/créer</strong>.
@@ -192,8 +213,8 @@ export const promotionsTutorialContent: TutorialContent = {
                         </>
                     ),
                     imageSrc: promoPageScreenshot,
-                    imageAlt: 'Bouton stylo pour modifier une promotion',
-                    imageCaption: 'Le stylo de la ligne promotion ouvre le pop-up de modification.',
+                    imageAlt: "Bouton stylo pour modifier une promotion",
+                    imageCaption: "Le stylo de la ligne promotion ouvre le pop-up de modification.",
                     imageHighlight: {
                         left: '41.9%',
                         top: '24.2%',
@@ -210,49 +231,99 @@ export const promotionsTutorialContent: TutorialContent = {
                         </>
                     ),
                     imageSrc: popupEditPromotionScreenshot,
-                    imageAlt: 'Pop-up Modifier une promotion dans OPALE',
-                    imageCaption: 'Le pop-up de modification est organisé en 4 parties.',
+                    imageAlt: "Pop-up Modifier une promotion dans OPALE",
+                    imageCaption: "Le pop-up de modification est organisé en 4 parties.",
+                    imagePlacement: 'beforeSubSteps',
+                    imageAfterSrc: popupEditPromotionFullScreenshot,
+                    imageAfterAlt: "Pop-up Modifier une promotion avec toutes les informations",
+                    imageAfterCaption: "Aperçu complet du pop-up après la saisie des informations.",
                     subSteps: [
-                        <>
-                            <strong>Partie 1 - Informations principales</strong>: nom de la promotion, nombre
-                            d'étudiants, date de début, date de fin.
-                            <br />
-                            Vérifier que les dates affichées par défaut sont celles déjà enregistrées pour la promotion.
-                            Si elles sont vides, renseigner la date de début et la date de fin.
-                            <br />
-                            <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
-                        </>,
-                        <>
-                            <strong>Partie 2 - Groupes</strong>: créer autant de groupes que souhaité pour les
-                            matières communes, puis définir le nombre d'étudiants par groupe (ex: 40
-                            étudiants répartis en 2 groupes de 20).
-                            <br />
-                            Cliquer sur <strong>+ Ajouter un groupe</strong>.
-                        </>,
-                        <>
-                            <strong>Partie 3 - Spécialités</strong>: créer les spécialités de la promotion
-                            (ex: cybersécurité, dev) et définir le nombre d'élèves dans chaque spécialité.
-                            Les spécialités sont <strong>indépendantes</strong> des groupes.
-                            <br />
-                            Cliquer sur <strong>+ Ajouter une spécialité</strong>.
-                        </>,
-                        <>
-                            <strong>Partie 4 - Contraintes académiques</strong>: définir les plages de dates de{' '}
-                            <strong>Entreprise</strong> (ou <strong>Vacances</strong> pour un parcours
-                            initial), <strong>Stages</strong>, <strong>International</strong>,{' '}
-                            <strong>Partiels</strong> et <strong>Rattrapages</strong>.
-                            <br />
-                            Repérer le message <strong>Info : Les vacances scolaires sont déjà récupérées via l'API.
-                            Inutile de les ajouter manuellement.</strong> pour les cycles initiaux.
-                            <br />
-                            Cliquer sur <strong>+</strong> pour ajouter une période et sur <strong>-</strong> pour
-                            supprimer la période.
-                            <br />
-                            <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
-                            <br />
-                            Définir correctement ces périodes est essentiel pour afficher clairement le
-                            planning macro et éviter de poser des cours sur ces plages en planning micro.
-                        </>,
+                        {
+                            text: (
+                                <>
+                                    <strong>Partie 1 - Informations principales</strong>
+                                </>
+                            ),
+                            subSteps: [
+                                <>
+                                    Renseigner le <strong>nom de la promotion</strong>, le
+                                    <strong>nombre d'étudiants</strong>, la <strong>date de début</strong>
+                                    et la <strong>date de fin</strong>.
+                                </>,
+                                <>
+                                    Vérifier que les dates affichées par défaut sont celles déjà
+                                    enregistrées pour la promotion. Si elles sont vides, renseigner
+                                    la date de début et la date de fin.
+                                    <br />
+                                    <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
+                                </>,
+                            ],
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Partie 2 - Groupes</strong>
+                                </>
+                            ),
+                            subSteps: [
+                                <>
+                                    Créer autant de groupes que souhaité pour les matières communes,
+                                    puis définir le nombre d'étudiants par groupe (ex: 40 étudiants
+                                    répartis en 2 groupes de 20).
+                                </>,
+                                <>
+                                    Cliquer sur <strong>+ Ajouter un groupe</strong>.
+                                </>,
+                            ],
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Partie 3 - Spécialités</strong>
+                                </>
+                            ),
+                            subSteps: [
+                                <>
+                                    Créer les spécialités de la promotion (ex: cybersécurité, dev)
+                                    et définir le nombre d'élèves dans chaque spécialité. Les
+                                    spécialités sont <strong>indépendantes</strong> des groupes.
+                                </>,
+                                <>
+                                    Cliquer sur <strong>+ Ajouter une spécialité</strong>.
+                                </>,
+                            ],
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Partie 4 - Contraintes académiques</strong>
+                                </>
+                            ),
+                            subSteps: [
+                                <>
+                                    Définir les plages de dates de <strong>Entreprise</strong> (ou
+                                    <strong>Vacances</strong> pour un parcours initial),
+                                    <strong>Stages</strong>, <strong>International</strong>,
+                                    <strong>Partiels</strong> et <strong>Rattrapages</strong>.
+                                </>,
+                                <>
+                                    Repérer le message <strong>Info : Les vacances scolaires sont déjà
+                                    récupérées via l'API. Inutile de les ajouter manuellement.</strong>
+                                    pour les cycles initiaux.
+                                </>,
+                                <>
+                                    Cliquer sur <strong>+</strong> pour ajouter une période et sur
+                                    <strong>-</strong> pour supprimer la période.
+                                    <br />
+                                    <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
+                                </>,
+                                <>
+                                    Définir correctement ces périodes est essentiel pour afficher clairement
+                                    le planning macro et éviter de poser des cours sur ces plages en
+                                    planning micro.
+                                </>,
+                            ],
+                        },
                     ],
                 },
                 {
@@ -317,20 +388,42 @@ export const promotionsTutorialContent: TutorialContent = {
                             suivantes.
                         </>
                     ),
+                    imageSrc: promoPageScreenshot,
+                    imageAlt: "Zone d'import des maquettes",
+                    imageCaption: "La zone d'import permet d'ajouter une maquette Excel.",
+                    imagePlacement: 'beforeSubSteps',
                     subSteps: [
                         <>
                             Méthode 1 : faire un <strong>drag and drop</strong> d'une ou plusieurs maquettes
-                            Excel dans la zone dédiée du cycle cible. Les fichiers acceptés sont{' '}
+                            Excel dans la zone dédiée du cycle cible. Les fichiers acceptés sont
                             <strong>uniquement</strong> des fichiers Excel.
                         </>,
-                        <>
-                            Méthode 2 : cliquer sur la zone de <strong>drag and drop</strong> pour ouvrir
-                            l'explorateur de fichiers.
-                            <br />
-                            Sélectionner un ou plusieurs fichiers Excel, puis cliquer sur <strong>Ouvrir</strong>.
-                            <br />
-                            L'explorateur affiche uniquement les fichiers Excel et les dossiers.
-                        </>,
+                        {
+                            text: (
+                                <>
+                                    Méthode 2 : cliquer sur la zone de <strong>drag and drop</strong> pour
+                                    ouvrir l'explorateur de fichiers.
+                                </>
+                            ),
+                            imageSrc: promoPageScreenshot,
+                            imageAlt: "Zone de drag and drop pour importer une maquette",
+                            imageCaption: "Cliquer sur la zone ouvre l'explorateur de fichiers.",
+                            subSteps: [
+                                {
+                                    text: (
+                                        <>
+                                            Sélectionner un ou plusieurs fichiers Excel, puis cliquer sur
+                                            <strong>Ouvrir</strong>.
+                                            <br />
+                                            L'explorateur affiche uniquement les fichiers Excel et les dossiers.
+                                        </>
+                                    ),
+                                    imageSrc: promoSelectMaquetteScreenshot,
+                                    imageAlt: "Explorateur de fichiers pour sélectionner la maquette",
+                                    imageCaption: "Sélectionner les fichiers Excel à importer.",
+                                },
+                            ],
+                        },
                     ],
                 },
                 {
@@ -340,41 +433,75 @@ export const promotionsTutorialContent: TutorialContent = {
                         </>
                     ),
                     subSteps: [
-                        <>
-                            Vérifier dans le premier tableau : <strong>Année scolaire</strong>,{' '}
-                            <strong>Cycle détecté</strong>, <strong>Promotions détectées</strong>,{' '}
-                            <strong>Spécialités détectées</strong>, <strong>Nombre de matières extraites</strong>,{' '}
-                            <strong>Nombre d'avertissements</strong> et <strong>Feuilles détectées</strong>.
-                            <br />
-                            <em>Action commune</em> : vérifier dans le second tableau : <strong>Promo</strong>,{' '}
-                            <strong>UE</strong>, <strong>Matière</strong>, <strong>Semestres</strong>,{' '}
-                            <strong>Spécialité</strong> (si disponible), <strong>Total heures</strong> et{' '}
-                            <strong>Total des épreuves</strong>.
-                            <br />
-                            <em>Action commune</em> : si plusieurs promotions sont détectées, utiliser{' '}
-                            <strong>Promotion précédente</strong> et <strong>Promotion suivante</strong>. Ces
-                            éléments sont des <strong>boutons</strong>. Le centre affiche le nom de la
-                            promotion et l'index <strong>(n/x)</strong>.
-                        </>,
+                        {
+                            text: (
+                                <>
+                                    Dans la prévisualisation, vérifier les informations suivantes.
+                                </>
+                            ),
+                            imageSrc: promoPrevisualiserMaquetteScreenshot,
+                            imageAlt: "Prévisualisation de la maquette Excel",
+                            imageCaption: "La prévisualisation détaille les données extraites de la maquette.",
+                            subSteps: [
+                                <>
+                                    Vérifier dans le premier tableau : <strong>Année scolaire</strong>,
+                                    <strong>Cycle détecté</strong>, <strong>Promotions détectées</strong>,
+                                    <strong>Spécialités détectées</strong>, <strong>Nombre de matières extraites</strong>,
+                                    <strong>Nombre d'avertissements</strong> et <strong>Feuilles détectées</strong>.
+                                </>,
+                                <>
+                                    <em>Action commune</em> : vérifier dans le second tableau : <strong>Promo</strong>,
+                                    <strong>UE</strong>, <strong>Matière</strong>, <strong>Semestres</strong>,
+                                    <strong>Spécialité</strong> (si disponible), <strong>Total heures</strong> et
+                                    <strong>Total des épreuves</strong>.
+                                </>,
+                                <>
+                                    <em>Action commune</em> : si plusieurs promotions sont détectées, utiliser
+                                    <strong>Promotion précédente</strong> et <strong>Promotion suivante</strong>. Ces
+                                    éléments sont des <strong>boutons</strong>. Le centre affiche le nom de la
+                                    promotion et l'index <strong>(n/x)</strong>.
+                                </>,
+                            ],
+                        },
                     ],
                 },
                 {
                     text: (
                         <>
-                            Cliquer sur <strong>Annuler</strong> (ou la <strong>croix</strong> /{' '}
-                            <strong>Escape</strong>) ou sur <strong>Valider</strong>.
-                            <br />
-                            <em>Action commune</em> : voir le tuto{' '}
-                            <strong>Annuler ou enregistrer/créer</strong>.
-                            <br />
-                            Si <strong>Valider</strong> est sélectionné, le nom du fichier apparaît dans la
-                            zone de <strong>drag and drop</strong>.
-                            <br />
-                            Vous pouvez prévisualiser d'autres maquettes sans supprimer celles déjà validées.
-                            <br />
-                            Cliquer sur la <strong>croix</strong> d'un fichier pour le retirer.
+                            Valider ou annuler la prévisualisation.
                         </>
                     ),
+                    subSteps: [
+                        {
+                            text: (
+                                <>
+                                    Cliquer sur <strong>Annuler</strong> (ou la <strong>croix</strong> /
+                                    <strong>Escape</strong>) ou sur <strong>Valider</strong>.
+                                    <br />
+                                    <em>Action commune</em> : voir le tuto
+                                    <strong>Annuler ou enregistrer/créer</strong>.
+                                </>
+                            ),
+                            imageSrc: promoPrevisualiserMaquetteScreenshot,
+                            imageAlt: "Boutons Annuler et Valider sur la prévisualisation",
+                            imageCaption: "Les boutons de validation se trouvent en bas du pop-up.",
+                        },
+                        {
+                            text: (
+                                <>
+                                    Si <strong>Valider</strong> est sélectionné, le nom du fichier apparaît dans
+                                    la zone de <strong>drag and drop</strong>.
+                                    <br />
+                                    Vous pouvez prévisualiser d'autres maquettes sans supprimer celles déjà validées.
+                                    <br />
+                                    Cliquer sur la <strong>croix</strong> d'un fichier pour le retirer.
+                                </>
+                            ),
+                            imageSrc: promoMaquetterSelectionnerScreenshot,
+                            imageAlt: "Fichiers de maquette sélectionnés",
+                            imageCaption: "Les fichiers validés apparaissent dans la zone de sélection.",
+                        },
+                    ],
                 },
                 {
                     text: (
@@ -383,6 +510,9 @@ export const promotionsTutorialContent: TutorialContent = {
                             sélectionnées.
                         </>
                     ),
+                    imageSrc: promoMaquetterSelectionnerScreenshot,
+                    imageAlt: "Bouton Importer la maquette",
+                    imageCaption: "Le bouton Importer la maquette lance l'import des fichiers sélectionnés.",
                     subSteps: [
                         {
                             text: (
@@ -391,23 +521,40 @@ export const promotionsTutorialContent: TutorialContent = {
                                     l'import démarre directement.
                                 </>
                             ),
+                            imageSrc: promoLierSpeScreenshot,
+                            imageAlt: "Pop-up de liaison des spécialités",
+                            imageCaption: "Le pop-up permet de lier les spécialités détectées et déclarées.",
                             subSteps: [
                                 <>Vérifier que le nom du fichier apparaît en sous-titre du pop-up.</>,
                                 <>
-                                    Repérer : à gauche les <strong>spécialités détectées</strong>, à droite les{' '}
+                                    Repérer : à gauche les <strong>spécialités détectées</strong>, à droite les
                                     <strong>spécialités déclarées</strong> (issues des promotions).
                                 </>,
+                                {
+                                    text: (
+                                        <>
+                                            Pour chaque spécialité détectée, sélectionner la spécialité déclarée via
+                                            la liste déroulante.
+                                        </>
+                                    ),
+                                    imageSrc: promoLierSpeDroplistScreenshot,
+                                    imageAlt: "Listes déroulantes de liaison des spécialités",
+                                    imageCaption: "Chaque spécialité détectée doit être associée via la liste.",
+                                },
+                                {
+                                    text: (
+                                        <>
+                                            Vous pouvez <strong>ajouter</strong>, <strong>supprimer</strong> ou
+                                            <strong>modifier</strong> le nom et les effectifs des spécialités déclarées.
+                                            Ces changements sont enregistrés dans le détail de la promotion concernée.
+                                        </>
+                                    ),
+                                    imageSrc: promoLierSpeScreenshot,
+                                    imageAlt: "Actions disponibles dans le pop-up de liaison",
+                                    imageCaption: "Les actions permettent d'ajuster les spécialités déclarées.",
+                                },
                                 <>
-                                    Pour chaque spécialité détectée, sélectionner la spécialité déclarée via la
-                                    liste déroulante.
-                                </>,
-                                <>
-                                    Vous pouvez <strong>ajouter</strong>, <strong>supprimer</strong> ou{' '}
-                                    <strong>modifier</strong> le nom et les effectifs des spécialités déclarées.
-                                    Ces changements sont enregistrés dans le détail de la promotion concernée.
-                                </>,
-                                <>
-                                    Si une spécialité détectée n'est pas liée, ses matières sont importées en{' '}
+                                    Si une spécialité détectée n'est pas liée, ses matières sont importées en
                                     <strong>tronc commun</strong>.
                                 </>,
                                 <>
@@ -418,7 +565,7 @@ export const promotionsTutorialContent: TutorialContent = {
                                     Cliquer sur <strong>Appliquer & importer</strong> pour appliquer les liaisons.
                                 </>,
                                 <>
-                                    Cliquer sur la <strong>croix</strong> ou appuyer sur <strong>Escape</strong>{' '}
+                                    Cliquer sur la <strong>croix</strong> ou appuyer sur <strong>Escape</strong>
                                     annule l'association et revient à l'étape <strong>4</strong> (Importer la
                                     maquette).
                                 </>,
@@ -427,7 +574,7 @@ export const promotionsTutorialContent: TutorialContent = {
                     ],
                 },
                 <>
-                    Attendre quelques instants : un message de récap apparaît dans la zone de{' '}
+                    Attendre quelques instants : un message de récap apparaît dans la zone de
                     <strong>drag and drop</strong>.
                 </>,
             ],
@@ -435,10 +582,16 @@ export const promotionsTutorialContent: TutorialContent = {
         {
             title: 'Supprimer un cycle',
             steps: [
-                <>
-                    Cliquer sur l'icône <strong>poubelle</strong> (ou le bouton{' '}
-                    <strong>Supprimer</strong> si les icônes sont désactivées) sur la carte du cycle.
-                </>,
+                {
+                    text: (
+                        <>
+                            Cliquer sur l'icône <strong>poubelle</strong> (ou le bouton <strong>Supprimer</strong> si les icônes sont désactivées) sur la carte du cycle.
+                        </>
+                    ),
+                    imageSrc: promoPageScreenshot,
+                    imageAlt: "Bouton de suppression d'un cycle",
+                    imageCaption: "La corbeille du cycle supprime le cycle complet et son contenu associé.",
+                },
                 <>
                     <strong>Corbeille du cycle</strong> (en haut de la carte): supprime le cycle complet et
                     son contenu associé.
@@ -454,10 +607,16 @@ export const promotionsTutorialContent: TutorialContent = {
         {
             title: 'Supprimer une promotion',
             steps: [
-                <>
-                    Cliquer sur l'icône <strong>poubelle</strong> (ou le bouton{' '}
-                    <strong>Supprimer</strong> si les icônes sont désactivées) sur la ligne promotion.
-                </>,
+                {
+                    text: (
+                        <>
+                            Cliquer sur l'icône <strong>poubelle</strong> (ou le bouton <strong>Supprimer</strong> si les icônes sont désactivées) sur la ligne promotion.
+                        </>
+                    ),
+                    imageSrc: promoPageScreenshot,
+                    imageAlt: "Bouton de suppression d'une promotion",
+                    imageCaption: "La corbeille de la promotion supprime uniquement la promotion cible.",
+                },
                 <>
                     <strong>Corbeille d'une promotion</strong> (sur la ligne promotion): supprime uniquement
                     la promotion cible.
@@ -476,5 +635,3 @@ export const promotionsTutorialContent: TutorialContent = {
         'Revérifier les contraintes avant de lancer une génération de planning.',
     ],
 }
-
-

@@ -1,7 +1,7 @@
 ﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
 import promoPageScreenshot from '../../../assets/tuto/promo/page-promo.png'
-import promoUpdateScreenshot from '../../../assets/tuto/promo/page-promo-update-promo2.png'
+import promoUpdateScreenshot from '../../../assets/tuto/promo/page-promo-update-promo-full.png'
 import eventPageScreenshot from '../../../assets/tuto/event/page-event-junia.png'
 import eventUpdateScreenshot from '../../../assets/tuto/event/page-event-junia-update.png'
 import planningPageScreenshot from '../../../assets/tuto/planning/page-planning.png'
