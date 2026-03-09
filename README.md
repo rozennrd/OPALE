@@ -68,6 +68,12 @@ VITE_RACINE_FETCHER_URL=http://localhost:3000/
 - Run the project → `docker compose up --build` (NB : write `docker compose up` if you have already built the project before)
 - The backend will be available at `http://localhost:3000` and the frontend at `http://localhost:5173`.
 
+
+### 6. Credentials
+- To access, without a profil, the application, you can use the following credentials:
+  - **Username**: test
+  - **Password**: test
+
 You can stop here if you just want to run the project. Continue if you are trying to develop.
 
 ---
