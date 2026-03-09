@@ -325,8 +325,8 @@ CREATE INDEX idx_matiere_specialite     ON matiere (id_specialite);
 -- utilisateur test, mdp test
 --
 INSERT INTO utilisateurs (login, email, password, date_blocage, tentatives_echouees) VALUES
-    ('Daminou', 'Daminou', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533',  null, 0),
-    ('test', 'test', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',  null, 0);
+    ('Daminou', 'Daminou', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533',  '2025-02-17 15:36:41', 0),
+    ('test', 'test', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',  '2025-02-17 15:36:41', 0);
 
 
 
@@ -339,8 +339,6 @@ INSERT INTO cycle (nom, type) VALUES
                                   ('Cycle Ingénieur - Apprentissage', 'Apprentissage');
 
 -- Déchargement des données de la table `promotions`
--- todo : À enlever une fois que la base de donnée sera correctement intégrée
---
 INSERT INTO promotion (nom, effectifs, id_cycle, date_start, date_end) VALUES
                                                                            ('ADI1',   20,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
                                                                            ('ADI2',   22,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
@@ -377,7 +375,7 @@ INSERT INTO salle (nom, nom_complet, type_principal, types_secondaires, etage, c
 
 
 INSERT INTO professeur (NOM, PRENOM, EMAIL, EMAIL_PERSO, TELEPHONE, TYPE, MODALITE_ENSEIGNEMENT, CAMPUS_ORIGIN) VALUES
-                                                                                                                    ("Pirog", "Antoine", "antoine.pirog@junia.com", "antoine.pirog@junia.com", "0625252525", "Permanent", "Présentiel", "Bordeaux"),
-                                                                                                                    ("Chatrie", "Frédéric", "frederic.chatrie@junia.com", "frederic.chatrie@junia.com", "0626252525", "Permanent", "Présentiel", "Bordeaux"),
-                                                                                                                    ("Viot", "Lucas", "lucas.viot@junia.com", "lucas.viot@junia.com", "0626352525", "Permanent", "Présentiel", "Bordeaux"),
-                                                                                                                    ("Mokrani", "Cyril", "cyril.mokrani@junia.com", null, "0626352625", "Intervenant", "Présentiel", "Bordeaux");
+                                                                                                                    ('Pirog', 'Antoine', 'antoine.pirog@junia.com', 'antoine.pirog@junia.com', '0625252525', 'Permanent', 'Présentiel', 'Bordeaux'),
+                                                                                                                    ('Chatrie', 'Frédéric', 'frederic.chatrie@junia.com', 'frederic.chatrie@junia.com', '0626252525', 'Permanent', 'Présentiel', 'Bordeaux'),
+                                                                                                                    ('Viot', 'Lucas', 'lucas.viot@junia.com', 'lucas.viot@junia.com', '0626352525', 'Permanent', 'Présentiel', 'Bordeaux'),
+                                                                                                                    ('Mokrani', 'Cyril', 'cyril.mokrani@junia.com', null, '0626352625', 'Intervenant', 'Présentiel', 'Bordeaux');
