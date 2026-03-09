@@ -2,7 +2,9 @@
 /* eslint-disable react/no-unescaped-entities */
 import screenPageMatiereScreenshot from '../../../assets/tuto/matiere/page-matiere.png'
 import screenPageMatiereSuppressionScreenshot from '../../../assets/tuto/matiere/page-matiere.png'
-import screenPopupMatiereModifScreenshot from '../../../assets/tuto/matiere/page-matiere-update-alert.png'
+import popupMatiereUpdateAlertScreenshot from '../../../assets/tuto/matiere/page-matiere-update-alert.png'
+import popupMatiereUpdateNoAlertScreenshot from '../../../assets/tuto/matiere/page-matiere-update-no-alert.png'
+import dropdownMatiereProfScreenshot from '../../../assets/tuto/matiere/page-matiere-droplist-prof.png'
 
 export const matieresTutorialContent: TutorialContent = {
     objective:
@@ -96,13 +98,14 @@ export const matieresTutorialContent: TutorialContent = {
                             Mettre à jour les informations dans le pop-up <strong>Détail matière</strong>.
                         </>
                     ),
-                    imageSrc: screenPopupMatiereModifScreenshot,
+                    imageSrc: popupMatiereUpdateNoAlertScreenshot,
                     imageAlt: "Pop-up de modification d'une matière",
                     imageCaption:
                         "Le pop-up permet d'ajuster les volumes et les affectations d'enseignants.",
+                    imagePlacement: 'beforeSubSteps',
                     subSteps: [
                         <>
-                            <strong>Champs modifiables</strong>:
+                            <strong>Champs modifiables</strong> (colonne information, à gauche) :
                             <ul>
                                 <li>
                                     <strong>Nom de la matière</strong>
@@ -130,6 +133,19 @@ export const matieresTutorialContent: TutorialContent = {
                         <>
                             Le nombre total d'épreuves et le détail des types d'épreuves sont affichés.
                         </>,
+                        {
+                            text: (
+                                <>
+                                    <strong>Attribuer des heures</strong> à un enseignant si nécessaire.
+                                    <br />
+                                    <em>Note</em> : voir le tuto{' '}
+                                    <strong>Attribuer des heures à un enseignant</strong>.
+                                </>
+                            ),
+                            imageSrc: popupMatiereUpdateNoAlertScreenshot,
+                            imageAlt: "Attribution des heures dans le détail d'une matière",
+                            imageCaption: "Attribution des heures aux enseignants depuis la carte de détail.",
+                        },
                         <>
                             Un <strong>warning</strong> indique le nombre d'heures <strong>restantes</strong> à
                             attribuer. Il disparaît lorsqu'il ne reste plus rien à attribuer.
@@ -231,34 +247,113 @@ export const matieresTutorialContent: TutorialContent = {
         {
             title: 'Attribuer des heures à un enseignant',
             steps: [
-                <>
-                    Depuis la <strong>carte de détail</strong> (en mode modification, et plus tard en mode
-                    création). Les enseignants déjà attribués à la matière depuis la page Enseignants sont
-                    affichés.
-                    <br />
-                    <em>Note</em> : voir le tuto <strong>Attribuer des matières à un enseignant</strong>.
-                </>,
-                <>
-                    Si l'enseignant voulu n'est pas affiché, cliquer sur <strong>+ Ajouter</strong>.
-                </>,
-                <>
-                    Cliquer sur le champ du type de cours voulu et attribuer le nombre d'heures souhaité. Si la
-                    valeur est supérieure à <strong>0</strong>, le label du type de cours passe en{' '}
-                    <strong>vert</strong>.
-                </>,
-                <>
-                    Si la somme des heures par type dépasse le volume total, ou si un type dépasse son volume
-                    prévu, le champ modifié est automatiquement ajusté au maximum autorisé. Si aucun volume
-                    n'est prévu pour un type de cours, le champ n'est pas saisissable.
-                </>,
-                <>
-                    Pour supprimer un enseignant, cliquer sur le bouton <strong>-</strong> à côté de son nom.
-                </>,
-                <>
-                    En bas à gauche, un <strong>warning</strong> indique le nombre d'heures restantes à attribuer.
-                    Il disparaît quand il ne reste plus rien à attribuer. Un second warning temporaire peut
-                    apparaître si un dépassement est détecté (environ <strong>2 secondes</strong>).
-                </>,
+                {
+                    text: (
+                        <>
+                            Depuis la <strong>carte de détail</strong> (en mode modification, et plus tard en
+                            mode création). Les enseignants déjà attribués à la matière depuis la page
+                            Enseignants sont affichés.
+                            <br />
+                            <em>Note</em> : voir le tuto <strong>Attribuer des matières à un enseignant</strong>.
+                        </>
+                    ),
+                    imageSrc: popupMatiereUpdateAlertScreenshot,
+                    imageAlt: "Carte de détail d'une matière",
+                    imageCaption: "Accès à l'attribution des heures par enseignant.",
+                },
+                {
+                    text: (
+                        <>
+                            Si l'enseignant voulu n'est pas affiché, cliquer sur <strong>+ Ajouter</strong>.
+                        </>
+                    ),
+                    imageSrc: popupMatiereUpdateAlertScreenshot,
+                    imageAlt: "Bouton d'ajout d'un enseignant",
+                    imageCaption: "Le bouton + Ajouter permet d'ajouter un enseignant.",
+                    imageHighlight: {
+                        left: '53.2%',
+                        top: '31.9%',
+                        width: '8.7%',
+                        height: '5.0%',
+                        label: 'Ajouter',
+                    },
+                },
+                {
+                    text: (
+                        <>
+                            Sélectionner un <strong>enseignant</strong> en cliquant sur la liste déroulante.
+                        </>
+                    ),
+                    imageSrc: dropdownMatiereProfScreenshot,
+                    imageAlt: "Liste déroulante des enseignants",
+                    imageCaption: "Sélection d'un enseignant.",
+                },
+                {
+                    text: (
+                        <>
+                            Cliquer sur le champ du type de cours voulu et attribuer le nombre d'heures
+                            souhaité. Si la valeur est supérieure à <strong>0</strong>, le label du type de cours
+                            passe en <strong>vert</strong>.
+                        </>
+                    ),
+                    imageSrc: popupMatiereUpdateNoAlertScreenshot,
+                    imageAlt: "Attribution des heures par type de cours",
+                    imageCaption: "Les labels passent en vert quand des heures sont attribuées.",
+                    imageHighlight: {
+                        left: '54.4%',
+                        top: '47.0%',
+                        width: '9.3%',
+                        height: '10.1%',
+                        label: 'Labels verts',
+                    },
+                },
+                {
+                    text: (
+                        <>
+                            Si la somme des heures par type dépasse le volume total, ou si un type dépasse son
+                            volume prévu, le champ modifié est automatiquement ajusté au maximum autorisé. Si
+                            aucun volume n'est prévu pour un type de cours, le champ n'est pas saisissable.
+                        </>
+                    ),
+                },
+                {
+                    text: (
+                        <>
+                            Pour supprimer un enseignant, cliquer sur le bouton <strong>-</strong> à côté de son
+                            nom.
+                        </>
+                    ),
+                    imageSrc: popupMatiereUpdateNoAlertScreenshot,
+                    imageAlt: "Suppression d'un enseignant",
+                    imageCaption: "Bouton de suppression d'un enseignant.",
+                    imageHighlight: {
+                        left: '71.2%',
+                        top: '43.1%',
+                        width: '4.1%',
+                        height: '7.8%',
+                        label: 'Supprimer',
+                    },
+                },
+                {
+                    text: (
+                        <>
+                            En bas à gauche, un <strong>warning</strong> indique le nombre d'heures restantes à
+                            attribuer. Il disparaît quand il ne reste plus rien à attribuer. Un second warning
+                            temporaire peut apparaître si un dépassement est détecté (environ{' '}
+                            <strong>2 secondes</strong>).
+                        </>
+                    ),
+                    imageSrc: popupMatiereUpdateAlertScreenshot,
+                    imageAlt: "Warning d'heures restantes",
+                    imageCaption: "Warning indiquant les heures restantes à attribuer.",
+                    imageHighlight: {
+                        left: '27.5%',
+                        top: '66.7%',
+                        width: '28.9%',
+                        height: '12.3%',
+                        label: 'Warning',
+                    },
+                },
             ],
         },
         {
