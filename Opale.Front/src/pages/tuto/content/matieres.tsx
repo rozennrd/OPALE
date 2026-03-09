@@ -188,7 +188,7 @@ export const matieresTutorialContent: TutorialContent = {
                                     ouvre un pop-up de confirmation.
                                     <br />
                                     <em>Action commune</em> : voir le tuto{' '}
-                                    <strong>Annuler ou enregistrer/créer</strong>.
+                                    <strong>Annuler, créer ou enregistrer</strong>.
                                 </>
                             ),
                             subSteps: [
@@ -425,6 +425,7 @@ export const matieresTutorialContent: TutorialContent = {
         'Contrôler la répartition TD/TP par enseignant pour garder une charge réaliste.',
     ],
 }
+
 
 
 

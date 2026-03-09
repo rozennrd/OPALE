@@ -156,7 +156,7 @@ export const eventsTutorialContent: TutorialContent = {
                             confirmation.
                             <br />
                             <em>Action commune</em> : voir le tuto{' '}
-                            <strong>Annuler ou enregistrer/créer</strong>.
+                            <strong>Annuler, créer ou enregistrer</strong>.
                         </>
                     ),
                     subSteps: [
@@ -182,7 +182,7 @@ export const eventsTutorialContent: TutorialContent = {
                             ouvre un pop-up de confirmation.
                             <br />
                             <em>Action commune</em> : voir le tuto{' '}
-                            <strong>Annuler ou enregistrer/créer</strong>.
+                            <strong>Annuler, créer ou enregistrer</strong>.
                         </>
                     ),
                     subSteps: [
@@ -301,7 +301,7 @@ export const eventsTutorialContent: TutorialContent = {
                                     ouvre un pop-up de confirmation.
                                     <br />
                                     <em>Action commune</em> : voir le tuto{' '}
-                                    <strong>Annuler ou enregistrer/créer</strong>.
+                                    <strong>Annuler, créer ou enregistrer</strong>.
                                 </>
                             ),
                             subSteps: [
@@ -389,3 +389,4 @@ export const eventsTutorialContent: TutorialContent = {
         'Les réglages Macro/Micro planning influencent directement la qualité des plannings générés.',
     ],
 }
+

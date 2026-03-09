@@ -114,7 +114,7 @@ export const roomsTutorialContent: TutorialContent = {
                             confirmation.
                             <br />
                             <em>Action commune</em> : voir le tuto{' '}
-                            <strong>Annuler ou enregistrer/créer</strong>.
+                            <strong>Annuler, créer ou enregistrer</strong>.
                         </>
                     ),
                     subSteps: [
@@ -140,7 +140,7 @@ export const roomsTutorialContent: TutorialContent = {
                             un pop-up de confirmation.
                             <br />
                             <em>Action commune</em> : voir le tuto{' '}
-                            <strong>Annuler ou enregistrer/créer</strong>.
+                            <strong>Annuler, créer ou enregistrer</strong>.
                         </>
                     ),
                     subSteps: [
@@ -248,7 +248,7 @@ export const roomsTutorialContent: TutorialContent = {
                                     ouvre un pop-up de confirmation.
                                     <br />
                                     <em>Action commune</em> : voir le tuto{' '}
-                                    <strong>Annuler ou enregistrer/créer</strong>.
+                                    <strong>Annuler, créer ou enregistrer</strong>.
                                 </>
                             ),
                             subSteps: [
@@ -335,6 +335,7 @@ export const roomsTutorialContent: TutorialContent = {
         'Documenter les contraintes de salle dans les commentaires (équipements, restrictions, travaux).',
     ],
 }
+
 
 
 

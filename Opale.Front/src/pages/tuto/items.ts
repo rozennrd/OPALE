@@ -39,7 +39,7 @@ export const TUTORIAL_ITEMS: TutorialItem[] = [
     },
     {
         id: 'action-cancel-save',
-        title: 'Annuler ou enregistrer',
+        title: 'Annuler, créer ou enregistrer',
         summary: 'Gérer les actions Annuler / Enregistrer.',
         tab: 'actions',
     },
@@ -92,6 +92,7 @@ export const TUTORIAL_ITEMS: TutorialItem[] = [
         tab: 'pages',
     },
 ]
+
 
 
 

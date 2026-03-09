@@ -1,5 +1,6 @@
 ﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
+import eventPageScreenshot from '../../../assets/tuto/event/page-event-junia.png'
 
 export const actionSearchFilterTutorialContent: TutorialContent = {
     objective:
@@ -7,15 +8,43 @@ export const actionSearchFilterTutorialContent: TutorialContent = {
     expectedResult:
         'La liste affichée correspond aux critères choisis.',
     steps: [
-        <>
-            Utiliser la <strong>recherche</strong> pour filtrer par texte (nom, libellé, etc.).
-        </>,
-        <>
-            Appliquer les <strong>filtres</strong> disponibles sur la page (types, dates, disponibilité, etc.).
-        </>,
-        <>
-            Cliquer sur <strong>Réinitialiser les filtres</strong> pour revenir à la vue complète.
-        </>,
+        {
+            text: (
+                <>
+                    Sur la première ligne de la toolbar (plein écran), on trouve toujours la{' '}
+                    <strong>barre de recherche</strong>, le <strong>mode sélection</strong>,{' '}
+                    <strong>réinitialiser les filtres</strong> et <strong>ajouter un élément</strong>.
+                </>
+            ),
+            imageSrc: eventPageScreenshot,
+            imageAlt: 'Première ligne de la toolbar',
+            imageCaption: 'Recherche, sélection, réinitialisation et ajout.',
+            imageHighlight: {
+                left: '24%',
+                top: '19%',
+                width: '72%',
+                height: '8%',
+                label: 'Toolbar',
+            },
+        },
+        {
+            text: (
+                <>
+                    Sur la seconde ligne (plein écran), on retrouve des <strong>filtres adaptés</strong> à la
+                    page (droplist, chips, date, champ...).
+                </>
+            ),
+            imageSrc: eventPageScreenshot,
+            imageAlt: 'Seconde ligne de la toolbar',
+            imageCaption: 'Filtres adaptés à la page.',
+            imageHighlight: {
+                left: '24%',
+                top: '26%',
+                width: '72%',
+                height: '9%',
+                label: 'Filtres',
+            },
+        },
     ],
     tips: [
         'Les filtres peuvent être combinés pour affiner les résultats.',

@@ -1,5 +1,6 @@
 ﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
+import eventPageScreenshot from '../../../assets/tuto/event/page-event-junia.png'
 
 export const actionCreateTutorialContent: TutorialContent = {
     objective:
@@ -7,11 +8,25 @@ export const actionCreateTutorialContent: TutorialContent = {
     expectedResult:
         "Le formulaire de création est ouvert et prêt à être rempli.",
     steps: [
-        <>
-            Sur les pages <strong>Événements</strong>, <strong>Enseignants</strong>,{' '}
-            <strong>Salles</strong> et <strong>Matières</strong>, cliquer sur le bouton <strong>+</strong>
-            dans la barre d'outils.
-        </>,
+        {
+            text: (
+                <>
+                    Sur les pages <strong>Événements</strong>, <strong>Enseignants</strong>,{' '}
+                    <strong>Salles</strong> et <strong>Matières</strong>, cliquer sur le bouton{' '}
+                    <strong>+</strong> dans la barre d'outils.
+                </>
+            ),
+            imageSrc: eventPageScreenshot,
+            imageAlt: "Bouton d'ajout dans la toolbar",
+            imageCaption: "Le bouton + ouvre le formulaire de création.",
+            imageHighlight: {
+                left: '75%',
+                top: '21%',
+                width: '15%',
+                height: '5%',
+                label: 'Ajouter',
+            },
+        },
         <>
             Le formulaire de création s'ouvre en mode <strong>Création</strong>.
         </>,

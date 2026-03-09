@@ -174,7 +174,7 @@ export const teachersTutorialContent: TutorialContent = {
                             confirmation.
                             <br />
                             <em>Action commune</em> : voir le tuto{' '}
-                            <strong>Annuler ou enregistrer/créer</strong>.
+                            <strong>Annuler, créer ou enregistrer</strong>.
                         </>
                     ),
                     subSteps: [
@@ -200,7 +200,7 @@ export const teachersTutorialContent: TutorialContent = {
                             ouvre un pop-up de confirmation.
                             <br />
                             <em>Action commune</em> : voir le tuto{' '}
-                            <strong>Annuler ou enregistrer/créer</strong>.
+                            <strong>Annuler, créer ou enregistrer</strong>.
                         </>
                     ),
                     subSteps: [
@@ -356,7 +356,7 @@ export const teachersTutorialContent: TutorialContent = {
                                     ouvre un pop-up de confirmation.
                                     <br />
                                     <em>Action commune</em> : voir le tuto{' '}
-                                    <strong>Annuler ou enregistrer/créer</strong>.
+                                    <strong>Annuler, créer ou enregistrer</strong>.
                                 </>
                             ),
                             subSteps: [
@@ -448,7 +448,7 @@ export const teachersTutorialContent: TutorialContent = {
                     <strong>Créer</strong> selon le contexte.
                     <br />
                     <em>Action commune</em> : voir le tuto{' '}
-                    <strong>Annuler ou enregistrer/créer</strong>.
+                    <strong>Annuler, créer ou enregistrer</strong>.
                 </>,
                 <>
                     Si on revient sur la carte de détail via la modification, les périodes de disponibilités
@@ -528,6 +528,7 @@ export const teachersTutorialContent: TutorialContent = {
         "Vérifier le rattachement et le campus d'origine pour anticiper les contraintes logistiques.",
     ],
 }
+
 
 
 

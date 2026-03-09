@@ -120,7 +120,7 @@ export const promotionsTutorialContent: TutorialContent = {
                         <>
                             Cliquer sur <strong>Enregistrer</strong> ouvre un pop-up de confirmation.
                             <br />
-                            <em>Action commune</em> : voir le tuto <strong>Annuler ou enregistrer/créer</strong>.
+                            <em>Action commune</em> : voir le tuto <strong>Annuler, créer ou enregistrer</strong>.
                         </>
                     ),
                     subSteps: [
@@ -191,7 +191,7 @@ export const promotionsTutorialContent: TutorialContent = {
                             à droite.
                             <br />
                             <em>Action commune</em> : voir le tuto{' '}
-                            <strong>Annuler ou enregistrer/créer</strong>.
+                            <strong>Annuler, créer ou enregistrer</strong>.
                         </>,
                         <>
                             <strong>Ajouter</strong>: valide la création et affiche la promotion dans la carte
@@ -348,7 +348,7 @@ export const promotionsTutorialContent: TutorialContent = {
                             enregistré, les modifications restent visibles.
                             <br />
                             <em>Action commune</em> : voir le tuto{' '}
-                            <strong>Annuler ou enregistrer/créer</strong>.
+                            <strong>Annuler, créer ou enregistrer</strong>.
                         </>,
                     ],
                 },
@@ -479,7 +479,7 @@ export const promotionsTutorialContent: TutorialContent = {
                                     <strong>Escape</strong>) ou sur <strong>Valider</strong>.
                                     <br />
                                     <em>Action commune</em> : voir le tuto
-                                    <strong>Annuler ou enregistrer/créer</strong>.
+                                    <strong>Annuler, créer ou enregistrer</strong>.
                                 </>
                             ),
                             imageSrc: promoPrevisualiserMaquetteScreenshot,
@@ -635,3 +635,4 @@ export const promotionsTutorialContent: TutorialContent = {
         'Revérifier les contraintes avant de lancer une génération de planning.',
     ],
 }
+
