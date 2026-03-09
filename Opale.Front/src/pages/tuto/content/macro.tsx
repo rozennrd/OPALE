@@ -11,7 +11,7 @@ const DOC_LINKS = {
 
 export const macroTutorialContent: TutorialContent = {
     objective:
-        'Suivre un flux simple et fiable pour générer un planning macro à partir des données minimales requises.',
+        'Suivre des étapes simples et fiables pour générer un planning macro à partir des données minimales requises.',
     expectedResult:
         'Le planning macro est généré sans blocage majeur, avec des périodes académiques et événements correctement pris en compte.',
     steps: [
@@ -91,7 +91,7 @@ export const macroTutorialContent: TutorialContent = {
             ),
             imageSrc: eventPageScreenshot,
             imageAlt: 'Page Événements pour compléter les informations minimales',
-            imageCaption: 'Validation des champs minimaux nécessaires au flux macro.',
+            imageCaption: 'Validation des champs minimaux nécessaires à la génération macro.',
             subSteps: [
                 <>
                     Un événement mal ciblé ou non activé pour le macro peut ne pas remonter correctement dans

@@ -1,7 +1,7 @@
 ﻿import type { TutorialItem, TutorialTab } from './types'
 
 export const TAB_ITEMS: Array<{ key: TutorialTab; label: string }> = [
-    { key: 'planning', label: 'Flux planning' },
+    { key: 'planning', label: 'Étape planning' },
     { key: 'pages', label: 'Par page' },
     { key: 'actions', label: 'Action commune' },
 ]
@@ -10,7 +10,7 @@ export const TUTORIAL_ITEMS: TutorialItem[] = [
     {
         id: 'macro',
         title: 'Générer un planning macro',
-        summary: 'Flux global de génération et validation du planning macro.',
+        summary: 'Étapes globales de génération et validation du planning macro.',
         tab: 'planning',
     },
     {

@@ -22,7 +22,7 @@ const DOC_LINKS = {
 
 export const microTutorialContent: TutorialContent = {
     objective:
-        'Suivre un flux complet pour générer un planning micro exploitable, avec toutes les ressources et contraintes correctement renseignées.',
+        'Suivre les étapes complètes pour générer un planning micro exploitable, avec toutes les ressources et contraintes correctement renseignées.',
     expectedResult:
         'Le planning micro est généré avec des affectations cohérentes (promotions, événements, enseignants, salles, matières).',
     steps: [
@@ -34,7 +34,7 @@ export const microTutorialContent: TutorialContent = {
             ),
             imageSrc: promoPageScreenshot,
             imageAlt: 'Page Promotions pour créer les cycles et promotions',
-            imageCaption: 'Création de la structure de base avant le flux micro.',
+            imageCaption: 'Création de la structure de base avant la génération micro.',
             subSteps: [
                 <>
                     <a href={DOC_LINKS.promotions} target="_blank" rel="noreferrer">
@@ -67,7 +67,7 @@ export const microTutorialContent: TutorialContent = {
             ),
             imageSrc: eventPageScreenshot,
             imageAlt: 'Page Événements pour créer les événements',
-            imageCaption: 'Création des événements impactant le flux micro.',
+            imageCaption: 'Création des événements impactant la génération micro.',
             subSteps: [
                 <>
                     <a href={DOC_LINKS.events} target="_blank" rel="noreferrer">
@@ -206,13 +206,13 @@ export const microTutorialContent: TutorialContent = {
                     Ouvrir la page planning: <a href="/planning" target="_blank" rel="noreferrer">/planning</a>
                 </>,
                 <>
-                    Si la génération bloque, reprendre la vérification dans l'ordre du flux ci-dessus.
+                    Si la génération bloque, reprendre la vérification dans l'ordre des étapes ci-dessus.
                 </>,
             ],
         },
     ],
     tips: [
-        "Exécuter le flux dans l'ordre pour limiter les incohérences de données.",
+        "Exécuter les étapes dans l'ordre pour limiter les incohérences de données.",
         'Pour le micro, tout champ critique non renseigné peut impacter fortement la génération.',
         'Vérifier en priorité promotions, enseignants, salles et matières avant de relancer un calcul.',
     ],

@@ -20,7 +20,7 @@ export const actionCreateTutorialContent: TutorialContent = {
         </>,
     ],
     tips: [
-        "La page Promotions n'utilise pas ce flux.",
+        "La page Promotions n'utilise pas ces étapes.",
         "Le remplissage détaillé est décrit dans les tutos de page.",
     ],
 }
