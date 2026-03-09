@@ -1,5 +1,5 @@
 // src/pages/Promotions.tsx
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import icPlus from '../assets/ic-plus.png'
 
 import PromoEditDialog from '../components/promotions/PromoEditDialog.tsx'
