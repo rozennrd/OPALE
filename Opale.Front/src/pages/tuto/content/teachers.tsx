@@ -1,6 +1,6 @@
 ﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
-import screenPageProfScreenshot from '../../../assets/tuto/prof/screen-page-prof.png'
+import screenPageProfScreenshot from '../../../assets/tuto/prof/page-prof.png'
 import screenPageProfSuppressionScreenshot from '../../../assets/tuto/prof/screen-page-prof-suppression.png'
 import screenPopupProfScreenshot from '../../../assets/tuto/prof/screen-pop-up-prof.png'
 import screenPopupProfModifScreenshot from '../../../assets/tuto/prof/screen-pop-up-prof-modif.png'
