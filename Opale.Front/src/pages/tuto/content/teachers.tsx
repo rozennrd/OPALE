@@ -2,8 +2,13 @@
 /* eslint-disable react/no-unescaped-entities */
 import screenPageProfScreenshot from '../../../assets/tuto/prof/page-prof.png'
 import screenPageProfSuppressionScreenshot from '../../../assets/tuto/prof/page-prof.png'
-import screenPopupProfScreenshot from '../../../assets/tuto/prof/page-prof-create.png'
+import screenPopupProfScreenshot from '../../../assets/tuto/prof/page-prof-add.png'
 import screenPopupProfModifScreenshot from '../../../assets/tuto/prof/page-prof-update.png'
+import dropdownProfTypeScreenshot from '../../../assets/tuto/prof/page-prof-droplist-type.png'
+import dropdownProfRattachementScreenshot from '../../../assets/tuto/prof/page-prof-droplist-rattachement.png'
+import dropdownProfCampusScreenshot from '../../../assets/tuto/prof/page-prof-droplist-campus.png'
+import dropdownProfPromoScreenshot from '../../../assets/tuto/prof/page-prof-droplist-promo.png'
+import dropdownProfMatieresScreenshot from '../../../assets/tuto/prof/page-prof-droplist-matieres.png'
 
 export const teachersTutorialContent: TutorialContent = {
     objective:
@@ -80,45 +85,85 @@ export const teachersTutorialContent: TutorialContent = {
                     imageSrc: screenPopupProfScreenshot,
                     imageAlt: "Pop-up de création d'un enseignant",
                     imageCaption: 'Le pop-up permet de définir le profil, les matières et les disponibilités.',
+                    imagePlacement: 'beforeSubSteps',
                     subSteps: [
-                        <>
-                            <strong>Informations</strong>: remplir <strong>Nom</strong>, <strong>Prénom</strong>,{' '}
-                            <strong>téléphone</strong>, <strong>Email Junia</strong> et{' '}
-                            <strong>Email perso</strong>.
-                        </>,
-                        <>
-                            <strong>Type</strong>: choisir le mode d'intervention de l'enseignant ({' '}
-                            <em>Présentiel</em>, <em>Hybride</em> ou <em>Distanciel</em>).
-                        </>,
-                        <>
-                            <strong>Rattachement</strong>: indiquer <em>Interne</em> ou <em>Vacataire</em>.
-                        </>,
-                        <>
-                            <strong>Campus d'origine</strong>: préciser le campus de référence (ex: Bordeaux,
-                            Lille, Châteauroux) pour faciliter l'organisation inter-campus.
-                        </>,
-                        <>
-                            <strong>Matières enseignées</strong>: ajouter les matières enseignées puis associer,
-                            si nécessaire, les promotions cibles.
-                            <br />
-                            <em>Conseil</em>: pour attribuer ou désattribuer une matière, se référer à la
-                            section <strong>Attribuer des matières à un enseignant</strong>.
-                            <br />
-                            <em>Note</em> : voir le tuto <strong>Attribuer des matières à un enseignant</strong>.
-                        </>,
-                        <>
-                            <strong>Disponibilités</strong>: créer une ou plusieurs périodes, définir la plage de
-                            dates, puis renseigner la grille <strong>Matin / Après-midi</strong> du{' '}
-                            <strong>Lundi au Vendredi</strong>.
-                            <br />
-                            <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
-                            <br />
-                            <em>Note</em> : voir le tuto <strong>Ajouter des périodes de disponibilités</strong>.
-                        </>,
-                        <>
-                            Vérifier la légende <em>Disponible</em> / <em>Non disponible</em> pour éviter les
-                            inversions lors de la saisie.
-                        </>,
+                        {
+                            text: (
+                                <>
+                                    <strong>Informations</strong>: remplir <strong>Nom</strong>,{' '}
+                                    <strong>Prénom</strong>, <strong>téléphone</strong>,{' '}
+                                    <strong>Email Junia</strong> et <strong>Email perso</strong>.
+                                </>
+                            ),
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Type</strong>: choisir le mode d'intervention de l'enseignant ({' '}
+                                    <em>Présentiel</em>, <em>Hybride</em> ou <em>Distanciel</em>).
+                                </>
+                            ),
+                            imageSrc: dropdownProfTypeScreenshot,
+                            imageAlt: "Liste déroulante du type d'enseignant",
+                            imageCaption: "Sélection du type d'enseignant.",
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Rattachement</strong>: indiquer <em>Interne</em> ou <em>Vacataire</em>.
+                                </>
+                            ),
+                            imageSrc: dropdownProfRattachementScreenshot,
+                            imageAlt: "Liste déroulante du rattachement de l'enseignant",
+                            imageCaption: "Sélection du rattachement.",
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Campus d'origine</strong>: préciser le campus de référence (ex:
+                                    Bordeaux, Lille, Châteauroux) pour faciliter l'organisation inter-campus.
+                                </>
+                            ),
+                            imageSrc: dropdownProfCampusScreenshot,
+                            imageAlt: "Liste déroulante du campus d'origine",
+                            imageCaption: "Sélection du campus d'origine.",
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Matières enseignées</strong>: ajouter les matières enseignées puis
+                                    associer, si nécessaire, les promotions cibles.
+                                    <br />
+                                    <em>Conseil</em>: pour attribuer ou désattribuer une matière, se référer à la
+                                    section <strong>Attribuer des matières à un enseignant</strong>.
+                                    <br />
+                                    <em>Note</em> : voir le tuto{' '}
+                                    <strong>Attribuer des matières à un enseignant</strong>.
+                                </>
+                            ),
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Disponibilités</strong>: créer une ou plusieurs périodes, définir la
+                                    plage de dates, puis renseigner la grille <strong>Matin / Après-midi</strong>{' '}
+                                    du <strong>Lundi au Vendredi</strong>.
+                                    <br />
+                                    <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
+                                    <br />
+                                    <em>Note</em> : voir le tuto{' '}
+                                    <strong>Ajouter des périodes de disponibilités</strong>.
+                                </>
+                            ),
+                        },
+                        {
+                            text: (
+                                <>
+                                    Vérifier la légende <em>Disponible</em> / <em>Non disponible</em> pour éviter
+                                    les inversions lors de la saisie.
+                                </>
+                            ),
+                        },
                     ],
                 },
                 {
@@ -203,32 +248,76 @@ export const teachersTutorialContent: TutorialContent = {
                     imageAlt: "Pop-up de modification d'un enseignant",
                     imageCaption:
                         'En modification, les informations existantes peuvent être corrigées et complétées.',
+                    imagePlacement: 'beforeSubSteps',
                     subSteps: [
-                        <>
-                            Mettre à jour les <strong>informations personnelles</strong>: Nom, Prénom, téléphone,
-                            Email Junia, Email perso.
-                        </>,
-                        <>
-                            Vérifier la cohérence de <strong>Type</strong>, <strong>Rattachement</strong> et{' '}
-                            <strong>Campus d'origine</strong>.
-                        </>,
-                        <>
-                            Ajuster les <strong>matières enseignées</strong> et les promotions associées selon
-                            la charge pédagogique réelle.
-                            <br />
-                            <em>Conseil</em>: pour attribuer ou désattribuer une matière, se référer à la
-                            section <strong>Attribuer des matières à un enseignant</strong>.
-                            <br />
-                            <em>Note</em> : voir le tuto <strong>Attribuer des matières à un enseignant</strong>.
-                        </>,
-                        <>
-                            Actualiser les <strong>disponibilités</strong> (périodes, grille hebdomadaire) pour
-                            garantir des plannings fiables.
-                            <br />
-                            <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
-                            <br />
-                            <em>Note</em> : voir le tuto <strong>Ajouter des périodes de disponibilités</strong>.
-                        </>,
+                        {
+                            text: (
+                                <>
+                                    <strong>Informations</strong>: remplir <strong>Nom</strong>,{' '}
+                                    <strong>Prénom</strong>, <strong>téléphone</strong>,{' '}
+                                    <strong>Email Junia</strong> et <strong>Email perso</strong>.
+                                </>
+                            ),
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Type</strong>: choisir le mode d'intervention de l'enseignant ({' '}
+                                    <em>Présentiel</em>, <em>Hybride</em> ou <em>Distanciel</em>).
+                                </>
+                            ),
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Rattachement</strong>: indiquer <em>Interne</em> ou <em>Vacataire</em>.
+                                </>
+                            ),
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Campus d'origine</strong>: préciser le campus de référence (ex:
+                                    Bordeaux, Lille, Châteauroux) pour faciliter l'organisation inter-campus.
+                                </>
+                            ),
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Matières enseignées</strong>: ajouter les matières enseignées puis
+                                    associer, si nécessaire, les promotions cibles.
+                                    <br />
+                                    <em>Conseil</em>: pour attribuer ou désattribuer une matière, se référer à la
+                                    section <strong>Attribuer des matières à un enseignant</strong>.
+                                    <br />
+                                    <em>Note</em> : voir le tuto{' '}
+                                    <strong>Attribuer des matières à un enseignant</strong>.
+                                </>
+                            ),
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Disponibilités</strong>: créer une ou plusieurs périodes, définir la
+                                    plage de dates, puis renseigner la grille <strong>Matin / Après-midi</strong>{' '}
+                                    du <strong>Lundi au Vendredi</strong>.
+                                    <br />
+                                    <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
+                                    <br />
+                                    <em>Note</em> : voir le tuto{' '}
+                                    <strong>Ajouter des périodes de disponibilités</strong>.
+                                </>
+                            ),
+                        },
+                        {
+                            text: (
+                                <>
+                                    Vérifier la légende <em>Disponible</em> / <em>Non disponible</em> pour éviter
+                                    les inversions lors de la saisie.
+                                </>
+                            ),
+                        },
                     ],
                 },
                 {
@@ -294,35 +383,65 @@ export const teachersTutorialContent: TutorialContent = {
                     Sur la <strong>carte de détail</strong>, lors d'une création ou d'une modification, cliquer
                     sur <strong>Ajouter une matière</strong>.
                 </>,
-                <>
-                    Sélectionner la <strong>promotion</strong> voulue.
-                </>,
-                <>
-                    Sélectionner la <strong>matière</strong> voulue. La liste de matières affiche uniquement les
-                    matières de la promotion sélectionnée. Si aucune promotion n'est sélectionnée, toutes les
-                    matières disponibles sont proposées. Si une matière est choisie sans promotion, la promotion
-                    associée à cette matière est automatiquement sélectionnée.
-                    <br />
-                    Le champ <strong>NA</strong> à droite du nom de la matière affiche le nombre d'heures
-                    attribuées à l'enseignant une fois les heures renseignées depuis la page Matières.
-                </>,
+                {
+                    text: (
+                        <>
+                            Sélectionner la <strong>promotion</strong> voulue.
+                        </>
+                    ),
+                    imageSrc: dropdownProfPromoScreenshot,
+                    imageAlt: 'Liste déroulante des promotions',
+                    imageCaption: 'Sélection de la promotion.',
+                },
+                {
+                    text: (
+                        <>
+                            Sélectionner la <strong>matière</strong> voulue.
+                            <br />
+                            La liste affiche uniquement les matières de la promotion sélectionnée.
+                            <br />
+                            Si aucune promotion n'est sélectionnée, toutes les matières disponibles sont
+                            proposées.
+                            <br />
+                            Si une matière est choisie sans promotion, la promotion associée est
+                            automatiquement sélectionnée.
+                            <br />
+                            <em>Note</em> : si la matière est sélectionnée en premier, la promotion est
+                            automatiquement remplie.
+                            <br />
+                            <em>Note</em> : un champ non modifiable affiche <strong>NA</strong>. Ce champ
+                            affichera à l'avenir le volume horaire attribué à ce prof pour cette matière. Voir le
+                            tuto <strong>Attribuer des matières à un enseignant</strong>.
+                        </>
+                    ),
+                    imageSrc: dropdownProfMatieresScreenshot,
+                    imageAlt: 'Liste déroulante des matières',
+                    imageCaption: 'Sélection de la matière.',
+                },
             ],
         },
         {
             title: 'Ajouter des périodes de disponibilités',
             steps: [
-                <>
-                    Depuis la <strong>carte de détail</strong> (création ou modification), cliquer sur{' '}
-                    <strong>Ajouter une période de disponibilité</strong>.
-                </>,
+                {
+                    text: (
+                        <>
+                            Depuis la <strong>carte de détail</strong> (création ou modification), cliquer sur{' '}
+                            <strong>Ajouter une période de disponibilité</strong>.
+                        </>
+                    ),
+                    imageSrc: screenPopupProfModifScreenshot,
+                    imageAlt: "Carte de détail d'un enseignant",
+                    imageCaption: "Ajout d'une période de disponibilité depuis la carte de détail.",
+                },
                 <>
                     Renseigner la <strong>date de début</strong> et la <strong>date de fin</strong> de la
                     période.
                     <br />
-                    <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
-                    <br />
                     Une période de disponibilité peut couvrir une longue période tant que les
                     disponibilités par demi-journée du <strong>Lundi au Vendredi</strong> ne changent pas.
+                    <br />
+                    <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
                 </>,
                 <>
                     Une fois toutes les périodes créées, cliquer sur <strong>Enregistrer</strong> ou{' '}
