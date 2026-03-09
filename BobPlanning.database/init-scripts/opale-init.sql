@@ -325,8 +325,8 @@ CREATE INDEX idx_matiere_specialite     ON matiere (id_specialite);
 -- utilisateur test, mdp test
 --
 INSERT INTO utilisateurs (login, email, password, date_blocage, tentatives_echouees) VALUES
-    ('Daminou', 'Daminou', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533',  '2025-02-17 15:36:41', 0),
-    ('test', 'test', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',  '2025-02-17 15:36:41', 0);
+                                                                                         ('Daminou', 'Daminou', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533',  '2025-02-17 15:36:41', 0),
+                                                                                         ('test', 'test', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',  '2025-02-17 15:36:41', 0);
 
 
 
@@ -334,9 +334,10 @@ INSERT INTO utilisateurs (login, email, password, date_blocage, tentatives_echou
 -- Attention : À enlever une fois que la base de donnée sera correctement intégrée
 --
 INSERT INTO cycle (nom, type) VALUES
-                                  ('Cycle Préparatoire', 'Initial'),
-                                  ('Cycle Ingénieur - Initial',   'Initial'),
-                                  ('Cycle Ingénieur - Apprentissage', 'Apprentissage');
+                                  ('Préparatoire - Adimaker', 'Initial'),
+                                  ('Préparatoire - Cir', 'Initial'),
+                                  ('Ingénieur - Initial',   'Initial'),
+                                  ('Ingénieur - Apprentissage', 'Apprentissage');
 
 -- Déchargement des données de la table `salle`
 --
@@ -372,16 +373,16 @@ INSERT INTO professeur (id, nom, prenom, email, email_perso, telephone, type, mo
 
 -- Déchargement des données de la table `promotions`
 INSERT INTO promotion (nom, effectifs, id_cycle, date_start, date_end) VALUES
-                                                                           ('ADI1',   20,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
-                                                                           ('ADI2',   22,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
-                                                                           ('CIR1',   21,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
-                                                                           ('CIR2',   25,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
-                                                                           ('AP3',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur - Apprentissage' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
-                                                                           ('AP4',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur - Apprentissage' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
-                                                                           ('AP5',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur - Apprentissage' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
-                                                                           ('ISEN3',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur - Initial' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
-                                                                           ('ISEN4',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur - Initial' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
-                                                                           ('ISEN5',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur - Initial' and type = 'Initial'),    '2023-09-01', '2024-06-30');
+                                                                           ('ADI1',   20,  (SELECT id FROM cycle WHERE nom = 'Préparatoire - Adimaker'), '2023-09-01', '2024-06-30'),
+                                                                           ('ADI2',   22,  (SELECT id FROM cycle WHERE nom = 'Préparatoire - Adimaker'), '2023-09-01', '2024-06-30'),
+                                                                           ('CIR1',   21,  (SELECT id FROM cycle WHERE nom = 'Préparatoire - Cir'), '2023-09-01', '2024-06-30'),
+                                                                           ('CIR2',   25,  (SELECT id FROM cycle WHERE nom = 'Préparatoire - Cir'), '2023-09-01', '2024-06-30'),
+                                                                           ('AP3',    30,  (SELECT id FROM cycle WHERE nom = 'Ingénieur - Apprentissage' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
+                                                                           ('AP4',    30,  (SELECT id FROM cycle WHERE nom = 'Ingénieur - Apprentissage' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
+                                                                           ('AP5',    30,  (SELECT id FROM cycle WHERE nom = 'Ingénieur - Apprentissage' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
+                                                                           ('ISEN3',    30,  (SELECT id FROM cycle WHERE nom = 'Ingénieur - Initial' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
+                                                                           ('ISEN4',    30,  (SELECT id FROM cycle WHERE nom = 'Ingénieur - Initial' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
+                                                                           ('ISEN5',    30,  (SELECT id FROM cycle WHERE nom = 'Ingénieur - Initial' and type = 'Initial'),    '2023-09-01', '2024-06-30');
 
 INSERT INTO salle (nom, nom_complet, type_principal, types_secondaires, etage, capacite, description) VALUES
                                                                                                           ('J001', 'Fablab', 'Fablab'::type_salle, ARRAY['Fablab', 'Informatique', 'Projet']::type_salle[], 0, 30, ''),

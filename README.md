@@ -352,6 +352,15 @@ For updating lib installations, you can run --> `pip freeze > requirements.txt`
 
 We have set up a CI/CD pipeline to automate the testing (and furthemore deployment) of our application.
 
+## 📔 Sonarqube
+
+We have integrated SonarQube into our containerized environment to ensure code quality and maintainability. SonarQube provides continuous inspection of code quality, allowing us to identify and fix issues early in the development process.
+
+You can access the SonarQube dashboard at `http://localhost:9000` to view code quality metrics, identify bugs, vulnerabilities, and code smells. This integration helps us maintain a high standard of code quality throughout the development lifecycle.
+
+Don't forget to get your Sonarqube token and set it in the `.env` file at the root of the project.
+
+
 ## 🔗 Usefull links:
 - [DrawSQL](https://drawsql.app/teams/opale-3/diagrams/opale-diagram?ref=embed) : for the database schema
 - [Postman](https://www.postman.com/workspace/My-Workspace~9c5702ca-1443-400d-88e7-5bcd552db2f4/collection/24357578-08705eb3-14c9-48e6-b159-9d5d52bd1576?action=share&source=copy-link&creator=24357578) : for the API collection
