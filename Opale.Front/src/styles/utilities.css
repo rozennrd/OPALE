@@ -39,8 +39,7 @@
   }
 
   :root[data-icons-pages='hide'] .toolbar-search-icon,
-  :root[data-icons-pages='hide'] .events-toolbar-plus-icon,
-  :root[data-icons-pages='hide'] .teachers-toolbar-plus-icon,
+  :root[data-icons-pages='hide'] .toolbar-add-icon,
   :root[data-icons-pages='hide'] .cycle-import-file-pill .file-icon,
   :root[data-icons-pages='hide'] .btn-icon-only img,
   :root[data-icons-pages='hide'] .btn-icon-responsive img {
@@ -58,11 +57,4 @@
     padding: 8px 12px;
   }
 
-  :root[data-icons-pages='hide'] .events-toolbar-plus-btn::before,
-  :root[data-icons-pages='hide'] .teachers-toolbar-plus-btn::before {
-    content: '+';
-    font-size: 1.1rem;
-    font-weight: 700;
-    line-height: 1;
-  }
 }

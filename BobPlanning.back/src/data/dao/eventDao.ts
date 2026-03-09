@@ -11,4 +11,5 @@ export interface EventDAO {
     is_blocking: boolean;
     is_exceptional: boolean;
     is_external: boolean;
+    promotions?: string[];
 }

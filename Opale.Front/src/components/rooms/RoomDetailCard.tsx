@@ -1,5 +1,6 @@
 // src/components/rooms/RoomDetailCard.tsx
 import { useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import { Room, RoomType } from '../../models/Room'
 import { ROOM_TYPES } from '../../mocks/rooms.mock'
 import RoomTypeBadge from './RoomTypeBadge'
@@ -8,20 +9,30 @@ import DetailCardBody from '../common/DetailCardBody'
 import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
+import type { RoomSaveResult } from '../../hooks/rooms/useRoomsData'
 
 interface RoomDetailCardProps {
     room: Room
     onClose: () => void
-    onChange: (room: Room) => Promise<boolean> | boolean | void
+    onChange: (room: Room) => Promise<RoomSaveResult> | RoomSaveResult | boolean | void
     onDelete?: () => void
+    isCreate?: boolean
+    validateRoomIdentity?: (roomId: string | undefined, name: string, fullName: string) => {
+        nameError?: string
+        fullNameError?: string
+    }
 }
 
 const ROOM_TYPE_LABELS: Record<RoomType, string> = {
-    TD: 'TD',
-    TP_ELECTRONIQUE: 'TP électronique',
-    TP_NUMERIQUE: 'TP numérique',
-    PROJET: 'Projet',
-    AUTRE: 'Autre',
+    Cours: 'Cours',
+    Informatique: 'Informatique',
+    Projet: 'Projet',
+    Rassemblement: 'Rassemblement',
+    Reunion: 'Réunion',
+    Associatif: 'Associatif',
+    Electronique: 'Électronique',
+    Fablab: 'Fablab',
+    Reseau: 'Réseau',
 }
 
 const floorLabel = (floor: number): string => {
@@ -37,7 +48,14 @@ const floorLabel = (floor: number): string => {
     }
 }
 
-export default function RoomDetailCard({ room, onClose, onChange, onDelete }: RoomDetailCardProps) {
+export default function RoomDetailCard({
+    room,
+    onClose,
+    onChange,
+    onDelete,
+    isCreate = false,
+    validateRoomIdentity,
+}: RoomDetailCardProps) {
     const [name, setName] = useState(room.name)
     const [fullName, setFullName] = useState(room.fullName ?? '')
     const [floor, setFloor] = useState<Room['floor']>(room.floor)
@@ -46,6 +64,7 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
     const [mainType, setMainType] = useState<RoomType>(room.mainType)
     const [types, setTypes] = useState<RoomType[]>(room.types)
     const [description, setDescription] = useState(room.description ?? '')
+    const [errorMessage, setErrorMessage] = useState<ReactNode | null>(null)
 
     useEffect(() => {
         setName(room.name)
@@ -56,9 +75,27 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
         setMainType(room.mainType)
         setTypes(room.types)
         setDescription(room.description ?? '')
+        setErrorMessage(null)
     }, [room])
 
     const headerTitle = (fullName || name).trim() || room.name
+    const roomDisplayName = (fullName || name || 'Nom de la salle').trim()
+    const validation = validateRoomIdentity
+        ? validateRoomIdentity(room.id, name, fullName)
+        : { nameError: undefined, fullNameError: undefined }
+    const nameError = validation.nameError
+    const fullNameError = validation.fullNameError
+
+    const cancelCreateTitle = 'Création non enregistrée'
+    const cancelCreateMessage = (
+        <>
+            <p>
+                Vous êtes en train de créer la salle{' '}
+                <strong>{roomDisplayName}</strong>.
+            </p>
+            <p>Souhaitez-vous créer avant de fermer ?</p>
+        </>
+    )
 
     const hasChanges =
         room.name !== name ||
@@ -81,8 +118,6 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                 nextTypes = [...nextTypes, type]
             }
 
-            console.log('[ROOMS] Change main type', { roomId: room.id, type })
-
             return nextTypes
         })
     }
@@ -94,8 +129,6 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
             const exists = prevTypes.includes(type)
             const nextTypes = exists ? prevTypes.filter((t) => t !== type) : [...prevTypes, type]
 
-            console.log('[ROOMS] Toggle type', { roomId: room.id, type, nextTypes })
-
             return nextTypes
         })
     }
@@ -103,19 +136,35 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
     const handleCapacityChange = (value: string) => {
         const parsed = Number.parseInt(value, 10)
         const nextCapacity = Number.isNaN(parsed) ? 0 : Math.max(0, parsed)
-        console.log('[ROOMS] Change room capacity (mock)', { roomId: room.id, nextCapacity })
         setCapacity(nextCapacity)
     }
 
     const handleToggleAvailability = () => {
         setIsAvailable((previous) => {
-            const next = !previous
-            console.log('[ROOMS] Toggle room availability (mock)', { roomId: room.id, isAvailable: next })
-            return next
+            return !previous
         })
     }
 
     const handleSave = async (): Promise<boolean> => {
+        if (nameError || fullNameError) {
+            const messages = [
+                nameError ? `Nom court : ${nameError}` : null,
+                fullNameError ? `Surnom / nom complet : ${fullNameError}` : null,
+            ].filter(Boolean) as string[]
+
+            setErrorMessage(
+                <div>
+                    <p>Corrige les champs suivants :</p>
+                    <ul>
+                        {messages.map((message) => (
+                            <li key={message}>{message}</li>
+                        ))}
+                    </ul>
+                </div>,
+            )
+            return false
+        }
+
         const nextRoom: Room = {
             ...room,
             name: name.trim() || room.name,
@@ -128,9 +177,16 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
             types: types.length ? types : [mainType],
         }
 
-        console.log('[ROOMS] Save room (mock)', nextRoom)
         const result = await Promise.resolve(onChange(nextRoom))
+        if (result && typeof result === 'object' && 'success' in result) {
+            if (!result.success) {
+                setErrorMessage(result.error)
+                return false
+            }
+            return true
+        }
         if (result === false) {
+            setErrorMessage("Erreur lors de la sauvegarde de la salle.")
             return false
         }
         return true
@@ -190,6 +246,9 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="Ex. J001"
                                     />
+                                    {nameError && (
+                                        <small className="room-detail-error">{nameError}</small>
+                                    )}
                                 </div>
 
                                 <div className="room-detail-field">
@@ -203,6 +262,9 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                                         onChange={(e) => setFullName(e.target.value)}
                                         placeholder="Ex. J001_Projet"
                                     />
+                                    {fullNameError && (
+                                        <small className="room-detail-error">{fullNameError}</small>
+                                    )}
                                 </div>
 
                                 <div className="room-detail-field">
@@ -322,13 +384,6 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                                                 .filter(Boolean)
                                                 .join(' ')
 
-                                            const checkboxClassName = [
-                                                'room-type-chip-checkbox',
-                                                isChecked ? 'is-checked' : '',
-                                            ]
-                                                .filter(Boolean)
-                                                .join(' ')
-
                                             return (
                                                 <button
                                                     key={type}
@@ -337,7 +392,7 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                                                     onClick={() => handleToggleType(type)}
                                                     aria-pressed={isChecked}
                                                 >
-                                                    <span className={checkboxClassName} aria-hidden="true" />
+                                                    <span className="room-type-chip-dot" aria-hidden="true" />
                                                     <span className="room-type-chip-label">{ROOM_TYPE_LABELS[type]}</span>
                                                 </button>
                                             )
@@ -368,30 +423,54 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
                         onCancel={handleRequestClose}
                         onSave={handleSave}
                         onAfterSaveConfirm={onClose}
-                        onDelete={onDelete}
-                        saveLabel="Enregistrer"
+                        onDelete={isCreate ? undefined : onDelete}
+                        hideCancel
+                        saveLabel={isCreate ? 'Créer' : 'Enregistrer'}
                         cancelLabel="Annuler"
-                        confirmTitle="Confirmer les modifications"
+                        confirmTitle={
+                            isCreate
+                                ? 'Créer cette salle'
+                                : 'Confirmer les modifications'
+                        }
                         confirmMessage={
-                            <>
-                                Vous êtes sur le point d&apos;enregistrer les modifications pour{' '}
-                                <strong>{headerTitle}</strong>.
-                                <br />
-                                Confirmer ?
-                            </>
+                            isCreate ? (
+                                <>
+                                    Vous êtes sur le point de créer la salle{' '}
+                                    <strong>{roomDisplayName}</strong>.
+                                    <br />
+                                    Confirmer ?
+                                </>
+                            ) : (
+                                <>
+                                    Vous êtes sur le point d&apos;enregistrer les modifications pour{' '}
+                                    <strong>{headerTitle}</strong>.
+                                    <br />
+                                    Confirmer ?
+                                </>
+                            )
                         }
-                        confirmLabel="Enregistrer"
+                        confirmLabel={isCreate ? 'Créer' : 'Enregistrer'}
                         hasChanges={hasChanges}
-                        cancelDirtyTitle="Modifications non enregistrées"
-                        cancelDirtyMessage={
-                            <>
-                                Tu as des modifications non enregistrées sur cette salle.
-                                <br />
-                                Souhaites-tu les enregistrer avant de fermer ?
-                            </>
+                        cancelDirtyTitle={
+                            isCreate ? cancelCreateTitle : 'Modifications non enregistrées'
                         }
-                        cancelDirtyConfirmLabel="Enregistrer et fermer"
-                        cancelDirtyDiscardLabel="Fermer sans enregistrer"
+                        cancelDirtyMessage={
+                            isCreate ? (
+                                cancelCreateMessage
+                            ) : (
+                                <>
+                                    Tu as des modifications non enregistrées sur cette salle.
+                                    <br />
+                                    Souhaites-tu les enregistrer avant de fermer ?
+                                </>
+                            )
+                        }
+                        cancelDirtyConfirmLabel={
+                            isCreate ? 'Fermer et créer' : 'Enregistrer et fermer'
+                        }
+                        cancelDirtyDiscardLabel={
+                            isCreate ? 'Fermer sans créer' : 'Fermer sans enregistrer'
+                        }
                         deleteLabel="Supprimer"
                         deleteTitle="Supprimer cette salle"
                         deleteMessage="Souhaites-tu supprimer cette salle ?"
@@ -402,20 +481,40 @@ export default function RoomDetailCard({ room, onClose, onChange, onDelete }: Ro
 
             <ConfirmDialog
                 open={isConfirmOpen}
-                title="Modifications non enregistrées"
+                title={isCreate ? cancelCreateTitle : 'Modifications non enregistrées'}
                 message={
-                    <>
-                        <p>Tu as des modifications non enregistrées sur cette salle.</p>
-                        <p>Souhaites-tu les enregistrer avant de fermer&nbsp;?</p>
-                    </>
+                    isCreate ? (
+                        cancelCreateMessage
+                    ) : (
+                        <>
+                            <p>Tu as des modifications non enregistrées sur cette salle.</p>
+                            <p>Souhaites-tu les enregistrer avant de fermer&nbsp;?</p>
+                        </>
+                    )
                 }
-                confirmLabel="Enregistrer et fermer"
-                cancelLabel="Fermer sans enregistrer"
+                confirmLabel={
+                    isCreate ? 'Fermer et créer' : 'Enregistrer et fermer'
+                }
+                cancelLabel={
+                    isCreate ? 'Fermer sans créer' : 'Fermer sans enregistrer'
+                }
                 confirmClassName="btn-primary"
                 cancelClassName="btn-danger"
                 onConfirm={handleConfirmSaveAndClose}
                 onCancel={handleDiscardAndClose}
                 onRequestClose={handleConfirmDialogRequestClose}
+            />
+
+            <ConfirmDialog
+                open={!!errorMessage}
+                title="Erreur"
+                message={errorMessage ?? ''}
+                confirmLabel="OK"
+                cancelLabel="Fermer"
+                variant="danger"
+                onConfirm={() => setErrorMessage(null)}
+                onCancel={() => setErrorMessage(null)}
+                onRequestClose={() => setErrorMessage(null)}
             />
         </div>
     )

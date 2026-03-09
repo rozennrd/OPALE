@@ -1,6 +1,7 @@
 import React from 'react'
-import { PageToolbar, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
+import { PageToolbar, ToolbarAddButton, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
+import icPlus from '../../assets/ic-plus.png'
 import {
     AvailabilityFilter,
     CapacityOperator,
@@ -23,17 +24,22 @@ interface RoomsToolbarProps {
     selectionMode: boolean
     selectedCount: number
     onToggleSelectionMode: () => void
+    onCreateRequested: () => void
     onResetFilters: () => void
     hasActiveFilters: boolean
 }
 
 const ROOM_TYPE_OPTIONS: { value: RoomTypeFilter; label: string }[] = [
     { value: 'ALL', label: 'Tous les types' },
-    { value: 'TD', label: 'TD' },
-    { value: 'TP_ELECTRONIQUE', label: 'TP électronique' },
-    { value: 'TP_NUMERIQUE', label: 'TP numérique' },
-    { value: 'PROJET', label: 'Projet' },
-    { value: 'AUTRE', label: 'Autre' },
+    { value: 'Cours', label: 'Cours' },
+    { value: 'Informatique', label: 'Informatique' },
+    { value: 'Projet', label: 'Projet' },
+    { value: 'Rassemblement', label: 'Rassemblement' },
+    { value: 'Reunion', label: 'Réunion' },
+    { value: 'Associatif', label: 'Associatif' },
+    { value: 'Electronique', label: 'Électronique' },
+    { value: 'Fablab', label: 'Fablab' },
+    { value: 'Reseau', label: 'Réseau' },
 ]
 
 export default function RoomsToolbar({
@@ -50,6 +56,7 @@ export default function RoomsToolbar({
     selectionMode,
     selectedCount,
     onToggleSelectionMode,
+    onCreateRequested,
     onResetFilters,
     hasActiveFilters,
 }: RoomsToolbarProps) {
@@ -83,10 +90,22 @@ export default function RoomsToolbar({
                         </span>
                     )}
                 </button>
+
+                <ToolbarResetButton
+                    onClick={onResetFilters}
+                    disabled={!hasActiveFilters}
+                />
+
+                <ToolbarAddButton
+                    className="rooms-toolbar-add-btn rooms-toolbar-add-primary"
+                    onClick={onCreateRequested}
+                    label="Ajouter une salle"
+                    iconSrc={icPlus}
+                />
             </ToolbarRow>
 
             <ToolbarRow className="page-toolbar-row--filters rooms-toolbar-row rooms-toolbar-row--filters rooms-toolbar-filters">
-                <div className="toolbar-filter">
+                <div className="toolbar-filter rooms-toolbar-type-filter">
                     <label className="toolbar-filter-label">
                         Type
                         <select
@@ -131,11 +150,11 @@ export default function RoomsToolbar({
                     </div>
                 </div>
 
-                <div className="toolbar-filter toolbar-filter--chips">
+                <div className="toolbar-filter toolbar-filter--chips rooms-toolbar-availability-filter">
                     <span className="toolbar-filter-label">Disponibilité</span>
                     <div className="toolbar-toggle-chips">
                         {([
-                            { value: 'ALL', label: 'Les deux' },
+                            { value: 'ALL', label: 'Tous' },
                             { value: 'AVAILABLE', label: 'Disponible' },
                             { value: 'UNAVAILABLE', label: 'Non dispo' },
                         ] as { value: AvailabilityFilter; label: string }[]).map((option) => (
@@ -155,10 +174,11 @@ export default function RoomsToolbar({
                         ))}
                     </div>
                 </div>
-
-                <ToolbarResetButton
-                    onClick={onResetFilters}
-                    disabled={!hasActiveFilters}
+                <ToolbarAddButton
+                    className="rooms-toolbar-add-btn rooms-toolbar-add-inline"
+                    onClick={onCreateRequested}
+                    label="Ajouter une salle"
+                    iconSrc={icPlus}
                 />
             </ToolbarRow>
         </PageToolbar>

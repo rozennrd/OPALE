@@ -1,5 +1,4 @@
 ﻿// src/components/rooms/RoomCard.tsx
-import React from 'react'
 import { Room } from '../../models/Room'
 import RoomTypeBadge from './RoomTypeBadge'
 import EntityCard from '../common/EntityCard'
@@ -40,7 +39,6 @@ export default function RoomCard({
             return
         }
 
-        console.log('[ROOMS] Click room card', room)
         onSelect()
     }
 

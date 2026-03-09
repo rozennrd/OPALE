@@ -10,6 +10,22 @@ export const salleRepository = {
     return result.rows as SalleDAO[];
   },
 
+  async getByNom(nom: string, excludeId?: string): Promise<SalleDAO | null> {
+    const baseSql = 'SELECT * FROM salle WHERE lower(trim(nom)) = lower(trim($1))';
+    const sql = excludeId ? `${baseSql} AND id <> $2` : baseSql;
+    const params = excludeId ? [nom, excludeId] : [nom];
+    const result = await pool.query(sql, params);
+    return result.rows[0] ?? null;
+  },
+
+  async getByNomComplet(nomComplet: string, excludeId?: string): Promise<SalleDAO | null> {
+    const baseSql = 'SELECT * FROM salle WHERE lower(trim(nom_complet)) = lower(trim($1))';
+    const sql = excludeId ? `${baseSql} AND id <> $2` : baseSql;
+    const params = excludeId ? [nomComplet, excludeId] : [nomComplet];
+    const result = await pool.query(sql, params);
+    return result.rows[0] ?? null;
+  },
+
   // Insère une nouvelle salle
   async insert(
     nom: string,

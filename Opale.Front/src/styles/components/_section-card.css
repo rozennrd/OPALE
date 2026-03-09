@@ -1,0 +1,99 @@
+@layer components {
+    .section-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+        padding: 1rem 1.1rem;
+        border: 1px solid var(--border-subtle, var(--border));
+        height: 100%;
+    }
+
+    .section-card--wide {
+        grid-column: 1 / -1;
+    }
+
+    .section-card.is-collapsed {
+        align-self: start;
+        height: auto;
+    }
+
+    .section-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.7rem;
+    }
+
+    .section-card-title {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    .section-card-title-btn {
+        border: 0;
+        background: transparent;
+        margin: 0;
+        padding: 0;
+        font: inherit;
+        color: inherit;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .section-card-title-btn:focus-visible {
+        outline: 2px solid color-mix(in srgb, var(--primary) 40%, transparent);
+        outline-offset: 2px;
+        border-radius: 0.25rem;
+    }
+
+    .section-card-toggle {
+        border: 1px solid var(--border);
+        background: var(--panel-soft);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        cursor: pointer;
+        transition:
+            background-color 140ms ease,
+            border-color 140ms ease;
+    }
+
+    .section-card-toggle:hover {
+        border-color: var(--primary-soft, var(--primary));
+        background: var(--surface-hover, var(--panel-soft));
+    }
+
+    .section-card-toggle:focus-visible {
+        outline: 2px solid color-mix(in srgb, var(--primary) 40%, transparent);
+        outline-offset: 2px;
+    }
+
+    .section-card-chevron {
+        width: 0.55rem;
+        height: 0.55rem;
+        border-right: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+        display: inline-block;
+    }
+
+    .section-card-chevron.is-down {
+        transform: rotate(45deg);
+        margin-top: -0.2rem;
+    }
+
+    .section-card-chevron.is-up {
+        transform: rotate(-135deg);
+        margin-top: 0.2rem;
+    }
+
+    .section-card-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+    }
+}

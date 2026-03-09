@@ -1,5 +1,5 @@
 // src/pages/Promotions.tsx
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import icPlus from '../assets/ic-plus.png'
 
 import PromoEditDialog from '../components/promotions/PromoEditDialog.tsx'
@@ -27,8 +27,13 @@ export default function Promotions() {
         createCycleWithPromotions,
         removeCycle,
         renameCycle,
+        renameErrors,
+        clearRenameError,
+        updateRenameValidation,
+        validateCreateCycleName,
         removePromotion,
         addPromotionToCycle,
+        refreshCycles,
     } = usePromotionCycles()
 
     // Promotion sync (save/fetch)
@@ -49,7 +54,9 @@ export default function Promotions() {
         isLoading: isLoadingPromotion,
         addSpecialty,
         removeSpecialty,
-        handleSpecialtyChange
+        handleSpecialtyChange,
+        removedGroupIds,
+        removedSpecialtyIds,
     } = usePromotionEditing(cycles)
 
     // Student adjustment popup
@@ -79,16 +86,20 @@ export default function Promotions() {
         if (!editingPromo) return
 
         try {
-            const updatedPromo = await savePromotion(editingPromo)
+            const updatedPromo = await savePromotion(
+                editingPromo,
+                [],
+                removedGroupIds,
+                removedSpecialtyIds
+            )
 
             // Update local state with synced groups (containing real IDs) and refresh state
             markFormAsUntouched(updatedPromo);
+            await refreshCycles()
 
             // TODO: Update cycles state to reflect changes
             // setCycles(prev => updateCyclePromotion(prev, updatedPromo))
 
-            // TODO: Show success notification
-            console.log('Promotion saved successfully')
         } catch (error) {
             console.error('Failed to save promotion:', error)
             // TODO: Show error notification to user
@@ -99,7 +110,7 @@ export default function Promotions() {
         <div className="promos">
             <PageHeader
                 title="Promotions"
-                subtitle="Gestion des cycles, promotions et contraintes académiques (mock front uniquement)."
+                subtitle="Gestion des cycles, promotions et contraintes académiques."
             />
 
             <div className="promos-grid">
@@ -108,10 +119,14 @@ export default function Promotions() {
                         key={cycle.id}
                         cycle={cycle}
                         renameCycle={renameCycle}
+                        renameError={renameErrors[cycle.id]}
+                        clearRenameError={clearRenameError}
+                        updateRenameValidation={updateRenameValidation}
                         removeCycle={removeCycle}
                         openEditPromotion={openEditPromotion}
                         removePromotion={removePromotion}
                         addPromotion={addPromotionToCycle}
+                        refreshCycles={refreshCycles}
                     />
                 ))}
                 <button
@@ -168,6 +183,8 @@ export default function Promotions() {
                 isOpen={isCreateModalOpen}
                 onSubmit={createCycleWithPromotions}
                 onClose={closeCreateModal}
+                errorMessage={error}
+                validateName={validateCreateCycleName}
             />
             </div></div>
     )

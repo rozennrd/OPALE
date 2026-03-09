@@ -9,22 +9,79 @@
         border: 1px solid var(--color-border-subtle, #e5e7eb);
         border-radius: 999px;
         padding: 4px 8px;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         color: var(--color-text-main, #111827);
+        line-height: 1;
     }
 
     .date-range-pill--interactive {
         cursor: pointer;
     }
 
+    .date-range-pill-main {
+        border: none;
+        background: transparent;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        color: inherit;
+        text-align: left;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .date-range-pill--editing .date-range-pill-main {
+        cursor: default;
+    }
+
+    .date-range-pill-editor {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        flex-wrap: nowrap;
+    }
+
     .date-range-pill-dates {
         display: inline-flex;
         align-items: center;
         gap: 0.25rem;
+        white-space: nowrap;
     }
 
     .date-range-pill-separator {
         opacity: 0.6;
+    }
+
+    .date-range-pill-date {
+        font-variant-numeric: tabular-nums;
+    }
+
+    .date-range-date-separator {
+        opacity: 0.6;
+    }
+
+    .date-range-pill .date-input {
+        width: auto;
+    }
+
+    .date-range-pill .date-input .date-input-field {
+        width: 6.8rem;
+        min-width: 6.2rem;
+        padding: 0.2rem 1.6rem 0.2rem 0.55rem;
+        font-size: 0.75rem;
+        text-align: center;
+    }
+
+    .date-range-pill .date-input .date-input-button {
+        width: 1.25rem;
+        height: 1.25rem;
+        right: 0.25rem;
+    }
+
+    .date-range-pill .date-input .date-input-icon {
+        width: 0.85rem;
+        height: 0.85rem;
     }
 
     .date-range-pill-badge {
@@ -40,5 +97,13 @@
         margin-left: 2px;
         font-size: 0.75rem;
         opacity: 0.7;
+    }
+
+    :root:is([data-theme='dark'], [data-theme='spock']) .date-range-pill {
+        color: #000000;
+    }
+
+    :root:is([data-theme='dark'], [data-theme='spock']) .date-range-pill .date-input-field {
+        color: #000000;
     }
 }

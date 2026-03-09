@@ -39,7 +39,7 @@ interface ToolbarResetButtonProps {
 export const ToolbarResetButton: React.FC<ToolbarResetButtonProps> = ({
                                                                           onClick,
                                                                           disabled = false,
-                                                                          label = 'Reset filtres',
+                                                                          label = 'Réinitialiser les filtres',
                                                                           className = '',
                                                                       }) => {
     const buttonClassName = ['toolbar-filter-button', 'toolbar-reset-button', className]
@@ -54,6 +54,44 @@ export const ToolbarResetButton: React.FC<ToolbarResetButtonProps> = ({
             disabled={disabled}
         >
             {label}
+        </button>
+    )
+}
+
+interface ToolbarAddButtonProps {
+    onClick: () => void
+    label: string
+    className?: string
+    ariaLabel?: string
+    title?: string
+    iconSrc: string
+    iconAlt?: string
+    disabled?: boolean
+}
+
+export const ToolbarAddButton: React.FC<ToolbarAddButtonProps> = ({
+                                                                      onClick,
+                                                                      label,
+                                                                      className = '',
+                                                                      ariaLabel,
+                                                                      title,
+                                                                      iconSrc,
+                                                                      iconAlt = '',
+                                                                      disabled = false,
+                                                                  }) => {
+    const buttonClassName = ['toolbar-add-btn', className].filter(Boolean).join(' ')
+
+    return (
+        <button
+            type="button"
+            className={buttonClassName}
+            onClick={onClick}
+            aria-label={ariaLabel ?? label}
+            title={title ?? label}
+            disabled={disabled}
+        >
+            <img src={iconSrc} alt={iconAlt} className="toolbar-add-icon" />
+            <span className="toolbar-add-label">{label}</span>
         </button>
     )
 }

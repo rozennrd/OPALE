@@ -112,6 +112,12 @@
                 background 140ms ease;
     }
 
+    .room-detail-error {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--danger-800, #b91c1c);
+    }
+
     @media (max-width: 900px) {
         .room-detail-identity-grid {
             grid-template-columns: minmax(0, 1fr);
@@ -272,16 +278,19 @@
     }
 
     .room-type-chip-dot {
-        position: absolute;
-        left: 0.8rem;
-        top: 50%;
-        transform: translateY(-50%);
         width: 8px;
         height: 8px;
         border-radius: 999px;
-        border: 1px solid var(--border-subtle);
+        border: 1px solid
+        color-mix(in srgb, var(--text) 55%, transparent);
         background: transparent;
         flex-shrink: 0;
+        display: inline-block;
+    }
+
+    .room-type-chip-selected .room-type-chip-dot {
+        border-color: var(--primary);
+        background: var(--primary);
     }
 
     .room-type-chip-main-selected .room-type-chip-dot {
@@ -456,6 +465,10 @@
     [data-theme='dark'] .room-availability-switch-track {
         background: rgba(148, 163, 184, 0.2);
         border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    [data-theme='dark'] .room-type-chip-dot {
+        border-color: color-mix(in srgb, var(--text) 70%, transparent);
     }
 
     /* ============================

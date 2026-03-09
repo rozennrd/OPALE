@@ -16,6 +16,11 @@ export const eventMapper = {
             is_blocking: dao.is_blocking,
             is_exceptional: dao.is_exceptional,
             is_external: dao.is_external,
+            concerne: {
+                promotions: dao.promotions ?? [],
+                groups: [],
+                specialties: [],
+            },
         };
     },
 };

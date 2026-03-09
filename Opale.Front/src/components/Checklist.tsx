@@ -16,7 +16,6 @@ interface ChecklistProps {
 
 const Checklist: React.FC<ChecklistProps> = ({ items, onToggle }) => {
     const handleToggle = (idx: number, it: ChecklistItem): void => {
-        console.log(`[CHECKBOX] ${it.id} -> ${!it.checked}`)
         onToggle?.(idx, !it.checked)
     }
 

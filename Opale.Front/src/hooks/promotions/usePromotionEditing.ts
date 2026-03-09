@@ -6,6 +6,7 @@ import { createEmptyConstraints } from './usePromotionConstraints'
 import { usePromotionSync } from './usePromotionSync'
 import { usePromotionConstraints } from "./usePromotionConstraints"
 import { transformBackendPromotionToFrontend } from '../../services/api/promotionsApiTransformers'
+import { Event } from '../../models/Event'
 
 export interface EditingPromotion {
     cycleId: string
@@ -27,6 +28,9 @@ export function usePromotionEditing(cycles: Cycle[]) {
     const [newGroupCounter, setNewGroupCounter] = useState(0)
     const [newSpecialtyCounter, setNewSpecialtyCounter] = useState(0)
     const [isLoading, setIsLoading] = useState(false)
+    const [removedGroupIds, setRemovedGroupIds] = useState<string[]>([])
+    const [removedSpecialtyIds, setRemovedSpecialtyIds] = useState<string[]>([])
+    const [originalEvents, setOriginalEvents] = useState<Event[]>([])
 
     const { fetchPromotionDetails } = usePromotionSync()
     const { convertEventsToConstraints } = usePromotionConstraints(editingPromo, setEditingPromo)
@@ -75,7 +79,9 @@ export function usePromotionEditing(cycles: Cycle[]) {
             setEditingPromo(normalized)
             setSavedSnapshot(structuredClone(normalized))
             setHasChanges(false)
-            console.log("promotion reloaded successfully")
+            setRemovedGroupIds([])
+            setRemovedSpecialtyIds([])
+            setOriginalEvents(events)
         } catch (error) {
             console.error('Error opening promotion:', error)
         } finally {
@@ -90,6 +96,8 @@ export function usePromotionEditing(cycles: Cycle[]) {
         setEditingPromo(null)
         setSavedSnapshot(null)
         setHasChanges(false)
+        setRemovedGroupIds([])
+        setRemovedSpecialtyIds([])
     }
 
     /**
@@ -136,6 +144,12 @@ export function usePromotionEditing(cycles: Cycle[]) {
      */
     const removeGroup = (index: number): void => {
         if (!editingPromo) return
+        const groupToRemove = editingPromo.groups[index]
+        if (groupToRemove?.id) {
+            setRemovedGroupIds(prev =>
+                prev.includes(String(groupToRemove.id)) ? prev : [...prev, String(groupToRemove.id)]
+            )
+        }
         const updatedGroups = editingPromo.groups.filter((_, i) => i !== index)
         setEditingPromo(prev => prev ? { ...prev, groups: updatedGroups } : prev)
     }
@@ -183,6 +197,12 @@ export function usePromotionEditing(cycles: Cycle[]) {
      */
     const removeSpecialty = (index: number): void => {
         if (!editingPromo) return
+        const specialtyToRemove = editingPromo.specialties[index]
+        if (specialtyToRemove?.id) {
+            setRemovedSpecialtyIds(prev =>
+                prev.includes(String(specialtyToRemove.id)) ? prev : [...prev, String(specialtyToRemove.id)]
+            )
+        }
         const updatedSpecialties = editingPromo.specialties.filter((_, i) => i !== index)
         setEditingPromo(prev => prev ? { ...prev, specialties: updatedSpecialties } : prev)
     }
@@ -206,9 +226,11 @@ export function usePromotionEditing(cycles: Cycle[]) {
 
     const markFormAsUntouched = (updatedPromo: EditingPromotion) => {
         setEditingPromo(updatedPromo)
-        console.log("hello")
         setSavedSnapshot(updatedPromo)
         setHasChanges(false)
+        setRemovedGroupIds([])
+        setRemovedSpecialtyIds([])
+        setOriginalEvents([])
     }
 
     return {
@@ -228,5 +250,8 @@ export function usePromotionEditing(cycles: Cycle[]) {
         handleSpecialtyChange,
         hasChanges,
         isLoading,
+        removedGroupIds,
+        removedSpecialtyIds,
+        originalEvents,
     }
 }

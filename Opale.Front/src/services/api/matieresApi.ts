@@ -36,7 +36,6 @@ export async function addMatiere(payload: Partial<Matiere>) {
 export async function updateMatiere(
     payload: BackendMatiereUpdateRequest
 ): Promise<ApiResponse<{ message: string }>> {
-    console.log('[API][updateMatiere] calling /updateMatiere with:', payload)
     return apiClient.put<{ message: string }>('/updateMatiere', payload)
 }
 
@@ -47,19 +46,12 @@ export async function deleteMatiere(id: string) {
 }
 
 export async function getMatieres(): Promise<BackendMatiere[]> {
-    console.log('[API][getMatieres] calling /getMatieres')
-
     const res = await apiClient.get<BackendMatiere[]>('/getMatieres')
-
-    console.log('[API][getMatieres] raw response:', res)
 
     if (!res.success) {
         console.error('[API][getMatieres] error:', res.error)
         throw new Error(res.error?.message ?? 'Failed to fetch matieres')
     }
-
-    console.log('[API][getMatieres] data length:', res.data?.length)
-    console.log('[API][getMatieres] first item:', res.data?.[0])
 
     return res.data ?? []
 }

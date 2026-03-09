@@ -12,16 +12,17 @@
     background: var(--cvd-error-hover-bg, color-mix(in srgb, var(--cvd-error-bg) 72%, var(--panel)));
   }
 
-  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .badge.ok {
-    background: var(--cvd-success-bg);
-    color: var(--cvd-success-text);
-    border: 2px solid var(--cvd-success-border);
-  }
-
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .badge.ok,
   :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .badge.alert {
     background: var(--cvd-warning-bg);
     color: var(--cvd-warning-text);
     border: 2px dashed var(--cvd-warning-border);
+  }
+
+  :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .badge.checked {
+    background: var(--cvd-success-bg);
+    color: var(--cvd-success-text);
+    border: 2px solid var(--cvd-success-border);
   }
 
   :root:is([data-cvd="protan-deutan"], [data-cvd="tritan"], [data-cvd="achromatopsia"]) .toolbar-toggle-chip--active,

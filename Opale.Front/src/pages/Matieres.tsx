@@ -74,8 +74,6 @@ export default function Matieres() {
 
         ;(async () => {
             try {
-                console.log('[MATIERES] fetching matieres + promotions + cycles + profs')
-
                 const [backendMatieres, promosRes, cyclesRes, profs, enseignementsRes] = await Promise.all([
                     getMatieres(),                 // Array backend matieres
                     promotionsApi.getPromotions(), // ApiResponse<BackendPromotion[]>
@@ -83,9 +81,6 @@ export default function Matieres() {
                     getProfsData(),                // ApiResponse<BackendTeacher[]>
                     getEnseignements(),            // ApiResponse<BackendEnseignement[]>
                 ])
-
-                console.log('[MATIERES] backendMatieres length:', backendMatieres?.length)
-                console.log('[MATIERES] backendMatieres first:', backendMatieres?.[0])
 
                 if (!promosRes.success) throw new Error(promosRes.error?.message ?? 'Promotions fetch failed')
                 if (!cyclesRes.success) throw new Error(cyclesRes.error?.message ?? 'Cycles fetch failed')
@@ -113,12 +108,6 @@ export default function Matieres() {
                 setTeacherIdsByMatiereId(map)
                 const backendPromos = promosRes.data ?? []
                 const backendCycles = cyclesRes.data ?? []
-
-                console.log('[MATIERES] backendPromos length:', backendPromos.length)
-                console.log('[MATIERES] backendCycles length:', backendCycles.length)
-
-                console.log('[MATIERES] example matiere id:', matieres?.[0]?.id)
-                console.log('[MATIERES] example enseignement matiereId:', enseignements?.[0]?.id_matiere)
 
                 const promotionLabels = backendPromos
                     .map((p) => p.nom)
@@ -197,8 +186,19 @@ export default function Matieres() {
     }, [allCycleNames])
 
     const promotionOptions = useMemo(() => {
-        return allPromotionLabels.map((nom) => ({ id: nom, nom }))
-    }, [allPromotionLabels])
+        const promos = Array.from(promoById.values())
+        const filtered = cycleFilter === 'ALL'
+            ? promos
+            : promos.filter((p) => (cycleNameById.get(p.id_cycle) ?? '') === cycleFilter)
+
+        const labels = filtered
+            .map((p) => p.nom)
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b, 'fr'))
+
+        const uniqueLabels = Array.from(new Set(labels))
+        return uniqueLabels.map((nom) => ({ id: nom, nom }))
+    }, [promoById, cycleNameById, cycleFilter])
 
     const teacherOptions = useMemo(() => {
         return (teachers ?? [])
@@ -209,6 +209,14 @@ export default function Matieres() {
             .filter((o) => o.label.length > 0)
             .sort((a, b) => a.label.localeCompare(b.label, 'fr'))
     }, [teachers])
+
+    useEffect(() => {
+        if (promotionFilter === 'ALL') return
+        const exists = promotionOptions.some((p) => p.nom === promotionFilter)
+        if (!exists) {
+            setPromotionFilter('ALL')
+        }
+    }, [promotionFilter, promotionOptions])
 
 
     const filtered = useMemo(() => {
@@ -335,8 +343,11 @@ export default function Matieres() {
         setSelected(matiere)
     }
 
+    const handleCreateRequested = () => {
+        console.log('[MATIERES] create requested')
+    }
+
     const reloadMatieres = async () => {
-        console.log('[MATIERES] reloadMatieres()')
         const backendMatieres = await getMatieres()
         const promosRes = await promotionsApi.getPromotions()
         if (!promosRes.success) return
@@ -350,8 +361,6 @@ export default function Matieres() {
 
         setMatieres(frontMatieres)
     }
-
-    console.log('Teacher option :', teacherOptions)
 
     return (
         <>
@@ -375,6 +384,7 @@ export default function Matieres() {
                     selectionMode={selectionMode}
                     selectedCount={selectedMatiereCount}
                     onToggleSelectionMode={toggleMatiereSelectionMode}
+                    onCreateRequested={handleCreateRequested}
                     onResetFilters={handleResetFilters}
                     hasActiveFilters={hasActiveFilters}
                 />

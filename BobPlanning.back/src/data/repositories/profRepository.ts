@@ -61,7 +61,6 @@ export const profRepository = {
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
             RETURNING id
         `;
-    console.log("telephone : ", telephone);
     const result = await pool.query(sql, [nom, prenom, email, email_perso, telephone, type, modalite_enseignement, campus_origin]);
     return result.rows[0].id;
   },

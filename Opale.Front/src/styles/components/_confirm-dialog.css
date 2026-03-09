@@ -21,6 +21,15 @@
         gap: 12px;
     }
 
+    .confirm-dialog-card--danger {
+        border: 1px solid var(--danger-200);
+        background: var(--panel);
+    }
+
+    .confirm-dialog-card--danger .confirm-dialog-title {
+        color: var(--danger-800);
+    }
+
     .confirm-dialog-close {
         position: absolute;
         top: 10px;

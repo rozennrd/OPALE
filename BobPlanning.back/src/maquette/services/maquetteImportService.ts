@@ -15,12 +15,15 @@ import {
   ImportMaquetteResult,
   MaquetteExamEventDraft,
   MaquetteMatiereLine,
+  MaquetteSpecialtyMappingInput,
 } from '../types/MaquetteExtracted';
-import { toUpperNoSpace } from '../utils/text';
+import { normalizeText, toUpperNoSpace } from '../utils/text';
 
 interface ImportMaquetteOptions extends AnalyzeMaquetteOptions {
   // Mode simulation: aucune ecriture en base.
   dryRun?: boolean;
+  // Mapping specialites issus du front (libelle detecte -> specialite base).
+  specialtyMappings?: MaquetteSpecialtyMappingInput[];
 }
 
 interface PromotionRow {
@@ -51,6 +54,71 @@ const toNullableInt = (value: number): number | null => {
   // Harmonise les volumes vers INT nullable.
   if (!Number.isFinite(value)) return null;
   return Math.round(value);
+};
+
+const getMappedTdHours = (line: MaquetteMatiereLine): number => {
+  // Regle metier demandee:
+  // heures_td en base = TD + cours magistral + cours interactif.
+  return line.heures.td + line.heures.coursMagistral + line.heures.coursInteractif;
+};
+
+const getMappedOtherHours = (line: MaquetteMatiereLine): number => {
+  // Les heures "autres" regroupent les postes non portes nativement par la table.
+  return line.heures.visitesConferences + line.heures.autoGere;
+};
+
+const getPromotionNumberFromCode = (promotionCode: string): number | null => {
+  const matches = promotionCode.match(/\d{1,2}/g);
+  if (!matches || matches.length === 0) return null;
+  const value = Number(matches[matches.length - 1]);
+  return Number.isFinite(value) && value > 0 ? value : null;
+};
+
+const getSemestreForDb = (line: MaquetteMatiereLine): number => {
+  const semestres = [...line.semestres].sort((a, b) => a - b);
+  const semestreBase = semestres[0] ?? 1;
+  const promoNumber = getPromotionNumberFromCode(line.promotionCode);
+  if (!promoNumber) return Math.max(1, semestreBase);
+  return semestreBase === promoNumber * 2 ? 2 : 1;
+};
+
+const normalizeSpecialiteKey = (value: string): string => normalizeText(value);
+
+const isCommunSpecialite = (value: string | null | undefined): boolean => {
+  if (!value) return false;
+  const normalized = normalizeText(value);
+  if (!normalized) return false;
+  return (
+    normalized === 'commun' ||
+    normalized.startsWith('commun ') ||
+    normalized.includes('tronc commun') ||
+    normalized.includes('tron commun')
+  );
+};
+
+const resolveSpecialtyIdForLine = (
+  line: MaquetteMatiereLine,
+  promotionId: string,
+  mapping: Map<string, string>,
+): string | null => {
+  const raw = line.specialiteLabel?.trim() || line.specialiteCode?.trim() || '';
+  if (!raw) return null;
+  if (line.specialiteType === 'COMMUN' || isCommunSpecialite(raw)) return null;
+  const key = `${promotionId}|${normalizeSpecialiteKey(raw)}`;
+  return mapping.get(key) ?? null;
+};
+
+const buildSpecialtyMappingLookup = (
+  mappings: MaquetteSpecialtyMappingInput[] | undefined,
+): Map<string, string> => {
+  if (!mappings || mappings.length === 0) return new Map();
+  const lookup = new Map<string, string>();
+  mappings.forEach((entry) => {
+    if (!entry?.promotionId || !entry?.specialtyId || !entry?.detected) return;
+    const key = `${entry.promotionId}|${normalizeSpecialiteKey(entry.detected)}`;
+    lookup.set(key, entry.specialtyId);
+  });
+  return lookup;
 };
 
 const parseSchoolYearStartYear = (schoolYear: string | null): SchoolYearInfo => {
@@ -231,19 +299,25 @@ const findExistingMatiere = async (
   client: PoolClient,
   line: MaquetteMatiereLine,
   promotionId: string,
+  specialiteId: string | null,
 ): Promise<string | null> => {
   // Recherche de la ligne cible pour logique upsert.
-  const semestre = line.semestres[0] ?? 1;
+  const semestre = getSemestreForDb(line);
   const sql = `
     SELECT id
     FROM matiere
     WHERE nom = $1
       AND id_promo = $2
       AND semestre = $3
-      AND id_specialite IS NULL
+      AND id_specialite IS NOT DISTINCT FROM $4
     LIMIT 1
   `;
-  const result = await client.query(sql, [line.matiereNom, promotionId, semestre]);
+  const result = await client.query(sql, [
+    line.matiereNom,
+    promotionId,
+    semestre,
+    specialiteId,
+  ]);
   return (result.rows[0]?.id as string | undefined) ?? null;
 };
 
@@ -251,27 +325,32 @@ const insertMatiere = async (
   client: PoolClient,
   line: MaquetteMatiereLine,
   promotionId: string,
+  specialiteId: string | null,
 ): Promise<void> => {
   // Insertion alignee sur le schema actuel de la table matiere.
-  const semestre = line.semestres[0] ?? 1;
+  const semestre = getSemestreForDb(line);
   const sql = `
     INSERT INTO matiere (
       nom, volume_horaire, id_promo, id_specialite,
       semestre, nb_partiels, nb_eval_intermediaire,
-      heures_td, heures_tp
+      heures_td, heures_tp, heures_projet, heures_elearning, heures_autre
     )
-    VALUES ($1,$2,$3,NULL,$4,$5,$6,$7,$8)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
   `;
 
   await client.query(sql, [
     line.matiereNom,
     line.heures.total,
     promotionId,
+    specialiteId,
     semestre,
     getNbPartiels(line),
     getNbEvalIntermediaire(line),
-    toNullableInt(line.heures.td),
+    toNullableInt(getMappedTdHours(line)),
     toNullableInt(line.heures.tp),
+    toNullableInt(line.heures.projet),
+    toNullableInt(line.heures.elearning),
+    toNullableInt(getMappedOtherHours(line)),
   ]);
 };
 
@@ -280,20 +359,24 @@ const updateMatiere = async (
   matiereId: string,
   line: MaquetteMatiereLine,
   promotionId: string,
+  specialiteId: string | null,
 ): Promise<void> => {
   // Mise a jour de la ligne existante (idempotence import).
-  const semestre = line.semestres[0] ?? 1;
+  const semestre = getSemestreForDb(line);
   const sql = `
     UPDATE matiere
     SET nom = $2,
         volume_horaire = $3,
         id_promo = $4,
-        id_specialite = NULL,
-        semestre = $5,
-        nb_partiels = $6,
-        nb_eval_intermediaire = $7,
-        heures_td = $8,
-        heures_tp = $9
+        id_specialite = $5,
+        semestre = $6,
+        nb_partiels = $7,
+        nb_eval_intermediaire = $8,
+        heures_td = $9,
+        heures_tp = $10,
+        heures_projet = $11,
+        heures_elearning = $12,
+        heures_autre = $13
     WHERE id = $1
   `;
 
@@ -302,11 +385,15 @@ const updateMatiere = async (
     line.matiereNom,
     line.heures.total,
     promotionId,
+    specialiteId,
     semestre,
     getNbPartiels(line),
     getNbEvalIntermediaire(line),
-    toNullableInt(line.heures.td),
+    toNullableInt(getMappedTdHours(line)),
     toNullableInt(line.heures.tp),
+    toNullableInt(line.heures.projet),
+    toNullableInt(line.heures.elearning),
+    toNullableInt(getMappedOtherHours(line)),
   ]);
 };
 
@@ -439,6 +526,7 @@ export const maquetteImportService = {
     const examEventsToCreate: MaquetteExamEventDraft[] = analyzed.matieres.flatMap(
       (matiere) => matiere.examEventDrafts,
     );
+    const specialtyMappingLookup = buildSpecialtyMappingLookup(options.specialtyMappings);
 
     if (options.dryRun) {
       // 2) Simulation: expose uniquement la projection.
@@ -474,10 +562,11 @@ export const maquetteImportService = {
 
       for (const line of analyzed.matieres) {
         if (line.semestres.length > 1) {
+          const semestre = getSemestreForDb(line);
           warnings.push(
             `Matiere "${line.matiereNom}" multi-semestres (${line.semestres.join(
               ',',
-            )}) importee avec semestre=${line.semestres[0]}.`,
+            )}) importee avec semestre=${semestre}.`,
           );
         }
 
@@ -491,14 +580,30 @@ export const maquetteImportService = {
           continue;
         }
 
-        const existingId = await findExistingMatiere(client, line, promotionId);
+        const mappedSpecialtyId = resolveSpecialtyIdForLine(
+          line,
+          promotionId,
+          specialtyMappingLookup,
+        );
+
+        let existingId = await findExistingMatiere(
+          client,
+          line,
+          promotionId,
+          mappedSpecialtyId,
+        );
+
+        if (!existingId && mappedSpecialtyId) {
+          existingId = await findExistingMatiere(client, line, promotionId, null);
+        }
+
         if (!existingId) {
-          await insertMatiere(client, line, promotionId);
+          await insertMatiere(client, line, promotionId, mappedSpecialtyId);
           insertedMatieres += 1;
           continue;
         }
 
-        await updateMatiere(client, existingId, line, promotionId);
+        await updateMatiere(client, existingId, line, promotionId, mappedSpecialtyId);
         updatedMatieres += 1;
       }
 

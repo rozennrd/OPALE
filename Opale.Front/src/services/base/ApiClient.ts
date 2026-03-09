@@ -14,6 +14,31 @@ class ApiClient {
         this.defaultRetries = config.retries ?? DEFAULT_API_CONFIG.retries
     }
 
+    private extractErrorMessage(errorData: unknown, fallback: string): string {
+        if (typeof errorData === 'string' && errorData.trim()) {
+            return errorData
+        }
+
+        if (errorData && typeof errorData === 'object') {
+            const asRecord = errorData as Record<string, unknown>
+
+            const candidates = [
+                asRecord.error,
+                asRecord.message,
+                asRecord.detail,
+                asRecord.details,
+            ]
+
+            for (const candidate of candidates) {
+                if (typeof candidate === 'string' && candidate.trim()) {
+                    return candidate
+                }
+            }
+        }
+
+        return fallback
+    }
+
   private async makeRequest<T>(
     method: string,
     endpoint: string,
@@ -80,7 +105,10 @@ class ApiClient {
 
                     const error: ApiError = {
                         code: response.status,
-                        message: errorData.message || `HTTP ${response.status}: ${response.statusText}`,
+                        message: this.extractErrorMessage(
+                            errorData,
+                            `HTTP ${response.status}: ${response.statusText}`,
+                        ),
                         details: errorData,
                     }
 
@@ -217,7 +245,10 @@ class ApiClient {
 
                     const error: ApiError = {
                         code: response.status,
-                        message: errorData.message || `HTTP ${response.status}: ${response.statusText}`,
+                        message: this.extractErrorMessage(
+                            errorData,
+                            `HTTP ${response.status}: ${response.statusText}`,
+                        ),
                         details: errorData,
                     }
 

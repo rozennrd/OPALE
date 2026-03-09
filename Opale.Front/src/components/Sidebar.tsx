@@ -1,9 +1,10 @@
 // src/components/Sidebar.tsx
-import React, { useEffect } from 'react'
+import {JSX, useEffect} from 'react'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 
 import logoFull from '../assets/logo/logo-full.png'
 import logoFullDark from '../assets/logo/logo-full-dark.png'
+import logoFullSpock from '../assets/logo/logo-full-spock.png'
 import logoCompact from '../assets/logo/logo-compact.png'
 import icPlanning from '../assets/sidebar/ic-planning.png'
 import icPromotions from '../assets/sidebar/ic-promos.png'
@@ -14,8 +15,8 @@ import icMatieres from '../assets/sidebar/ic-matieres.png'
 import icParametres from '../assets/sidebar/ic-para.png'
 import icLogout from '../assets/sidebar/ic-logout.png'
 import icLogoutDark from '../assets/sidebar/ic-logout-dark.png'
-import icContact from '../assets/sidebar/ic-contact.png'
-import icContactDark from '../assets/sidebar/ic-contact-dark.png'
+import icTuto from '../assets/sidebar/ic-tuto.png'
+import icTutoDark from '../assets/sidebar/ic-tuto-dark.png'
 import { readAndApplyIconVisibilityPreferences } from '../utils/iconPreferences'
 
 import ThemeToggle from './ThemeToggle'
@@ -30,7 +31,7 @@ interface NavItem {
 const items: NavItem[] = [
     { to: '/planning', label: 'Planning', ic: icPlanning, code: 'OPS-01' },
     { to: '/promotions', label: 'Promotions', ic: icPromotions, code: 'CELL-03' },
-    { to: '/evenements', label: 'Evenements', ic: icEvenements, code: 'EVENT-12' },
+    { to: '/evenements', label: 'Événements', ic: icEvenements, code: 'EVENT-12' },
     { to: '/teachers', label: 'Enseignants', ic: icEnseignants, code: 'CREW-07' },
     { to: '/salles', label: 'Salles', ic: icSalles, code: 'DECK-04' },
     { to: '/matieres', label: 'Mati\u00e8res', ic: icMatieres, code: 'LAB-22' },
@@ -49,13 +50,12 @@ export default function Sidebar(): JSX.Element | null {
     if (location.pathname === '/login') return null
 
     const handleDisconnect = () => {
-        console.log('[AUTH] Se d\u00e9connecter')
         // Redirection vers la page login
         navigate('/login')
     }
 
-    const handleContact = () => {
-        console.log('[AUTH] Page contact')
+    const handleTutorial = () => {
+        navigate('/documentation')
     }
 
     return (
@@ -63,6 +63,7 @@ export default function Sidebar(): JSX.Element | null {
             <div className="brand">
                 <img className="logo-full logo-full-light" src={logoFull} alt="OPALE" />
                 <img className="logo-full logo-full-dark" src={logoFullDark} alt="OPALE" />
+                <img className="logo-full logo-full-spock" src={logoFullSpock} alt="OPALE" />
                 <img className="logo-compact" src={logoCompact} alt="O" />
             </div>
 
@@ -76,7 +77,6 @@ export default function Sidebar(): JSX.Element | null {
                         key={it.to}
                         to={it.to}
                         className={({ isActive }) => `nav-btn ${isActive ? 'active' : ''}`}
-                        onClick={() => console.log(`[NAV] ${it.label}`)}
                     >
                         <span className="nav-label-wrap">
                             <span className="nav-label">{it.label}</span>
@@ -106,14 +106,14 @@ export default function Sidebar(): JSX.Element | null {
                     <button
                         type="button"
                         className="footer-icon-btn"
-                        onClick={handleContact}
-                        aria-label="Contact"
-                        title="Contact"
+                        onClick={handleTutorial}
+                        aria-label="Documentation utilisateur"
+                        title="Documentation utilisateur"
                     >
-                        <img className="footer-icon-light" src={icContact} alt="" />
-                        <img className="footer-icon-dark" src={icContactDark} alt="" />
+                        <img className="footer-icon-light" src={icTuto} alt="" />
+                        <img className="footer-icon-dark" src={icTutoDark} alt="" />
                         <span className="footer-icon-fallback" aria-hidden="true">
-                            Contact
+                            Tuto
                         </span>
                     </button>
                 </div>

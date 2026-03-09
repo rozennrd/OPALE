@@ -52,6 +52,21 @@
         color: var(--text);
     }
 
+    .cycle-name-wrapper {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .cycle-name-error {
+        font-family: 'Nunito', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--danger-800, #b91c1c);
+    }
+
     .cycle-actions {
         display: flex;
         gap: 8px;

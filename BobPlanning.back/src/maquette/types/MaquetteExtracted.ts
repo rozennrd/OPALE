@@ -96,6 +96,12 @@ export interface MaquetteAnalyzeResult {
       type: MaquetteSpecialiteType;
     }>;
     feuilles: string[];
+    sectionSemesterDetections: Array<{
+      sheetName: string;
+      rowNumber: number;
+      semestres: number[];
+      rawText: string;
+    }>;
   };
 }
 
@@ -103,6 +109,15 @@ export interface AnalyzeMaquetteOptions {
   // Hints API: permettent de forcer un comportement de resolution.
   cycleHint?: string | null;
   promotionHint?: string | null;
+}
+
+export interface MaquetteSpecialtyMappingInput {
+  // Promotion cible (UUID base).
+  promotionId: string;
+  // Libelle detecte dans la maquette (code ou label brut).
+  detected: string;
+  // Specialite cible (UUID base).
+  specialtyId: string;
 }
 
 export interface ImportMaquetteResult {

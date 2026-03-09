@@ -14,12 +14,14 @@ export default function Rooms() {
     const {
         rooms,
         selectedRoom,
+        pendingNewRoomId,
         setSelectedRoom,
         addRoom,
         updateRoom,
         closeDetail,
         deleteRoomsByIds,
         deleteSingleRoom,
+        validateRoomIdentity,
     } = useRoomsData()
 
     const {
@@ -61,7 +63,6 @@ export default function Rooms() {
     })
 
     const handleToggleSelectionMode = () => {
-        console.log('[ROOMS] Toggle selection mode (mock)', { next: !selectionMode })
         toggleSelectionMode()
     }
 
@@ -71,17 +72,14 @@ export default function Rooms() {
     }
 
     const handleSelectAllVisible = () => {
-        console.log('[ROOMS] Select all visible rooms (mock)', { count: visibleRoomIds.length })
         selectAllRooms(visibleRoomIds)
     }
 
     const handleClearSelection = () => {
-        console.log('[ROOMS] Clear selection (mock)')
         clearSelection()
     }
 
     const handleDeleteSelected = () => {
-        console.log('[ROOMS] Delete selected rooms (mock)', { ids: selectedRoomIds })
         deleteRoomsByIds(selectedRoomIds)
         disableSelectionMode()
     }
@@ -89,6 +87,18 @@ export default function Rooms() {
     const floors = Array.from(
         new Set(rooms.map((room) => room.floor)),
     ).sort((a, b) => a - b)
+    const visibleFloors = Object.keys(roomsByFloor)
+        .map(Number)
+        .sort((a, b) => a - b)
+
+    const hasVisibleRooms = visibleRoomIds.length > 0
+
+    const isCreatingSelectedRoom = !!selectedRoom && pendingNewRoomId === selectedRoom.id
+    
+    const handleCreateRequested = () => {
+        const floor = floors[0] ?? 0
+        addRoom(floor)
+    }
 
     return (
         <>
@@ -112,6 +122,7 @@ export default function Rooms() {
                     selectionMode={selectionMode}
                     selectedCount={selectedRoomCount}
                     onToggleSelectionMode={handleToggleSelectionMode}
+                    onCreateRequested={handleCreateRequested}
                     onResetFilters={handleResetFilters}
                     hasActiveFilters={hasActiveFilters}
                 />
@@ -129,18 +140,23 @@ export default function Rooms() {
                 )}
 
                 <div className="rooms-sections">
-                    {floors.map((floor) => (
-                        <RoomsSection
-                            key={floor}
-                            floor={floor}
-                            rooms={roomsByFloor[floor] || []}
-                            onSelectRoom={setSelectedRoom}
-                            onAddRoom={addRoom}
-                            selectionMode={selectionMode}
-                            selectedRoomIds={selectedRoomIdsSet}
-                            onToggleRoomSelection={toggleRoomSelection}
-                        />
-                    ))}
+                    {hasVisibleRooms ? (
+                        visibleFloors.map((floor) => (
+                            <RoomsSection
+                                key={floor}
+                                floor={floor}
+                                rooms={roomsByFloor[floor] || []}
+                                onSelectRoom={setSelectedRoom}
+                                selectionMode={selectionMode}
+                                selectedRoomIds={selectedRoomIdsSet}
+                                onToggleRoomSelection={toggleRoomSelection}
+                            />
+                        ))
+                    ) : (
+                        <div className="rooms-empty-state">
+                            Aucune salle ne correspond aux filtres sélectionnés.
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -150,6 +166,8 @@ export default function Rooms() {
                     onClose={closeDetail}
                     onChange={updateRoom}
                     onDelete={() => handleDeleteSingleRoom(selectedRoom.id)}
+                    isCreate={isCreatingSelectedRoom}
+                    validateRoomIdentity={validateRoomIdentity}
                 />
             )}
         </>

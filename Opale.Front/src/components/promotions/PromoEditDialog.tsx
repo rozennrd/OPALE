@@ -42,8 +42,9 @@ interface PromoEditDialogProps {
 
 // Helper to format date as dd/mm/yyyy
 const formatDateLabel = (iso: string): string => {
+    const datePart = iso.split('T')[0] // supprime l'heure si présente
+    const [y, m, d] = datePart.split('-')
     if (!iso) return 'jj/mm/aaaa'
-    const [y, m, d] = (iso || '').split('-')
     if (!y || !m || !d) return 'jj/mm/aaaa'
     return `${d}/${m}/${y}`
 }
@@ -115,14 +116,22 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
         constraints: editingPromo.constraints,
     })
 
-    const handleSave = async () => {
-        await props.onSubmit()
+    const handleSave = async (): Promise<boolean> => {
+        try {
+            await props.onSubmit()
+            return true
+        } catch (error) {
+            console.error('Failed to save promotion:', error)
+            return false
+        }
     }
 
     const handleConfirmSaveAndClose = async () => {
         setOpenCloseConfirm(false)
-        await handleSave()
-        props.onClose()
+        const saved = await handleSave()
+        if (saved) {
+            props.onClose()
+        }
     }
 
     const handleDiscardAndClose = () => {
@@ -188,33 +197,37 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                 </div>
 
                 {(totals.groupsMismatch || totals.specialtiesMismatch) && (
-                    <div className="promo-mismatch-block">
-                        {totals.groupsMismatch && (
-                            <p className="promo-mismatch">
-                                Le total des groupes est {totals.groupsTotal} pour{' '}
-                                {totals.totalStudents}.
-                            </p>
-                        )}
-                        {totals.specialtiesMismatch && (
-                            <p className="promo-mismatch">
-                                Le total des spécialités est {totals.specialtiesTotal} pour{' '}
-                                {totals.totalStudents}.
-                            </p>
-                        )}
+                    <div className="promo-warning promo-warning--danger" role="status" aria-live="polite">
+                        <span className="promo-warning-icon" aria-hidden="true">&#9888;</span>
+                        <div className="promo-warning-content">
+                            {totals.groupsMismatch && (
+                                <p>
+                                    Le total des groupes est {totals.groupsTotal} pour {totals.totalStudents}.
+                                </p>
+                            )}
+                            {totals.specialtiesMismatch && (
+                                <p>
+                                    Le total des spécialités est {totals.specialtiesTotal} pour {totals.totalStudents}.
+                                </p>
+                            )}
+                        </div>
                     </div>
                 )}
 
                 {/* Constraint validation error */}
                 {!constraintValidation.isValid && (
-                    <div className="promo-mismatch-block valid-promo">
-                        <p className="promo-mismatch" style={{ color: '#856404' }}>
-                            <strong>Attention :</strong> Les contraintes suivantes sont en dehors de la période de la promotion 
-                            ({formatDateLabel(editingPromo.startDate)} - {formatDateLabel(editingPromo.endDate)}) :{' '}
-                            <strong>{constraintValidation.outOfPeriodTypes.join(', ')}</strong>
-                        </p>
-                        <p style={{ color: '#856404', fontSize: '0.9em', marginTop: '4px' }}>
-                            Veuillez corriger les dates ou supprimer ces contraintes avant d&apos;enregistrer.
-                        </p>
+                    <div className="promo-warning promo-warning--warning" role="status" aria-live="polite">
+                        <span className="promo-warning-icon" aria-hidden="true">&#9888;</span>
+                        <div className="promo-warning-content">
+                            <p>
+                                <strong>Attention :</strong> Les contraintes suivantes sont en dehors de la période de la promotion 
+                                ({formatDateLabel(editingPromo.startDate)} - {formatDateLabel(editingPromo.endDate)}) :{' '}
+                                <strong>{constraintValidation.outOfPeriodTypes.join(', ')}</strong>
+                            </p>
+                            <p className="promo-warning-sub">
+                                Veuillez corriger les dates ou supprimer ces contraintes avant d&apos;enregistrer.
+                            </p>
+                        </div>
                     </div>
                 )}
 
@@ -222,6 +235,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                     <ActionButtonsWithConfirm
                         onCancel={props.onClose}
                         onSave={handleSave}
+                        onAfterSaveConfirm={props.onClose}
                         hasChanges={props.hasChanges && !isSaveDisabled}
                         disabled={isSaveDisabled}
                         confirmMessage={
@@ -275,3 +289,4 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
 }
 
 export default PromoEditDialog
+

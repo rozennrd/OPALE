@@ -5,6 +5,7 @@ import ConfirmDialog from './ConfirmDialog'
 interface ActionButtonsWithConfirmProps {
     saveLabel?: string
     cancelLabel?: string
+    hideCancel?: boolean
 
     // Confirm "Enregistrer"
     confirmTitle?: string
@@ -43,16 +44,7 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
     confirmTitle = 'Confirmer les modifications',
     confirmMessage = 'Souhaitez-vous enregistrer les modifications ?',
     confirmLabel = 'Confirmer',
-    hasChanges = false,
-    cancelDirtyTitle = 'Modifications non enregistrées',
-    cancelDirtyMessage = (
-        <>
-            <p>Vous avez modifié certaines informations.</p>
-            <p>Souhaitez-vous les enregistrer avant de quitter&nbsp;?</p>
-        </>
-    ),
-    cancelDirtyConfirmLabel = 'Enregistrer et fermer',
-    cancelDirtyDiscardLabel = 'Fermer sans enregistrer',
+    hasChanges = true,
     onDelete,
     deleteLabel = 'Supprimer',
     deleteTitle = 'Confirmer la suppression',
@@ -63,18 +55,12 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
     onAfterSaveConfirm,
     disabled,
     onSave,
-    onCancel,
 }) => {
     const [openSaveConfirm, setOpenSaveConfirm] = useState(false)
-    const [openCancelConfirm, setOpenCancelConfirm] = useState(false)
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false)
 
     const closeSaveConfirmDialog = () => {
         setOpenSaveConfirm(false)
-    }
-
-    const closeCancelConfirmDialog = () => {
-        setOpenCancelConfirm(false)
     }
 
     const closeDeleteConfirmDialog = () => {
@@ -87,7 +73,10 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
     }
 
     const handleConfirmSave = async () => {
-        if (!canSave()) return
+        if (!canSave()) {
+            closeSaveConfirmDialog()
+            return
+        }
 
         closeSaveConfirmDialog()
         const saveResult = await Promise.resolve(onSave())
@@ -95,29 +84,12 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
         if (onAfterSaveConfirm) await Promise.resolve(onAfterSaveConfirm())
     }
 
-    const handleCancelClick = () => {
-        if (!hasChanges) {
-            onCancel()
-            return
-        }
-
-        setOpenCancelConfirm(true)
-    }
-
-    const handleConfirmCancelWithSave = async () => {
+    const handleDirectSave = async () => {
         if (!canSave()) return
 
         const saveResult = await Promise.resolve(onSave())
         if (saveResult === false) return
-
-        closeCancelConfirmDialog()
-        onSave()
-        onCancel()
-    }
-
-    const handleDiscardChangesAndClose = () => {
-        closeCancelConfirmDialog()
-        onCancel()
+        if (onAfterSaveConfirm) await Promise.resolve(onAfterSaveConfirm())
     }
 
     const handleConfirmDelete = () => {
@@ -142,16 +114,14 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
 
                 <button
                     type="button"
-                    className="btn-tertiary"
-                    onClick={handleCancelClick}
-                >
-                    {cancelLabel}
-                </button>
-
-                <button
-                    type="button"
                     className="btn-primary"
-                    onClick={() => setOpenSaveConfirm(true)}
+                    onClick={() => {
+                        if (!hasChanges) {
+                            void handleDirectSave()
+                            return
+                        }
+                        setOpenSaveConfirm(true)
+                    }}
                     disabled={disabled}
                     style={{ opacity: disabled ? 0.5 : 1, cursor: disabled ? 'not-allowed' : 'pointer' }}
                 >
@@ -168,19 +138,6 @@ export const ActionButtonsWithConfirm: React.FC<ActionButtonsWithConfirmProps> =
                 onConfirm={handleConfirmSave}
                 onCancel={closeSaveConfirmDialog}
                 onRequestClose={closeSaveConfirmDialog}
-            />
-
-            <ConfirmDialog
-                open={openCancelConfirm}
-                title={cancelDirtyTitle}
-                message={cancelDirtyMessage}
-                confirmLabel={cancelDirtyConfirmLabel}
-                cancelLabel={cancelDirtyDiscardLabel}
-                confirmClassName="btn-primary"
-                cancelClassName="btn-danger"
-                onConfirm={handleConfirmCancelWithSave}
-                onCancel={handleDiscardChangesAndClose}
-                onRequestClose={closeCancelConfirmDialog}
             />
 
             <ConfirmDialog

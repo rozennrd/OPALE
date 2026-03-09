@@ -7,6 +7,12 @@ export interface MaquetteAnalyzeMetadata {
   cycleCode: string
   promotions: string[]
   feuilles: string[]
+  sectionSemesterDetections?: Array<{
+    sheetName: string
+    rowNumber: number
+    semestres: number[]
+    rawText: string
+  }>
   specialites?: Array<{
     code: string
     label: string | null
@@ -19,6 +25,18 @@ export interface MaquetteAnalyzeMatiere {
   ueNom: string
   matiereNom: string
   semestres: number[]
+  heures?: {
+    total: number
+    totalAvecProf: number
+    coursMagistral: number
+    coursInteractif: number
+    td: number
+    tp: number
+    projet: number
+    elearning: number
+    visitesConferences: number
+    autoGere: number
+  }
   specialiteCode?: string | null
   specialiteLabel?: string | null
   specialiteType?: 'OPTION' | 'SPECIALITE' | 'COMMUN' | null
@@ -46,6 +64,12 @@ export interface MaquetteImportResponse {
   examEventsToCreate: unknown[]
 }
 
+export interface MaquetteSpecialtyMapping {
+  promotionId: string
+  detected: string
+  specialtyId: string
+}
+
 export interface MaquetteRequestOptions {
   cycleHint?: string
   promotionHint?: string
@@ -53,6 +77,7 @@ export interface MaquetteRequestOptions {
 
 export interface MaquetteImportOptions extends MaquetteRequestOptions {
   dryRun?: boolean
+  specialtyMappings?: MaquetteSpecialtyMapping[]
 }
 
 class MaquetteApi {
@@ -83,6 +108,9 @@ class MaquetteApi {
 
     if (options.cycleHint) formPayload.cycleHint = options.cycleHint
     if (options.promotionHint) formPayload.promotionHint = options.promotionHint
+    if (options.specialtyMappings && options.specialtyMappings.length > 0) {
+      formPayload.specialtyMappings = JSON.stringify(options.specialtyMappings)
+    }
 
     return apiClient.uploadFile<MaquetteImportResponse>(
       '/maquette/import',

@@ -62,11 +62,22 @@ export const usePromotionSync = () => {
     }
 
     /**
+     * Returns the ISO week number of a date string (YYYY-MM-DD)
+     */
+    const getWeekNumber = (dateStr: string): number => {
+        const date = new Date(dateStr)
+        const thursday = new Date(date)
+        thursday.setDate(date.getDate() + (4 - (date.getDay() || 7)))
+        const yearStart = new Date(thursday.getFullYear(), 0, 1)
+        return Math.ceil(((thursday.getTime() - yearStart.getTime()) / 86400000 + 1) / 7)
+    }
+
+    /**
      * Converts constraints to Event objects for API
      */
     const constraintsToEvents = (
         constraints: Constraints,
-        promoId: string
+        promoName: string
     ): Array<Omit<Event, 'id'> & { id?: string }> => {
         const events: Array<Omit<Event, 'id'> & { id?: string }> = []
 
@@ -78,7 +89,8 @@ export const usePromotionSync = () => {
                 events.push({
                     id: range.id?.startsWith('ctr-') ? undefined : range.id,
                     type: eventType,
-                    nom: `${eventType} - ${range.start} to ${range.end}`,
+                    nom: `${eventType} - ${promoName}`,
+                    num_semaine: range.start ? getWeekNumber(range.start) : undefined,
                     datetime_start: `${range.start}T00:00:00`,
                     datetime_end: `${range.end}T23:59:59`,
                     show_macro: true,
@@ -98,11 +110,12 @@ export const usePromotionSync = () => {
      */
     const syncEvents = async (
         promoId: string,
+        promoName: string,
         currentConstraints: Constraints,
         originalEvents: Event[]
     ): Promise<void> => {
         try {
-            const currentEvents = constraintsToEvents(currentConstraints, promoId)
+            const currentEvents = constraintsToEvents(currentConstraints, promoName)
 
             // Separate new and existing events
             const newEvents = currentEvents.filter(e => !e.id)
@@ -114,7 +127,6 @@ export const usePromotionSync = () => {
 
             // Create new events
             if (newEvents.length > 0) {
-                console.log(`Creating ${newEvents.length} new events`)
                 for (const newEvent of newEvents) {
 
                     if (!newEvent.concerne) {newEvent.concerne = {}}
@@ -136,14 +148,12 @@ export const usePromotionSync = () => {
                     originalEvent.datetime_end !== event.datetime_end ||
                     originalEvent.nom !== event.nom
                 )) {
-                    console.log(`Updating event ${event.id}`)
                     await eventsApi.updateEvent(event.id!, event)
                 }
             }
 
             // Delete removed events
             for (const event of deletedEvents) {
-                console.log(`Deleting event ${event.id}`)
                 await eventsApi.deleteEvent(event.id)
             }
 
@@ -217,7 +227,7 @@ export const usePromotionSync = () => {
             )
 
             // Map groups to their created versions
-            return groups.map(g => {
+            const syncedGroups = groups.map(g => {
                 if (g.idPromo.startsWith('new-group-')) {
                     const created = createdGroups.find(cg => cg.tempId === g.idPromo)
                     if (created) {
@@ -232,6 +242,30 @@ export const usePromotionSync = () => {
                 }
                 return g
             })
+
+            // Delete removed groups
+            try {
+                const existingGroupsRes = await groupsApi.getGroups()
+                const existingGroups = (existingGroupsRes.data || []).filter(g => String(g.id_promo) === String(promoId))
+                const currentIds = new Set(
+                    syncedGroups
+                        .map(g => g.id)
+                        .filter(Boolean)
+                        .map(id => String(id))
+                )
+
+                const deletions = existingGroups
+                    .filter(g => !currentIds.has(String(g.id)))
+                    .map(g => groupsApi.deleteGroup(Number(g.id)))
+
+                if (deletions.length > 0) {
+                    await Promise.all(deletions)
+                }
+            } catch (error) {
+                console.warn('Failed to delete removed groups:', error)
+            }
+
+            return syncedGroups
         } catch (error) {
             console.error('Error syncing groups:', error)
             throw new Error('Failed to sync groups with backend')
@@ -304,7 +338,7 @@ export const usePromotionSync = () => {
             )
 
             // Map specialties to their created versions
-            return specialties.map(s => {
+            const syncedSpecialties = specialties.map(s => {
                 if (s.idPromo.startsWith('new-specialty-')) {
                     const created = createdSpecialties.find(cs => cs.tempId === s.idPromo)
                     if (created) {
@@ -319,6 +353,32 @@ export const usePromotionSync = () => {
                 }
                 return s
             })
+
+            // Delete removed specialties
+            try {
+                const existingSpecialtiesRes = await specialtiesApi.getSpecialties()
+                const existingSpecialties = (existingSpecialtiesRes.data || []).filter(
+                    s => String(s.id_promo) === String(promoId)
+                )
+                const currentIds = new Set(
+                    syncedSpecialties
+                        .map(s => s.id)
+                        .filter(Boolean)
+                        .map(id => String(id))
+                )
+
+                const deletions = existingSpecialties
+                    .filter(s => !currentIds.has(String(s.id)))
+                    .map(s => specialtiesApi.deleteSpecialty(String(s.id)))
+
+                if (deletions.length > 0) {
+                    await Promise.all(deletions)
+                }
+            } catch (error) {
+                console.warn('Failed to delete removed specialties:', error)
+            }
+
+            return syncedSpecialties
         } catch (error) {
             console.error('Error syncing specialties:', error)
             throw new Error('Failed to sync specialties with backend')
@@ -331,7 +391,9 @@ export const usePromotionSync = () => {
      */
     const savePromotion = async (
         promo: EditingPromotion,
-        originalEvents: Event[] = []
+        originalEvents: Event[] = [],
+        removedGroupIds: string[] = [],
+        removedSpecialtyIds: string[] = []
     ): Promise<EditingPromotion> => {
         try {
             // Validate constraints are within promotion period
@@ -354,8 +416,40 @@ export const usePromotionSync = () => {
             // Sync specialties
             const syncedSpecialties = await syncSpecialties(promo.promoId, promo.specialties)
 
+            // Delete removed groups
+            if (removedGroupIds.length > 0) {
+                const groupsApi = new GroupsApi()
+                const uniqueGroupIds = Array.from(new Set(removedGroupIds))
+                for (const id of uniqueGroupIds) {
+                    try {
+                        await groupsApi.deleteGroup(id)
+                    } catch (error) {
+                        console.warn(`Failed to delete group ${id}:`, error)
+                    }
+                }
+            }
+
+            // Delete removed specialties
+            if (removedSpecialtyIds.length > 0) {
+                const specialtiesApi = new SpecialtiesApi()
+                const uniqueSpecialtyIds = Array.from(new Set(removedSpecialtyIds))
+                for (const id of uniqueSpecialtyIds) {
+                    try {
+                        await specialtiesApi.deleteSpecialty(id)
+                    } catch (error) {
+                        console.warn(`Failed to delete specialty ${id}:`, error)
+                    }
+                }
+            }
+
+            // Fetch original events from backend before syncing (to detect deletions/updates)
+            const { events: fetchedOriginalEvents } = await fetchPromotionDetails(promo.promoId)
+
             // Sync events (constraints)
-            await syncEvents(promo.promoId, promo.constraints, originalEvents)
+            await syncEvents( promo.promoId,
+                promo.name,
+                promo.constraints,
+                fetchedOriginalEvents)
 
             // Update promotion metadata
             await promotionsApi.updatePromotion({

@@ -8,9 +8,8 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- 1. Types ENUM
 -- ==============================================================
 
-
 CREATE TYPE type_professeur AS ENUM ('Permanent', 'Intervenant', 'Invite');
-CREATE TYPE type_salle      AS ENUM ('Cours', 'Informatique', 'Projet', 'Rassemblement', 'Associatif', 'Reunion', 'Electronique', 'Fablab', 'Reseau');
+CREATE TYPE type_salle      AS ENUM ('Cours', 'Informatique', 'Projet', 'Rassemblement', 'Associatif', 'Reunion', 'Electronique', 'Fablab', 'Reseau', 'Autre');
 CREATE TYPE type_event      AS ENUM ('Cours', 'Entreprise', 'Examen', 'Reunion', 'Fermeture', 'Soutenance', 'JPO', 'Stage', 'Mobilite', 'PFE', 'Rattrapage', 'Conference', 'Rentrée', 'Réunion parents', 'Journée Immersion', 'Concours', 'Salon', 'Fin des cours', 'Autre');
 CREATE TYPE type_cours      AS ENUM ('Cours_TD', 'Cours_TD_DIST', 'Cours_TP', 'Cours_TP_DIST', 'E-Learning', 'Entreprise', 'Examen', 'Projet', 'Rattrapage', 'Associatif', 'Conférence', 'Stage', 'Encadrement', 'Auto-géré', 'Autre');
 CREATE TYPE type_cycle      AS ENUM ('Initial', 'Apprentissage');
@@ -322,19 +321,22 @@ CREATE INDEX idx_matiere_specialite     ON matiere (id_specialite);
 -- ==============================================================
 --
 -- Déchargement des données de la table `Utilisateurs`
+-- Note : utilisateur Daminou, mdp Daminou
+-- utilisateur test, mdp test
 --
 INSERT INTO utilisateurs (login, email, password, date_blocage, tentatives_echouees) VALUES
-    ('Daminou', 'Daminou', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533',  '2025-02-17 15:36:41', 0);
+    ('Daminou', 'Daminou', '43c1f76adf6d51952d6a20bbf8ddc93478d11aae84dbc37caa5e5c18b3c7f533',  '2025-02-17 15:36:41', 0),
+    ('test', 'test', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',  '2025-02-17 15:36:41', 0);
+
 
 
 -- Déchargement des données de la table `cycle`
--- Attention : A enlever une fois que la base de donnée sera correctement intégrée
+-- Attention : À enlever une fois que la base de donnée sera correctement intégrée
 --
 INSERT INTO cycle (nom, type) VALUES
                                   ('Cycle Préparatoire', 'Initial'),
-                                  ('Cycle Ingénieur',   'Initial'),
-                                  ('Cycle Ingénieur', 'Apprentissage');
-
+                                  ('Cycle Ingénieur - Initial',   'Initial'),
+                                  ('Cycle Ingénieur - Apprentissage', 'Apprentissage');
 
 -- Déchargement des données de la table `salle`
 --
@@ -369,16 +371,43 @@ INSERT INTO professeur (id, nom, prenom, email, email_perso, telephone, type, mo
     ('5e6f7a8b-9c0d-1234-ef12-345678901235', 'Chevalier',  'Sarah',   'sarah.chevalier@isen.fr',     'sarah.c@hotmail.fr',          '0612121212', 'Permanent',   'Hybride',    'Chateauroux');
 
 -- Déchargement des données de la table `promotions`
--- Attention : A enlever une fois que la base de donnée sera correctement intégrée
---
 INSERT INTO promotion (nom, effectifs, id_cycle, date_start, date_end) VALUES
                                                                            ('ADI1',   20,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
                                                                            ('ADI2',   22,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
                                                                            ('CIR1',   21,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
                                                                            ('CIR2',   25,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
-                                                                           ('AP3',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
-                                                                           ('AP4',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
-                                                                           ('AP5',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
-                                                                           ('ISEN3',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
-                                                                           ('ISEN4',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
-                                                                           ('ISEN5',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur' and type = 'Initial'),    '2023-09-01', '2024-06-30');
+                                                                           ('AP3',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur - Apprentissage' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
+                                                                           ('AP4',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur - Apprentissage' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
+                                                                           ('AP5',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur - Apprentissage' and type = 'Apprentissage'),    '2023-09-01', '2024-06-30'),
+                                                                           ('ISEN3',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur - Initial' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
+                                                                           ('ISEN4',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur - Initial' and type = 'Initial'),    '2023-09-01', '2024-06-30'),
+                                                                           ('ISEN5',    30,  (SELECT id FROM cycle WHERE nom = 'Cycle Ingénieur - Initial' and type = 'Initial'),    '2023-09-01', '2024-06-30');
+
+INSERT INTO salle (nom, nom_complet, type_principal, types_secondaires, etage, capacite, description) VALUES
+                                                                                                          ('J001', 'Fablab', 'Fablab'::type_salle, ARRAY['Fablab', 'Informatique', 'Projet']::type_salle[], 0, 30, ''),
+                                                                                                          ('J002', 'J002', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 0, 30, ''),
+                                                                                                          ('J003', 'Codesign', 'Informatique'::type_salle, ARRAY['Informatique']::type_salle[], 0, 20, 'Salle de cours de TD informatique'),
+                                                                                                          ('J004', 'J004', 'Informatique'::type_salle, ARRAY['Informatique', 'Reseau', 'Electronique']::type_salle[], 0, 16, 'Salle de cours de TP informatique'),
+                                                                                                          ('J005', 'J005', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 0, 30, ''),
+                                                                                                          ('J101', 'J101', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 1, 30, ''),
+                                                                                                          ('J102', 'J102', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 1, 30, ''),
+                                                                                                          ('J103', 'J103', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 1, 20, 'Salle de cours de TD informatique'),
+                                                                                                          ('J104', 'J104', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 1, 16, 'Salle de cours de TP informatique'),
+                                                                                                          ('J105', 'J105', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 1, 30, ''),
+                                                                                                          ('J106', 'J106', 'Electronique'::type_salle, ARRAY['Electronique']::type_salle[], 1, 30, ''),
+                                                                                                          ('J107', 'Cuisine Pédagogique', 'Reunion'::type_salle, ARRAY['Reunion', 'Cours']::type_salle[], 1, 30, ''),
+                                                                                                          ('J108', 'J108', 'Reunion'::type_salle, ARRAY['Informatique']::type_salle[], 1, 30, ''),
+                                                                                                          ('J109', 'Classlab', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 1, 30, ''),
+                                                                                                          ('J201', 'J201', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 2, 30, ''),
+                                                                                                          ('J202', 'J202', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 2, 30, ''),
+                                                                                                          ('J203', 'J203', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 2, 20, 'Salle de cours de TD informatique'),
+                                                                                                          ('J204', 'J204', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 2, 16, 'Salle de cours de TP informatique'),
+                                                                                                          ('J205', 'J205', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 2, 30, ''),
+                                                                                                          ('J206', 'J206', 'Cours'::type_salle, ARRAY['Informatique']::type_salle[], 2, 30, '');
+
+
+INSERT INTO professeur (NOM, PRENOM, EMAIL, EMAIL_PERSO, TELEPHONE, TYPE, MODALITE_ENSEIGNEMENT, CAMPUS_ORIGIN) VALUES
+                                                                                                                    ('Pirog', 'Antoine', 'antoine.pirog@junia.com', 'antoine.pirog@junia.com', '0625252525', 'Permanent', 'Présentiel', 'Bordeaux'),
+                                                                                                                    ('Chatrie', 'Frédéric', 'frederic.chatrie@junia.com', 'frederic.chatrie@junia.com', '0626252525', 'Permanent', 'Présentiel', 'Bordeaux'),
+                                                                                                                    ('Viot', 'Lucas', 'lucas.viot@junia.com', 'lucas.viot@junia.com', '0626352525', 'Permanent', 'Présentiel', 'Bordeaux'),
+                                                                                                                    ('Mokrani', 'Cyril', 'cyril.mokrani@junia.com', null, '0626352625', 'Intervenant', 'Présentiel', 'Bordeaux');

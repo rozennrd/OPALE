@@ -1,15 +1,24 @@
 // src/components/promotions/CycleCreateDialog.tsx
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import { getCycleTypeDisplayName, CYCLE_TYPES } from '../../constants/cycleTypes'
+import { DUPLICATE_CYCLE_MESSAGE } from '../../hooks/promotions/usePromotionCycles'
 
 interface CycleCreateDialogProps {
     isOpen: boolean
-    onSubmit: (formData: { name: string; type: string; promotionCount: number }) => void
+    onSubmit: (formData: { name: string; type: string; promotionCount: number }) => Promise<boolean>
     onClose: () => void
+    errorMessage?: string
+    validateName?: (name: string) => string
 }
 
-const CycleCreateDialog: React.FC<CycleCreateDialogProps> = ({ isOpen, onSubmit, onClose }) => {
+const CycleCreateDialog: React.FC<CycleCreateDialogProps> = ({
+    isOpen,
+    onSubmit,
+    onClose,
+    errorMessage,
+    validateName,
+}) => {
     const [formData, setFormData] = useState({
         name: '',
         type: CYCLE_TYPES[0], // Default to first available type
@@ -32,21 +41,63 @@ const CycleCreateDialog: React.FC<CycleCreateDialogProps> = ({ isOpen, onSubmit,
         setFormData(prev => ({ ...prev, [field]: value }))
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         // Basic validation - name is required
         if (!formData.name.trim()) {
             return
         }
 
-        onSubmit(formData)
-        onClose()
+        const validationMessage = validateName ? validateName(formData.name) : ''
+        if (validationMessage) {
+            return
+        }
+
+        const success = await onSubmit(formData)
+        if (success) {
+            onClose()
+        }
     }
 
+    const handleRequestClose = useCallback(() => {
+        onClose()
+    }, [onClose])
+
+    useEffect(() => {
+        if (!isOpen) return
+
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key !== 'Escape') return
+
+            const hasModal = document.querySelector('.modal-overlay')
+            if (hasModal) {
+                return
+            }
+
+            handleRequestClose()
+        }
+
+        window.addEventListener('keydown', onKeyDown)
+        return () => window.removeEventListener('keydown', onKeyDown)
+    }, [isOpen, handleRequestClose])
+
     if (!isOpen) return null
+
+    const nameValidationMessage = validateName ? validateName(formData.name) : ''
+    const inlineNameError = nameValidationMessage || (errorMessage === DUPLICATE_CYCLE_MESSAGE ? errorMessage : '')
+    const shouldShowGenericError = Boolean(errorMessage && errorMessage !== DUPLICATE_CYCLE_MESSAGE)
 
     return (
         <div className="promo-edit-overlay">
             <div className="card promo-edit-card">
+                <button
+                    type="button"
+                    className="promo-edit-close"
+                    onClick={handleRequestClose}
+                    aria-label="Fermer la fenÍtre de crÈation"
+                >
+                    &times;
+                </button>
+
                 <h3 className="promo-edit-title">Cr√©er un nouveau cycle</h3>
 
                 <section className="promo-section promo-section-main">
@@ -64,6 +115,9 @@ const CycleCreateDialog: React.FC<CycleCreateDialogProps> = ({ isOpen, onSubmit,
                                 autoFocus
                                 required
                             />
+                            {inlineNameError && (
+                                <small className="promo-edit-error">{inlineNameError}</small>
+                            )}
                         </label>
 
                         <label className="promo-edit-field">
@@ -98,6 +152,15 @@ const CycleCreateDialog: React.FC<CycleCreateDialogProps> = ({ isOpen, onSubmit,
                     </div>
                 </section>
 
+                {shouldShowGenericError && (
+                    <div className="promo-warning promo-warning--danger" role="alert">
+                        <span className="promo-warning-icon">!</span>
+                        <div className="promo-warning-content">
+                            <p>{errorMessage}</p>
+                        </div>
+                    </div>
+                )}
+
                 <div className="promo-edit-actions">
                     <ActionButtonsWithConfirm
                         onCancel={onClose}
@@ -118,3 +181,4 @@ const CycleCreateDialog: React.FC<CycleCreateDialogProps> = ({ isOpen, onSubmit,
 }
 
 export default CycleCreateDialog
+

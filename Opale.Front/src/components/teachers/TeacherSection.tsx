@@ -26,7 +26,6 @@ export default function TeacherSection({
     const handleToggle = () => {
         const next = !isOpen
         setIsOpen(next)
-        console.log(`[TEACHERS] Toggle section "${title}" ->`, next ? 'open' : 'closed')
     }
 
     return (

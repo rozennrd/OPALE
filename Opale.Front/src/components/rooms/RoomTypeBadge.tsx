@@ -17,19 +17,15 @@ interface RoomTypeBadgeProps {
 }
 
 const TYPE_META: Record<RoomType, { icon: string; label: string; typeClass: string }> = {
-    TD: { icon: icTd, label: 'Salle de TD', typeClass: 'td' },
-    TP_ELECTRONIQUE: {
-        icon: icTpe,
-        label: 'TP électronique',
-        typeClass: 'tp_electronique',
-    },
-    TP_NUMERIQUE: {
-        icon: icTpn,
-        label: 'TP numérique',
-        typeClass: 'tp_numerique',
-    },
-    PROJET: { icon: icProjet, label: 'Salle projet', typeClass: 'projet' },
-    AUTRE: { icon: icAutre, label: 'Autre', typeClass: 'autre' },
+    Cours: { icon: icTd, label: 'Cours', typeClass: 'td' },
+    Informatique: { icon: icTpn, label: 'Informatique', typeClass: 'tp_numerique' },
+    Projet: { icon: icProjet, label: 'Projet', typeClass: 'projet' },
+    Rassemblement: { icon: icAutre, label: 'Rassemblement', typeClass: 'autre' },
+    Reunion: { icon: icAutre, label: 'Réunion', typeClass: 'autre' },
+    Associatif: { icon: icAutre, label: 'Associatif', typeClass: 'autre' },
+    Electronique: { icon: icTpe, label: 'Électronique', typeClass: 'tp_electronique' },
+    Fablab: { icon: icProjet, label: 'Fablab', typeClass: 'projet' },
+    Reseau: { icon: icTpn, label: 'Réseau', typeClass: 'tp_numerique' },
 }
 
 export default function RoomTypeBadge({
@@ -39,7 +35,7 @@ export default function RoomTypeBadge({
                                           title,
                                           subtitle,
                                       }: RoomTypeBadgeProps) {
-    const meta = TYPE_META[type] ?? TYPE_META.AUTRE
+    const meta = TYPE_META[type] ?? TYPE_META.Rassemblement
 
     const rootClassName = [
         'room-type-badge',

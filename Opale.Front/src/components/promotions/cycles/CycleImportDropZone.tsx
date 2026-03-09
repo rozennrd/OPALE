@@ -9,6 +9,7 @@ interface CycleImportDropzoneProps {
     onRemoveFile?: (file: File) => void
     onImportRequested?: () => void | Promise<void>
     isImporting?: boolean
+    hideImportButton?: boolean
     importFeedback?: {
         variant: ImportFeedbackVariant
         message: string
@@ -16,12 +17,12 @@ interface CycleImportDropzoneProps {
 }
 
 const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
-                                                                     cycleId,
                                                                      selectedFiles,
                                                                      onIncomingFiles,
                                                                      onRemoveFile,
                                                                      onImportRequested,
                                                                      isImporting = false,
+                                                                     hideImportButton = false,
                                                                      importFeedback = null,
                                                                  }) => {
     const inputRef = useRef<HTMLInputElement | null>(null)
@@ -50,17 +51,11 @@ const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
         const excelFiles = filterExcelFiles(files)
         if (excelFiles.length === 0) {
             console.warn(
-                '[CycleImportDropzone] Aucun fichier Excel detecte dans la selection',
+                '[CycleImportDropzone] Aucun fichier Excel détecté dans la sélection',
                 files,
             )
             return
         }
-
-        console.log(
-            '[CycleImportDropzone] Fichiers Excel reçus pour le cycle',
-            cycleId,
-            excelFiles,
-        )
 
         if (onIncomingFiles) {
             onIncomingFiles(excelFiles)
@@ -168,16 +163,18 @@ const CycleImportDropzone: React.FC<CycleImportDropzoneProps> = ({
                             )}
                         </div>
 
-                        <div className="cycle-import-dropzone-actions">
-                            <button
-                                type="button"
-                                className="btn-primary"
-                                onClick={handleImportClick}
-                                disabled={isImporting || selectedFiles.length === 0}
-                            >
-                                {isImporting ? 'Import en cours...' : 'Importer la maquette'}
-                            </button>
-                        </div>
+                        {!hideImportButton && (
+                            <div className="cycle-import-dropzone-actions">
+                                <button
+                                    type="button"
+                                    className="btn-primary"
+                                    onClick={handleImportClick}
+                                    disabled={isImporting || selectedFiles.length === 0}
+                                >
+                                    {isImporting ? 'Import en cours...' : 'Importer la maquette'}
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
 

@@ -4,7 +4,7 @@ import TeacherSection from '../components/teachers/TeacherSection'
 import TeacherDetailCard from '../components/teachers/TeacherDetailCard'
 import SelectionToolbar from '../components/common/SelectionToolbar'
 
-import { getProfsData } from '../services/api/professorsApi'
+import { deleteProf, getProfsData } from '../services/api/professorsApi'
 import { getEnseignements } from '../services/api/enseignementsApi'
 import { getMatieres } from '../services/api/matieresApi'
 import { promotionsApi } from '../services/api/promotionsApi'
@@ -18,11 +18,17 @@ import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
 const DEFAULT_TEACHERS_FILTERS: {
     searchValue: string
     modeFilter: ModeFilter
+    promotionFilter: string
     subjectFilter: string
+    dateFrom: string
+    dateTo: string
 } = {
     searchValue: '',
     modeFilter: 'ALL',
+    promotionFilter: '',
     subjectFilter: '',
+    dateFrom: '',
+    dateTo: '',
 }
 
 const getIsoWeekDateRange = (
@@ -52,7 +58,11 @@ export default function Teachers() {
     const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null)
     const [searchValue, setSearchValue] = useState('')
     const [modeFilter, setModeFilter] = useState<ModeFilter>('ALL')
+    const [promotionFilter, setPromotionFilter] = useState('')
     const [subjectFilter, setSubjectFilter] = useState('')
+    const [dateFrom, setDateFrom] = useState('')
+    const [dateTo, setDateTo] = useState('')
+    const [promotionOptions, setPromotionOptions] = useState<string[]>([])
 
     useEffect(() => {
         let mounted = true
@@ -78,14 +88,19 @@ export default function Teachers() {
 
                 const disponibilitesRes = await getDisponibilites()
 
-                console.log(apiTeachers)
-
                 if (!mounted) return
 
                 const promoLabelById = new Map<string, string>()
                 for (const p of promotionsRes.data ?? []) {
                     promoLabelById.set(String(p.id), p.nom)
                 }
+                const promotionLabels = (promotionsRes.data ?? [])
+                    .map((promo) => promo.nom ?? '')
+                    .filter((label) => label.trim().length > 0)
+                const uniquePromotionLabels = Array.from(
+                    new Set(promotionLabels),
+                ).sort((a, b) => a.localeCompare(b, 'fr', { numeric: true, sensitivity: 'base' }))
+                setPromotionOptions(uniquePromotionLabels)
 
                 const matiereById = new Map<string, { nom: string; promoLabel: string }>()
                 for (const m of matieres ?? []) {
@@ -250,6 +265,10 @@ export default function Teachers() {
     const filteredTeachers = (list: Teacher[]) => {
         const needle = searchValue.trim().toLowerCase()
         const subjectNeedle = subjectFilter.trim().toLowerCase()
+        const promotionNeedle = promotionFilter.trim().toLowerCase()
+        const hasDateFilter = Boolean(dateFrom || dateTo)
+        const rangeStart = dateFrom || '0000-01-01'
+        const rangeEnd = dateTo || '9999-12-31'
 
         return list.filter((teacher) => {
             const fullName = `${teacher.lastName} ${teacher.firstName} ${teacher.firstName} ${teacher.lastName}`.toLowerCase()
@@ -260,8 +279,26 @@ export default function Teachers() {
                 (teacher.subjects || []).some((subject) =>
                     subject.name.toLowerCase().includes(subjectNeedle),
                 )
+            const matchesPromotion =
+                !promotionNeedle ||
+                (teacher.subjects || []).some(
+                    (subject) => subject.promo?.toLowerCase() === promotionNeedle,
+                )
+            const matchesDate = !hasDateFilter
+                ? true
+                : (teacher.availabilityPeriods || []).some((period) => {
+                      const periodStart = period.start || '0000-01-01'
+                      const periodEnd = period.end || '9999-12-31'
+                      return periodStart <= rangeEnd && periodEnd >= rangeStart
+                  })
 
-            return matchesSearch && matchesMode && matchesSubject
+            return (
+                matchesSearch &&
+                matchesMode &&
+                matchesSubject &&
+                matchesPromotion &&
+                matchesDate
+            )
         })
     }
 
@@ -269,17 +306,33 @@ export default function Teachers() {
     const filteredInternalLilleChateauroux = filteredTeachers(internalLilleChateauroux)
     const filteredVacataires = filteredTeachers(intervenants)
     const filteredInvited = filteredTeachers(invites)
+    const hasFilteredTeachers =
+        filteredInternalBordeaux.length +
+            filteredInternalLilleChateauroux.length +
+            filteredVacataires.length +
+            filteredInvited.length >
+        0
 
     const {
         hasActiveFilters,
         resetFilters: handleResetFilters,
     } = useToolbarFilters({
-        values: { searchValue, modeFilter, subjectFilter },
+        values: {
+            searchValue,
+            modeFilter,
+            promotionFilter,
+            subjectFilter,
+            dateFrom,
+            dateTo,
+        },
         defaults: DEFAULT_TEACHERS_FILTERS,
         onReset: () => {
             setSearchValue(DEFAULT_TEACHERS_FILTERS.searchValue)
             setModeFilter(DEFAULT_TEACHERS_FILTERS.modeFilter)
+            setPromotionFilter(DEFAULT_TEACHERS_FILTERS.promotionFilter)
             setSubjectFilter(DEFAULT_TEACHERS_FILTERS.subjectFilter)
+            setDateFrom(DEFAULT_TEACHERS_FILTERS.dateFrom)
+            setDateTo(DEFAULT_TEACHERS_FILTERS.dateTo)
         },
     })
 
@@ -296,9 +349,16 @@ export default function Teachers() {
         ],
     )
 
-    const removeTeachersByIds = (ids: string[]) => {
+    const removeTeachersByIds = async (ids: string[]) => {
         const idsSet = new Set(ids)
         if (idsSet.size === 0) return
+
+        try {
+            await Promise.all(Array.from(idsSet).map((id) => deleteProf(id)))
+        } catch (error) {
+            console.error('[TEACHERS] delete failed:', error)
+            return
+        }
 
         setTeachers((prev) => prev.filter((teacher) => !idsSet.has(teacher.id)))
         pruneTeacherSelection(Array.from(idsSet))
@@ -310,12 +370,13 @@ export default function Teachers() {
     }
 
     const handleDeleteSingleTeacher = (teacherId: string) => {
-        removeTeachersByIds([teacherId])
+        void removeTeachersByIds([teacherId])
     }
 
     const handleDeleteSelected = () => {
-        removeTeachersByIds(selectedTeacherIds)
-        disableTeacherSelectionMode()
+        void removeTeachersByIds(selectedTeacherIds).then(() => {
+            disableTeacherSelectionMode()
+        })
     }
 
     const handleTeacherUpdated = (updatedTeacher: Teacher) => {
@@ -353,9 +414,16 @@ export default function Teachers() {
                     onSearchChange={setSearchValue}
                     modeFilter={modeFilter}
                     onModeChange={setModeFilter}
+                    promotionFilter={promotionFilter}
+                    onPromotionChange={setPromotionFilter}
+                    promotionOptions={promotionOptions}
                     subjectFilter={subjectFilter}
                     onSubjectChange={setSubjectFilter}
                     subjectOptions={subjectOptions}
+                    dateFrom={dateFrom}
+                    onDateFromChange={setDateFrom}
+                    dateTo={dateTo}
+                    onDateToChange={setDateTo}
                     selectionMode={selectionMode}
                     selectedCount={selectedTeacherCount}
                     onToggleSelectionMode={toggleTeacherSelectionMode}
@@ -371,50 +439,58 @@ export default function Teachers() {
                             onClearSelection={clearTeacherSelection}
                             onDeleteSelected={handleDeleteSelected}
                             confirmTitle="Supprimer les enseignants sélectionnés"
-                            confirmMessage={`Vous allez supprimer ${selectedTeacherIds.length} enseignant${selectedTeacherIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                            confirmMessage={`Vous allez supprimer ${selectedTeacherIds.length} enseignant${selectedTeacherIds.length > 1 ? 's' : ''}. Cette action est définitive.`}
                     />
                 )}
 
                 <div className="teachers-sections">
-                    {filteredInternalBordeaux.length > 0 && (
-                        <TeacherSection
-                            title="Internes Bordeaux"
-                            teachers={filteredInternalBordeaux}
-                            onSelectTeacher={setSelectedTeacher}
-                            selectionMode={selectionMode}
-                            selectedTeacherIds={selectedTeacherIdsSet}
-                            onToggleTeacherSelection={toggleTeacherSelection}
-                        />
-                    )}
-                    {filteredInternalLilleChateauroux.length > 0 && (
-                        <TeacherSection
-                            title="Internes Lille/Châteauroux"
-                            teachers={filteredInternalLilleChateauroux}
-                            onSelectTeacher={setSelectedTeacher}
-                            selectionMode={selectionMode}
-                            selectedTeacherIds={selectedTeacherIdsSet}
-                            onToggleTeacherSelection={toggleTeacherSelection}
-                        />
-                    )}
-                    {filteredVacataires.length > 0 && (
-                        <TeacherSection
-                            title="Vacataires"
-                            teachers={filteredVacataires}
-                            onSelectTeacher={setSelectedTeacher}
-                            selectionMode={selectionMode}
-                            selectedTeacherIds={selectedTeacherIdsSet}
-                            onToggleTeacherSelection={toggleTeacherSelection}
-                        />
-                    )}
-                    {filteredInvited.length > 0 && (
-                        <TeacherSection
-                            title="Invités ponctuels"
-                            teachers={filteredInvited}
-                            onSelectTeacher={setSelectedTeacher}
-                            selectionMode={selectionMode}
-                            selectedTeacherIds={selectedTeacherIdsSet}
-                            onToggleTeacherSelection={toggleTeacherSelection}
-                        />
+                    {hasFilteredTeachers ? (
+                        <>
+                            {filteredInternalBordeaux.length > 0 && (
+                                <TeacherSection
+                                    title="Internes Bordeaux"
+                                    teachers={filteredInternalBordeaux}
+                                    onSelectTeacher={setSelectedTeacher}
+                                    selectionMode={selectionMode}
+                                    selectedTeacherIds={selectedTeacherIdsSet}
+                                    onToggleTeacherSelection={toggleTeacherSelection}
+                                />
+                            )}
+                            {filteredInternalLilleChateauroux.length > 0 && (
+                                <TeacherSection
+                                    title="Internes Lille/Châteauroux"
+                                    teachers={filteredInternalLilleChateauroux}
+                                    onSelectTeacher={setSelectedTeacher}
+                                    selectionMode={selectionMode}
+                                    selectedTeacherIds={selectedTeacherIdsSet}
+                                    onToggleTeacherSelection={toggleTeacherSelection}
+                                />
+                            )}
+                            {filteredVacataires.length > 0 && (
+                                <TeacherSection
+                                    title="Vacataires"
+                                    teachers={filteredVacataires}
+                                    onSelectTeacher={setSelectedTeacher}
+                                    selectionMode={selectionMode}
+                                    selectedTeacherIds={selectedTeacherIdsSet}
+                                    onToggleTeacherSelection={toggleTeacherSelection}
+                                />
+                            )}
+                            {filteredInvited.length > 0 && (
+                                <TeacherSection
+                                    title="Invités ponctuels"
+                                    teachers={filteredInvited}
+                                    onSelectTeacher={setSelectedTeacher}
+                                    selectionMode={selectionMode}
+                                    selectedTeacherIds={selectedTeacherIdsSet}
+                                    onToggleTeacherSelection={toggleTeacherSelection}
+                                />
+                            )}
+                        </>
+                    ) : (
+                        <div className="teacher-empty-state">
+                            Aucun enseignant ne correspond aux filtres sélectionnés.
+                        </div>
                     )}
                 </div>
             </div>
