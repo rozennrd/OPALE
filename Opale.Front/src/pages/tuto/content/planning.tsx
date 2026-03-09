@@ -39,6 +39,16 @@ export const planningTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
+                            Utiliser la <strong>checklist macro</strong> pour s'assurer qu'on a tout fait.
+                        </>
+                    ),
+                    imageSrc: screenPagePlanningScreenshot,
+                    imageAlt: 'Checklist macro de la page Planning',
+                    imageCaption: 'Checklist macro pour valider les prérequis.',
+                },
+                {
+                    text: (
+                        <>
                             Cliquer sur le bouton <strong>Générer le planning macro</strong>.
                         </>
                     ),
