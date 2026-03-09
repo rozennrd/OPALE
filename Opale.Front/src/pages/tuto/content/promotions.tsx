@@ -78,7 +78,7 @@ export const promotionsTutorialContent: TutorialContent = {
                         <>
                             Champ <strong>Nom du cycle</strong>: saisir un nom clair (ex: ADI, CIR).
                             <br />
-                            On ne peut pas donner un nom de cycle existant
+                            On ne peut pas donner un nom de cycle existant.
                         </>,
                         <>
                             Champ <strong>Type de formation</strong>: choisir via la liste déroulante{' '}
@@ -476,5 +476,4 @@ export const promotionsTutorialContent: TutorialContent = {
         'Revérifier les contraintes avant de lancer une génération de planning.',
     ],
 }
-
 

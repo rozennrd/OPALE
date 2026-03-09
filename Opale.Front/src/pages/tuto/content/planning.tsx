@@ -5,8 +5,8 @@ import screenPagePlanningDownloadScreenshot from '../../../assets/tuto/planning/
 import screenPagePlanningDownloadDoScreenshot from '../../../assets/tuto/planning/screen-page-planning-download-do.png'
 
 export const planningTutorialContent: TutorialContent = {
-    objective: "Accompagner l'utilisateur avec une checklist et guider la gÃ©nÃ©ration du planning demandÃ©.",
-    expectedResult: 'Planning demandÃ© gÃ©nÃ©rÃ© (macro et/ou micro).',
+    objective: "Accompagner l'utilisateur avec une checklist et guider la génération du planning demandé.",
+    expectedResult: 'Planning demandé généré (macro et/ou micro).',
     steps: [],
     stepSections: [
         {
@@ -15,65 +15,65 @@ export const planningTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            La page Planning est organisÃ©e en <strong>deux colonnes</strong>:{' '}
+                            La page Planning est organisée en <strong>deux colonnes</strong>:{' '}
                             <strong>Macro</strong> et <strong>Micro</strong>.
                         </>
                     ),
                     imageSrc: screenPagePlanningScreenshot,
-                    imageAlt: 'Vue gÃ©nÃ©rale de la page Planning',
-                    imageCaption: 'Checklist macro et micro avec sections dÃ©pliantes.',
+                    imageAlt: 'Vue générale de la page Planning',
+                    imageCaption: 'Checklist macro et micro avec sections dépliantes.',
                 },
                 <>
-                    Chaque colonne prÃ©sente une <strong>checklist</strong> pour sÃ©curiser les prÃ©requis
-                    de gÃ©nÃ©ration.
+                    Chaque colonne présente une <strong>checklist</strong> pour sécuriser les prérequis
+                    de génération.
                 </>,
                 <>
-                    Les checklists sont dÃ©coupÃ©es en <strong>sections dÃ©pliantes</strong>, une section
-                    par page (Promotions, Ã‰vÃ©nements, Enseignants, etc.).
+                    Les checklists sont découpées en <strong>sections dépliantes</strong>, une section
+                    par page (Promotions, Événements, Enseignants, etc.).
                 </>,
             ],
         },
         {
-            title: 'GÃ©nÃ©rer un planning macro',
+            title: 'Générer un planning macro',
             steps: [
                 {
                     text: (
                         <>
-                            Cliquer sur le bouton <strong>GÃ©nÃ©rer le planning macro</strong>.
+                            Cliquer sur le bouton <strong>Générer le planning macro</strong>.
                         </>
                     ),
                     imageSrc: screenPagePlanningScreenshot,
-                    imageAlt: 'Bouton GÃ©nÃ©rer le planning macro',
-                    imageCaption: 'Le bouton lance la gÃ©nÃ©ration macro.',
+                    imageAlt: 'Bouton Générer le planning macro',
+                    imageCaption: 'Le bouton lance la génération macro.',
                 },
                 <>
-                    Attendre quelques instants pendant la gÃ©nÃ©ration.
+                    Attendre quelques instants pendant la génération.
                 </>,
                 {
                     text: (
                         <>
-                            Une fois la gÃ©nÃ©ration terminÃ©e, cliquer sur <strong>TÃ©lÃ©charger le fichier</strong>.
+                            Une fois la génération terminée, cliquer sur <strong>Télécharger le fichier</strong>.
                         </>
                     ),
                     imageSrc: screenPagePlanningDownloadScreenshot,
-                    imageAlt: 'Bouton TÃ©lÃ©charger le fichier',
-                    imageCaption: 'Le bouton de tÃ©lÃ©chargement apparaÃ®t aprÃ¨s la gÃ©nÃ©ration.',
+                    imageAlt: 'Bouton Télécharger le fichier',
+                    imageCaption: 'Le bouton de téléchargement apparaît après la génération.',
                 },
                 {
                     text: (
                         <>
-                            Le fichier est tÃ©lÃ©chargÃ©. Il est accessible dans le dossier{' '}
-                            <strong>TÃ©lÃ©chargements</strong> ou dans les tÃ©lÃ©chargements du navigateur.
+                            Le fichier est téléchargé. Il est accessible dans le dossier{' '}
+                            <strong>Téléchargements</strong> ou dans les téléchargements du navigateur.
                         </>
                     ),
                     imageSrc: screenPagePlanningDownloadDoScreenshot,
-                    imageAlt: 'TÃ©lÃ©chargement du fichier macro',
-                    imageCaption: 'Le fichier gÃ©nÃ©rÃ© est disponible dans les tÃ©lÃ©chargements.',
+                    imageAlt: 'Téléchargement du fichier macro',
+                    imageCaption: 'Le fichier généré est disponible dans les téléchargements.',
                 },
             ],
         },
         {
-            title: 'GÃ©nÃ©rer un planning micro',
+            title: 'Générer un planning micro',
             steps: [
                 <>
                     Non disponible pour le moment.
@@ -82,9 +82,10 @@ export const planningTutorialContent: TutorialContent = {
         },
     ],
     tips: [
-        'Les checklists sont prÃ©sentes Ã  titre indicatif.',
-        'Les checklists sont dÃ©coupÃ©es par sections dÃ©pliantes, une section par page.',
-        'La gÃ©nÃ©ration du planning macro est actuellement indisponible.',
+        'Les checklists sont présentes à titre indicatif.',
+        'Les checklists sont découpées par sections dépliantes, une section par page.',
+        'La génération du planning macro est actuellement indisponible.',
     ],
 }
+
 

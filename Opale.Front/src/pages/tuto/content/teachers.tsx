@@ -67,7 +67,7 @@ export const teachersTutorialContent: TutorialContent = {
                         top: '19.7%',
                         width: '2.7%',
                         height: '5.4%',
-                        label: 'Création enseignant',
+                        label: "Création d'enseignant",
                         labelLeft: '-4rem',
                     },
                 },
@@ -83,7 +83,7 @@ export const teachersTutorialContent: TutorialContent = {
                     subSteps: [
                         <>
                             <strong>Informations</strong>: remplir <strong>Nom</strong>, <strong>Prénom</strong>,{' '}
-                            <strong>Téléphone</strong>, <strong>Email Junia</strong> et{' '}
+                            <strong>téléphone</strong>, <strong>Email Junia</strong> et{' '}
                             <strong>Email perso</strong>.
                         </>,
                         <>
@@ -189,7 +189,7 @@ export const teachersTutorialContent: TutorialContent = {
                         top: '48.9%',
                         width: '13.4%',
                         height: '10.5%',
-                        label: 'Enseignant à modifier',
+                        label: 'enseignant à modifier',
                     },
                 },
                 {
@@ -205,7 +205,7 @@ export const teachersTutorialContent: TutorialContent = {
                         'En modification, les informations existantes peuvent être corrigées et complétées.',
                     subSteps: [
                         <>
-                            Mettre à jour les <strong>informations personnelles</strong>: Nom, Prénom, Téléphone,
+                            Mettre à jour les <strong>informations personnelles</strong>: Nom, Prénom, téléphone,
                             Email Junia, Email perso.
                         </>,
                         <>
@@ -370,24 +370,24 @@ export const teachersTutorialContent: TutorialContent = {
                                     <strong>Recherche</strong> d'enseignant.
                                 </li>
                                 <li>
-                                    <strong>Filtres de disponibilitÃ©</strong> : Dispo Ã  partir du / Jusqu'au.
+                                    <strong>Filtres de disponibilité</strong> : Dispo à partir du / Jusqu'au.
                                 </li>
                                 <li>
-                                    <strong>Filtre Type de cours</strong> : Tous, PrÃ©sentiel, Hybride,
+                                    <strong>Filtre Type de cours</strong> : Tous, Présentiel, Hybride,
                                     Distanciel.
                                 </li>
                                 <li>
-                                    <strong>Filtre Promotion</strong> (liste dÃ©roulante).
+                                    <strong>Filtre Promotion</strong> (liste déroulante).
                                 </li>
                                 <li>
-                                    <strong>Filtre MatiÃ¨res</strong> (liste dÃ©roulante).
+                                    <strong>Filtre Matières</strong> (liste déroulante).
                                 </li>
                                 <li>
-                                    <strong>SÃ©lectionner / Quitter sÃ©lection</strong> avec compteur des
-                                    Ã©lÃ©ments sÃ©lectionnÃ©s.
+                                    <strong>Sélectionner / Quitter sélection</strong> avec compteur des
+                                    éléments sélectionnés.
                                 </li>
                                 <li>
-                                    <strong>RÃ©initialiser les filtres</strong>.
+                                    <strong>Réinitialiser les filtres</strong>.
                                 </li>
                                 <li>
                                     <strong>Ajouter un enseignant</strong>.
@@ -409,4 +409,9 @@ export const teachersTutorialContent: TutorialContent = {
         "Vérifier le rattachement et le campus d'origine pour anticiper les contraintes logistiques.",
     ],
 }
+
+
+
+
+
 

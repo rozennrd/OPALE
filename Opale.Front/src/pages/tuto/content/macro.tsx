@@ -1,4 +1,4 @@
-import type { TutorialContent } from '../types'
+﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
 import promoPageScreenshot from '../../../assets/tuto/promo/screen-page-promo.png'
 import eventPageScreenshot from '../../../assets/tuto/event/screen-page-event.png'
@@ -121,4 +121,5 @@ export const macroTutorialContent: TutorialContent = {
         'Ne pas lancer la génération macro tant que les contraintes académiques ne sont pas complètes.',
     ],
 }
+
 

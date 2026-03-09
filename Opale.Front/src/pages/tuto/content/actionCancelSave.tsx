@@ -14,7 +14,7 @@ export const actionCancelSaveTutorialContent: TutorialContent = {
             La touche <strong>Escape</strong> du clavier fait la même action.
         </>,
         <>
-            Quand il est présent, le bouton <strong>Annuler</strong> ferme aussi la fiche sans sauvegarder.
+            Lorsqu'il est présent, le bouton <strong>Annuler</strong> ferme aussi la fiche sans sauvegarder.
         </>,
         <>
             Cliquer sur <strong>Enregistrer</strong> ou <strong>Créer</strong> pour valider les modifications.

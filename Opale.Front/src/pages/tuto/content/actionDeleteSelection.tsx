@@ -24,7 +24,7 @@ export const actionDeleteSelectionTutorialContent: TutorialContent = {
     tips: [
         'Disponible sur : Événements, Enseignants, Salles, Matières.',
         "Le compteur (n) indique le nombre d'éléments sélectionnés.",
-        'Désactive le mode sélection pour revenir à la consultation.',
+        'Désactiver le mode sélection pour revenir à la consultation.',
     ],
 }
 

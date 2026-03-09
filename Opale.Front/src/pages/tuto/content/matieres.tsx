@@ -6,9 +6,9 @@ import screenPopupMatiereModifScreenshot from '../../../assets/tuto/matiere/scre
 
 export const matieresTutorialContent: TutorialContent = {
     objective:
-        'Administrer les matiÃ¨res de chaque promotion pour garantir une base pÃ©dagogique fiable pour les plannings.',
+        'Administrer les matières de chaque promotion pour garantir une base pédagogique fiable pour les plannings.',
     expectedResult:
-        'Les matiÃ¨res sont correctement structurÃ©es par promotion, avec des volumes cohÃ©rents et des affectations enseignants maÃ®trisÃ©es.',
+        'Les matières sont correctement structurées par promotion, avec des volumes cohérents et des affectations d\'enseignants maîtrisées.',
     steps: [],
     stepSections: [
         {
@@ -17,75 +17,75 @@ export const matieresTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            La page MatiÃ¨res affiche l'ensemble des matiÃ¨res dans une vue consolidÃ©e par
-                            <strong> promotion</strong>. Ces matiÃ¨res sont <strong>rÃ©cupÃ©rÃ©es</strong> et{' '}
+                            La page Matières affiche l'ensemble des matières dans une vue consolidée par
+                            <strong> promotion</strong>. Ces matières sont <strong>récupérées</strong> et{' '}
                             <strong>remplies automatiquement</strong> lors de l'import d'une maquette.
                         </>
                     ),
                     imageSrc: screenPageMatiereScreenshot,
-                    imageAlt: 'Vue gÃ©nÃ©rale de la page MatiÃ¨res dans OPALE',
+                    imageAlt: 'Vue générale de la page Matières dans OPALE',
                     imageCaption:
-                        'Vue gÃ©nÃ©rale avec toolbar de recherche/filtres et liste des matiÃ¨res par promotion.',
+                        'Vue générale avec toolbar de recherche/filtres et liste des matières par promotion.',
                 },
                 <>
                     La toolbar en haut centralise la <strong>recherche</strong>, les <strong>filtres</strong>, la{' '}
-                    <strong>crÃ©ation</strong> et la <strong>suppression en mode sÃ©lection</strong>.
+                    <strong>création</strong> et la <strong>suppression en mode sélection</strong>.
                 </>,
                 <>
-                    Les matiÃ¨res sont regroupÃ©es en <strong>catÃ©gories par promotion</strong> (ex: AP3, AP4, AP5,
+                    Les matières sont regroupées en <strong>catégories par promotion</strong> (ex: AP3, AP4, AP5,
                     etc.).
                 </>,
                 <>
-                    Chaque carte matiÃ¨re prÃ©sente le <strong>nom</strong>, les <strong>volumes horaires</strong>{' '}
+                    Chaque carte matière présente le <strong>nom</strong>, les <strong>volumes horaires</strong>{' '}
                     (h total, TD, TP) et le <strong>semestre</strong>.
                 </>,
                 <>
-                    La cÃ©ation d'une matiÃ¨re est <strong>en cours d'implÃ©mentation</strong>. Elle se fera via le <strong>bouton de la
-                    toolbar</strong> et permettra de crÃ©er une matiÃ¨re si elle n'a pas Ã©tÃ© dÃ©tectÃ©e lors de
+                    La création d'une matière est <strong>en cours d'implémentation</strong>. Elle se fera via le <strong>bouton de la
+                    toolbar</strong> et permettra de créer une matière si elle n'a pas été détectée lors de
                     l'import de la maquette.
                 </>,
             ],
         },
         {
-            title: 'CrÃ©er une matiÃ¨re',
+            title: 'Créer une matière',
             steps: [
                 <>
-                    Le bouton de crÃ©ation dans la toolbar est <strong>prÃ©sent</strong> mais{' '}
-                    <strong>non fonctionnel</strong> : la fonctionnalitÃ© n'est pas encore dÃ©veloppÃ©e.
+                    Le bouton de création dans la toolbar est <strong>présent</strong> mais{' '}
+                    <strong>non fonctionnel</strong> : la fonctionnalité n'est pas encore développée.
                 </>,
                 <>
-                    Le but est de pouvoir crÃ©er une matiÃ¨re dans le cas oÃ¹ elle n'aurait pas Ã©tÃ© dÃ©tectÃ©e lors
+                    Le but est de pouvoir créer une matière dans le cas où elle n'aurait pas été détectée lors
                     de l'import de la maquette.
                 </>,
             ],
         },
         {
-            title: 'Modifier une matiÃ¨re',
+            title: 'Modifier une matière',
             steps: [
                 {
                     text: (
                         <>
-                            Cliquer sur la <strong>carte</strong> de la matiÃ¨re Ã  modifier pour ouvrir le
-                            pop-up de dÃ©tail matiÃ¨re.
+                            Cliquer sur la <strong>carte</strong> de la matière à modifier pour ouvrir le
+                            pop-up de détail matière.
                         </>
                     ),
                     imageSrc: screenPageMatiereScreenshot,
-                    imageAlt: "AccÃ¨s Ã  la modification d'une matiÃ¨re",
-                    imageCaption: 'La carte matiÃ¨re ouvre le formulaire de modification.',
+                    imageAlt: "Accès à la modification d'une matière",
+                    imageCaption: 'La carte matière ouvre le formulaire de modification.',
                     imageHighlight: {
                         left: '21.8%',
                         top: '43.9%',
                         width: '14.6%',
                         height: '9.6%',
-                        label: 'MatiÃ¨re Ã  modifier',
+                        label: 'Matière à modifier',
                         labelLeft: '-0.1rem',
                     },
                 },
                 {
                     text: (
                         <>
-                            Le pop-up <strong>DÃ©tail matiÃ¨re</strong> est structurÃ© en deux colonnes :
-                            <strong> Ã  gauche</strong> les informations de la matiÃ¨re, <strong> Ã  droite</strong>{' '}
+                            Le pop-up <strong>Détail matière</strong> est structuré en deux colonnes :
+                            <strong> à gauche</strong> les informations de la matière, <strong> à droite</strong>{' '}
                             l'attribution des enseignants.
                         </>
                     ),
@@ -93,19 +93,19 @@ export const matieresTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Mettre Ã  jour les informations dans le pop-up <strong>DÃ©tail matiÃ¨re</strong>.
+                            Mettre à jour les informations dans le pop-up <strong>Détail matière</strong>.
                         </>
                     ),
                     imageSrc: screenPopupMatiereModifScreenshot,
-                    imageAlt: "Pop-up de modification d'une matiÃ¨re",
+                    imageAlt: "Pop-up de modification d'une matière",
                     imageCaption:
-                        "Le pop-up permet d'ajuster les volumes et les affectations enseignants.",
+                        "Le pop-up permet d'ajuster les volumes et les affectations d'enseignants.",
                     subSteps: [
                         <>
                             <strong>Champs modifiables</strong>:
                             <ul>
                                 <li>
-                                    <strong>Nom de la matiÃ¨re</strong>
+                                    <strong>Nom de la matière</strong>
                                 </li>
                                 <li>
                                     <strong>Volume total (h)</strong>
@@ -128,11 +128,11 @@ export const matieresTutorialContent: TutorialContent = {
                             </ul>
                         </>,
                         <>
-                            Le nombre d'Ã©preuves total et le dÃ©tail des types d'Ã©preveus est affichÃ©.
+                            Le nombre total d'épreuves et le détail des types d'épreuves sont affichés.
                         </>,
                         <>
-                            Un <strong>warning</strong> indique le nombre d'heures <strong>restantes</strong> Ã 
-                            attribuer. Il disparaÃ®t lorsqu'il ne reste plus rien Ã  attribuer.
+                            Un <strong>warning</strong> indique le nombre d'heures <strong>restantes</strong> à
+                            attribuer. Il disparaît lorsqu'il ne reste plus rien à attribuer.
                         </>,
                     ],
                 },
@@ -140,14 +140,14 @@ export const matieresTutorialContent: TutorialContent = {
                     text: (
                         <>
                             Cliquer sur <strong>Supprimer</strong> ou <strong>Enregistrer</strong> selon le
-                            rÃ©sultat souhaitÃ©.
+                            résultat souhaité.
                         </>
                     ),
                     subSteps: [
                         {
                             text: (
                                 <>
-                                    <strong>Supprimer</strong>: supprime la matiÃ¨re affichÃ©e Ã  l'Ã©cran. Cette
+                                    <strong>Supprimer</strong>: supprime la matière affichée à l'écran. Cette
                                     action ouvre un pop-up de confirmation.
                                     <br />
                                     <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
@@ -155,13 +155,13 @@ export const matieresTutorialContent: TutorialContent = {
                             ),
                             subSteps: [
                                 <>
-                                    Cliquer sur <strong>Annuler</strong>, la <strong>croix</strong> en haut Ã 
+                                    Cliquer sur <strong>Annuler</strong>, la <strong>croix</strong> en haut à
                                     droite ou <strong>Escape</strong> annule la suppression et renvoie sur la{' '}
-                                    <strong>carte de dÃ©tail de modification</strong> en conservant les
+                                    <strong>carte de détail de modification</strong> en conservant les
                                     informations saisies.
                                 </>,
                                 <>
-                                    Cliquer sur <strong>Supprimer</strong> supprime dÃ©finitivement la matiÃ¨re.
+                                    Cliquer sur <strong>Supprimer</strong> supprime définitivement la matière.
                                 </>,
                             ],
                         },
@@ -172,18 +172,18 @@ export const matieresTutorialContent: TutorialContent = {
                                     ouvre un pop-up de confirmation.
                                     <br />
                                     <em>Action commune</em> : voir le tuto{' '}
-                                    <strong>Annuler ou enregistrer/crÃ©er</strong>.
+                                    <strong>Annuler ou enregistrer/créer</strong>.
                                 </>
                             ),
                             subSteps: [
                                 <>
-                                    Cliquer sur <strong>Annuler</strong>, la <strong>croix</strong> en haut Ã 
+                                    Cliquer sur <strong>Annuler</strong>, la <strong>croix</strong> en haut à
                                     droite ou <strong>Escape</strong> renvoie sur la{' '}
-                                    <strong>carte de dÃ©tail de modification</strong> en conservant les
+                                    <strong>carte de détail de modification</strong> en conservant les
                                     informations saisies.
                                 </>,
                                 <>
-                                    Cliquer sur <strong>Enregistrer</strong> enregistre la matiÃ¨re et ferme le
+                                    Cliquer sur <strong>Enregistrer</strong> enregistre la matière et ferme le
                                     pop-up de modification.
                                 </>,
                             ],
@@ -193,20 +193,20 @@ export const matieresTutorialContent: TutorialContent = {
             ],
         },
         {
-            title: 'Modifier la rÃ©partition du volume horaire',
+            title: 'Modifier la répartition du volume horaire',
             steps: [
                 <>
-                    Les volumes sont extraits de la maquette avec les rÃ¨gles suivantes :
+                    Les volumes sont extraits de la maquette avec les règles suivantes :
                     <br />
                     <ul>
                         <li>
-                            <strong>Volume total (h)</strong> = premiÃ¨re valeur non nulle parmi{' '}
-                            <strong>Nb heures planifiÃ©es</strong>, <strong>Nb heures Ã©tudiant</strong> ou{' '}
-                            <strong>Nb heures encadrÃ©es</strong>. Si aucun total n'est renseignÃ©, il est
-                            calculÃ© Ã  partir de la somme des dÃ©tails (<strong>cours magistral</strong>,{' '}
+                            <strong>Volume total (h)</strong> = première valeur non nulle parmi{' '}
+                            <strong>Nb heures planifiées</strong>, <strong>Nb heures étudiant</strong> ou{' '}
+                            <strong>Nb heures encadrées</strong>. Si aucun total n'est renseigné, il est
+                            calculé à partir de la somme des détails (<strong>cours magistral</strong>,{' '}
                             <strong>cours interactif</strong>, <strong>TD</strong>, <strong>TP</strong>,{' '}
                             <strong>projet</strong>, <strong>e-learning</strong>,{' '}
-                            <strong>visites / confÃ©rences</strong>, <strong>auto-gÃ©rÃ©</strong>).
+                            <strong>visites / conférences</strong>, <strong>auto-géré</strong>).
                         </li>
                         <li>
                             <strong>Volume TD (h)</strong> = <strong>TD + cours magistral + cours interactif</strong>.
@@ -222,61 +222,61 @@ export const matieresTutorialContent: TutorialContent = {
                     et saisir la nouvelle valeur.
                 </>,
                 <>
-                    Si la somme des heures <strong>TD</strong> et <strong>TP</strong> dÃ©passe le{' '}
-                    <strong>volume total</strong>, le type modifiÃ© est automatiquement ajustÃ© au maximum autorisÃ©
+                    Si la somme des heures <strong>TD</strong> et <strong>TP</strong> dépasse le{' '}
+                    <strong>volume total</strong>, le type modifié est automatiquement ajusté au maximum autorisé
                     pour respecter le total.
                 </>,
             ],
         },
         {
-            title: 'Attribuer des heures Ã  un enseignant',
+            title: 'Attribuer des heures à un enseignant',
             steps: [
                 <>
-                    Depuis la <strong>carte de dÃ©tail</strong> (en mode modification, et plus tard en mode
-                    crÃ©ation). Les enseignants dÃ©jÃ  attribuÃ©s Ã  la matiÃ¨re depuis la page Enseignants sont
-                    affichÃ©s.
+                    Depuis la <strong>carte de détail</strong> (en mode modification, et plus tard en mode
+                    création). Les enseignants déjà attribués à la matière depuis la page Enseignants sont
+                    affichés.
                     <br />
-                    <em>Note</em> : voir le tuto <strong>Attribuer des matiÃ¨res Ã  un enseignant</strong>.
+                    <em>Note</em> : voir le tuto <strong>Attribuer des matières à un enseignant</strong>.
                 </>,
                 <>
-                    Si l'enseignant voulu n'est pas affichÃ©, cliquer sur <strong>+ Ajouter</strong>.
+                    Si l'enseignant voulu n'est pas affiché, cliquer sur <strong>+ Ajouter</strong>.
                 </>,
                 <>
-                    Cliquer sur le champ du type de cours voulu et attribuer le nombre d'heures souhaitÃ©. Si la
-                    valeur est supÃ©rieure Ã  <strong>0</strong>, le label du type de cours passe en{' '}
+                    Cliquer sur le champ du type de cours voulu et attribuer le nombre d'heures souhaité. Si la
+                    valeur est supérieure à <strong>0</strong>, le label du type de cours passe en{' '}
                     <strong>vert</strong>.
                 </>,
                 <>
-                    Si la somme des heures par type dÃ©passe le volume total, ou si un type dÃ©passe son volume
-                    prÃ©vu, le champ modifiÃ© est automatiquement ajustÃ© au maximum autorisÃ©. Si aucun volume
-                    n'est prÃ©vu pour un type de cours, le champ n'est pas saisissable.
+                    Si la somme des heures par type dépasse le volume total, ou si un type dépasse son volume
+                    prévu, le champ modifié est automatiquement ajusté au maximum autorisé. Si aucun volume
+                    n'est prévu pour un type de cours, le champ n'est pas saisissable.
                 </>,
                 <>
-                    Pour supprimer un enseignant, cliquer sur le bouton <strong>-</strong> Ã  cÃ´tÃ© de son nom.
+                    Pour supprimer un enseignant, cliquer sur le bouton <strong>-</strong> à côté de son nom.
                 </>,
                 <>
-                    En bas Ã  gauche, un <strong>warning</strong> indique le nombre d'heures restantes Ã  attribuer.
-                    Il disparaÃ®t quand il ne reste plus rien Ã  attribuer. Un second warning temporaire peut
-                    apparaÃ®tre si un dÃ©passement est dÃ©tectÃ© (environ <strong>2 secondes</strong>).
+                    En bas à gauche, un <strong>warning</strong> indique le nombre d'heures restantes à attribuer.
+                    Il disparaît quand il ne reste plus rien à attribuer. Un second warning temporaire peut
+                    apparaître si un dépassement est détecté (environ <strong>2 secondes</strong>).
                 </>,
             ],
         },
         {
-            title: 'Supprimer une matiÃ¨re',
+            title: 'Supprimer une matière',
             steps: [
                 {
                     text: (
                         <>
-                            La suppression des matiÃ¨res se fait en <strong>mode sÃ©lection</strong> depuis la
-                            toolbar, ou depuis la <strong>carte de dÃ©tail</strong> d'une matiÃ¨re en modification.
+                            La suppression des matières se fait en <strong>mode sélection</strong> depuis la
+                            toolbar, ou depuis la <strong>carte de détail</strong> d'une matière en modification.
                             <br />
                             <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
                         </>
                     ),
                     imageSrc: screenPageMatiereSuppressionScreenshot,
-                    imageAlt: 'Suppression de matiÃ¨res en mode sÃ©lection',
+                    imageAlt: 'Suppression de matières en mode sélection',
                     imageCaption:
-                        'Le mode sÃ©lection permet une suppression multiple avec compteur des Ã©lÃ©ments sÃ©lectionnÃ©s.',
+                        'Le mode sélection permet une suppression multiple avec compteur des éléments sélectionnés.',
                 },
             ],
         },
@@ -289,47 +289,48 @@ export const matieresTutorialContent: TutorialContent = {
                             La barre d'outils contient :
                             <ul>
                                 <li>
-                                    <strong>Recherche</strong> de matiÃ¨re.
+                                    <strong>Recherche</strong> de matière.
                                 </li>
                                 <li>
-                                    <strong>SÃ©lectionner / Quitter sÃ©lection</strong> avec compteur des
-                                    Ã©lÃ©ments sÃ©lectionnÃ©s.
+                                    <strong>Sélectionner / Quitter sélection</strong> avec compteur des
+                                    éléments sélectionnés.
                                 </li>
                                 <li>
-                                    <strong>RÃ©initialiser les filtres</strong>.
+                                    <strong>Réinitialiser les filtres</strong>.
                                 </li>
                                 <li>
-                                    <strong>Ajouter une matiÃ¨re</strong> (bouton prÃ©sent, non disponible).
+                                    <strong>Ajouter une matière</strong> (bouton présent, non disponible).
                                 </li>
                                 <li>
                                     <strong>Filtre Semestre</strong> : Tous, S1, S2.
                                 </li>
                                 <li>
-                                    <strong>Filtre Cycles</strong> (liste dÃ©roulante).
+                                    <strong>Filtre Cycles</strong> (liste déroulante).
                                 </li>
                                 <li>
-                                    <strong>Filtre Promotions</strong> (liste dÃ©roulante).
+                                    <strong>Filtre Promotions</strong> (liste déroulante).
                                 </li>
                                 <li>
-                                    <strong>Filtre Enseignants</strong> (liste dÃ©roulante).
+                                    <strong>Filtre Enseignants</strong> (liste déroulante).
                                 </li>
                             </ul>
                             <em>Action commune</em> : voir le tuto <strong>Rechercher et filtrer</strong>.
                         </>
                     ),
                     imageSrc: screenPageMatiereScreenshot,
-                    imageAlt: "Barre d'outils de la page MatiÃ¨res",
+                    imageAlt: "Barre d'outils de la page Matières",
                     imageCaption: 'Toolbar de recherche, filtres et actions.',
                 },
             ],
         },
     ],
     tips: [
-        'Maintenir des libellÃ©s de matiÃ¨res stables pour Ã©viter les doublons entre promotions.',
-        'VÃ©rifier la cohÃ©rence des volumes avant validation pour limiter les erreurs de planification.',
-        'ContrÃ´ler la rÃ©partition TD/TP par enseignant pour garder une charge rÃ©aliste.',
+        'Maintenir des libellés de matières stables pour éviter les doublons entre promotions.',
+        'Vérifier la cohérence des volumes avant validation pour limiter les erreurs de planification.',
+        'Contrôler la répartition TD/TP par enseignant pour garder une charge réaliste.',
     ],
 }
+
 
 
 

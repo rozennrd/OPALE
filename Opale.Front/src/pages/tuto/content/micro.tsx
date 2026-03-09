@@ -1,4 +1,4 @@
-import type { TutorialContent } from '../types'
+﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
 import promoPageScreenshot from '../../../assets/tuto/promo/screen-page-promo.png'
 import eventPageScreenshot from '../../../assets/tuto/event/screen-page-event.png'
@@ -217,4 +217,5 @@ export const microTutorialContent: TutorialContent = {
         'Vérifier en priorité promotions, enseignants, salles et matières avant de relancer un calcul.',
     ],
 }
+
 

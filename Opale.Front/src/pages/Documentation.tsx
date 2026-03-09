@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+﻿import React, { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import PageHeader from '../components/common/PageHeader'
 import SectionCard from '../components/common/SectionCard'
@@ -144,7 +144,7 @@ export default function Documentation() {
                 {selectedTutorial?.id === 'micro' && (
                     <div className="documentation-warning" role="note" aria-live="polite">
                         <strong>Attention :</strong> ce tutoriel est une <strong>esquisse</strong> avec les grandes
-                        Ã©tapes. Il faudra le mettre Ã  jour une fois la fonctionnalitÃ© intÃ©grÃ©e.
+                        étapes. Il faudra le mettre à jour une fois la fonctionnalité intégrée.
                     </div>
                 )}
 
@@ -658,3 +658,4 @@ export default function Documentation() {
         </>
     )
 }
+

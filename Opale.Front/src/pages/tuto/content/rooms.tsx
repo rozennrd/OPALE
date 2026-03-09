@@ -67,7 +67,7 @@ export const roomsTutorialContent: TutorialContent = {
                         top: '20.6%',
                         width: '2.6%',
                         height: '3.8%',
-                        label: 'Création salle',
+                        label: 'Création de salle',
                         labelLeft: '-3.5rem',
                     },
                 },
@@ -86,7 +86,7 @@ export const roomsTutorialContent: TutorialContent = {
                         <>
                             <strong>Identité de la salle & types</strong>: saisir le{' '}
                             <strong>Nom court (code salle)</strong>, le <strong>Surnom / nom complet</strong>,
-                            l'<strong>Étage</strong> et la <strong>Capacité (places)</strong>.
+                            l'<strong>étage</strong> et la <strong>capacité (places)</strong>.
                         </>,
                         <>
                             <strong>Disponibilité globale</strong>: activer/désactiver le statut réservable de
@@ -174,7 +174,7 @@ export const roomsTutorialContent: TutorialContent = {
                         top: '42.7%',
                         width: '14.5%',
                         height: '9.6%',
-                        label: 'Salle à modifier',
+                        label: 'salle à modifier',
                     },
                 },
                 {
@@ -191,7 +191,7 @@ export const roomsTutorialContent: TutorialContent = {
                     subSteps: [
                         <>
                             <strong>Nom court (code salle)</strong>, <strong>Surnom / nom complet</strong>,{' '}
-                            <strong>Étage</strong> et <strong>Capacité (places)</strong>: corriger ces champs
+                            <strong>étage</strong> et <strong>capacité (places)</strong>: corriger ces champs
                             si l'identité ou l'usage de la salle évolue.
                         </>,
                         <>
@@ -207,7 +207,7 @@ export const roomsTutorialContent: TutorialContent = {
                             réels autorisés dans la salle.
                         </>,
                         <>
-                            <strong>Description / commentaires</strong>: mettre à jour les contraintes, les
+                            <strong>Description / commentaires</strong>: Mettre à jour les contraintes, les
                             équipements et toute information utile à l'exploitation.
                         </>,
                     ],
@@ -299,24 +299,24 @@ export const roomsTutorialContent: TutorialContent = {
                                     <strong>Recherche</strong> de salle.
                                 </li>
                                 <li>
-                                    <strong>SÃ©lectionner / Quitter sÃ©lection</strong> avec compteur des
-                                    Ã©lÃ©ments sÃ©lectionnÃ©s.
+                                    <strong>Sélectionner / Quitter sélection</strong> avec compteur des
+                                    éléments sélectionnés.
                                 </li>
                                 <li>
-                                    <strong>RÃ©initialiser les filtres</strong>.
+                                    <strong>Réinitialiser les filtres</strong>.
                                 </li>
                                 <li>
                                     <strong>Ajouter une salle</strong>.
                                 </li>
                                 <li>
                                     <strong>Filtre Type</strong> : Tous les types, Cours, Informatique, Projet,
-                                    Rassemblement, RÃ©union, Associatif, Ã‰lectronique, Fablab, RÃ©seau.
+                                    Rassemblement, Réunion, Associatif, Électronique, Fablab, Réseau.
                                 </li>
                                 <li>
-                                    <strong>Filtre CapacitÃ©</strong> : opÃ©rateur (Tous, &gt;, &lt;, =) + valeur.
+                                    <strong>Filtre Capacité</strong> : opérateur (Tous, &gt;, &lt;, =) + valeur.
                                 </li>
                                 <li>
-                                    <strong>Filtre DisponibilitÃ©</strong> : Tous, Disponible, Non dispo.
+                                    <strong>Filtre Disponibilité</strong> : Tous, Disponible, Non dispo.
                                 </li>
                             </ul>
                             <em>Action commune</em> : voir le tuto <strong>Rechercher et filtrer</strong>.
@@ -335,3 +335,6 @@ export const roomsTutorialContent: TutorialContent = {
         'Documenter les contraintes de salle dans les commentaires (équipements, restrictions, travaux).',
     ],
 }
+
+
+
