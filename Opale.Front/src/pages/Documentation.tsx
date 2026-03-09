@@ -496,6 +496,13 @@ export default function Documentation() {
                                                                                 hasRenderableNode(subStepText)
                                                                             const nestedSubSteps =
                                                                                 getVisibleSubSteps(subStep)
+                                                                            const subStepDetails =
+                                                                                isTutorialStepObject(subStep)
+                                                                                    ? subStep
+                                                                                    : null
+                                                                            const subStepHighlights =
+                                                                                getStepHighlights(subStep)
+                                                                            const subStepHighlightMaskId = `${selectedTutorial.id}-step-${index}-substep-${subStepIndex}-highlight-mask`
 
                                                                             return (
                                                                                 <li
@@ -521,6 +528,112 @@ export default function Documentation() {
                                                                                                 ),
                                                                                             )}
                                                                                         </ol>
+                                                                                    )}
+                                                                                    {subStepDetails?.imageSrc && (
+                                                                                        <figure className="documentation-step-figure">
+                                                                                            <div className="documentation-step-image-wrapper">
+                                                                                                <img
+                                                                                                    src={subStepDetails.imageSrc}
+                                                                                                    alt={
+                                                                                                        subStepDetails.imageAlt ??
+                                                                                                        "Capture d'écran du tutoriel"
+                                                                                                    }
+                                                                                                    className="documentation-step-image"
+                                                                                                />
+                                                                                                {subStepHighlights.length > 0 && (
+                                                                                                    <svg
+                                                                                                        className="documentation-step-dim-overlay"
+                                                                                                        viewBox="0 0 100 100"
+                                                                                                        preserveAspectRatio="none"
+                                                                                                        aria-hidden="true"
+                                                                                                    >
+                                                                                                        <defs>
+                                                                                                            <mask id={subStepHighlightMaskId}>
+                                                                                                                <rect
+                                                                                                                    x="0"
+                                                                                                                    y="0"
+                                                                                                                    width="100%"
+                                                                                                                    height="100%"
+                                                                                                                    fill="white"
+                                                                                                                />
+                                                                                                                {subStepHighlights.map(
+                                                                                                                    (
+                                                                                                                        highlight,
+                                                                                                                        highlightIndex,
+                                                                                                                    ) => (
+                                                                                                                        <rect
+                                                                                                                            key={`${subStepHighlightMaskId}-cutout-${highlightIndex}`}
+                                                                                                                            x={highlight.left}
+                                                                                                                            y={highlight.top}
+                                                                                                                            width={highlight.width}
+                                                                                                                            height={highlight.height}
+                                                                                                                            rx="1.2"
+                                                                                                                            ry="1.2"
+                                                                                                                            fill="black"
+                                                                                                                        />
+                                                                                                                    ),
+                                                                                                                )}
+                                                                                                            </mask>
+                                                                                                        </defs>
+                                                                                                        <rect
+                                                                                                            x="0"
+                                                                                                            y="0"
+                                                                                                            width="100%"
+                                                                                                            height="100%"
+                                                                                                            fill="rgba(9, 17, 31, 0.42)"
+                                                                                                            mask={`url(#${subStepHighlightMaskId})`}
+                                                                                                        />
+                                                                                                    </svg>
+                                                                                                )}
+                                                                                                {subStepHighlights.map(
+                                                                                                    (
+                                                                                                        highlight,
+                                                                                                        highlightIndex,
+                                                                                                    ) => (
+                                                                                                        <div
+                                                                                                            key={`${selectedTutorial.id}-step-${index}-substep-${subStepIndex}-highlight-${highlightIndex}`}
+                                                                                                            className="documentation-step-highlight"
+                                                                                                            style={{
+                                                                                                                left: highlight.left,
+                                                                                                                top: highlight.top,
+                                                                                                                width: highlight.width,
+                                                                                                                height: highlight.height,
+                                                                                                            }}
+                                                                                                        >
+                                                                                                            {highlight.label && (
+                                                                                                                <span
+                                                                                                                    className="documentation-step-highlight-label"
+                                                                                                                    style={
+                                                                                                                        highlight.labelLeft ||
+                                                                                                                        highlight.labelTop
+                                                                                                                            ? {
+                                                                                                                                  ...(highlight.labelLeft
+                                                                                                                                      ? {
+                                                                                                                                            left: highlight.labelLeft,
+                                                                                                                                        }
+                                                                                                                                      : {}),
+                                                                                                                                  ...(highlight.labelTop
+                                                                                                                                      ? {
+                                                                                                                                            top: highlight.labelTop,
+                                                                                                                                        }
+                                                                                                                                      : {}),
+                                                                                                                              }
+                                                                                                                            : undefined
+                                                                                                                    }
+                                                                                                                >
+                                                                                                                    {highlight.label}
+                                                                                                                </span>
+                                                                                                            )}
+                                                                                                        </div>
+                                                                                                    ),
+                                                                                                )}
+                                                                                            </div>
+                                                                                            {subStepDetails.imageCaption && (
+                                                                                                <figcaption className="documentation-step-caption">
+                                                                                                    {subStepDetails.imageCaption}
+                                                                                                </figcaption>
+                                                                                            )}
+                                                                                        </figure>
                                                                                     )}
                                                                                 </li>
                                                                             )

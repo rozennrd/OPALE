@@ -1,7 +1,12 @@
 ﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
 import promoPageScreenshot from '../../../assets/tuto/promo/page-promo.png'
+import promoUpdateScreenshot from '../../../assets/tuto/promo/page-promo-update-promo2.png'
 import eventPageScreenshot from '../../../assets/tuto/event/page-event-junia.png'
+import eventUpdateScreenshot from '../../../assets/tuto/event/page-event-junia-update.png'
+import planningPageScreenshot from '../../../assets/tuto/planning/page-planning.png'
+import planningDownloadScreenshot from '../../../assets/tuto/planning/page-planning-download.png'
+import planningDownloadDoScreenshot from '../../../assets/tuto/planning/page-planning-download-do.png'
 import { buildPageTutorialDeepLink } from './docLinks'
 
 const DOC_LINKS = {
@@ -46,8 +51,8 @@ export const macroTutorialContent: TutorialContent = {
                     <strong>contraintes académiques</strong>.
                 </>
             ),
-            imageSrc: promoPageScreenshot,
-            imageAlt: 'Page Promotions pour renseigner les informations minimales',
+            imageSrc: promoUpdateScreenshot,
+            imageAlt: "Pop-up de modification d'une promotion",
             imageCaption: 'Saisie des informations minimales nécessaires au planning macro.',
             subSteps: [
                 <>
@@ -89,8 +94,8 @@ export const macroTutorialContent: TutorialContent = {
                     vérifier que l'affichage <strong>Macro planning</strong> est actif.
                 </>
             ),
-            imageSrc: eventPageScreenshot,
-            imageAlt: 'Page Événements pour compléter les informations minimales',
+            imageSrc: eventUpdateScreenshot,
+            imageAlt: "Pop-up de modification d'un événement",
             imageCaption: 'Validation des champs minimaux nécessaires à la génération macro.',
             subSteps: [
                 <>
@@ -110,8 +115,40 @@ export const macroTutorialContent: TutorialContent = {
                 <>
                     Ouvrir la page planning: <a href="/planning" target="_blank" rel="noreferrer">/planning</a>
                 </>,
+                {
+                    text: (
+                        <>
+                            Utiliser la <strong>checklist macro</strong> pour s'assurer que toutes les actions ont
+                            été faites.
+                        </>
+                    ),
+                    imageSrc: planningPageScreenshot,
+                    imageAlt: 'Checklist macro sur la page Planning',
+                    imageCaption: 'Checklist macro pour valider les prérequis.',
+                },
+                {
+                    text: (
+                        <>
+                            Cliquer sur le bouton <strong>Générer le planning macro</strong> (résultat après clic).
+                        </>
+                    ),
+                    imageSrc: planningDownloadScreenshot,
+                    imageAlt: 'Résultat après génération du planning macro',
+                    imageCaption: 'Le bouton de téléchargement apparaît après génération.',
+                },
+                {
+                    text: (
+                        <>
+                            Cliquer sur le bouton <strong>Télécharger le fichier</strong> (résultat après clic).
+                        </>
+                    ),
+                    imageSrc: planningDownloadDoScreenshot,
+                    imageAlt: 'Téléchargement du planning macro',
+                    imageCaption: 'Le fichier est téléchargé après validation.',
+                },
                 <>
-                    Si la génération échoue, revenir vérifier en priorité les promotions et événements.
+                    Le fichier a été téléchargé en local dans le dossier <strong>Téléchargements</strong>,
+                    accessible via ce dossier ou depuis l'accès rapide du navigateur.
                 </>,
             ],
         },
