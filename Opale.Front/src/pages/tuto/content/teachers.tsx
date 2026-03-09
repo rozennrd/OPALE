@@ -1,9 +1,9 @@
 ﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
 import screenPageProfScreenshot from '../../../assets/tuto/prof/page-prof.png'
-import screenPageProfSuppressionScreenshot from '../../../assets/tuto/prof/screen-page-prof-suppression.png'
-import screenPopupProfScreenshot from '../../../assets/tuto/prof/screen-pop-up-prof.png'
-import screenPopupProfModifScreenshot from '../../../assets/tuto/prof/screen-pop-up-prof-modif.png'
+import screenPageProfSuppressionScreenshot from '../../../assets/tuto/prof/page-prof.png'
+import screenPopupProfScreenshot from '../../../assets/tuto/prof/page-prof-create.png'
+import screenPopupProfModifScreenshot from '../../../assets/tuto/prof/page-prof-update.png'
 
 export const teachersTutorialContent: TutorialContent = {
     objective:
@@ -63,10 +63,10 @@ export const teachersTutorialContent: TutorialContent = {
                     imageAlt: "Bouton + de création d'un enseignant",
                     imageCaption: "Le bouton + ouvre le pop-up de création d'un enseignant.",
                     imageHighlight: {
-                        left: '92.3%',
-                        top: '19.7%',
-                        width: '2.7%',
-                        height: '5.4%',
+                        left: '82.3%',
+                        top: '19.2%',
+                        width: '12.6%',
+                        height: '6.0%',
                         label: "Création d'enseignant",
                         labelLeft: '-4rem',
                     },
@@ -185,10 +185,10 @@ export const teachersTutorialContent: TutorialContent = {
                     imageAlt: "Accès à la modification d'un enseignant",
                     imageCaption: 'La carte enseignant ouvre le formulaire de modification.',
                     imageHighlight: {
-                        left: '21.4%',
-                        top: '48.9%',
-                        width: '13.4%',
-                        height: '10.5%',
+                        left: '25.0%',
+                        top: '38.5%',
+                        width: '14.7%',
+                        height: '7.2%',
                         label: 'enseignant à modifier',
                     },
                 },
@@ -409,6 +409,7 @@ export const teachersTutorialContent: TutorialContent = {
         "Vérifier le rattachement et le campus d'origine pour anticiper les contraintes logistiques.",
     ],
 }
+
 
 
 

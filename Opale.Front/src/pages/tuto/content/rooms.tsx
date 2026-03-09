@@ -1,9 +1,9 @@
 ﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
-import screenPageSalleScreenshot from '../../../assets/tuto/salle/screen-page-salle.png'
-import screenPageSalleSuppressionScreenshot from '../../../assets/tuto/salle/screen-page-salle-suppression.png'
-import screenPopupSalleScreenshot from '../../../assets/tuto/salle/screen-pop-up-salle.png'
-import screenPopupSalleModifScreenshot from '../../../assets/tuto/salle/screen-pop-up-salle-modif.png'
+import screenPageSalleScreenshot from '../../../assets/tuto/salle/page-salle.png'
+import screenPageSalleSuppressionScreenshot from '../../../assets/tuto/salle/page-salle.png'
+import screenPopupSalleScreenshot from '../../../assets/tuto/salle/page-salle-add.png'
+import screenPopupSalleModifScreenshot from '../../../assets/tuto/salle/page-salle-update.png'
 
 export const roomsTutorialContent: TutorialContent = {
     objective:
@@ -63,10 +63,10 @@ export const roomsTutorialContent: TutorialContent = {
                     imageAlt: "Bouton + de création d'une salle",
                     imageCaption: "Le bouton + ouvre le pop-up de création d'une salle.",
                     imageHighlight: {
-                        left: '92.2%',
-                        top: '20.6%',
-                        width: '2.6%',
-                        height: '3.8%',
+                        left: '83.8%',
+                        top: '20.2%',
+                        width: '10.2%',
+                        height: '3.9%',
                         label: 'Création de salle',
                         labelLeft: '-3.5rem',
                     },
@@ -170,10 +170,10 @@ export const roomsTutorialContent: TutorialContent = {
                     imageAlt: "Accès à la modification d'une salle",
                     imageCaption: 'La carte salle ouvre le formulaire de modification.',
                     imageHighlight: {
-                        left: '21.5%',
-                        top: '42.7%',
-                        width: '14.5%',
-                        height: '9.6%',
+                        left: '25.0%',
+                        top: '36.0%',
+                        width: '20.0%',
+                        height: '10.0%',
                         label: 'salle à modifier',
                     },
                 },
@@ -335,6 +335,7 @@ export const roomsTutorialContent: TutorialContent = {
         'Documenter les contraintes de salle dans les commentaires (équipements, restrictions, travaux).',
     ],
 }
+
 
 
 

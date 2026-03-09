@@ -1,9 +1,9 @@
 ﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
-import screenPageEventScreenshot from '../../../assets/tuto/event/screen-page-event.png'
-import screenPageEventSuppressionScreenshot from '../../../assets/tuto/event/screen-page-event-suppression.png'
-import screenPopupEventModifScreenshot from '../../../assets/tuto/event/screen-pop-up-event-modif.png'
-import screenPopupEventScreenshot from '../../../assets/tuto/event/screen-pop-up-event.png'
+import screenPageEventScreenshot from '../../../assets/tuto/event/page-event-junia.png'
+import screenPageEventSuppressionScreenshot from '../../../assets/tuto/event/page-event-junia.png'
+import screenPopupEventModifScreenshot from '../../../assets/tuto/event/page-event-junia-update.png'
+import screenPopupEventScreenshot from '../../../assets/tuto/event/page-event-junia-add.png'
 
 export const eventsTutorialContent: TutorialContent = {
     objective:
@@ -55,10 +55,10 @@ export const eventsTutorialContent: TutorialContent = {
                     imageAlt: "Bouton + de création d'un événement",
                     imageCaption: "Le bouton + ouvre le pop-up de création d'un événement.",
                     imageHighlight: {
-                        left: '92.7%',
-                        top: '21.35%',
-                        width: '2.2%',
-                        height: '4.8%',
+                        left: '81.8%',
+                        top: '22.3%',
+                        width: '12.4%',
+                        height: '3.9%',
                         label: 'Créer un événement',
                         labelLeft: '-5rem',
                         labelTop: '-0.5rem',
@@ -174,10 +174,10 @@ export const eventsTutorialContent: TutorialContent = {
                     imageAlt: "Accès à la modification d'un événement",
                     imageCaption: "La ligne événement ouvre le pop-up de modification.",
                     imageHighlight: {
-                        left: '21.2%',
-                        top: '41.0%',
-                        width: '73.4%',
-                        height: '9.7%',
+                        left: '25.0%',
+                        top: '38.0%',
+                        width: '70.0%',
+                        height: '8.0%',
                         label: 'Événement à modifier',
                     },
                 },

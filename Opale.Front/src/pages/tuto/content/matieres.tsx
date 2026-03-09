@@ -1,8 +1,8 @@
 ﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
-import screenPageMatiereScreenshot from '../../../assets/tuto/matiere/screen-page-matiere.png'
-import screenPageMatiereSuppressionScreenshot from '../../../assets/tuto/matiere/screen-page-matiere-suppression.png'
-import screenPopupMatiereModifScreenshot from '../../../assets/tuto/matiere/screen-pop-up-matiere-modif.png'
+import screenPageMatiereScreenshot from '../../../assets/tuto/matiere/page-matiere.png'
+import screenPageMatiereSuppressionScreenshot from '../../../assets/tuto/matiere/page-matiere.png'
+import screenPopupMatiereModifScreenshot from '../../../assets/tuto/matiere/page-matiere-update-alert.png'
 
 export const matieresTutorialContent: TutorialContent = {
     objective:
@@ -73,10 +73,10 @@ export const matieresTutorialContent: TutorialContent = {
                     imageAlt: "Accès à la modification d'une matière",
                     imageCaption: 'La carte matière ouvre le formulaire de modification.',
                     imageHighlight: {
-                        left: '21.8%',
-                        top: '43.9%',
-                        width: '14.6%',
-                        height: '9.6%',
+                        left: '25.0%',
+                        top: '38.0%',
+                        width: '14.9%',
+                        height: '9.9%',
                         label: 'Matière à modifier',
                         labelLeft: '-0.1rem',
                     },

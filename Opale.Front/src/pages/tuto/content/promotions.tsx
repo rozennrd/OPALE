@@ -1,8 +1,8 @@
-﻿import promoPageScreenshot from '../../../assets/tuto/promo/screen-page-promo.png'
+﻿import promoPageScreenshot from '../../../assets/tuto/promo/page-promo.png'
 /* eslint-disable react/no-unescaped-entities */
-import popupAddPromotionScreenshot from '../../../assets/tuto/promo/screen-pop-up-ajouter-promotion.png'
-import popupCreateCycleScreenshot from '../../../assets/tuto/promo/screen-pop-up-creer-cycle.png'
-import popupEditPromotionScreenshot from '../../../assets/tuto/promo/screen-pop-up-modifier-promo.png'
+import popupAddPromotionScreenshot from '../../../assets/tuto/promo/page-promo-add-promo.png'
+import popupCreateCycleScreenshot from '../../../assets/tuto/promo/page-promo-add-cycle.png'
+import popupEditPromotionScreenshot from '../../../assets/tuto/promo/page-promo-update-promo.png'
 import type { TutorialContent } from '../types'
 
 export const promotionsTutorialContent: TutorialContent = {
@@ -62,10 +62,10 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageAlt: "Zone pour ouvrir le pop-up de création d'un cycle sur la page Promotions",
                     imageCaption: 'Cette zone ouvre le pop-up contenant les champs de création du cycle.',
                     imageHighlight: {
-                        left: '71.4%',
-                        top: '12.5%',
-                        width: '25.6%',
-                        height: '57.5%',
+                        left: '19.6%',
+                        top: '72.8%',
+                        width: '20.5%',
+                        height: '14.3%',
                         label: "Zone d'ouverture du pop-up",
                     },
                 },
@@ -131,10 +131,10 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageCaption:
                         "Le bouton Ajouter une promotion ouvre le pop-up d'ajout pour le cycle sélectionné.",
                     imageHighlight: {
-                        left: '21.0%',
-                        top: '40.0%',
-                        width: '24.5%',
-                        height: '6.0%',
+                        left: '22.0%',
+                        top: '46.2%',
+                        width: '28.0%',
+                        height: '9.0%',
                         label: 'Bouton Ajouter une promotion',
                     },
                 },
@@ -195,10 +195,10 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageAlt: 'Bouton stylo pour modifier une promotion',
                     imageCaption: 'Le stylo de la ligne promotion ouvre le pop-up de modification.',
                     imageHighlight: {
-                        left: '38.0%',
-                        top: '24.0%',
-                        width: '3.8%',
-                        height: '7.5%',
+                        left: '41.9%',
+                        top: '24.2%',
+                        width: '3.0%',
+                        height: '3.0%',
                         label: 'Bouton Modifier',
                     },
                 },
@@ -476,4 +476,5 @@ export const promotionsTutorialContent: TutorialContent = {
         'Revérifier les contraintes avant de lancer une génération de planning.',
     ],
 }
+
 
