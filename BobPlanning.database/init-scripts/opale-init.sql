@@ -338,6 +338,38 @@ INSERT INTO cycle (nom, type) VALUES
                                   ('Cycle Ingénieur - Initial',   'Initial'),
                                   ('Cycle Ingénieur - Apprentissage', 'Apprentissage');
 
+-- Déchargement des données de la table `salle`
+--
+INSERT INTO salle (nom, nom_complet, type_principal, etage, capacite, utilisable, description) VALUES
+    ('A101', 'Salle de cours A101', 'Cours', 1, 30, TRUE, 'Salle de cours standard'),
+    ('A102', 'Salle de cours A102', 'Cours', 1, 25, TRUE, 'Salle de cours standard'),
+    ('B201', 'Salle de cours B201', 'Cours', 2, 35, TRUE, 'Salle de cours grande capacité'),
+    ('INFO1', 'Salle informatique INFO1', 'Informatique', 0, 20, TRUE, 'Salle informatique avec postes de travail'),
+    ('PROJ1', 'Salle de projet PROJ1', 'Projet', 2, 15, TRUE, 'Salle dédiée aux travaux de groupe et projets');
+
+-- Déchargement des données de la table `professeur`
+--
+INSERT INTO professeur (id, nom, prenom, email, email_perso, telephone, type, modalite_enseignement, campus_origin) VALUES
+    ('7ecaee77-c21a-4bcc-9e0b-be9e554153a2', 'McMillan',   'Tricia',  NULL,                               NULL,                               '0633936710', 'Intervenant', 'Distanciel', 'Bordeaux'),
+    ('cdedd532-bf81-4706-8fd4-225597223203', 'McMillan',   'Tricia',  'rozenn.renaud@protonmail.com', 'rozenn.renaud@protonmail.com', '0532629636', 'Permanent',   'Présentiel', 'Bordeaux'),
+    ('ed2d8e6a-db52-4c89-8efc-acdf05df96bf', 'Dent',        'Arthur',  'fhdsjkf@gfdg.gf',             'gfjdkg@fds.fe',                '0121212121', 'Permanent',   'Présentiel', 'Bordeaux'),
+    ('f938d325-f880-4a21-b5ae-53f58e15b3e5', 'Beeblebrox', 'Zaphod',  'lllll@ae.e',                   'fdgf@fd.e',                    '0665656565', 'Intervenant', 'Présentiel', 'Bordeaux'),
+    ('1c4cb8ce-68c7-44f3-afa2-eaa9ad7d337a', 'Prefect',     'Ford',    'grrr@fd.e',                    'fdsfds@fd.d',                  '0632323232', 'Intervenant', 'Présentiel', 'Bordeaux'),
+    ('faac9900-3d03-454b-8c46-0947e353c46c', 'McGee',       'Bobby',   'fds@ooo.e',                    'fdsfds@ese.ts',                '0685858585', 'Intervenant', 'Présentiel', 'Bordeaux'),
+    ('96f46b56-47f6-418b-802d-f2dd1732da6b', 'lumpur',      'koala',   'gfdg@lll.e',                   'pppp@e.e',                     '0656565656', 'Permanent',   'Présentiel', 'Bordeaux'),
+    ('885de8c7-1e90-488b-8360-1f9ef5fd754b', 'chirac',      'jacques', 'jjj@ds.e',                     'jiji@peo.p',                   '0632323232', 'Permanent',   'Présentiel', 'Bordeaux'),
+    ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Dupont',     'Marie',   'marie.dupont@isen.fr',        'marie.perso@mail.fr',          '0611111111', 'Permanent',   'Présentiel', 'Bordeaux'),
+    ('b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Martin',     'Pierre',  'pierre.martin@isen.fr',       NULL,                          '0622222222', 'Intervenant', 'Hybride',    'Bordeaux'),
+    ('c3d4e5f6-a7b8-9012-cdef-123456789012', 'Bernard',    'Sophie',  'sophie.bernard@isen.fr',      'sophie.b@gmail.com',           '0633333333', 'Permanent',   'Présentiel', 'Lille'),
+    ('d4e5f6a7-b8c9-0123-def1-234567890123', 'Lefevre',    'Luc',     NULL,                          'luc.lefevre@free.fr',         '0644444444', 'Intervenant', 'Distanciel', 'Bordeaux'),
+    ('e5f6a7b8-c9d0-1234-ef12-345678901234', 'Moreau',     'Claire',  'claire.moreau@isen.fr',       NULL,                          '0655555555', 'Permanent',   'Hybride',    'Bordeaux'),
+    ('f6a7b8c9-d0e1-2345-f123-456789012345', 'Petit',      'Thomas',  'thomas.petit@isen.fr',        'thomas.p@outlook.fr',         '0666666666', 'Intervenant', 'Présentiel', 'Lille'),
+    ('1a2b3c4d-5e6f-7890-abcd-ef1234567891', 'Leroy',      'Julie',   'julie.leroy@isen.fr',         'julie.leroy@gmail.com',       '0677777777', 'Permanent',   'Présentiel', 'Bordeaux'),
+    ('2b3c4d5e-6f7a-8901-bcde-f12345678912', 'Roux',       'Nicolas', 'nicolas.roux@isen.fr',        NULL,                         '0688888888', 'Intervenant', 'Hybride',    'Chateauroux'),
+    ('3c4d5e6f-7a8b-9012-cdef-123456789013', 'Fournier',   'Emma',    'emma.fournier@isen.fr',       'emma.f@free.fr',              '0699999999', 'Permanent',   'Distanciel', 'Bordeaux'),
+    ('4d5e6f7a-8b9c-0123-def1-234567890134', 'Garnier',    'Antoine', 'antoine.garnier@isen.fr',     NULL,                         '0610101010', 'Intervenant', 'Présentiel', 'Lille'),
+    ('5e6f7a8b-9c0d-1234-ef12-345678901235', 'Chevalier',  'Sarah',   'sarah.chevalier@isen.fr',     'sarah.c@hotmail.fr',          '0612121212', 'Permanent',   'Hybride',    'Chateauroux');
+
 -- Déchargement des données de la table `promotions`
 INSERT INTO promotion (nom, effectifs, id_cycle, date_start, date_end) VALUES
                                                                            ('ADI1',   20,  (SELECT id FROM cycle WHERE nom = 'Cycle Préparatoire'), '2023-09-01', '2024-06-30'),
