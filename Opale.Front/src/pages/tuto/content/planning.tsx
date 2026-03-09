@@ -1,8 +1,8 @@
 ﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
-import screenPagePlanningScreenshot from '../../../assets/tuto/planning/screen-page-planning.png'
-import screenPagePlanningDownloadScreenshot from '../../../assets/tuto/planning/screen-page-planning-download.png'
-import screenPagePlanningDownloadDoScreenshot from '../../../assets/tuto/planning/screen-page-planning-download-do.png'
+import screenPagePlanningScreenshot from '../../../assets/tuto/planning/page-planning.png'
+import screenPagePlanningDownloadScreenshot from '../../../assets/tuto/planning/page-planning-download.png'
+import screenPagePlanningDownloadDoScreenshot from '../../../assets/tuto/planning/page-planning-download-do.png'
 
 export const planningTutorialContent: TutorialContent = {
     objective: "Accompagner l'utilisateur avec une checklist et guider la génération du planning demandé.",
