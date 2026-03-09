@@ -1,4 +1,4 @@
-// src/components/teachers/TeacherDetailCard.tsx
+﻿// src/components/teachers/TeacherDetailCard.tsx
 import { Teacher } from '../../models/Teachers'
 import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import TeacherInfoColumn from './section/TeacherInfoColumn'
@@ -125,6 +125,7 @@ export default function TeacherDetailCard({
                     />
 
                     <TeacherSubjectsColumn
+                        teacherId={teacherDraft.id}
                         subjects={teacherDraft.subjects}
                         onSubjectChange={handleSubjectChange}
                         onAddSubject={handleAddSubject}
@@ -230,4 +231,6 @@ export default function TeacherDetailCard({
         </div>
     )
 }
+
+
 

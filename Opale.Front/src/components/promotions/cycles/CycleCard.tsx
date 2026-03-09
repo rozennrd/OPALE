@@ -2,28 +2,45 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import icTrash from '../../../assets/ic-trash.png'
 import icModif from '../../../assets/ic-modif.png'
 import icPlus from '../../../assets/ic-plus.png'
-import { hasPromoMismatch } from '../../../utils/promoUtils'
-import { Cycle } from '../../../models'
+import { hasPromoMismatch, uid } from '../../../utils/promoUtils'
+import { Cycle, GroupSpecialtyItem, Promotion } from '../../../models'
 import CycleImportDropzone from './CycleImportDropZone'
 import ConfirmDialog from '../../common/ConfirmDialog'
+import MaquettePreviewDialog from './MaquettePreviewDialog'
+import MaquetteSpecialtyMapDialog from './MaquetteSpecialtyMapDialog'
+import { DetectedSpecialtyItem, FileSpecialtyMapping, SpecialtyDraft } from './maquetteImportTypes'
 import {
     maquetteApi,
     MaquetteAnalyzeResponse,
     MaquetteImportResponse,
+    MaquetteSpecialtyMapping,
 } from '../../../services/api/maquetteApi'
-import { Promotion } from "../../../models"
+import { specialtiesApi } from '../../../services/api/specialtiesApi'
 
 
 interface CycleCardProps {
     cycle: Cycle
-    renameCycle: (cycleId: string, name: string) => void
+    renameCycle: (cycleId: string, name: string) => Promise<boolean>
+    renameError?: string
+    clearRenameError: (cycleId: string) => void
+    updateRenameValidation: (cycleId: string, name: string) => void
     removeCycle: (cycleId: string) => void
     openEditPromotion: (cycleId: string, promoId: string) => void
     removePromotion: (promoId: string) => void
     addPromotion: (cycleId: string, label: string) => void
+    refreshCycles: () => Promise<void>
 }
 
 type ImportFeedbackVariant = 'success' | 'error' | 'info'
+
+interface MappingModalState {
+    file: File
+    analysis: MaquetteAnalyzeResponse
+    detectedItems: DetectedSpecialtyItem[]
+    draftSpecialtiesByPromoId: Record<string, SpecialtyDraft[]>
+    originalSpecialtiesByPromoId: Record<string, GroupSpecialtyItem[]>
+    mapping: Record<string, string | null>
+}
 
 const normalize = (value: string): string => {
     return value
@@ -110,6 +127,23 @@ const isCommunSpecialite = (value: string | null | undefined): boolean => {
     )
 }
 
+const normalizePromoCode = (value: string): string =>
+    normalize(value).replace(/[^A-Z0-9]/g, '')
+
+const normalizeSpecialtyValue = (value: string): string =>
+    value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\u00a0/g, ' ')
+        .replace(/[\/\\_|-]/g, ' ')
+        .replace(/[\u2010-\u2015]/g, ' ')
+        .replace(/[\u2019']/g, ' ')
+        .replace(/[()[\]{}]/g, ' ')
+        .replace(/[.,;:!?%]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase()
+
 const emptyImportCounters = (): Required<
     Pick<
         MaquetteImportResponse,
@@ -123,31 +157,36 @@ const emptyImportCounters = (): Required<
     skippedExamEvents: 0,
 })
 
-const EVALUATION_COLUMNS: Array<{
-    type: 'INTERMEDIAIRE' | 'FINALE' | 'CONTROLE_CONTINU' | 'TRAVAUX_PRATIQUES' | 'PROJET' | 'AUTRE'
-    label: string
-}> = [
-    { type: 'INTERMEDIAIRE', label: 'Interm.' },
-    { type: 'FINALE', label: 'Finale' },
-    { type: 'CONTROLE_CONTINU', label: 'CC' },
-    { type: 'TRAVAUX_PRATIQUES', label: 'TP' },
-    { type: 'PROJET', label: 'Projet' },
-    { type: 'AUTRE', label: 'Autre' },
+const HOURS_KEYS: Array<keyof NonNullable<MaquetteAnalyzeResponse['matieres']>[number]['heures']> = [
+    'coursMagistral',
+    'coursInteractif',
+    'td',
+    'tp',
+    'projet',
+    'elearning',
+    'visitesConferences',
+    'autoGere',
 ]
 
 const CycleCard: React.FC<CycleCardProps> = ({
                                                  cycle,
                                                  renameCycle,
+                                                 renameError,
+                                                 clearRenameError,
+                                                 updateRenameValidation,
                                                  removeCycle,
                                                  openEditPromotion,
                                                  removePromotion,
                                                  addPromotion,
+                                                 refreshCycles,
                                              }) => {
     const [cycleName, setCycleName] = useState(cycle.name)
     const [isAddPromoOpen, setIsAddPromoOpen] = useState(false)
     const [promoName, setPromoName] = useState('')
 
     const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+    const [selectedFileAnalyses, setSelectedFileAnalyses] = useState<Record<string, MaquetteAnalyzeResponse>>({})
+    const [fileMappings, setFileMappings] = useState<Record<string, FileSpecialtyMapping>>({})
     const [previewQueue, setPreviewQueue] = useState<File[]>([])
     const [previewFile, setPreviewFile] = useState<File | null>(null)
     const [previewData, setPreviewData] = useState<MaquetteAnalyzeResponse | null>(null)
@@ -157,14 +196,23 @@ const CycleCard: React.FC<CycleCardProps> = ({
     const [isPreviewWarningsVisible, setIsPreviewWarningsVisible] = useState(true)
 
     const [isImporting, setIsImporting] = useState(false)
+    const [hasImported, setHasImported] = useState(false)
     const [importFeedback, setImportFeedback] = useState<{
         variant: ImportFeedbackVariant
         message: string
     } | null>(null)
 
+    const [mappingModal, setMappingModal] = useState<MappingModalState | null>(null)
+    const [mappingSaving, setMappingSaving] = useState(false)
+    const [mappingError, setMappingError] = useState<string | null>(null)
+
     const previewRequestIdRef = useRef(0)
 
     const cycleHint = useMemo(() => inferCycleHint(cycle), [cycle])
+
+    useEffect(() => {
+        setCycleName(cycle.name)
+    }, [cycle.name])
 
     const openAddPromoDialog = () => {
         const nextIndex = (cycle.promotions?.length || 0) + 1
@@ -263,9 +311,26 @@ const CycleCard: React.FC<CycleCardProps> = ({
     }
 
     const handleRemoveValidatedFile = (fileToRemove: File) => {
+        const key = fileKey(fileToRemove)
         setSelectedFiles((previous) =>
             previous.filter((file) => fileKey(file) !== fileKey(fileToRemove)),
         )
+        setSelectedFileAnalyses((previous) => {
+            if (!previous[key]) return previous
+            const next = { ...previous }
+            delete next[key]
+            return next
+        })
+        setFileMappings((previous) => {
+            if (!previous[key]) return previous
+            const next = { ...previous }
+            delete next[key]
+            return next
+        })
+        setMappingModal((current) => {
+            if (!current || fileKey(current.file) !== key) return current
+            return null
+        })
     }
 
     const handleValidatePreview = () => {
@@ -276,6 +341,15 @@ const CycleCard: React.FC<CycleCardProps> = ({
             if (existing.has(fileKey(previewFile))) return previous
             return [...previous, previewFile]
         })
+        setSelectedFileAnalyses((previous) => ({
+            ...previous,
+            [fileKey(previewFile)]: previewData,
+        }))
+        setFileMappings((previous) => {
+            const next = { ...previous }
+            delete next[fileKey(previewFile)]
+            return next
+        })
 
         closePreview()
     }
@@ -284,7 +358,437 @@ const CycleCard: React.FC<CycleCardProps> = ({
         closePreview()
     }
 
-    const handleImportRequested = async () => {
+    const findPromotionByCode = (promotionCode: string): Promotion | null => {
+        const normalizedCode = normalizePromoCode(promotionCode || '')
+        if (!normalizedCode) return null
+
+        return (
+            cycle.promotions.find(
+                (promo) => normalizePromoCode(promo.label) === normalizedCode,
+            ) || null
+        )
+    }
+
+    const buildDetectedSpecialties = (
+        analysis: MaquetteAnalyzeResponse,
+    ): DetectedSpecialtyItem[] => {
+        const detectedByKey = new Map<string, DetectedSpecialtyItem>()
+
+        analysis.matieres.forEach((matiere) => {
+            const promotionCode = (matiere.promotionCode || '').trim()
+            if (!promotionCode) return
+
+            const rawSpecialty = (matiere.specialiteLabel || matiere.specialiteCode || '').trim()
+            if (!rawSpecialty) return
+
+            if (matiere.specialiteType === 'COMMUN' || isCommunSpecialite(rawSpecialty)) {
+                return
+            }
+
+            const normalized = normalizeSpecialtyValue(rawSpecialty)
+            if (!normalized) return
+
+            const key = `${promotionCode}||${normalized}`
+            const promotion = findPromotionByCode(promotionCode)
+            const detectedLabel = rawSpecialty
+
+            const existing = detectedByKey.get(key)
+            if (!existing) {
+                detectedByKey.set(key, {
+                    key,
+                    promotionCode,
+                    promotionId: promotion?.id ?? null,
+                    promotionLabel: promotion?.label ?? null,
+                    detectedLabel,
+                    normalized,
+                })
+                return
+            }
+
+            if (matiere.specialiteLabel && existing.detectedLabel !== detectedLabel) {
+                detectedByKey.set(key, {
+                    ...existing,
+                    detectedLabel,
+                })
+            }
+        })
+
+        return Array.from(detectedByKey.values()).sort((left, right) => {
+            const byPromo = left.promotionCode.localeCompare(right.promotionCode, 'fr', {
+                numeric: true,
+                sensitivity: 'base',
+            })
+            if (byPromo !== 0) return byPromo
+
+            return left.detectedLabel.localeCompare(right.detectedLabel, 'fr', {
+                numeric: true,
+                sensitivity: 'base',
+            })
+        })
+    }
+
+    const buildMappingModalState = (
+        file: File,
+        analysis: MaquetteAnalyzeResponse,
+    ): MappingModalState | null => {
+        const detectedItems = buildDetectedSpecialties(analysis)
+        if (detectedItems.length === 0) return null
+
+        const promoIds = Array.from(
+            new Set(detectedItems.map((item) => item.promotionId).filter(Boolean)),
+        ) as string[]
+
+        const draftSpecialtiesByPromoId: Record<string, SpecialtyDraft[]> = {}
+        const originalSpecialtiesByPromoId: Record<string, GroupSpecialtyItem[]> = {}
+
+        promoIds.forEach((promoId) => {
+            const promo = cycle.promotions.find((promotion) => promotion.id === promoId)
+            const specialties = (promo?.specialties || []).map((specialty) => ({
+                id: specialty.id ? String(specialty.id) : undefined,
+                idPromo: specialty.idPromo,
+                nom: specialty.nom,
+                effectifs: specialty.effectifs,
+            }))
+
+            draftSpecialtiesByPromoId[promoId] = specialties
+            originalSpecialtiesByPromoId[promoId] = (promo?.specialties || []).map((specialty) => ({
+                ...specialty,
+                id: specialty.id ? String(specialty.id) : specialty.id,
+            }))
+        })
+
+        const mapping: Record<string, string | null> = {}
+        detectedItems.forEach((item) => {
+            if (!item.promotionId) {
+                mapping[item.key] = null
+                return
+            }
+
+            const options = draftSpecialtiesByPromoId[item.promotionId] || []
+            const match = options.find(
+                (specialty) => normalizeSpecialtyValue(specialty.nom) === item.normalized,
+            )
+            mapping[item.key] = match ? (match.id ?? match.tempId ?? null) : null
+        })
+
+        return {
+            file,
+            analysis,
+            detectedItems,
+            draftSpecialtiesByPromoId,
+            originalSpecialtiesByPromoId,
+            mapping,
+        }
+    }
+
+    const findNextFileRequiringMapping = (
+        mappings: Record<string, FileSpecialtyMapping> = fileMappings,
+    ): File | null => {
+        for (const file of selectedFiles) {
+            const analysis = selectedFileAnalyses[fileKey(file)]
+            if (!analysis) continue
+            const detectedItems = buildDetectedSpecialties(analysis)
+            if (detectedItems.length === 0) continue
+
+            const existingMapping = mappings[fileKey(file)]
+            if (!existingMapping?.confirmed) {
+                return file
+            }
+        }
+
+        return null
+    }
+
+    const openMappingModalForFile = (file: File) => {
+        const analysis = selectedFileAnalyses[fileKey(file)]
+        if (!analysis) return
+        const modalState = buildMappingModalState(file, analysis)
+        if (!modalState) return
+        setMappingError(null)
+        setMappingModal(modalState)
+    }
+
+    const persistSpecialtyDrafts = async (
+        state: MappingModalState,
+    ): Promise<Record<string, string>> => {
+        const createdIdMap: Record<string, string> = {}
+        const errors: string[] = []
+
+        for (const [promoId, draftList] of Object.entries(state.draftSpecialtiesByPromoId)) {
+            const originalList = state.originalSpecialtiesByPromoId[promoId] || []
+            const originalById = new Map(
+                originalList
+                    .filter((specialty) => specialty.id)
+                    .map((specialty) => [String(specialty.id), specialty]),
+            )
+
+            for (const draft of draftList.filter((item) => item.tempId)) {
+                const name = draft.nom.trim()
+                if (!name) continue
+
+                const response = await specialtiesApi.addSpecialty({
+                    id_promo: promoId,
+                    id_groupe: null,
+                    nom: name,
+                    effectifs: draft.effectifs,
+                })
+
+                if (!response.success || !response.data?.insertedId) {
+                    errors.push(
+                        response.error?.message ||
+                        `Impossible d'ajouter la spécialité "${name}".`,
+                    )
+                    continue
+                }
+
+                createdIdMap[draft.tempId as string] = String(response.data.insertedId)
+            }
+
+            for (const draft of draftList.filter((item) => item.id)) {
+                const original = originalById.get(String(draft.id))
+                if (!original) continue
+
+                if (
+                    original.nom !== draft.nom ||
+                    Number(original.effectifs) !== Number(draft.effectifs)
+                ) {
+                    const response = await specialtiesApi.updateSpecialty({
+                        id: String(draft.id),
+                        id_promo: promoId,
+                        id_groupe: null,
+                        nom: draft.nom.trim(),
+                        effectifs: draft.effectifs,
+                    })
+
+                    if (!response.success) {
+                        errors.push(
+                            response.error?.message ||
+                            `Impossible de mettre à jour la spécialité "${draft.nom}".`,
+                        )
+                    }
+                }
+            }
+
+            const draftIds = new Set(
+                draftList
+                    .filter((item) => item.id)
+                    .map((item) => String(item.id)),
+            )
+            const removed = originalList.filter(
+                (item) => item.id && !draftIds.has(String(item.id)),
+            )
+
+            for (const removedItem of removed) {
+                const response = await specialtiesApi.deleteSpecialty(String(removedItem.id))
+                if (!response.success) {
+                    errors.push(
+                        response.error?.message ||
+                        `Impossible de supprimer la spécialité "${removedItem.nom}".`,
+                    )
+                }
+            }
+        }
+
+        if (errors.length > 0) {
+            throw new Error(errors[0])
+        }
+
+        return createdIdMap
+    }
+
+    const buildSpecialtyMappingsPayload = (
+        file: File,
+        mappings: Record<string, FileSpecialtyMapping> = fileMappings,
+    ): MaquetteSpecialtyMapping[] => {
+        const analysis = selectedFileAnalyses[fileKey(file)]
+        if (!analysis) return []
+
+        const existingMapping = mappings[fileKey(file)]
+        if (!existingMapping?.mapping) return []
+
+        const detectedItems = buildDetectedSpecialties(analysis)
+        return detectedItems
+            .filter((item) => item.promotionId && existingMapping.mapping[item.key])
+            .map((item) => ({
+                promotionId: item.promotionId as string,
+                detected: item.detectedLabel,
+                specialtyId: existingMapping.mapping[item.key] as string,
+            }))
+    }
+
+    const continueImportFlow = async (
+        mappings: Record<string, FileSpecialtyMapping> = fileMappings,
+    ) => {
+        const nextFile = findNextFileRequiringMapping(mappings)
+        if (nextFile) {
+            openMappingModalForFile(nextFile)
+            return
+        }
+
+        await runImport(mappings)
+    }
+
+    const handleMappingSelectionChange = (detectedKey: string, value: string) => {
+        setMappingModal((previous) => {
+            if (!previous) return previous
+            return {
+                ...previous,
+                mapping: {
+                    ...previous.mapping,
+                    [detectedKey]: value || null,
+                },
+            }
+        })
+    }
+
+    const handleAddDraftSpecialty = (promoId: string, initialName: string = '') => {
+        setMappingModal((previous) => {
+            if (!previous) return previous
+            const nextList = [...(previous.draftSpecialtiesByPromoId[promoId] || [])]
+            nextList.push({
+                tempId: uid('new-specialty'),
+                idPromo: promoId,
+                nom: initialName,
+                effectifs: 1,
+            })
+
+            return {
+                ...previous,
+                draftSpecialtiesByPromoId: {
+                    ...previous.draftSpecialtiesByPromoId,
+                    [promoId]: nextList,
+                },
+            }
+        })
+    }
+
+    const handleSpecialtyNameChange = (promoId: string, index: number, value: string) => {
+        setMappingModal((previous) => {
+            if (!previous) return previous
+            const nextList = [...(previous.draftSpecialtiesByPromoId[promoId] || [])]
+            if (!nextList[index]) return previous
+            nextList[index] = { ...nextList[index], nom: value }
+
+            return {
+                ...previous,
+                draftSpecialtiesByPromoId: {
+                    ...previous.draftSpecialtiesByPromoId,
+                    [promoId]: nextList,
+                },
+            }
+        })
+    }
+
+    const handleSpecialtyEffectifsChange = (promoId: string, index: number, value: string) => {
+        setMappingModal((previous) => {
+            if (!previous) return previous
+            const nextList = [...(previous.draftSpecialtiesByPromoId[promoId] || [])]
+            if (!nextList[index]) return previous
+            nextList[index] = {
+                ...nextList[index],
+                effectifs: Number(value) || 0,
+            }
+
+            return {
+                ...previous,
+                draftSpecialtiesByPromoId: {
+                    ...previous.draftSpecialtiesByPromoId,
+                    [promoId]: nextList,
+                },
+            }
+        })
+    }
+
+    const handleRemoveDraftSpecialty = (promoId: string, index: number) => {
+        setMappingModal((previous) => {
+            if (!previous) return previous
+            const nextList = [...(previous.draftSpecialtiesByPromoId[promoId] || [])]
+            const removed = nextList.splice(index, 1)[0]
+            if (!removed) return previous
+
+            const mapping = { ...previous.mapping }
+            const removedKey = removed.id ?? removed.tempId
+            if (removedKey) {
+                Object.keys(mapping).forEach((key) => {
+                    if (mapping[key] === removedKey) {
+                        mapping[key] = null
+                    }
+                })
+            }
+
+            return {
+                ...previous,
+                mapping,
+                draftSpecialtiesByPromoId: {
+                    ...previous.draftSpecialtiesByPromoId,
+                    [promoId]: nextList,
+                },
+            }
+        })
+    }
+
+    const handleMappingConfirm = async () => {
+        if (!mappingModal || mappingSaving) return
+        setMappingSaving(true)
+        setMappingError(null)
+
+        try {
+            const createdIdMap = await persistSpecialtyDrafts(mappingModal)
+            const resolvedMapping: Record<string, string | null> = {}
+            Object.entries(mappingModal.mapping).forEach(([key, value]) => {
+                if (!value) {
+                    resolvedMapping[key] = null
+                    return
+                }
+                resolvedMapping[key] = createdIdMap[value] ?? value
+            })
+
+            const nextMappings = {
+                ...fileMappings,
+                [fileKey(mappingModal.file)]: {
+                    confirmed: true,
+                    mapping: resolvedMapping,
+                },
+            }
+            setFileMappings(nextMappings)
+
+            setMappingModal(null)
+            await refreshCycles()
+            await continueImportFlow(nextMappings)
+        } catch (error) {
+            setMappingError(
+                error instanceof Error
+                    ? error.message
+                    : "Impossible d'enregistrer les spécialités.",
+            )
+        } finally {
+            setMappingSaving(false)
+        }
+    }
+
+    const handleMappingSkip = async () => {
+        if (!mappingModal) return
+        const nextMappings = {
+            ...fileMappings,
+            [fileKey(mappingModal.file)]: {
+                confirmed: true,
+                mapping: {},
+            },
+        }
+        setFileMappings(nextMappings)
+        setMappingModal(null)
+        setMappingError(null)
+        await continueImportFlow(nextMappings)
+    }
+
+    const handleMappingCancel = () => {
+        setMappingModal(null)
+        setMappingError(null)
+    }
+
+    const runImport = async (
+        mappings: Record<string, FileSpecialtyMapping> = fileMappings,
+    ) => {
         if (selectedFiles.length === 0) return
 
         setIsImporting(true)
@@ -300,9 +804,11 @@ const CycleCard: React.FC<CycleCardProps> = ({
 
         try {
             for (const file of selectedFiles) {
+                const specialtyMappings = buildSpecialtyMappingsPayload(file, mappings)
                 const response = await maquetteApi.import(file, {
                     cycleHint,
                     dryRun: false,
+                    specialtyMappings,
                 })
 
                 if (!response.success || !response.data) {
@@ -325,6 +831,10 @@ const CycleCard: React.FC<CycleCardProps> = ({
             const failedSuffix =
                 failedFiles.length > 0 ? ` Échec : ${failedFiles.join(', ')}.` : ''
 
+            if (successCount > 0) {
+                setHasImported(true)
+            }
+
             setImportFeedback({
                 variant,
                 message:
@@ -343,6 +853,18 @@ const CycleCard: React.FC<CycleCardProps> = ({
         } finally {
             setIsImporting(false)
         }
+    }
+
+    const handleImportRequested = async () => {
+        if (selectedFiles.length === 0 || isImporting) return
+
+        const nextFile = findNextFileRequiringMapping()
+        if (nextFile) {
+            openMappingModalForFile(nextFile)
+            return
+        }
+
+        await runImport()
     }
 
     const previewSpecialites = useMemo(() => {
@@ -446,23 +968,80 @@ const CycleCard: React.FC<CycleCardProps> = ({
         })
     ), [previewMatieresToDisplay])
 
-    const getEvaluationCountByType = (
+    const mappingPromoIds = useMemo(() => {
+        if (!mappingModal) return []
+        return Object.keys(mappingModal.draftSpecialtiesByPromoId)
+    }, [mappingModal])
+
+    const mappingHasInvalidNames = useMemo(() => {
+        if (!mappingModal) return false
+        return Object.values(mappingModal.draftSpecialtiesByPromoId).some((list) =>
+            list.some((specialty) => !specialty.nom.trim() || specialty.effectifs <= 0),
+        )
+    }, [mappingModal])
+
+    const mappingSelectionsByPromo = useMemo(() => {
+        if (!mappingModal) return {} as Record<string, Set<string>>
+        const used: Record<string, Set<string>> = {}
+
+        mappingModal.detectedItems.forEach((item) => {
+            if (!item.promotionId) return
+            const selected = mappingModal.mapping[item.key]
+            if (!selected) return
+            if (!used[item.promotionId]) {
+                used[item.promotionId] = new Set()
+            }
+            used[item.promotionId].add(selected)
+        })
+
+        return used
+    }, [mappingModal])
+
+    const getTotalEvaluations = (
         row: NonNullable<MaquetteAnalyzeResponse['matieres']>[number],
-        type: 'INTERMEDIAIRE' | 'FINALE' | 'CONTROLE_CONTINU' | 'TRAVAUX_PRATIQUES' | 'PROJET' | 'AUTRE',
+    ): number => row.evaluations?.length ?? 0
+
+    const getTotalHours = (
+        row: NonNullable<MaquetteAnalyzeResponse['matieres']>[number],
     ): number => {
-        if (!row.evaluations || row.evaluations.length === 0) return 0
-        return row.evaluations.filter((evaluation) => evaluation.type === type).length
+        const hours = row.heures
+        if (!hours) return 0
+        const total = Number(hours.total)
+        if (Number.isFinite(total) && total > 0) return total
+        return HOURS_KEYS.reduce((sum, key) => sum + (Number(hours[key]) || 0), 0)
     }
 
     return (
         <section className="card cycle-card">
             <div className="cycle-head">
-                <input
-                    className="cycle-name"
-                    value={cycleName}
-                    onChange={(event) => setCycleName(event.target.value)}
-                    onBlur={() => renameCycle(cycle.id, cycleName)}
-                />
+                <div className="cycle-name-wrapper">
+                    <input
+                        className="cycle-name"
+                        value={cycleName}
+                        onChange={(event) => {
+                            const nextValue = event.target.value
+                            setCycleName(nextValue)
+                            updateRenameValidation(cycle.id, nextValue)
+                        }}
+                        onFocus={() => {
+                            updateRenameValidation(cycle.id, cycleName)
+                        }}
+                        onBlur={() => {
+                            void (async () => {
+                                const success = await renameCycle(cycle.id, cycleName)
+                                if (!success) {
+                                    setCycleName(cycle.name)
+                                    updateRenameValidation(cycle.id, cycle.name)
+                                }
+                            })()
+                        }}
+                    />
+                    {renameError && (
+                        <div className="cycle-name-error" role="alert">
+                            {renameError}
+                        </div>
+                    )}
+                </div>
 
                 <div className="cycle-actions">
                     <button
@@ -480,7 +1059,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
             <div className="promotions">
                 {cycle.promotions.length === 0 && (
                     <div className="empty">
-                        Aucune promotion affichee pour ce cycle.
+                        Aucune promotion affichée pour ce cycle.
                     </div>
                 )}
 
@@ -539,6 +1118,7 @@ const CycleCard: React.FC<CycleCardProps> = ({
                     selectedFiles={selectedFiles}
                     isImporting={isImporting}
                     importFeedback={importFeedback}
+                    hideImportButton={hasImported}
                     onIncomingFiles={handleIncomingFiles}
                     onRemoveFile={handleRemoveValidatedFile}
                     onImportRequested={handleImportRequested}
@@ -575,216 +1155,64 @@ const CycleCard: React.FC<CycleCardProps> = ({
                 onCancel={closeAddPromoDialog}
                 onRequestClose={closeAddPromoDialog}
             />
-
-            <ConfirmDialog
+            <MaquettePreviewDialog
                 open={Boolean(previewFile)}
                 title={cycle.name}
-                message={(
-                    <div className="maquette-preview-content">
-                        {previewFile && (
-                            <div className="maquette-preview-filename">
-                                Fichier: <strong>{previewFile.name}</strong>
-                            </div>
-                        )}
-
-                        {previewLoading && (
-                            <div className="maquette-preview-loading">
-                                Analyse de la maquette en cours...
-                            </div>
-                        )}
-
-                        {!previewLoading && previewError && (
-                            <div className="maquette-preview-error">
-                                {previewError}
-                            </div>
-                        )}
-
-                        {!previewLoading && !previewError && previewData && (
-                            <>
-                                <table className="maquette-preview-summary-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <div className="maquette-preview-summary-col">
-                                                    <div className="maquette-preview-summary-item">
-                                                        <span>Année scolaire</span>
-                                                        <strong>{previewData.metadata.anneeScolaire || '-'}</strong>
-                                                    </div>
-                                                    <div className="maquette-preview-summary-item">
-                                                        <span>Cycle détecté</span>
-                                                        <strong>{previewData.metadata.cycleCode || '-'}</strong>
-                                                    </div>
-                                                    <div className="maquette-preview-summary-item">
-                                                        <span>Promotions détectées</span>
-                                                        <strong>{previewData.metadata.promotions.join(', ') || '-'}</strong>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="maquette-preview-summary-col">
-                                                    <div className="maquette-preview-summary-item">
-                                                        <span>Spécialités détectées</span>
-                                                        <strong>{previewSpecialites}</strong>
-                                                    </div>
-                                                    <div className="maquette-preview-summary-item">
-                                                        <span>Nombre de matières extraites</span>
-                                                        <strong>{previewData.matieres.length}</strong>
-                                                    </div>
-                                                    <div className="maquette-preview-summary-item">
-                                                        <span>Nombre d&apos;avertissements</span>
-                                                        <strong>{previewData.warnings.length}</strong>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colSpan={2} className="maquette-preview-summary-fullrow">
-                                                <span>Feuilles détectées</span>
-                                                {' : '}
-                                                <strong>{previewData.metadata.feuilles.join(', ') || '-'}</strong>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                                {previewData.warnings.length > 0 && (
-                                    isPreviewWarningsVisible ? (
-                                        <div className="maquette-preview-warning-list">
-                                            <div className="maquette-preview-warning-head">
-                                                <strong>Avertissements</strong>
-                                                <button
-                                                    type="button"
-                                                    className="maquette-preview-warning-close"
-                                                    onClick={() => setIsPreviewWarningsVisible(false)}
-                                                    aria-label="Fermer les avertissements"
-                                                    title="Fermer"
-                                                >
-                                                    ×
-                                                </button>
-                                            </div>
-                                            <ul>
-                                                {previewData.warnings.slice(0, 5).map((warning, index) => (
-                                                    <li key={`${warning}-${index}`}>{warning}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            className="maquette-preview-warning-reopen btn-tertiary"
-                                            onClick={() => setIsPreviewWarningsVisible(true)}
-                                        >
-                                            Afficher les avertissements
-                                        </button>
-                                    )
-                                )}
-
-                                <div className="maquette-preview-promo-nav">
-                                    <button
-                                        type="button"
-                                        className="btn-tertiary maquette-preview-promo-nav-btn"
-                                        onClick={() => setPreviewPromotionIndex((current) => Math.max(0, current - 1))}
-                                        disabled={previewPromotions.length <= 1 || previewPromotionIndex === 0}
-                                    >
-                                        Promotion précédente
-                                    </button>
-                                    <div className="maquette-preview-promo-nav-label">
-                                        <span>Promotion affichée</span>
-                                        <strong>
-                                            {activePreviewPromotion || '-'} (
-                                            {previewPromotions.length > 0 ? previewPromotionIndex + 1 : 0}/
-                                            {previewPromotions.length})
-                                        </strong>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        className="btn-tertiary maquette-preview-promo-nav-btn"
-                                        onClick={() =>
-                                            setPreviewPromotionIndex((current) =>
-                                                Math.min(previewPromotions.length - 1, current + 1),
-                                            )
-                                        }
-                                        disabled={
-                                            previewPromotions.length <= 1 ||
-                                            previewPromotionIndex >= previewPromotions.length - 1
-                                        }
-                                    >
-                                        Promotion suivante
-                                    </button>
-                                </div>
-
-                                <div className="maquette-preview-grid-wrapper">
-                                    <table className="maquette-preview-grid">
-                                        <thead>
-                                            <tr>
-                                                <th rowSpan={2}>Promo</th>
-                                                <th rowSpan={2}>UE</th>
-                                                <th rowSpan={2}>Matière</th>
-                                                <th rowSpan={2}>Semestres</th>
-                                                {shouldShowSpecialiteColumn && (
-                                                    <th rowSpan={2}>Spécialité</th>
-                                                )}
-                                                <th
-                                                    colSpan={EVALUATION_COLUMNS.length}
-                                                    className="maquette-preview-grid-group"
-                                                >
-                                                    Épreuves
-                                                </th>
-                                            </tr>
-                                            <tr>
-                                                {EVALUATION_COLUMNS.map((column) => (
-                                                    <th
-                                                        key={column.type}
-                                                        className={`evaluation-col evaluation-col--${column.type.toLowerCase()}`}
-                                                    >
-                                                        {column.label}
-                                                    </th>
-                                                ))}
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {previewMatieresToDisplay.map((matiere, index) => (
-                                                <tr key={`${matiere.promotionCode}-${matiere.matiereNom}-${index}`}>
-                                                    <td>{matiere.promotionCode || '-'}</td>
-                                                    <td>{matiere.ueNom || '-'}</td>
-                                                    <td>{matiere.matiereNom || '-'}</td>
-                                                    <td>
-                                                        {formatSemestresForDisplay(
-                                                            matiere.semestres ?? [],
-                                                            matiere.promotionCode,
-                                                        )}
-                                                    </td>
-                                                    {shouldShowSpecialiteColumn && (
-                                                        <td>{matiere.specialiteLabel || matiere.specialiteCode || '-'}</td>
-                                                    )}
-                                                    {EVALUATION_COLUMNS.map((column) => (
-                                                        <td
-                                                            key={`${matiere.matiereNom}-${column.type}-${index}`}
-                                                            className={`evaluation-col evaluation-col--${column.type.toLowerCase()}`}
-                                                        >
-                                                            {getEvaluationCountByType(matiere, column.type)}
-                                                        </td>
-                                                    ))}
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                )}
-                confirmLabel="Valider"
-                cancelLabel="Annuler"
-                cardClassName="maquette-preview-dialog"
+                previewFile={previewFile}
+                previewLoading={previewLoading}
+                previewError={previewError}
+                previewData={previewData}
+                previewSpecialites={previewSpecialites}
+                isPreviewWarningsVisible={isPreviewWarningsVisible}
+                onToggleWarnings={setIsPreviewWarningsVisible}
+                previewPromotions={previewPromotions}
+                previewPromotionIndex={previewPromotionIndex}
+                onPrevPromotion={() =>
+                    setPreviewPromotionIndex((current) => Math.max(0, current - 1))
+                }
+                onNextPromotion={() =>
+                    setPreviewPromotionIndex((current) =>
+                        Math.min(previewPromotions.length - 1, current + 1),
+                    )
+                }
+                activePreviewPromotion={activePreviewPromotion}
+                previewMatieresToDisplay={previewMatieresToDisplay}
+                shouldShowSpecialiteColumn={shouldShowSpecialiteColumn}
+                formatSemestresForDisplay={formatSemestresForDisplay}
+                getTotalHours={getTotalHours}
+                getTotalEvaluations={getTotalEvaluations}
                 onConfirm={handleValidatePreview}
                 onCancel={handleCancelPreview}
-                onRequestClose={handleCancelPreview}
                 confirmDisabled={previewLoading || !!previewError || !previewData}
+            />
+            <MaquetteSpecialtyMapDialog
+                open={Boolean(mappingModal)}
+                fileName={mappingModal?.file.name ?? null}
+                mappingSaving={mappingSaving}
+                mappingError={mappingError}
+                detectedItems={mappingModal?.detectedItems ?? []}
+                draftSpecialtiesByPromoId={mappingModal?.draftSpecialtiesByPromoId ?? {}}
+                mappingSelectionsByPromo={mappingSelectionsByPromo}
+                mapping={mappingModal?.mapping ?? {}}
+                mappingPromoIds={mappingPromoIds}
+                promotions={cycle.promotions}
+                confirmDisabled={mappingHasInvalidNames}
+                onSelectionChange={handleMappingSelectionChange}
+                onAddDraftSpecialty={handleAddDraftSpecialty}
+                onSpecialtyNameChange={handleSpecialtyNameChange}
+                onSpecialtyEffectifsChange={handleSpecialtyEffectifsChange}
+                onRemoveDraftSpecialty={handleRemoveDraftSpecialty}
+                onConfirm={handleMappingConfirm}
+                onSkip={handleMappingSkip}
+                onCancel={handleMappingCancel}
             />
         </section>
     )
 }
 
 export default CycleCard
+
+
+
+
 

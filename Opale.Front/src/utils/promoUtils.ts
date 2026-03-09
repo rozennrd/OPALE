@@ -12,6 +12,19 @@ interface PromoTotals {
 export const uid = (p: string = 'id'): string =>
     `${p}-${Math.random().toString(36).slice(2, 9)}`
 
+export const getAcademicYearRange = (today: Date = new Date()): { startDate: string; endDate: string } => {
+    const year = today.getFullYear()
+    const month = today.getMonth()
+
+    const startYear = month >= 8 ? year : year - 1
+    const endYear = startYear + 1
+
+    const startDate = `${startYear}-09-01`
+    const endDate = `${endYear}-08-31`
+
+    return { startDate, endDate }
+}
+
 export const makePromotions = (name: string, years: number): Promotion[] =>
     Array.from({ length: years }, (_, i): Promotion => ({
         id: uid('promo'),

@@ -346,7 +346,7 @@ export const teachersTutorialContent: TutorialContent = {
                             <strong>Sélectionner</strong>: activer le mode de suppression multiple.
                         </>,
                         <>
-                            <strong>Reset filtres</strong>: revenir rapidement à la vue complète.
+                            <strong>Réinitialiser les filtres</strong>: revenir rapidement à la vue complète.
                         </>,
                         <>
                             Le bouton <strong>+</strong> ouvre le pop-up de création d'un enseignant.

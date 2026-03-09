@@ -333,7 +333,7 @@ export const roomsTutorialContent: TutorialContent = {
                             top: '28.0%',
                             width: '6.1%',
                             height: '4.4%',
-                            label: 'Reset filtres',
+                            label: 'Réinitialiser les filtres',
                             labelLeft: '-0.8rem',
                             labelTop: '2.4rem',
                         },
@@ -357,7 +357,7 @@ export const roomsTutorialContent: TutorialContent = {
                             <strong>Sélectionner</strong>: activer la suppression multiple.
                         </>,
                         <>
-                            <strong>Reset filtres</strong>: revenir rapidement à la vue complète.
+                            <strong>Réinitialiser les filtres</strong>: revenir rapidement à la vue complète.
                         </>,
                     ],
                 },

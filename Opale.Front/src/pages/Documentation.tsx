@@ -223,7 +223,7 @@ export default function Documentation() {
                                                                         title={
                                                                             isExpanded
                                                                                 ? 'Replier'
-                                                                                : 'Deplier'
+                                                                                : 'Déplier'
                                                                         }
                                                                     >
                                                                         {stepSection.title}
@@ -238,7 +238,7 @@ export default function Documentation() {
                                                                     title={
                                                                         isExpanded
                                                                             ? 'Replier'
-                                                                            : 'Deplier'
+                                                                            : 'Déplier'
                                                                     }
                                                                 >
                                                                     <span

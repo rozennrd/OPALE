@@ -1,5 +1,6 @@
 // src/components/rooms/RoomDetailCard.tsx
 import { useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import { Room, RoomType } from '../../models/Room'
 import { ROOM_TYPES } from '../../mocks/rooms.mock'
 import RoomTypeBadge from './RoomTypeBadge'
@@ -8,13 +9,18 @@ import DetailCardBody from '../common/DetailCardBody'
 import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
+import type { RoomSaveResult } from '../../hooks/rooms/useRoomsData'
 
 interface RoomDetailCardProps {
     room: Room
     onClose: () => void
-    onChange: (room: Room) => Promise<boolean> | boolean | void
+    onChange: (room: Room) => Promise<RoomSaveResult> | RoomSaveResult | boolean | void
     onDelete?: () => void
     isCreate?: boolean
+    validateRoomIdentity?: (roomId: string | undefined, name: string, fullName: string) => {
+        nameError?: string
+        fullNameError?: string
+    }
 }
 
 const ROOM_TYPE_LABELS: Record<RoomType, string> = {
@@ -22,11 +28,11 @@ const ROOM_TYPE_LABELS: Record<RoomType, string> = {
     Informatique: 'Informatique',
     Projet: 'Projet',
     Rassemblement: 'Rassemblement',
-    Reunion: 'Reunion',
+    Reunion: 'Réunion',
     Associatif: 'Associatif',
-    Electronique: 'Electronique',
+    Electronique: 'Électronique',
     Fablab: 'Fablab',
-    Reseau: 'Reseau',
+    Reseau: 'Réseau',
 }
 
 const floorLabel = (floor: number): string => {
@@ -48,6 +54,7 @@ export default function RoomDetailCard({
     onChange,
     onDelete,
     isCreate = false,
+    validateRoomIdentity,
 }: RoomDetailCardProps) {
     const [name, setName] = useState(room.name)
     const [fullName, setFullName] = useState(room.fullName ?? '')
@@ -57,6 +64,7 @@ export default function RoomDetailCard({
     const [mainType, setMainType] = useState<RoomType>(room.mainType)
     const [types, setTypes] = useState<RoomType[]>(room.types)
     const [description, setDescription] = useState(room.description ?? '')
+    const [errorMessage, setErrorMessage] = useState<ReactNode | null>(null)
 
     useEffect(() => {
         setName(room.name)
@@ -67,10 +75,16 @@ export default function RoomDetailCard({
         setMainType(room.mainType)
         setTypes(room.types)
         setDescription(room.description ?? '')
+        setErrorMessage(null)
     }, [room])
 
     const headerTitle = (fullName || name).trim() || room.name
     const roomDisplayName = (fullName || name || 'Nom de la salle').trim()
+    const validation = validateRoomIdentity
+        ? validateRoomIdentity(room.id, name, fullName)
+        : { nameError: undefined, fullNameError: undefined }
+    const nameError = validation.nameError
+    const fullNameError = validation.fullNameError
 
     const cancelCreateTitle = 'Création non enregistrée'
     const cancelCreateMessage = (
@@ -132,6 +146,25 @@ export default function RoomDetailCard({
     }
 
     const handleSave = async (): Promise<boolean> => {
+        if (nameError || fullNameError) {
+            const messages = [
+                nameError ? `Nom court : ${nameError}` : null,
+                fullNameError ? `Surnom / nom complet : ${fullNameError}` : null,
+            ].filter(Boolean) as string[]
+
+            setErrorMessage(
+                <div>
+                    <p>Corrige les champs suivants :</p>
+                    <ul>
+                        {messages.map((message) => (
+                            <li key={message}>{message}</li>
+                        ))}
+                    </ul>
+                </div>,
+            )
+            return false
+        }
+
         const nextRoom: Room = {
             ...room,
             name: name.trim() || room.name,
@@ -145,7 +178,15 @@ export default function RoomDetailCard({
         }
 
         const result = await Promise.resolve(onChange(nextRoom))
+        if (result && typeof result === 'object' && 'success' in result) {
+            if (!result.success) {
+                setErrorMessage(result.error)
+                return false
+            }
+            return true
+        }
         if (result === false) {
+            setErrorMessage("Erreur lors de la sauvegarde de la salle.")
             return false
         }
         return true
@@ -205,6 +246,9 @@ export default function RoomDetailCard({
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="Ex. J001"
                                     />
+                                    {nameError && (
+                                        <small className="room-detail-error">{nameError}</small>
+                                    )}
                                 </div>
 
                                 <div className="room-detail-field">
@@ -218,6 +262,9 @@ export default function RoomDetailCard({
                                         onChange={(e) => setFullName(e.target.value)}
                                         placeholder="Ex. J001_Projet"
                                     />
+                                    {fullNameError && (
+                                        <small className="room-detail-error">{fullNameError}</small>
+                                    )}
                                 </div>
 
                                 <div className="room-detail-field">
@@ -456,6 +503,18 @@ export default function RoomDetailCard({
                 onConfirm={handleConfirmSaveAndClose}
                 onCancel={handleDiscardAndClose}
                 onRequestClose={handleConfirmDialogRequestClose}
+            />
+
+            <ConfirmDialog
+                open={!!errorMessage}
+                title="Erreur"
+                message={errorMessage ?? ''}
+                confirmLabel="OK"
+                cancelLabel="Fermer"
+                variant="danger"
+                onConfirm={() => setErrorMessage(null)}
+                onCancel={() => setErrorMessage(null)}
+                onRequestClose={() => setErrorMessage(null)}
             />
         </div>
     )

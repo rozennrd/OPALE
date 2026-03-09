@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Room } from '../../models/Room'
 import { Salle, sallesApi } from '../../services/api/sallesApi'
+import type { ApiError } from '../../services/base/types'
 
 const ROOM_TYPE_VALUES: Room['mainType'][] = [
     'Cours',
@@ -105,10 +106,69 @@ const getNextRoomCode = (rooms: Room[], floor: Room['floor']): string => {
     return `J${floor}${Date.now().toString().slice(-2)}`
 }
 
+export const ROOM_NAME_DUPLICATE_MESSAGE = 'Ce code de salle est deja utilise par une autre salle.'
+export const ROOM_FULLNAME_DUPLICATE_MESSAGE = 'Ce nom/surnom de salle est deja utilise par une autre salle.'
+
+export type RoomSaveResult = { success: true } | { success: false; error: string }
+
+const getRoomSaveErrorMessage = (error?: ApiError): string => {
+    const message = error?.message?.toLowerCase() ?? ''
+
+    if (message.includes('nom/surnom') || message.includes('nom complet')) {
+        return ROOM_FULLNAME_DUPLICATE_MESSAGE
+    }
+
+    if (
+        message.includes('duplicate') ||
+        message.includes('unique') ||
+        message.includes('already') ||
+        message.includes('existe') ||
+        message.includes('existe deja')
+    ) {
+        return ROOM_NAME_DUPLICATE_MESSAGE
+    }
+
+    return error?.message ?? "Erreur lors de la sauvegarde de la salle."
+}
+
+const normalizeRoomValue = (value: string): string => {
+    return value.trim().toLocaleLowerCase('fr')
+}
+
+const getRoomFullNameValue = (room: Room): string => {
+    return (room.fullName || room.name).trim()
+}
+
 export const useRoomsData = () => {
     const [rooms, setRooms] = useState<Room[]>([])
     const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
     const [pendingNewRoomId, setPendingNewRoomId] = useState<string | null>(null)
+
+    const isDuplicateRoomName = (name: string, excludeId?: string): boolean => {
+        const normalized = normalizeRoomValue(name)
+        if (!normalized) return false
+        return rooms.some((room) => normalizeRoomValue(room.name) === normalized && room.id !== excludeId)
+    }
+
+    const isDuplicateRoomFullName = (fullName: string, excludeId?: string): boolean => {
+        const normalized = normalizeRoomValue(fullName)
+        if (!normalized) return false
+        return rooms.some((room) => normalizeRoomValue(getRoomFullNameValue(room)) === normalized && room.id !== excludeId)
+    }
+
+    const validateRoomIdentity = (roomId: string | undefined, name: string, fullName: string) => {
+        const nameValue = name.trim()
+        const fullNameValue = fullName.trim() || nameValue
+        const nameError = nameValue && isDuplicateRoomName(nameValue, roomId)
+            ? ROOM_NAME_DUPLICATE_MESSAGE
+            : undefined
+        const shouldValidateFullName = Boolean(fullNameValue)
+        const fullNameError = shouldValidateFullName && isDuplicateRoomFullName(fullNameValue, roomId)
+            ? ROOM_FULLNAME_DUPLICATE_MESSAGE
+            : undefined
+
+        return { nameError, fullNameError }
+    }
 
     useEffect(() => {
         const loadRooms = async () => {
@@ -179,7 +239,7 @@ export const useRoomsData = () => {
         setSelectedRoom(newRoom)
     }
 
-    const updateRoom = async (updatedRoom: Room): Promise<boolean> => {
+    const updateRoom = async (updatedRoom: Room): Promise<RoomSaveResult> => {
         try {
             const payload = {
                 ...roomToCreatePayload(updatedRoom),
@@ -193,7 +253,10 @@ export const useRoomsData = () => {
 
                 if (!createResponse.success || !createResponse.data) {
                     console.error('[ROOMS] Failed to create room via API', createResponse.error)
-                    return false
+                    return {
+                        success: false,
+                        error: getRoomSaveErrorMessage(createResponse.error),
+                    }
                 }
 
                 const refreshResponse = await sallesApi.getAllSalles()
@@ -206,7 +269,7 @@ export const useRoomsData = () => {
                 }
 
                 setPendingNewRoomId(null)
-                return true
+                return { success: true }
             }
 
             const updateResponse = await sallesApi.updateSalle({
@@ -215,17 +278,23 @@ export const useRoomsData = () => {
             })
             if (!updateResponse.success) {
                 console.error('[ROOMS] Failed to update room via API', updateResponse.error)
-                return false
+                return {
+                    success: false,
+                    error: getRoomSaveErrorMessage(updateResponse.error),
+                }
             }
 
             setRooms((prevRooms) =>
                 prevRooms.map((room) => (room.id === updatedRoom.id ? updatedRoom : room)),
             )
             setSelectedRoom(updatedRoom)
-            return true
+            return { success: true }
         } catch (error) {
             console.error('[ROOMS] Unexpected error while saving room', error)
-            return false
+            return {
+                success: false,
+                error: "Erreur inattendue lors de la sauvegarde de la salle.",
+            }
         }
     }
 
@@ -251,6 +320,7 @@ export const useRoomsData = () => {
         closeDetail,
         deleteRoomsByIds,
         deleteSingleRoom,
+        validateRoomIdentity,
     }
 }
 
