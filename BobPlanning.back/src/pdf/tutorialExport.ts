@@ -377,12 +377,28 @@ const getImageSize = (
     }
 }
 
-const normalizeText = (value?: string): string => {
-    if (!value) {
+const normalizeText = (value?: unknown): string => {
+    if (value === null || value === undefined || value === false) {
         return ''
     }
 
-    return value.replace(/\s+/g, ' ').trim()
+    if (typeof value === 'string') {
+        return value.replace(/\s+/g, ' ').trim()
+    }
+
+    if (typeof value === 'number') {
+        return String(value)
+    }
+
+    if (Array.isArray(value)) {
+        return value.map((item) => normalizeText(item)).filter(Boolean).join(' ').trim()
+    }
+
+    if (typeof value === 'object' && 'text' in (value as Record<string, unknown>)) {
+        return normalizeText((value as { text?: unknown }).text)
+    }
+
+    return String(value).replace(/\s+/g, ' ').trim()
 }
 
 const mergeRichTextSpans = (spans: RichTextSpan[]): RichTextSpan[] => {

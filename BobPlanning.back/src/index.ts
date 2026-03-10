@@ -36,23 +36,28 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const app = express();
 const PORT = 3000;
-app.use(express.json({ limit: '50mb' }));
-app.use(
-    cors({
-      origin: function (
-          origin: string | undefined,
-          callback: (err: Error | null, allow?: string | boolean) => void,
-      ) {
-        // Allow requests with no origin (mobile apps, curl, etc.)
-        if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
-          return callback(null, origin || true);
-        } else {
-          return callback(null, false);
-        }
-      },
-      credentials: true,
-    }),
-);
+const JSON_BODY_LIMIT = process.env.JSON_BODY_LIMIT ?? '200mb'
+const LOCALHOST_ORIGIN_REGEX = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/
+const corsOptions = {
+  origin: function (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: string | boolean) => void,
+  ) {
+    if (!origin || LOCALHOST_ORIGIN_REGEX.test(origin)) {
+      return callback(null, origin || true);
+    }
+
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'x-access-token', 'Authorization'],
+  exposedHeaders: ['Content-Disposition'],
+  optionsSuccessStatus: 204,
+};
+app.use(express.json({ limit: JSON_BODY_LIMIT }));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 pool.connect((err: any, connection: any) => {
   if (err) {

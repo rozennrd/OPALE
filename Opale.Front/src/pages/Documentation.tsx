@@ -268,6 +268,13 @@ export default function Documentation() {
     const normalizeRichText = (spans: RichTextSpan[]): RichTextSpan[] =>
         mergeRichTextSpans(spans).filter((span) => span.text.length > 0)
 
+    const nodeToPlainText = (node: React.ReactNode): string =>
+        normalizeRichText(nodeToRichText(node))
+            .map((span) => span.text)
+            .join('')
+            .replace(/\s+/g, ' ')
+            .trim()
+
     const fetchImageData = async (
         url: string,
         cache: Map<string, string>,
@@ -391,7 +398,7 @@ export default function Documentation() {
                 summary: item.summary,
                 objective: content.objective,
                 expectedResult: content.expectedResult,
-                tips: content.tips ?? [],
+                tips: (content.tips ?? []).map((tip) => nodeToPlainText(tip)).filter(Boolean),
                 steps,
                 stepSections,
             })
