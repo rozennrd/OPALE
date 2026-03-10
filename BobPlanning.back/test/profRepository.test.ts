@@ -62,14 +62,15 @@ describe('profRepository', () => {
 
   it('update should call pool.query with correct params', async () => {
     mockQuery.mockResolvedValue({});
-    await profRepository.update('1', 'Nom', 'Prenom', 'a@b.com', null, 'Permanent', false, null);
+    await profRepository.update('1', 'Nom', 'Prenom', 'a@b.com', null, null, 'Permanent', null, null);
     expect(mockQuery).toHaveBeenCalledWith(expect.any(String), [
       'Nom',
       'Prenom',
       'a@b.com',
       null,
+      null,
       'Permanent',
-      false,
+      null,
       null,
       '1',
     ]);

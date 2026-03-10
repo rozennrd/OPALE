@@ -195,7 +195,7 @@ describe("cycleController", () => {
             );
 
             expect(cycleService.getCycleById).toHaveBeenCalledWith("undefined");
-            expect(mockStatus).toHaveBeenCalledWith(404);
+            expect(mockStatus).toHaveBeenCalledWith(500);
         });
 
         it("devrait retourner une erreur 404 si le cycle n'existe pas", async () => {

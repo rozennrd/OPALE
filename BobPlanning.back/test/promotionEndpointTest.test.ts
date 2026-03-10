@@ -1,4 +1,10 @@
 const request = require('supertest');
+const express = require('express');
+
+jest.spyOn(express.application, 'listen').mockImplementation(() => ({
+  timeout: 0,
+  close: jest.fn(),
+}));
 
 // Mocks must be defined before importing the app so the modules used
 // when routes/controllers are registered will use the mocked implementations.
@@ -62,8 +68,7 @@ describe('Promotion endpoints', () => {
 
       const res = await request(app)
         .get('/getPromoById')
-        .set('Content-Type', 'application/json')
-        .send({ id: '1' })
+        .query({ id: '1' })
         .expect(200);
 
       expect(res.body).toEqual(promo);
@@ -77,8 +82,7 @@ describe('Promotion endpoints', () => {
 
       const res = await request(app)
         .get('/getPromoById')
-        .set('Content-Type', 'application/json')
-        .send({ id: '999' })
+        .query({ id: '999' })
         .expect(404);
 
       expect(res.body).toHaveProperty('error');
@@ -88,20 +92,19 @@ describe('Promotion endpoints', () => {
       mockGetPromotionById.mockRejectedValue(new Error('Unexpected'));
       const res = await request(app)
         .get('/getPromoById')
-        .set('Content-Type', 'application/json')
-        .send({ id: '1' })
+        .query({ id: '1' })
         .expect(500);
       expect(res.body).toHaveProperty('error');
     });
   });
 
-  describe('POST /setPromotion', () => {
+  describe('POST /addPromotion', () => {
     it('should create a promotion and return 201', async () => {
       mockCreatePromotion.mockResolvedValue({ id: 42 });
 
       const body = { nom: 'New Promo', effectifs: 20, id_cycle: '1', date_start: '2025-09-01', date_end: '2026-06-30' };
       const res = await request(app)
-        .post('/setPromotion')
+        .post('/addPromotion')
         .send(body)
         .set('Content-Type', 'application/json')
         .expect(201);
@@ -120,7 +123,7 @@ describe('Promotion endpoints', () => {
     it('should return 400 when nom is missing', async () => {
       const body = { effectifs: 20 };
       const res = await request(app)
-        .post('/setPromotion')
+        .post('/addPromotion')
         .send(body)
         .set('Content-Type', 'application/json')
         .expect(400);
@@ -136,7 +139,7 @@ describe('Promotion endpoints', () => {
 
       const body = { nom: 'Bad Promo', effectifs: 10 };
       const res = await request(app)
-        .post('/setPromotion')
+        .post('/addPromotion')
         .send(body)
         .set('Content-Type', 'application/json')
         .expect(400);
