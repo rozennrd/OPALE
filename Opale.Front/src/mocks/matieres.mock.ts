@@ -283,7 +283,7 @@ export const MATIERES_MOCK: Matiere[] = [
     },
     {
         id: 'mat-fisen2-simu',
-        nom: 'Simulation de flux',
+        nom: 'Simulation de génération',
         volume_horaire: 22,
         id_promo: 'FISEN 2',
         semestre: 2,

@@ -1,10 +1,17 @@
 import type React from 'react'
 
-export type TutorialTab = 'planning' | 'pages'
+export type TutorialTab = 'planning' | 'pages' | 'actions'
 
 export type TutorialId =
     | 'macro'
     | 'micro'
+    | 'planning'
+    | 'action-create'
+    | 'action-edit'
+    | 'action-cancel-save'
+    | 'action-delete-selection'
+    | 'action-search-filter'
+    | 'date-selector'
     | 'promotions'
     | 'events'
     | 'teachers'
@@ -27,6 +34,7 @@ export type TutorialImageHighlight = {
     label?: string
     labelLeft?: string
     labelTop?: string
+    labelWidth?: string
 }
 
 export type TutorialStep = {
@@ -36,7 +44,13 @@ export type TutorialStep = {
     imageCaption?: string
     imageHighlight?: TutorialImageHighlight
     imageHighlights?: TutorialImageHighlight[]
-    subSteps?: React.ReactNode[]
+    imagePlacement?: 'beforeSubSteps' | 'afterSubSteps'
+    imageAfterSrc?: string
+    imageAfterAlt?: string
+    imageAfterCaption?: string
+    imageAfterHighlight?: TutorialImageHighlight
+    imageAfterHighlights?: TutorialImageHighlight[]
+    subSteps?: TutorialStepEntry[]
 }
 
 export type TutorialStepEntry = React.ReactNode | TutorialStep
@@ -51,5 +65,5 @@ export type TutorialContent = {
     expectedResult: string
     steps: TutorialStepEntry[]
     stepSections?: TutorialStepSection[]
-    tips: string[]
+    tips: React.ReactNode[]
 }

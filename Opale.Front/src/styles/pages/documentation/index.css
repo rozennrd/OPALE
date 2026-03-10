@@ -96,6 +96,20 @@
         line-height: 1.35;
     }
 
+    .documentation-warning {
+        border: 1px solid color-mix(in srgb, #f2c94c 65%, var(--border));
+        background: color-mix(in srgb, #f2c94c 18%, var(--panel-soft));
+        color: var(--text);
+        border-radius: 0.75rem;
+        padding: 0.65rem 0.8rem;
+        font-size: 0.88rem;
+        line-height: 1.45;
+    }
+
+    .documentation-warning strong {
+        font-weight: 700;
+    }
+
     .documentation-viewer {
         border: 1px dashed var(--border-subtle, var(--border));
         border-radius: 0.85rem;
@@ -292,18 +306,21 @@
     }
 
     .documentation-step-text strong,
-    .documentation-substep-item strong {
+    .documentation-substep-item strong,
+    .documentation-subsubstep-item strong {
         font-weight: 700;
         color: var(--text);
     }
 
     .documentation-step-text em,
-    .documentation-substep-item em {
+    .documentation-substep-item em,
+    .documentation-subsubstep-item em {
         font-style: italic;
     }
 
     .documentation-step-text u,
-    .documentation-substep-item u {
+    .documentation-substep-item u,
+    .documentation-subsubstep-item u {
         text-underline-offset: 0.17rem;
         text-decoration-thickness: 0.09rem;
     }
@@ -336,6 +353,37 @@
         font-size: 0.82rem;
         font-weight: 700;
         color: color-mix(in srgb, var(--primary) 65%, var(--text));
+    }
+
+    .documentation-subsubstep-list {
+        margin: 0.4rem 0 0.1rem;
+        padding-left: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.36rem;
+        counter-reset: documentation-subsubstep;
+    }
+
+    .documentation-subsubstep-item {
+        position: relative;
+        padding-left: 2.95rem;
+        counter-increment: documentation-subsubstep;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        color: var(--muted-strong, var(--muted));
+    }
+
+    .documentation-subsubstep-item::before {
+        content: counter(documentation-step) '.' counter(documentation-substep) '.'
+            counter(documentation-subsubstep);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 2.5rem;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: color-mix(in srgb, var(--primary) 60%, var(--text));
     }
 
     .documentation-step-figure {
