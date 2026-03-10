@@ -623,7 +623,7 @@ export const promotionsTutorialContent: TutorialContent = {
                                 left: '20.3%',
                                 top: '62.2%',
                                 width: '19.8%',
-                                height: '4.5%',
+                                height: '5.1%',
                                 label: "Liste des fichiers sélectionné et validé",
                                 labelLeft: '-1rem',
                             },
@@ -641,10 +641,11 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageAlt: "Bouton Importer la maquette",
                     imageCaption: "Le bouton Importer la maquette lance l'import des fichiers sélectionnés.",
                     imageHighlight: {
-                        left: '29.4%',
-                        top: '68.5%',
+                        left: '27.7%',
+                        top: '66.75%',
                         width: '11.6%',
-                        height: '5.6%',
+                        height: '6.2%',
+                        label: "Bouton Importer"
                     },
                     subSteps: [
                         {
@@ -674,10 +675,12 @@ export const promotionsTutorialContent: TutorialContent = {
                                     imageAlt: "Listes déroulantes de liaison des spécialités",
                                     imageCaption: "Chaque spécialité détectée doit être associée via la liste.",
                                     imageHighlight: {
-                                        left: '42.1%',
-                                        top: '44.0%',
-                                        width: '7.2%',
-                                        height: '18.7%',
+                                        left: '41.8%',
+                                        top: '43.8%',
+                                        width: '7.5%',
+                                        height: '16.9%',
+                                        label: "Liste des spécialités annoncés",
+                                        labelLeft: '-1.8rem',
                                     },
                                 },
                                 {
@@ -691,12 +694,33 @@ export const promotionsTutorialContent: TutorialContent = {
                                     imageSrc: promoLierSpeScreenshot,
                                     imageAlt: "Actions disponibles dans le pop-up de liaison",
                                     imageCaption: "Les actions permettent d'ajuster les spécialités déclarées.",
-                                    imageHighlight: {
-                                        left: '49.1%',
-                                        top: '44.1%',
-                                        width: '23.5%',
-                                        height: '18.1%',
-                                    },
+                                    imageHighlights: [
+                                        {
+                                            left: '69.1%',
+                                            top: '44.1%',
+                                            width: '7.2%',
+                                            height: '5.2%',
+                                            label: "Bouton Ajouter une spécialité",
+                                            labelLeft: '-1rem',
+                                        },
+                                        {
+                                            left: '72.05%',
+                                            top: '49.2%',
+                                            width: '2.5%',
+                                            height: '12.0%',
+                                            label: "Bouton supprimer une spécialité",
+                                            labelLeft: '1.8rem',
+                                            labelTop: '1.8rem',
+                                        },
+                                        {
+                                            left: '50.7%',
+                                            top: '49.2%',
+                                            width: '21.9%',
+                                            height: '5.4%',
+                                            label: "Champ nom et nombre d'étudiants",
+                                            labelLeft: '-1.5rem',
+                                        },
+                                    ],
                                 },
                                 <>
                                     Si une spécialité détectée n'est pas liée, ses matières sont importées en
@@ -738,9 +762,11 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageCaption: "La corbeille du cycle supprime le cycle complet et son contenu associé.",
                     imageHighlight: {
                         left: '36.6%',
-                        top: '13.0%',
-                        width: '4.0%',
-                        height: '7.3%',
+                        top: '14.1%',
+                        width: '3.5%',
+                        height: '7.0%',
+                        label: "Bouton Supprimer un cycle",
+                        labelLeft: '-1re,m'
                     },
                 },
                 <>
@@ -769,9 +795,10 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageCaption: "La corbeille de la promotion supprime uniquement la promotion cible.",
                     imageHighlight: {
                         left: '35.7%',
-                        top: '24.1%',
+                        top: '22.35%',
                         width: '3.7%',
-                        height: '7.2%',
+                        height: '6.8%',
+                        labelLeft: '-1rem',
                     },
                 },
                 <>

@@ -68,12 +68,12 @@ export const teachersTutorialContent: TutorialContent = {
                     imageAlt: "Bouton + de création d'un enseignant",
                     imageCaption: "Le bouton + ouvre le pop-up de création d'un enseignant.",
                     imageHighlight: {
-                        left: '82.6%',
-                        top: '17.9%',
-                        width: '15.0%',
-                        height: '4.3%',
+                        left: '84.35%',
+                        top: '18.8%',
+                        width: '11.0%',
+                        height: '4.5%',
                         label: "Création d'enseignant",
-                        labelLeft: '-4.2rem',
+                        labelLeft: '-1rem',
                     },
                 },
                 {
@@ -88,24 +88,24 @@ export const teachersTutorialContent: TutorialContent = {
                     imagePlacement: 'beforeSubSteps',
                     imageHighlights: [
                         {
-                            left: '21.9%',
-                            top: '35.7%',
-                            width: '23.6%',
-                            height: '38.5%',
+                            left: '21.5%',
+                            top: '35.2%',
+                            width: '23.37%',
+                            height: '38.9%',
                             label: 'Informations',
                         },
                         {
-                            left: '46.1%',
-                            top: '35.6%',
-                            width: '16.8%',
+                            left: '44.85%',
+                            top: '35.2%',
+                            width: '14.8%',
                             height: '17.8%',
-                            label: 'Matières',
+                            label: 'Matières attribuées',
                         },
                         {
-                            left: '62.7%',
-                            top: '35.6%',
-                            width: '16.6%',
-                            height: '39.0%',
+                            left: '59.7%',
+                            top: '35.2%',
+                            width: '18.6%',
+                            height: '36.0%',
                             label: 'Disponibilités',
                         },
                     ],
@@ -130,11 +130,11 @@ export const teachersTutorialContent: TutorialContent = {
                             imageAlt: "Liste déroulante du type d'enseignant",
                             imageCaption: "Sélection du type d'enseignant.",
                             imageHighlight: {
-                                left: '26.9%',
-                                top: '47.7%',
-                                width: '17.5%',
-                                height: '26.0%',
-                                label: 'Type',
+                                left: '26.2%',
+                                top: '59.3%',
+                                width: '18.2%',
+                                height: '16.7%',
+                                label: 'Liste déroulante Type',
                             },
                         },
                         {
@@ -147,11 +147,11 @@ export const teachersTutorialContent: TutorialContent = {
                             imageAlt: "Liste déroulante du rattachement de l'enseignant",
                             imageCaption: "Sélection du rattachement.",
                             imageHighlight: {
-                                left: '28.0%',
-                                top: '52.2%',
-                                width: '16.1%',
-                                height: '18.5%',
-                                label: 'Rattachement',
+                                left: '27.1%',
+                                top: '63.4%',
+                                width: '17.3%',
+                                height: '18.0%',
+                                label: 'Liste déroulante Rattachement',
                             },
                         },
                         {
@@ -165,11 +165,11 @@ export const teachersTutorialContent: TutorialContent = {
                             imageAlt: "Liste déroulante du campus d'origine",
                             imageCaption: "Sélection du campus d'origine.",
                             imageHighlight: {
-                                left: '29.1%',
-                                top: '56.8%',
-                                width: '15.0%',
-                                height: '19.0%',
-                                label: 'Campus',
+                                left: '28.0%',
+                                top: '67.2%',
+                                width: '16.4%',
+                                height: '18.0%',
+                                label: 'Liste déroulante Campus',
                             },
                         },
                         {
@@ -274,10 +274,10 @@ export const teachersTutorialContent: TutorialContent = {
                     imageAlt: "Accès à la modification d'un enseignant",
                     imageCaption: 'La carte enseignant ouvre le formulaire de modification.',
                     imageHighlight: {
-                        left: '20.8%',
-                        top: '39.6%',
-                        width: '12.0%',
-                        height: '7.4%',
+                        left: '20.1%',
+                        top: '37.5%',
+                        width: '12.85%',
+                        height: '9.5%',
                         label: 'Enseignant à modifier',
                     },
                 },
@@ -295,24 +295,24 @@ export const teachersTutorialContent: TutorialContent = {
                     imagePlacement: 'beforeSubSteps',
                     imageHighlights: [
                         {
-                            left: '21.9%',
-                            top: '35.8%',
+                            left: '21.5%',
+                            top: '35.2%',
                             width: '18.1%',
-                            height: '39.0%',
+                            height: '38.9%',
                             label: 'Informations',
                         },
                         {
-                            left: '40.6%',
-                            top: '35.7%',
-                            width: '24.8%',
-                            height: '18.1%',
-                            label: 'Matières',
+                            left: '39.65%',
+                            top: '35.2%',
+                            width: '24.65%',
+                            height: '17.8%',
+                            label: 'Matières attribuées',
                         },
                         {
-                            left: '66.0%',
-                            top: '35.6%',
-                            width: '14.0%',
-                            height: '38.8%',
+                            left: '64.35%',
+                            top: '35.2%',
+                            width: '13.9%',
+                            height: '36.0%',
                             label: 'Disponibilités',
                         },
                     ],
@@ -460,11 +460,11 @@ export const teachersTutorialContent: TutorialContent = {
                     imageAlt: 'Liste déroulante des promotions',
                     imageCaption: 'Sélection de la promotion.',
                     imageHighlight: {
-                        left: '41.8%',
-                        top: '40.2%',
-                        width: '11.1%',
-                        height: '39.1%',
-                        label: 'Promotion',
+                        left: '40.75%',
+                        top: '38.1%',
+                        width: '9.3%',
+                        height: '41.2%',
+                        label: 'Liste déroulante Promotion',
                     },
                 },
                 {
@@ -493,10 +493,10 @@ export const teachersTutorialContent: TutorialContent = {
                     imageCaption: 'Sélection de la matière.',
                     imageHighlight: {
                         left: '45.8%',
-                        top: '40.1%',
-                        width: '17.1%',
-                        height: '62.0%',
-                        label: 'Matière',
+                        top: '38.1%',
+                        width: '15.1%',
+                        height: '63.5%',
+                        label: 'Liste déroulante Matière',
                     },
                 },
             ],
@@ -514,13 +514,25 @@ export const teachersTutorialContent: TutorialContent = {
                     imageSrc: screenPopupProfModifScreenshot,
                     imageAlt: "Carte de détail d'un enseignant",
                     imageCaption: "Ajout d'une période de disponibilité depuis la carte de détail.",
-                    imageHighlight: {
-                        left: '61.8%',
-                        top: '44.8%',
-                        width: '16.0%',
-                        height: '3.4%',
-                        label: 'Ajouter une période',
-                    },
+                    imageHighlights: [
+                        {
+                            left: '64.0%',
+                            top: '41.8%',
+                            width: '13.7%',
+                            height: '3.7%',
+                            label: 'Ajouter une période',
+                        },
+                        {
+                            left: '64.0%',
+                            top: '49.8%',
+                            width: '15.0%',
+                            height: '19.5%',
+                            label: 'Tableau des disponibilités',
+                            labelWidth: '6.5rem',
+                            labelLeft: '-7.5rem',
+                            labelTop: '3rem',
+                        },
+                    ],
                 },
                 <>
                     Renseigner la <strong>date de début</strong> et la <strong>date de fin</strong> de la
@@ -530,6 +542,16 @@ export const teachersTutorialContent: TutorialContent = {
                     disponibilités par demi-journée du <strong>Lundi au Vendredi</strong> ne changent pas.
                     <br />
                     <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
+                </>,
+                <>
+                    Indiquer ensuite, par <strong>demi-journée</strong>, si l'enseignant est{' '}
+                    <strong>disponible</strong> ou <strong>non disponible</strong>.
+                    <br />
+                    Pour cela, cliquer sur les <strong>carrés</strong> du tableau.
+                    <br />
+                    <strong>Vert</strong> = disponible.
+                    <br />
+                    <strong>Rouge</strong> = non disponible.
                 </>,
                 <>
                     Une fois toutes les périodes créées, cliquer sur <strong>Enregistrer</strong> ou{' '}
@@ -616,7 +638,6 @@ export const teachersTutorialContent: TutorialContent = {
         "Vérifier le rattachement et le campus d'origine pour anticiper les contraintes logistiques.",
     ],
 }
-
 
 
 
