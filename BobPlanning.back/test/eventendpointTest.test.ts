@@ -2,6 +2,10 @@ import { Request, Response } from "express";
 import { eventController } from "../src/api/controllers/eventController";
 import { eventService } from "../src/domain/services/eventService";
 
+const fail = (message: string): never => {
+    throw new Error(message);
+};
+
 // Mock du service
 jest.mock("../src/domain/services/eventService");
 
@@ -360,7 +364,7 @@ describe("eventController", () => {
     describe("getEventsByPromoAndTypes", () => {
         it("devrait retourner les événements par promo et types", async () => {
             mockRequest.body = {
-                promo: "AP5",
+                idPromo: "AP5",
                 types: ["Cours", "Examen"],
             };
 
@@ -414,7 +418,7 @@ describe("eventController", () => {
                 expect(eventService.getEventsByPromoAndTypes).not.toHaveBeenCalled();
                 expect(mockStatus).toHaveBeenCalledWith(400);
                 expect(mockJson).toHaveBeenCalledWith({
-                    message: "Les champs 'promo' et 'types[]' sont obligatoires.",
+                    message: "Les champs 'idPromo' et 'types[]' sont obligatoires.",
                 });
             } catch (error) {
                 fail(`Le controller devrait gérer la validation: ${error}`);
@@ -422,7 +426,7 @@ describe("eventController", () => {
         });
 
         it("devrait throw si types n'est pas un tableau valide", async () => {
-            mockRequest.body = { promo: "AP5", types: "Cours" };
+            mockRequest.body = { idPromo: "AP5", types: "Cours" };
 
             try {
                 await eventController.getEventsByPromoAndTypes(
@@ -438,7 +442,7 @@ describe("eventController", () => {
         });
 
         it("devrait retourner une erreur 404 si aucun événement trouvé", async () => {
-            mockRequest.body = { promo: "AP5", types: ["Cours", "Examen"] };
+            mockRequest.body = { idPromo: "AP5", types: ["Cours", "Examen"] };
 
             const mockEvents = {
                 Cours: [],
@@ -463,7 +467,7 @@ describe("eventController", () => {
         });
 
         it("devrait throw et gérer les erreurs du service", async () => {
-            mockRequest.body = { promo: "AP5", types: ["Cours"] };
+            mockRequest.body = { idPromo: "AP5", types: ["Cours"] };
             const mockError = new Error("Erreur de base de données");
 
             (eventService.getEventsByPromoAndTypes as jest.Mock).mockRejectedValue(mockError);

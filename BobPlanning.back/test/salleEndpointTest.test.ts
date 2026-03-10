@@ -1,4 +1,10 @@
 const request = require('supertest');
+const express = require('express');
+
+jest.spyOn(express.application, 'listen').mockImplementation(() => ({
+  timeout: 0,
+  close: jest.fn(),
+}));
 
 // Mocks before importing app
 const mockGetSalles = jest.fn();
