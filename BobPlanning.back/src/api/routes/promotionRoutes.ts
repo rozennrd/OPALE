@@ -7,7 +7,7 @@ const router = Router();
 router.get("/getPromotions", authJwt.verifyToken, promotionController.getPromotions);
 router.get("/getPromoById", authJwt.verifyToken, promotionController.getPromotionById);
 
-router.post("/setPromotion", authJwt.verifyToken, promotionController.createPromotion);
+router.post("/addPromotion", authJwt.verifyToken, promotionController.createPromotion);
 router.put("/updatePromotion", authJwt.verifyToken, promotionController.updatePromotion);
 router.delete("/deletePromotion", authJwt.verifyToken, promotionController.deletePromotion);
 

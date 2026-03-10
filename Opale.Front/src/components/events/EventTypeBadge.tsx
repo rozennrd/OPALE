@@ -1,6 +1,7 @@
 // src/components/events/EventTypeBadge.tsx
 import React from 'react'
-import { EventType, EventSource } from '../../models/CampusEvent'
+import { EventType } from '../../models/EventTypes'
+import { EventSource } from '../../models/CampusEvent'
 import EntityBadge, { BadgeVariant } from '../common/EntityBadge'
 import { getEventTypeMeta } from './eventTypeMeta'
 
@@ -22,6 +23,7 @@ export default function EventTypeBadge({
                                            subtitle,
                                        }: EventTypeBadgeProps) {
     const meta = getEventTypeMeta(type)
+    const sourceMarker = source === 'JUNIA' ? 'J' : 'E'
     const headerColorClass =
         source === 'JUNIA'
             ? 'event-detail-header-pill--junia'
@@ -45,7 +47,7 @@ export default function EventTypeBadge({
     return (
         <EntityBadge
             iconSrc={meta.icon}
-            label={meta.label}
+            label={`${meta.label} (${sourceMarker})`}
             className={rootClassName}
             variant={variant}
             title={title}

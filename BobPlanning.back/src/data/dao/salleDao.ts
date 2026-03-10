@@ -1,9 +1,12 @@
 export interface SalleDAO {
   id: string;
   nom: string;
-  type: string;
-  capacite: number;
+  nom_complet: string | null;
+  type_principal: string;
+  types_secondaires: string[] | null;
   etage: number;
-  description: string;
+  capacite: number;
+  description: string | null;
+  utilisable: boolean;
 }
 

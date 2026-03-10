@@ -117,6 +117,13 @@
         color: var(--text);
     }
 
+    .promo-edit-error {
+        font-family: 'Nunito', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--danger-800, #b91c1c);
+    }
+
     .promo-edit-actions {
         display: flex;
         justify-content: flex-end;
@@ -133,11 +140,109 @@
         gap: 4px;
     }
 
+    .valid-promo {
+        background-color: #fff3cd;
+        border-color: #ffc107;
+        padding: 12px;
+        margin-top: 12px;
+    }
+
     .promo-mismatch {
         margin: 0;
         font-size: 13px;
         font-family: 'Nunito', sans-serif;
         color: #b91c1c; /* rouge bien visible */
+    }
+
+    .promo-info {
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: rgba(59, 130, 246, 0.12);
+        border: 1px solid rgba(59, 130, 246, 0.35);
+        color: #1d4ed8;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .promo-info p {
+        margin: 0;
+    }
+
+    /* Warnings (meme format que la card matiere) */
+    .promo-warning {
+        margin-top: 12px;
+        padding: 10px 14px;
+        width: clamp(240px, 33%, 420px);
+
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+
+        background: linear-gradient(
+                135deg,
+                rgba(251, 146, 60, 0.18),
+                rgba(251, 146, 60, 0.10)
+        );
+
+        border: 1px solid rgba(251, 146, 60, 0.45);
+        border-radius: 10px;
+
+        color: #fbbf24;
+        font-size: 0.85rem;
+        font-weight: 500;
+
+        backdrop-filter: blur(4px);
+
+        animation: promoWarningFadeIn 180ms ease-out;
+    }
+
+    .promo-warning--warning {
+        background: linear-gradient(
+                135deg,
+                rgba(251, 146, 60, 0.18),
+                rgba(251, 146, 60, 0.10)
+        );
+    }
+
+    .promo-warning--danger {
+        background: linear-gradient(
+                135deg,
+                rgba(251, 146, 60, 0.18),
+                rgba(251, 146, 60, 0.10)
+        );
+        border-color: rgba(251, 146, 60, 0.45);
+        color: #fbbf24;
+    }
+
+    .promo-warning-icon {
+        line-height: 1;
+        font-size: 1rem;
+    }
+
+    .promo-warning-content {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .promo-warning-content p {
+        margin: 0;
+    }
+
+    .promo-warning-sub {
+        color: #fbbf24;
+        font-size: 0.9em;
+    }
+
+    @keyframes promoWarningFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* ===== Colonne "Contraintes académiques" ===== */
@@ -297,7 +402,21 @@
     }
 
     /* Responsive */
+    @media (max-width: 1100px) {
+        .promo-edit-layout {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .promo-section-constraints {
+            grid-column: 1 / -1;
+        }
+    }
+
     @media (max-width: 860px) {
+        .promo-edit-layout {
+            grid-template-columns: 1fr;
+        }
+
         .constraints-grid {
             grid-template-columns: 1fr;
         }

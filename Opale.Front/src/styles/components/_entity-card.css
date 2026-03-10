@@ -5,6 +5,7 @@
         display: flex;
         align-items: stretch;
         justify-content: space-between;
+        position: relative;
 
         border-radius: 0.9rem;
         background: var(--panel-soft);
@@ -31,6 +32,11 @@
         box-shadow: var(--shadow-xl);
     }
 
+    .entity-card--selected {
+        border-color: var(--primary-soft, var(--primary));
+        box-shadow: var(--shadow-xl);
+    }
+
     /* ============================
        COLONNE GAUCHE (contenu texte)
        ============================ */
@@ -48,6 +54,14 @@
     /* Variante compacte possible (ex: teachers) */
     .entity-card--compact .entity-card-main {
         padding: 0.6rem 0.8rem 0.6rem 0.9rem;
+    }
+
+    .entity-card--selection-mode .entity-card-main {
+        padding-left: 2.2rem;
+    }
+
+    .entity-card--selection-mode.entity-card--compact .entity-card-main {
+        padding-left: 2rem;
     }
 
     /* ============================
@@ -92,5 +106,30 @@
         justify-content: center;
 
         padding: 0;
+    }
+
+    .entity-card-selection-dot {
+        position: absolute;
+        top: 0.58rem;
+        left: 0.6rem;
+        width: 1.2rem;
+        height: 1.2rem;
+        border-radius: 999px;
+        border: 2px solid var(--muted-strong, var(--muted));
+        background: color-mix(in srgb, var(--panel) 70%, var(--border) 30%);
+        color: #ffffff;
+        font-family: 'Nunito', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+        line-height: 1;
+        display: grid;
+        place-items: center;
+        pointer-events: none;
+    }
+
+    .entity-card-selection-dot.is-selected {
+        background: #dc2626;
+        border-color: #dc2626;
+        color: #ffffff;
     }
 }

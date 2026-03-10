@@ -14,7 +14,7 @@
 
     .promos-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 420px));
         gap: 16px;
     }
 
@@ -23,8 +23,10 @@
         flex-direction: column;
         gap: 12px;
         padding: 16px;
-        min-width: 0;
-        box-shadow: var(--shadow-lg);
+        width: 100%;
+        min-width: min(380px, 100%);
+        max-width: 420px;
+        box-shadow: none;
 
         background: var(--panel-soft);
         border-radius: var(--radius);
@@ -45,10 +47,26 @@
         font-family: 'Nunito', sans-serif;
         font-size: clamp(18px, 2vw, 28px);
         font-weight: 700;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--border);
         border-radius: var(--radius-sm);
         padding: 10px 12px;
-        background: #fff;
+        background: var(--input-bg);
+        color: var(--text);
+    }
+
+    .cycle-name-wrapper {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .cycle-name-error {
+        font-family: 'Nunito', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--danger-800, #b91c1c);
     }
 
     .cycle-actions {
@@ -60,6 +78,30 @@
     .promotions {
         display: flex;
         flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-add-promo {
+        border-color: var(--success-soft-border);
+        background: var(--success-soft-bg);
+        color: var(--success-soft-text);
+    }
+
+    .btn-add-promo:hover {
+        background: var(--success-soft-bg-hover);
+        border-color: var(--success-soft-border-hover);
+    }
+
+    .promo-add-dialog {
+        width: min(560px, 92vw);
+        gap: 8px;
+    }
+
+    .promo-add-dialog .confirm-dialog-title {
+        margin-bottom: 2px;
+    }
+
+    .promo-add-dialog .promo-edit-field {
         gap: 10px;
     }
 
@@ -82,8 +124,8 @@
         border: var(--add-cycle-border-width) dashed var(--add-cycle-border-color);
 
         cursor: pointer;
-        transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
-        box-shadow: var(--shadow-md);
+        transition: transform .12s ease, background .12s ease;
+        box-shadow: none;
     }
 
     .add-cycle-card img {
@@ -96,6 +138,22 @@
     .add-cycle-card:hover {
         background: transparent;
         transform: translateY(-1px);
-        box-shadow: var(--shadow-lg);
+        box-shadow: none;
+    }
+
+    @media (max-width: 720px) {
+        .cycle-head {
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .cycle-name {
+            width: 100%;
+        }
+
+        .cycle-actions {
+            width: 100%;
+            justify-content: flex-end;
+        }
     }
 }

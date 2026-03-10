@@ -1,9 +1,9 @@
 // src/components/events/EventsToolbar.tsx
-import React from 'react'
 import { EventType } from '../../models/CampusEvent'
-import { PageToolbar, ToolbarRow } from '../common/Toolbar'
+import { PageToolbar, ToolbarAddButton, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
 import icPlus from '../../assets/ic-plus.png'
+import DateInput from '../common/DateInput'
 
 export type TargetFilter = 'ALL' | 'JUNIA' | 'EXTERNE'
 export type TypeFilter = 'ALL' | EventType
@@ -24,129 +24,156 @@ interface EventsToolbarProps {
     type: TypeFilter
     onTypeChange: (value: TypeFilter) => void
 
-    // 👇 nouveau : clic sur "+"
     onCreateRequested: () => void
+
+    selectionMode: boolean
+    selectedCount: number
+    onToggleSelectionMode: () => void
+    onResetFilters: () => void
+    hasActiveFilters: boolean
 }
 
 const EVENT_TYPE_OPTIONS = [
     { value: 'ALL', label: 'Tous les types' },
-    { value: 'JOURNEE_PO', label: 'Journée Portes Ouvertes' },
-    { value: 'EXAMEN', label: 'Examen' },
-    { value: 'CONFERENCE', label: 'Conférence' },
-    { value: 'FORUM', label: 'Forum' },
-    { value: 'SALON', label: 'Salon' },
-    { value: 'AUTRE', label: 'Autre' },
+    { value: 'JPO', label: 'JPO' },
+    { value: 'Examen', label: 'Examen' },
+    { value: 'Conference', label: 'Conférence' },
+    { value: 'Forum', label: 'Forum' },
+    { value: 'Salon', label: 'Salon' },
+    { value: 'Autre', label: 'Autre' },
 ]
 
 export default function EventsToolbar({
-                                          searchValue,
-                                          onSearchChange,
-                                          dateFrom,
-                                          onDateFromChange,
-                                          dateTo,
-                                          onDateToChange,
-                                          target,
-                                          onTargetChange,
-                                          type,
-                                          onTypeChange,
-                                          onCreateRequested,
-                                      }: EventsToolbarProps) {
+    searchValue,
+    onSearchChange,
+    dateFrom,
+    onDateFromChange,
+    dateTo,
+    onDateToChange,
+    target,
+    onTargetChange,
+    type,
+    onTypeChange,
+    onCreateRequested,
+    selectionMode,
+    selectedCount,
+    onToggleSelectionMode,
+    onResetFilters,
+    hasActiveFilters,
+}: EventsToolbarProps) {
     return (
         <PageToolbar className="events-toolbar">
-            {/* Ligne 1 : search + bouton + */}
-            <ToolbarRow>
-                <ToolbarSearch
+            <ToolbarRow className="page-toolbar-row--primary events-toolbar-row events-toolbar-row--primary">
+                <ToolbarSearch className="events-toolbar-search"
                     value={searchValue}
                     onChange={onSearchChange}
-                    placeholder="Rechercher un événement…"
+                    placeholder="Rechercher un événement..."
                 />
 
                 <button
                     type="button"
-                    className="events-toolbar-plus-btn"
-                    onClick={onCreateRequested}
-                    aria-label="Créer un événement"
-                    title="Créer un événement"
+                    className={[
+                        'toolbar-filter-button',
+                        'toolbar-selection-toggle',
+                        selectionMode ? 'is-active' : '',
+                    ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    onClick={onToggleSelectionMode}
                 >
-                    <img src={icPlus} alt="" className="events-toolbar-plus-icon"/>
+                    <span>
+                        {selectionMode ? 'Quitter sélection' : 'Sélectionner'}
+                    </span>
+                    {selectedCount > 0 && (
+                        <span className="toolbar-selection-count-pill">
+                            {selectedCount}
+                        </span>
+                    )}
                 </button>
+
+                <ToolbarResetButton
+                    className="events-toolbar-reset-inline"
+                    onClick={onResetFilters}
+                    disabled={!hasActiveFilters}
+                />
+
+                <ToolbarAddButton
+                    className="events-toolbar-add-btn"
+                    onClick={onCreateRequested}
+                    label="Ajouter un événement"
+                    iconSrc={icPlus}
+                />
             </ToolbarRow>
 
-            {/* Ligne 2 : filtres */}
-            <ToolbarRow className="page-toolbar-row--filters events-toolbar-filters">
-                {/* Filtre dates */}
-                <div className="toolbar-filter">
+            <ToolbarRow className="page-toolbar-row--filters events-toolbar-row events-toolbar-row--filters events-toolbar-filters">
+                <div className="toolbar-filter events-toolbar-date-filter events-toolbar-date-filter--from">
                     <label className="toolbar-filter-label">
                         À partir du
-                        <input
-                            type="date"
+                        <DateInput
                             value={dateFrom}
-                            onChange={(e) => onDateFromChange(e.target.value)}
-                            className="toolbar-filter-date"
+                            onChange={onDateFromChange}
+                            inputClassName="toolbar-filter-date"
+                            max={dateTo || undefined}
                         />
                     </label>
                 </div>
 
-                <div className="toolbar-filter">
+                <div className="toolbar-filter events-toolbar-date-filter events-toolbar-date-filter--to">
                     <label className="toolbar-filter-label">
-                        Jusqu’au
-                        <input
-                            type="date"
+                        Jusqu&apos;au
+                        <DateInput
                             value={dateTo}
-                            onChange={(e) => onDateToChange(e.target.value)}
-                            className="toolbar-filter-date"
+                            onChange={onDateToChange}
+                            inputClassName="toolbar-filter-date"
+                            min={dateFrom || undefined}
                         />
                     </label>
                 </div>
 
-                {/* Filtre cible */}
-                <div className="toolbar-filter">
+                <div className="toolbar-filter toolbar-filter--chips events-toolbar-target-filter">
                     <span className="toolbar-filter-label">Cible</span>
                     <div className="toolbar-toggle-chips">
-                        {(['ALL', 'JUNIA', 'EXTERNE'] as TargetFilter[]).map(
-                            (v) => (
-                                <button
-                                    key={v}
-                                    type="button"
-                                    className={
-                                        'toolbar-toggle-chip' +
-                                        (target === v
-                                            ? ' toolbar-toggle-chip--active'
-                                            : '')
-                                    }
-                                    onClick={() => onTargetChange(v)}
-                                >
-                                    {v === 'ALL'
-                                        ? 'Tous'
-                                        : v === 'JUNIA'
-                                            ? 'Junia'
-                                            : 'Externe'}
-                                </button>
-                            ),
-                        )}
+                        {(['ALL', 'JUNIA', 'EXTERNE'] as TargetFilter[]).map((value) => (
+                            <button
+                                key={value}
+                                type="button"
+                                className={
+                                    'toolbar-toggle-chip' +
+                                    (target === value
+                                        ? ' toolbar-toggle-chip--active'
+                                        : '')
+                                }
+                                onClick={() => onTargetChange(value)}
+                            >
+                                {value === 'ALL'
+                                    ? 'Tous'
+                                    : value === 'JUNIA'
+                                      ? 'Junia'
+                                      : 'Externe'}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
-                {/* Filtre type */}
-                <div className="toolbar-filter">
+                <div className="toolbar-filter events-toolbar-type-filter">
                     <label className="toolbar-filter-label">
                         Type d&apos;événement
                         <select
                             value={type}
-                            onChange={(e) =>
-                                onTypeChange(e.target.value as TypeFilter)
-                            }
+                            onChange={(e) => onTypeChange(e.target.value as TypeFilter)}
                             className="toolbar-filter-select"
                         >
-                            {EVENT_TYPE_OPTIONS.map((opt) => (
-                                <option key={opt.value} value={opt.value}>
-                                    {opt.label}
+                            {EVENT_TYPE_OPTIONS.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
                                 </option>
                             ))}
                         </select>
                     </label>
                 </div>
+
             </ToolbarRow>
         </PageToolbar>
     )
 }
+

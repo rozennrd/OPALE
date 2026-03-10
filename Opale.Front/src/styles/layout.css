@@ -9,13 +9,21 @@
     padding: 24px;
     height: 100%;
   }
-  .right-col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+  }
 
   /* Sidebar */
   .sidebar {
     padding: 22px;
     display: flex; flex-direction: column; gap: 24px;
     height: 100%;
+    min-height: 0;
     transition: all .3s ease;
   }
   .brand {
@@ -24,6 +32,15 @@
   }
   .brand .logo-full { width: 100%; height: auto; max-width: 280px; }
   .brand .logo-compact { display: none; width: 48px; height: auto; }
+  .brand .logo-full-dark { display: none; }
+  .brand .logo-full-spock { display: none; }
+
+  :root[data-theme='dark'] .brand .logo-full-light { display: none; }
+  :root[data-theme='dark'] .brand .logo-full-dark { display: block; }
+
+  :root[data-theme='spock'] .brand .logo-full-light { display: none; }
+  :root[data-theme='spock'] .brand .logo-full-dark { display: none; }
+  :root[data-theme='spock'] .brand .logo-full-spock { display: block; }
 
   .nav { display: flex; flex-direction: column; gap: 8px; }
   .nav-btn {
@@ -40,7 +57,16 @@
   /* ✅ on passe sur des tokens */
   .nav-btn:hover { background: var(--surface-hover); }
   .nav-btn.active { background: var(--surface-active); }
+  .nav-label-wrap {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
   .nav-label { flex: 1; text-align: left; min-width: 0; }
+  .nav-code { display: none; }
   .nav-icon-right { flex-shrink: 0; width: 40px; height: 40px; }
 
   /* Footer (icônes Logout + Contact) */
@@ -69,6 +95,18 @@
   }
   .footer-icon-btn:hover { background: var(--surface-hover); }
   .footer-icon-btn img { width: 28px; height: 28px; }
+  .footer-icon-btn .footer-icon-dark { display: none; }
+  .footer-icon-fallback {
+    display: none;
+    font-size: 0.67rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    line-height: 1;
+  }
+
+  :root:is([data-theme='dark'], [data-theme='spock']) .footer-icon-btn .footer-icon-light { display: none; }
+  :root:is([data-theme='dark'], [data-theme='spock']) .footer-icon-btn .footer-icon-dark { display: block; }
 
   /* Sidebar compacte */
   @media (max-width: 860px) {
@@ -101,11 +139,36 @@
   .btn-disconnect img { width: 20px; height: 20px; }
 
   /* Main */
-  .main-card { padding: 24px; flex: 1; display: flex; flex-direction: column; }
+  .main-card {
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
   .main-inner {
-    position: relative; flex: 1; display: flex; flex-direction: column;
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
     padding: 8px; padding-bottom: 10px;
   }
+  .main-inner::-webkit-scrollbar { width: 8px; }
+  .main-inner::-webkit-scrollbar-track { background: transparent; }
+  .main-inner::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .main-inner::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
 
   .page-title {
     font-family: 'Nunito', sans-serif;
@@ -125,5 +188,138 @@
   .cycle-name {
     background: var(--input-bg);
     border: 1px solid var(--border);
+  }
+
+  /* Responsive layout */
+  @media (max-width: 1024px) {
+    .app {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 16px;
+      height: 100%;
+    }
+
+    .sidebar {
+      height: 100%;
+      max-height: calc(100vh - 32px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-gutter: stable;
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) transparent;
+      direction: rtl;
+      text-align: left;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: var(--scrollbar-thumb-hover);
+    }
+
+    .sidebar > * {
+      direction: ltr;
+    }
+
+    .brand {
+      justify-content: flex-start;
+    }
+
+    .brand .logo-full {
+      max-width: 220px;
+    }
+
+    .nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .nav-btn {
+      padding: 10px 12px;
+      font-size: clamp(16px, 2.2vw, 20px);
+    }
+
+    .nav-icon-right {
+      width: 28px;
+      height: 28px;
+    }
+
+    .footer-actions {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .app {
+      padding: 12px;
+      gap: 12px;
+    }
+
+    .sidebar {
+      max-height: calc(100vh - 24px);
+    }
+
+    .brand .logo-full {
+      max-width: 200px;
+    }
+
+    .nav {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+
+    .nav-btn {
+      font-size: 16px;
+    }
+  }
+
+  @media (max-height: 860px) and (min-width: 1025px) {
+    .sidebar {
+      height: 100%;
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-gutter: stable;
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) transparent;
+      direction: rtl;
+      text-align: left;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: var(--scrollbar-thumb-hover);
+    }
+
+    .sidebar > * {
+      direction: ltr;
+    }
   }
 }

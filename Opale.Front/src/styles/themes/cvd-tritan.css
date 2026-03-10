@@ -1,0 +1,187 @@
+/* Daltonisme bleu-jaune (tritan) */
+
+@layer tokens {
+  :root[data-cvd="tritan"] {
+    --brand: #c25708;
+    --brand-hover: #964307;
+
+    --primary: #0a7f66;
+    --primary-hover: #08614f;
+
+    --amber: #b75f92;
+    --surface-active: rgba(10, 127, 102, 0.24);
+
+    --danger-100: #f8e8f1;
+    --danger-200: #f0d1e5;
+    --danger-800: #6f2145;
+
+    --text-on-primary: #f8fafc;
+    --text-on-brand: #f8fafc;
+    --text-on-amber: #ffffff;
+
+    --cvd-success-bg: rgba(10, 127, 102, 0.16);
+    --cvd-success-border: rgba(8, 97, 79, 0.58);
+    --cvd-success-text: #0d4f41;
+
+    --cvd-info-bg: rgba(194, 87, 8, 0.18);
+    --cvd-info-border: rgba(124, 45, 8, 0.56);
+    --cvd-info-text: #7c2d12;
+
+    --cvd-warning-bg: rgba(183, 95, 146, 0.2);
+    --cvd-warning-border: rgba(131, 24, 67, 0.56);
+    --cvd-warning-text: #701a46;
+
+    --cvd-error-bg: rgba(111, 33, 69, 0.2);
+    --cvd-error-border: rgba(76, 5, 25, 0.6);
+    --cvd-error-text: #581c32;
+
+    --cvd-off-bg: rgba(107, 114, 128, 0.2);
+    --cvd-off-border: rgba(55, 65, 81, 0.62);
+    --cvd-off-text: #1f2937;
+
+    --cvd-source-junia-bg: var(--cvd-success-bg);
+    --cvd-source-junia-border: var(--cvd-success-border);
+    --cvd-source-junia-text: var(--cvd-success-text);
+
+    --cvd-source-external-bg: var(--cvd-info-bg);
+    --cvd-source-external-border: var(--cvd-info-border);
+    --cvd-source-external-text: var(--cvd-info-text);
+
+    --cvd-source-active-junia-bg: var(--brand);
+    --cvd-source-active-junia-border: color-mix(in srgb, var(--brand) 60%, #000000);
+    --cvd-source-active-junia-text: var(--text-on-brand);
+
+    --cvd-source-active-external-bg: var(--primary);
+    --cvd-source-active-external-border: color-mix(in srgb, var(--primary) 66%, #000000);
+    --cvd-source-active-external-text: var(--text-on-primary);
+    --cvd-source-active-font-weight: 600;
+
+    --cvd-room-td-bg: var(--cvd-success-bg);
+    --cvd-room-td-border: var(--cvd-success-border);
+    --cvd-room-td-text: var(--cvd-success-text);
+
+    --cvd-room-tp-electronique-bg: var(--cvd-warning-bg);
+    --cvd-room-tp-electronique-border: var(--cvd-warning-border);
+    --cvd-room-tp-electronique-text: var(--cvd-warning-text);
+
+    --cvd-room-tp-numerique-bg: var(--cvd-info-bg);
+    --cvd-room-tp-numerique-border: var(--cvd-info-border);
+    --cvd-room-tp-numerique-text: var(--cvd-info-text);
+
+    --cvd-room-projet-bg: var(--cvd-error-bg);
+    --cvd-room-projet-border: var(--cvd-error-border);
+    --cvd-room-projet-text: var(--cvd-error-text);
+
+    --cvd-room-autre-bg: repeating-linear-gradient(
+      135deg,
+      rgba(107, 114, 128, 0.18) 0 6px,
+      rgba(107, 114, 128, 0.08) 6px 12px
+    );
+    --cvd-room-autre-border: var(--cvd-off-border);
+    --cvd-room-autre-text: var(--cvd-off-text);
+
+    --cvd-teacher-distanciel-bg: var(--cvd-success-bg);
+    --cvd-teacher-distanciel-border: var(--cvd-success-border);
+    --cvd-teacher-distanciel-text: var(--cvd-success-text);
+
+    --cvd-teacher-hybride-bg: var(--cvd-error-bg);
+    --cvd-teacher-hybride-border: var(--cvd-error-border);
+    --cvd-teacher-hybride-text: var(--cvd-error-text);
+
+    --cvd-teacher-presentiel-bg: var(--cvd-warning-bg);
+    --cvd-teacher-presentiel-border: var(--cvd-warning-border);
+    --cvd-teacher-presentiel-text: var(--cvd-warning-text);
+
+    --cvd-availability-available-bg: var(--cvd-success-bg);
+    --cvd-availability-available-border: var(--cvd-success-border);
+    --cvd-availability-available-text: var(--cvd-success-text);
+
+    --cvd-availability-unavailable-bg: repeating-linear-gradient(
+      -45deg,
+      rgba(55, 65, 81, 0.15) 0 5px,
+      rgba(55, 65, 81, 0.03) 5px 10px
+    ), var(--cvd-off-bg);
+    --cvd-availability-unavailable-border: var(--cvd-off-border);
+    --cvd-availability-unavailable-text: var(--cvd-off-text);
+
+    --cvd-switch-off-track-bg: var(--cvd-off-bg);
+    --cvd-switch-off-track-border: var(--cvd-off-border);
+    --cvd-switch-off-thumb: var(--cvd-off-text);
+
+    --cvd-switch-on-track-bg: var(--cvd-success-bg);
+    --cvd-switch-on-track-border: var(--cvd-success-border);
+    --cvd-switch-on-thumb: var(--cvd-success-text);
+
+    --cvd-add-promo-bg: var(--cvd-success-bg);
+    --cvd-add-promo-border: var(--cvd-success-border);
+    --cvd-add-promo-text: var(--cvd-success-text);
+    --cvd-add-promo-hover-bg: color-mix(in srgb, var(--cvd-success-bg) 65%, var(--panel));
+    --cvd-add-promo-hover-border: color-mix(in srgb, var(--cvd-success-border) 80%, #000000);
+
+    --cvd-promo-mismatch-color: var(--cvd-error-text);
+
+    --cvd-status-success-bg: var(--cvd-success-bg);
+    --cvd-status-success-border: var(--cvd-success-border);
+    --cvd-status-success-text: var(--cvd-success-text);
+
+    --cvd-status-info-bg: var(--cvd-info-bg);
+    --cvd-status-info-border: var(--cvd-info-border);
+    --cvd-status-info-text: var(--cvd-info-text);
+
+    --cvd-status-error-bg: var(--cvd-error-bg);
+    --cvd-status-error-border: var(--cvd-error-border);
+    --cvd-status-error-text: var(--cvd-error-text);
+
+    --cvd-status-warning-bg: var(--cvd-warning-bg);
+    --cvd-status-warning-border: var(--cvd-warning-border);
+    --cvd-status-warning-text: var(--cvd-warning-text);
+
+    --cvd-constraint-vacances-bg: rgba(247, 226, 213, 0.9);
+    --cvd-constraint-vacances-border: #8a3d05;
+    --cvd-constraint-vacances-style: solid;
+
+    --cvd-constraint-entreprise-bg: rgba(215, 236, 229, 0.9);
+    --cvd-constraint-entreprise-border: #0a5f4d;
+    --cvd-constraint-entreprise-style: dashed;
+
+    --cvd-constraint-stages-bg: rgba(235, 219, 233, 0.9);
+    --cvd-constraint-stages-border: #7a2750;
+    --cvd-constraint-stages-style: dotted;
+
+    --cvd-constraint-international-bg: rgba(211, 226, 239, 0.9);
+    --cvd-constraint-international-border: #334155;
+    --cvd-constraint-international-style: double;
+
+    --cvd-constraint-partiels-bg: rgba(245, 214, 228, 0.9);
+    --cvd-constraint-partiels-border: #831843;
+    --cvd-constraint-partiels-style: solid;
+
+    --cvd-constraint-rattrapages-bg: rgba(223, 232, 235, 0.9);
+    --cvd-constraint-rattrapages-border: #0f3d3a;
+    --cvd-constraint-rattrapages-style: solid;
+
+    --cvd-constraint-pill-vacances-bg: rgba(248, 219, 196, 0.95);
+    --cvd-constraint-pill-vacances-border: #8a3d05;
+    --cvd-constraint-pill-vacances-style: solid;
+
+    --cvd-constraint-pill-entreprise-bg: rgba(196, 225, 216, 0.95);
+    --cvd-constraint-pill-entreprise-border: #0a5f4d;
+    --cvd-constraint-pill-entreprise-style: dashed;
+
+    --cvd-constraint-pill-stages-bg: rgba(227, 201, 225, 0.95);
+    --cvd-constraint-pill-stages-border: #7a2750;
+    --cvd-constraint-pill-stages-style: dotted;
+
+    --cvd-constraint-pill-international-bg: rgba(198, 215, 229, 0.95);
+    --cvd-constraint-pill-international-border: #334155;
+    --cvd-constraint-pill-international-style: double;
+
+    --cvd-constraint-pill-partiels-bg: rgba(242, 194, 217, 0.96);
+    --cvd-constraint-pill-partiels-border: #831843;
+    --cvd-constraint-pill-partiels-style: solid;
+
+    --cvd-constraint-pill-rattrapages-bg: rgba(202, 219, 224, 0.95);
+    --cvd-constraint-pill-rattrapages-border: #0f3d3a;
+    --cvd-constraint-pill-rattrapages-style: solid;
+  }
+}

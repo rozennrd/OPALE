@@ -1,55 +1,173 @@
-// src/pages/Rooms.tsx
-import React, { useMemo, useState } from 'react'
-import { Room } from '../models/Room'
-import { ROOMS_MOCK } from '../mocks/rooms.mock'
+﻿// src/pages/Rooms.tsx
 import RoomsSection from '../components/rooms/RoomsSection'
 import RoomDetailCard from '../components/rooms/RoomDetailCard'
 import PageHeader from '../components/common/PageHeader'
+import SelectionToolbar from '../components/common/SelectionToolbar'
+import RoomsToolbar from '../components/rooms/RoomsToolbar'
+import { useRoomsData } from '../hooks/rooms/useRoomsData'
+import { useRoomsFilters } from '../hooks/rooms/useRoomsFilters'
+import { useSelectionState } from '../hooks/common/useSelectionState'
+import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
+import { DEFAULT_ROOMS_FILTERS } from '../models/RoomFilters'
 
 export default function Rooms() {
-    const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
+    const {
+        rooms,
+        selectedRoom,
+        pendingNewRoomId,
+        setSelectedRoom,
+        addRoom,
+        updateRoom,
+        closeDetail,
+        deleteRoomsByIds,
+        deleteSingleRoom,
+        validateRoomIdentity,
+    } = useRoomsData()
 
-    const roomsByFloor = useMemo(() => {
-        const map: Record<number, Room[]> = { 0: [], 1: [], 2: [] }
-        for (const room of ROOMS_MOCK) {
-            if (!map[room.floor]) {
-                map[room.floor] = []
-            }
-            map[room.floor].push(room)
-        }
-        return map
-    }, [])
+    const {
+        filters,
+        visibleRoomIds,
+        roomsByFloor,
+        handleSearchChange,
+        handleTypeFilterChange,
+        handleCapacityOperatorChange,
+        handleCapacityValueChange,
+        handleAvailabilityFilterChange,
+        resetFilters,
+    } = useRoomsFilters(rooms)
+
+    const {
+        selectionMode,
+        selectedIds: selectedRoomIds,
+        selectedIdsSet: selectedRoomIdsSet,
+        selectedCount: selectedRoomCount,
+        toggleSelectionMode,
+        toggleSelection: toggleRoomSelection,
+        selectAll: selectAllRooms,
+        clearSelection,
+        disableSelectionMode,
+        pruneSelection,
+    } = useSelectionState({
+        onEnterSelectionMode: () => {
+            setSelectedRoom(null)
+        },
+    })
+
+    const {
+        hasActiveFilters,
+        resetFilters: handleResetFilters,
+    } = useToolbarFilters({
+        values: filters,
+        defaults: DEFAULT_ROOMS_FILTERS,
+        onReset: resetFilters,
+    })
+
+    const handleToggleSelectionMode = () => {
+        toggleSelectionMode()
+    }
+
+    const handleDeleteSingleRoom = (roomId: string) => {
+        deleteSingleRoom(roomId)
+        pruneSelection([roomId])
+    }
+
+    const handleSelectAllVisible = () => {
+        selectAllRooms(visibleRoomIds)
+    }
+
+    const handleClearSelection = () => {
+        clearSelection()
+    }
+
+    const handleDeleteSelected = () => {
+        deleteRoomsByIds(selectedRoomIds)
+        disableSelectionMode()
+    }
+
+    const floors = Array.from(
+        new Set(rooms.map((room) => room.floor)),
+    ).sort((a, b) => a - b)
+    const visibleFloors = Object.keys(roomsByFloor)
+        .map(Number)
+        .sort((a, b) => a - b)
+
+    const hasVisibleRooms = visibleRoomIds.length > 0
+
+    const isCreatingSelectedRoom = !!selectedRoom && pendingNewRoomId === selectedRoom.id
+    
+    const handleCreateRequested = () => {
+        const floor = floors[0] ?? 0
+        addRoom(floor)
+    }
 
     return (
         <>
-            {/* TITRE & SOUS-TITRE */}
             <PageHeader
                 title="Salles"
-                subtitle="Liste des salles par étage avec types et commentaires (mock front uniquement)."
+                subtitle="Liste des salles par étage avec types et commentaires."
             />
 
-            {/* CONTENU DE LA PAGE */}
             <div className="rooms-page">
+                <RoomsToolbar
+                    searchValue={filters.searchValue}
+                    onSearchChange={handleSearchChange}
+                    typeFilter={filters.typeFilter}
+                    onTypeFilterChange={handleTypeFilterChange}
+                    capacityOperator={filters.capacityOperator}
+                    onCapacityOperatorChange={handleCapacityOperatorChange}
+                    capacityValue={filters.capacityValue}
+                    onCapacityValueChange={handleCapacityValueChange}
+                    availabilityFilter={filters.availabilityFilter}
+                    onAvailabilityFilterChange={handleAvailabilityFilterChange}
+                    selectionMode={selectionMode}
+                    selectedCount={selectedRoomCount}
+                    onToggleSelectionMode={handleToggleSelectionMode}
+                    onCreateRequested={handleCreateRequested}
+                    onResetFilters={handleResetFilters}
+                    hasActiveFilters={hasActiveFilters}
+                />
+
+                {selectionMode && (
+                    <SelectionToolbar
+                        totalCount={visibleRoomIds.length}
+                        selectedCount={selectedRoomCount}
+                        onSelectAll={handleSelectAllVisible}
+                        onClearSelection={handleClearSelection}
+                        onDeleteSelected={handleDeleteSelected}
+                        confirmTitle="Supprimer les salles sélectionnées"
+                        confirmMessage={`Vous allez supprimer ${selectedRoomIds.length} salle${selectedRoomIds.length > 1 ? 's' : ''}.`}
+                    />
+                )}
+
                 <div className="rooms-sections">
-                    {[0, 1, 2].map((floor) => (
-                        <RoomsSection
-                            key={floor}
-                            floor={floor as 0 | 1 | 2}
-                            rooms={roomsByFloor[floor] || []}
-                            onSelectRoom={setSelectedRoom}
-                        />
-                    ))}
+                    {hasVisibleRooms ? (
+                        visibleFloors.map((floor) => (
+                            <RoomsSection
+                                key={floor}
+                                floor={floor}
+                                rooms={roomsByFloor[floor] || []}
+                                onSelectRoom={setSelectedRoom}
+                                selectionMode={selectionMode}
+                                selectedRoomIds={selectedRoomIdsSet}
+                                onToggleRoomSelection={toggleRoomSelection}
+                            />
+                        ))
+                    ) : (
+                        <div className="rooms-empty-state">
+                            Aucune salle ne correspond aux filtres sélectionnés.
+                        </div>
+                    )}
                 </div>
             </div>
 
             {selectedRoom && (
                 <RoomDetailCard
                     room={selectedRoom}
-                    onClose={() => setSelectedRoom(null)}
-                    onChange={(updated) => {
-                        console.log('[ROOMS] Save (mock) room', updated)
-                        setSelectedRoom(updated)
-                    }}
+                    onClose={closeDetail}
+                    onChange={updateRoom}
+                    onDelete={() => handleDeleteSingleRoom(selectedRoom.id)}
+                    isCreate={isCreatingSelectedRoom}
+                    validateRoomIdentity={validateRoomIdentity}
                 />
             )}
         </>

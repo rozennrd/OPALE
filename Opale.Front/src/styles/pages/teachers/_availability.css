@@ -98,6 +98,12 @@
         background: rgba(148, 163, 184, 0.08);
     }
 
+    .teacher-availability-scroll {
+        overflow-x: auto;
+        padding-bottom: 0.25rem;
+        -webkit-overflow-scrolling: touch;
+    }
+
     .teacher-availability-grid {
         display: grid;
         grid-template-columns: repeat(6, 1fr);
@@ -185,6 +191,12 @@
     @media (max-width: 900px) {
         .teacher-availability-grid {
             grid-template-columns: repeat(6, 1fr);
+        }
+    }
+
+    @media (max-width: 720px) {
+        .teacher-availability-grid {
+            min-width: 420px;
         }
     }
 }

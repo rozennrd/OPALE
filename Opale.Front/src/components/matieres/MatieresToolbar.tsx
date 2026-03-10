@@ -1,8 +1,9 @@
 // src/components/matieres/MatieresToolbar.tsx
 
 import React from 'react'
-import { PageToolbar, ToolbarRow } from '../common/Toolbar'
+import { PageToolbar, ToolbarAddButton, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
+import icPlus from '../../assets/ic-plus.png'
 
 export type SemestreFilter = 'ALL' | 1 | 2
 export type CycleFilter = 'ALL' | string
@@ -24,9 +25,16 @@ interface MatieresToolbarProps {
     onTeacherChange: (value: TeacherFilter) => void
 
     // ✅ options injectées depuis la page
-    cycleOptions: string[]
-    promotionOptions: string[]
+    cycleOptions: { id: string; nom: string }[]
+    promotionOptions: { id: string; nom: string }[]
     teacherOptions: { id: string; label: string }[]
+
+    selectionMode: boolean
+    selectedCount: number
+    onToggleSelectionMode: () => void
+    onCreateRequested: () => void
+    onResetFilters: () => void
+    hasActiveFilters: boolean
 }
 
 const SEMESTRE_OPTIONS: { value: SemestreFilter; label: string }[] = [
@@ -36,23 +44,29 @@ const SEMESTRE_OPTIONS: { value: SemestreFilter; label: string }[] = [
 ]
 
 export default function MatieresToolbar({
-                                            searchValue,
-                                            onSearchChange,
-                                            semestreFilter,
-                                            onSemestreChange,
-                                            cycleFilter,
-                                            onCycleChange,
-                                            promotionFilter,
-                                            onPromotionChange,
-                                            teacherFilter,
-                                            onTeacherChange,
-                                            cycleOptions,
-                                            promotionOptions,
-                                            teacherOptions,
-                                        }: MatieresToolbarProps) {
+    searchValue,
+    onSearchChange,
+    semestreFilter,
+    onSemestreChange,
+    cycleFilter,
+    onCycleChange,
+    promotionFilter,
+    onPromotionChange,
+    teacherFilter,
+    onTeacherChange,
+    cycleOptions,
+    promotionOptions,
+    teacherOptions,
+    selectionMode,
+    selectedCount,
+    onToggleSelectionMode,
+    onCreateRequested,
+    onResetFilters,
+    hasActiveFilters,
+}: MatieresToolbarProps) {
     return (
         <PageToolbar className="matieres-toolbar">
-            <ToolbarRow className="matieres-toolbar-row">
+            <ToolbarRow className="page-toolbar-row--primary matieres-toolbar-row matieres-toolbar-row--primary">
                 <ToolbarSearch
                     value={searchValue}
                     onChange={onSearchChange}
@@ -60,31 +74,65 @@ export default function MatieresToolbar({
                     className="matieres-toolbar-search"
                 />
 
-                <div className="matieres-toolbar-filters">
-                    {/* Semestre (chips) */}
-                    <div className="toolbar-filter">
-                        <span className="toolbar-filter-label">Semestre</span>
-                        <div className="toolbar-toggle-chips">
-                            {SEMESTRE_OPTIONS.map((opt) => (
-                                <button
-                                    key={String(opt.value)}
-                                    type="button"
-                                    className={
-                                        'toolbar-toggle-chip' +
-                                        (semestreFilter === opt.value
-                                            ? ' toolbar-toggle-chip--active'
-                                            : '')
-                                    }
-                                    onClick={() => onSemestreChange(opt.value)}
-                                >
-                                    {opt.label}
-                                </button>
-                            ))}
-                        </div>
+                <button
+                    type="button"
+                    className={[
+                        'toolbar-filter-button',
+                        'toolbar-selection-toggle',
+                        selectionMode ? 'is-active' : '',
+                    ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    onClick={onToggleSelectionMode}
+                >
+                    <span>
+                        {selectionMode ? 'Quitter sélection' : 'Sélectionner'}
+                    </span>
+                    {selectedCount > 0 && (
+                        <span className="toolbar-selection-count-pill">
+                            {selectedCount}
+                        </span>
+                    )}
+                </button>
+
+                <ToolbarResetButton
+                    onClick={onResetFilters}
+                    disabled={!hasActiveFilters}
+                />
+
+                <ToolbarAddButton
+                    className="matieres-toolbar-add-btn"
+                    onClick={onCreateRequested}
+                    label="Ajouter une matière"
+                    iconSrc={icPlus}
+                    disabled
+                />
+            </ToolbarRow>
+
+            <ToolbarRow className="page-toolbar-row--filters matieres-toolbar-row matieres-toolbar-row--filters">
+                <div className="toolbar-filter toolbar-filter--chips matieres-toolbar-semestre-filter">
+                    <span className="toolbar-filter-label">Semestre</span>
+                    <div className="toolbar-toggle-chips">
+                        {SEMESTRE_OPTIONS.map((option) => (
+                            <button
+                                key={String(option.value)}
+                                type="button"
+                                className={
+                                    'toolbar-toggle-chip' +
+                                    (semestreFilter === option.value
+                                        ? ' toolbar-toggle-chip--active'
+                                        : '')
+                                }
+                                onClick={() => onSemestreChange(option.value)}
+                            >
+                                {option.label}
+                            </button>
+                        ))}
                     </div>
+                </div>
 
                     {/* Cycle (select) */}
-                    <div className="toolbar-filter">
+                    <div className="toolbar-filter matieres-toolbar-cycle-filter">
                         <label className="toolbar-filter-label">
                             Cycles
                             <select
@@ -94,8 +142,8 @@ export default function MatieresToolbar({
                             >
                                 <option value="ALL">Tous</option>
                                 {cycleOptions.map((c) => (
-                                    <option key={c} value={c}>
-                                        {c}
+                                    <option key={c.id} value={c.nom}>
+                                        {c.nom}
                                     </option>
                                 ))}
                             </select>
@@ -103,7 +151,7 @@ export default function MatieresToolbar({
                     </div>
 
                     {/* Promotions (select) */}
-                    <div className="toolbar-filter">
+                    <div className="toolbar-filter matieres-toolbar-promotion-filter">
                         <label className="toolbar-filter-label">
                             Promotions
                             <select
@@ -115,36 +163,34 @@ export default function MatieresToolbar({
                             >
                                 <option value="ALL">Toutes</option>
                                 {promotionOptions.map((p) => (
-                                    <option key={p} value={p}>
-                                        {p}
+                                    <option key={p.id} value={p.nom}>
+                                        {p.nom}
                                     </option>
                                 ))}
                             </select>
                         </label>
                     </div>
 
-                    {/* Enseignants (select) */}
-                    <div className="toolbar-filter">
-                        <label className="toolbar-filter-label">
-                            Enseignants
-                            <select
-                                value={teacherFilter}
-                                onChange={(e) =>
-                                    onTeacherChange(e.target.value as TeacherFilter)
-                                }
-                                className="toolbar-filter-select"
-                            >
-                                <option value="ALL">Tous</option>
-                                {teacherOptions.map((t) => (
-                                    <option key={t.id} value={t.id}>
-                                        {t.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </label>
-                    </div>
+                <div className="toolbar-filter matieres-toolbar-teacher-filter">
+                    <label className="toolbar-filter-label">
+                        Enseignants
+                        <select
+                            value={teacherFilter}
+                            onChange={(e) => onTeacherChange(e.target.value as TeacherFilter)}
+                            className="toolbar-filter-select"
+                        >
+                            <option value="ALL">Tous</option>
+                            {teacherOptions.map((teacher) => (
+                                <option key={teacher.id} value={teacher.id}>
+                                    {teacher.label}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
                 </div>
+
             </ToolbarRow>
         </PageToolbar>
     )
 }
+

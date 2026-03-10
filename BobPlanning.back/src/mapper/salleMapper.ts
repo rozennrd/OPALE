@@ -7,10 +7,13 @@ export const salleMapper = {
     return {
       id: dao.id,
       nom: dao.nom,
-      type: dao.type,
-      capacite: dao.capacite,
+      nom_complet: dao.nom_complet,
+      type_principal: dao.type_principal,
+      types_secondaires: dao.types_secondaires,
       etage: dao.etage,
-      description: dao.description
+      capacite: dao.capacite,
+      description: dao.description,
+      utilisable: dao.utilisable
     };
   },
 };

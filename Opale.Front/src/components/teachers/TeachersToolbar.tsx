@@ -1,87 +1,211 @@
 // src/components/teachers/TeachersToolbar.tsx
-import React, { useState } from 'react'
-import { TeachingMode } from '../../models/Teacher'
-import { PageToolbar, ToolbarRow } from '../common/Toolbar'
+import { TeachingMode } from '../../models/Teachers'
+import { PageToolbar, ToolbarAddButton, ToolbarResetButton, ToolbarRow } from '../common/Toolbar'
 import ToolbarSearch from '../common/ToolbarSearch'
+import icPlus from '../../assets/ic-plus.png'
+import DateInput from '../common/DateInput'
 
-type ModeFilter = 'ALL' | TeachingMode
+export type ModeFilter = 'ALL' | TeachingMode
 
 const MODE_OPTIONS: { value: ModeFilter; label: string }[] = [
     { value: 'ALL', label: 'Tous' },
-    { value: 'PRESENTIEL', label: 'Présentiel' },
-    { value: 'HYBRIDE', label: 'Hybride' },
-    { value: 'DISTANCIEL', label: 'Distanciel' },
+    { value: 'Présentiel', label: 'Présentiel' },
+    { value: 'Hybride', label: 'Hybride' },
+    { value: 'Distanciel', label: 'Distanciel' },
 ]
 
-export default function TeachersToolbar() {
-    const [searchValue, setSearchValue] = useState('')
-    const [modeFilter, setModeFilter] = useState<ModeFilter>('ALL')
+interface TeachersToolbarProps {
+    onCreateRequested: () => void
+    searchValue: string
+    onSearchChange: (value: string) => void
+    modeFilter: ModeFilter
+    onModeChange: (value: ModeFilter) => void
+    promotionFilter: string
+    onPromotionChange: (value: string) => void
+    promotionOptions: string[]
+    subjectFilter: string
+    onSubjectChange: (value: string) => void
+    subjectOptions: string[]
+    dateFrom: string
+    onDateFromChange: (value: string) => void
+    dateTo: string
+    onDateToChange: (value: string) => void
+    selectionMode: boolean
+    selectedCount: number
+    onToggleSelectionMode: () => void
+    onResetFilters: () => void
+    hasActiveFilters: boolean
+}
 
-    const handleSearchChange = (value: string) => {
-        setSearchValue(value)
-        console.log('[TEACHERS] Recherche :', value)
-    }
-
-    const handleSubjectsClick = () => {
-        console.log('[TEACHERS] Ouvrir filtre "Matières"')
-    }
-
-    const handleModeChange = (value: ModeFilter) => {
-        setModeFilter(value)
-        console.log('[TEACHERS] Filtre mode :', value)
-        // plus tard : remonter ce filtre à la page par des props
-    }
-
+export default function TeachersToolbar({
+    onCreateRequested,
+    searchValue,
+    onSearchChange,
+    modeFilter,
+    onModeChange,
+    promotionFilter,
+    onPromotionChange,
+    promotionOptions,
+    subjectFilter,
+    onSubjectChange,
+    subjectOptions,
+    dateFrom,
+    onDateFromChange,
+    dateTo,
+    onDateToChange,
+    selectionMode,
+    selectedCount,
+    onToggleSelectionMode,
+    onResetFilters,
+    hasActiveFilters,
+}: TeachersToolbarProps) {
     return (
         <PageToolbar className="teachers-toolbar">
-            <ToolbarRow className="teachers-toolbar-row">
-                {/* Searchbar à gauche */}
+            <ToolbarRow className="page-toolbar-row--primary teachers-toolbar-row teachers-toolbar-row--primary">
                 <ToolbarSearch
                     value={searchValue}
-                    onChange={handleSearchChange}
+                    onChange={onSearchChange}
                     placeholder="Rechercher un enseignant"
                     className="teachers-toolbar-search"
                 />
 
-                {/* Filtres à droite */}
-                <div className="teachers-toolbar-filters">
-                    {/* Filtre matières (bouton simple) */}
-                    <button
-                        type="button"
-                        className="toolbar-filter-button"
-                        onClick={handleSubjectsClick}
-                    >
-                        <span>Matières</span>
-                        <span
-                            className="toolbar-filter-button-chevron"
-                            aria-hidden="true"
-                        >
-                            ▾
-                        </span>
-                    </button>
+                <div className="page-toolbar-row--filters teachers-toolbar-filters">
+                    <div className="toolbar-filter teachers-toolbar-date-filter teachers-toolbar-date-filter--from">
+                        <label className="toolbar-filter-label">
+                            Dispo à partir du...
+                            <DateInput
+                                value={dateFrom}
+                                onChange={onDateFromChange}
+                                inputClassName="toolbar-filter-date"
+                                max={dateTo || undefined}
+                            />
+                        </label>
+                    </div>
 
-                    {/* Filtre mode : groupe de chips (radio visuels) */}
-                    <div className="toolbar-filter">
-                        <span className="toolbar-filter-label"></span>
+                    <div className="toolbar-filter teachers-toolbar-date-filter teachers-toolbar-date-filter--to">
+                        <label className="toolbar-filter-label">
+                            Jusqu&apos;au
+                            <DateInput
+                                value={dateTo}
+                                onChange={onDateToChange}
+                                inputClassName="toolbar-filter-date"
+                                min={dateFrom || undefined}
+                            />
+                        </label>
+                    </div>
+
+                    <ToolbarAddButton
+                        className="teachers-toolbar-add-btn teachers-toolbar-add-inline"
+                        onClick={onCreateRequested}
+                        label="Ajouter un enseignant"
+                        iconSrc={icPlus}
+                    />
+
+                    <div className="toolbar-filter toolbar-filter--chips teachers-toolbar-mode-filter">
+                        <span className="toolbar-filter-label">Type de cours</span>
                         <div className="toolbar-toggle-chips">
-                            {MODE_OPTIONS.map((opt) => (
+                            {MODE_OPTIONS.map((option) => (
                                 <button
-                                    key={opt.value}
+                                    key={option.value}
                                     type="button"
                                     className={
                                         'toolbar-toggle-chip' +
-                                        (modeFilter === opt.value
+                                        (modeFilter === option.value
                                             ? ' toolbar-toggle-chip--active'
                                             : '')
                                     }
-                                    onClick={() => handleModeChange(opt.value)}
+                                    onClick={() => onModeChange(option.value)}
                                 >
-                                    {opt.label}
+                                    {option.label}
                                 </button>
                             ))}
                         </div>
                     </div>
+
+                    <div className="teachers-toolbar-line3">
+                        <div className="toolbar-filter teachers-toolbar-promotion-filter">
+                            <label className="toolbar-filter-label">
+                                Promotion
+                                <select
+                                    className="toolbar-filter-select"
+                                    value={promotionFilter || 'ALL'}
+                                    onChange={(e) =>
+                                        onPromotionChange(
+                                            e.target.value === 'ALL'
+                                                ? ''
+                                                : e.target.value,
+                                        )
+                                    }
+                                >
+                                    <option value="ALL">Toutes</option>
+                                    {promotionOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </select>
+                            </label>
+                        </div>
+
+                        <div className="toolbar-filter teachers-toolbar-subjects">
+                            <label className="toolbar-filter-label">
+                                Matières
+                                <select
+                                    value={subjectFilter || 'ALL'}
+                                    onChange={(e) =>
+                                        onSubjectChange(
+                                            e.target.value === 'ALL'
+                                                ? ''
+                                                : e.target.value,
+                                        )
+                                    }
+                                    className="toolbar-filter-select"
+                                >
+                                    <option value="ALL">Toutes</option>
+                                    {subjectOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </select>
+                            </label>
+                        </div>
+                    </div>
                 </div>
+
+                <button
+                    type="button"
+                    className={[
+                        'toolbar-filter-button',
+                        'toolbar-selection-toggle',
+                        selectionMode ? 'is-active' : '',
+                    ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    onClick={onToggleSelectionMode}
+                >
+                    <span>
+                        {selectionMode ? 'Quitter sélection' : 'Sélectionner'}
+                    </span>
+                    {selectedCount > 0 && (
+                        <span className="toolbar-selection-count-pill">
+                            {selectedCount}
+                        </span>
+                    )}
+                </button>
+
+                <ToolbarResetButton
+                    className="teachers-toolbar-reset"
+                    onClick={onResetFilters}
+                    disabled={!hasActiveFilters}
+                />
+
+                <ToolbarAddButton
+                    className="teachers-toolbar-add-btn"
+                    onClick={onCreateRequested}
+                    label="Ajouter un enseignant"
+                    iconSrc={icPlus}
+                />
             </ToolbarRow>
         </PageToolbar>
     )

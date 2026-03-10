@@ -284,8 +284,7 @@ src/
 │   ├── events.mock.ts
 │   ├── matieres.mock.ts
 │   ├── promotionCycles.mock.ts
-│   ├── rooms.mock.ts
-│   └── teachers.mock.ts
+│   └── rooms.mock.ts
 ├── models
 │   ├── CampusEvent.ts
 │   ├── Constraints.ts
@@ -303,7 +302,7 @@ src/
 │   ├── Login.tsx
 │   ├── Matieres.tsx
 │   ├── Placeholder.tsx
-│   ├── PlanningMacro.tsx
+│   ├── Planning.tsx
 │   ├── Promotions.tsx
 │   ├── Rooms.tsx
 │   └── Teachers.tsx

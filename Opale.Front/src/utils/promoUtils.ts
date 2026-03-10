@@ -12,6 +12,19 @@ interface PromoTotals {
 export const uid = (p: string = 'id'): string =>
     `${p}-${Math.random().toString(36).slice(2, 9)}`
 
+export const getAcademicYearRange = (today: Date = new Date()): { startDate: string; endDate: string } => {
+    const year = today.getFullYear()
+    const month = today.getMonth()
+
+    const startYear = month >= 8 ? year : year - 1
+    const endYear = startYear + 1
+
+    const startDate = `${startYear}-09-01`
+    const endDate = `${endYear}-08-31`
+
+    return { startDate, endDate }
+}
+
 export const makePromotions = (name: string, years: number): Promotion[] =>
     Array.from({ length: years }, (_, i): Promotion => ({
         id: uid('promo'),
@@ -19,6 +32,7 @@ export const makePromotions = (name: string, years: number): Promotion[] =>
         students: 0,
         startDate: '',
         endDate: '',
+        isApprentissage: false,
         groups: [],
         specialties: [],
         constraints: {
@@ -35,14 +49,14 @@ export const distributeEvenly = (total: number | string, items: GroupSpecialtyIt
     if (!items.length) return items
     const safeTotal = Number(total) || 0
     if (safeTotal <= 0) {
-        return items.map(it => ({ ...it, students: 0 }))
+        return items.map(it => ({ ...it, effectifs: 0 }))
     }
     const base = Math.floor(safeTotal / items.length)
     let remainder = safeTotal % items.length
 
     return items.map((it, idx) => ({
         ...it,
-        students: base + (idx < remainder ? 1 : 0),
+        effectifs: base + (idx < remainder ? 1 : 0),
     }))
 }
 
@@ -63,11 +77,11 @@ export const computePromoTotals = (promo: Promotion | undefined): PromoTotals =>
     const specialties = promo.specialties || []
 
     const groupsTotal = groups.reduce(
-        (sum: number, g: GroupSpecialtyItem) => sum + (Number(g.students) || 0),
+        (sum: number, g: GroupSpecialtyItem) => sum + (Number(g.effectifs) || 0),
         0
     )
     const specialtiesTotal = specialties.reduce(
-        (sum: number, s: GroupSpecialtyItem) => sum + (Number(s.students) || 0),
+        (sum: number, s: GroupSpecialtyItem) => sum + (Number(s.effectifs) || 0),
         0
     )
 

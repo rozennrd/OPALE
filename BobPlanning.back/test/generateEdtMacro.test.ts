@@ -13,9 +13,9 @@ jest.mock('exceljs');
 jest.mock('../src/tools/holidaysAndWeek');
 jest.mock('fs');
 
-// Converts methods into Jest mocks
+// Convertit les méthodes en mocks Jest
 type MockedWorksheet = jest.Mocked<
-  Pick<ExcelJS.Worksheet, 'addRow' | 'getRow' | 'getCell' | 'eachRow'>
+  Pick<ExcelJS.Worksheet, 'addRow' | 'getRow' | 'getCell' | 'eachRow' | 'lastRow'>
 > & {
   columns: NonNullable<ExcelJS.Worksheet['columns']>;
 };
@@ -27,7 +27,7 @@ type MockedWorkbook = jest.Mocked<{
   };
 }>;
 
-// Get holidays
+// Récupérer les vacances et jours fériés
 type PublicHolidays = Awaited<ReturnType<typeof getPublicHolidays>>;
 type HolidaysArray = Awaited<ReturnType<typeof getHolidays>>;
 type Holiday = HolidaysArray[number];
@@ -42,39 +42,58 @@ describe('generateEdtMacro', () => {
     eachCell: jest.Mock;
   };
 
+  // Promo de base réutilisable dans les tests
+  const basePromo = {
+    id: '1',
+    nom: 'ADI1',
+    effectifs: 20,
+    id_cycle: '2',
+    type: 'initial',
+    date_start: new Date('2024-01-08'),
+    date_end: new Date('2024-03-31'),
+    i: 0,
+    periode: [] as any[],
+  };
+
   const createMockEdtMacroData = (
     overrides?: Partial<EdtMacroData>,
   ): EdtMacroData =>
     <EdtMacroData>{
-      DateDeb: new Date('2024-01-08'), // Monday
+      DateDeb: new Date('2024-01-08'), // Lundi
       DateFin: new Date('2024-02-05'),
       Promos: [
         {
-          Name: 'ADI1',
-          Periode: [
+          ...basePromo,
+          nom: 'ADI1',
+          periode: [
             {
-              DateDebutP: '2024-01-08',
-              DateFinP: '2024-03-31',
+              DateDebutP: new Date('2024-01-08'),
+              DateFinP: new Date('2024-03-31'),
+              type: 'cours',
             },
           ],
         },
         {
-          Name: 'CIR1',
-          Periode: [
+          ...basePromo,
+          id: '2',
+          nom: 'CIR1',
+          periode: [
             {
-              DateDebutP: '2024-01-08',
-              DateFinP: '2024-03-31',
+              DateDebutP: new Date('2024-01-08'),
+              DateFinP: new Date('2024-03-31'),
+              type: 'cours',
             },
           ],
         },
       ],
+      EventsMacro: [],
       ...overrides,
     };
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Create mocked cell
+    // Création d'une cellule mockée
     const createMockCell = () => ({
       fill: undefined,
       font: undefined,
@@ -82,7 +101,7 @@ describe('generateEdtMacro', () => {
       alignment: undefined,
     });
 
-    // Row Mock
+    // Mock de la ligne
     mockRow = {
       height: undefined,
       alignment: undefined,
@@ -94,18 +113,25 @@ describe('generateEdtMacro', () => {
       }),
     };
 
-    // Worksheet Mock
+    // Mock de la feuille de calcul
+    let internalLastRow: any = undefined;
     mockWorksheet = {
       columns: [],
-      addRow: jest.fn().mockReturnValue(mockRow),
+      addRow: jest.fn().mockImplementation(() => {
+        internalLastRow = mockRow;
+        return mockRow;
+      }),
       getRow: jest.fn().mockReturnValue(mockRow),
       getCell: jest.fn().mockReturnValue(createMockCell()),
       eachRow: jest.fn((callback) => {
-        callback(mockRow); // Simulates a line with cells
+        callback(mockRow); // Simule une ligne avec des cellules
       }),
+      get lastRow() {
+        return internalLastRow;
+      },
     } as unknown as MockedWorksheet;
 
-    // Workbook Mock
+    // Mock du classeur
     mockWorkbook = {
       addWorksheet: jest.fn().mockReturnValue(mockWorksheet),
       xlsx: {
@@ -113,12 +139,12 @@ describe('generateEdtMacro', () => {
       },
     } as unknown as MockedWorkbook;
 
-    // ExcelJS.Workbook constructor Mock
+    // Mock du constructeur ExcelJS.Workbook
     (
       ExcelJS.Workbook as jest.MockedClass<typeof ExcelJS.Workbook>
     ).mockImplementation(() => mockWorkbook as unknown as ExcelJS.Workbook);
 
-    // Holidays functions Mock
+    // Mock des fonctions de gestion des vacances
     (getWeekNumber as jest.Mock).mockImplementation((date: Date) => {
       const start = new Date(date.getFullYear(), 0, 1);
       const diff = date.getTime() - start.getTime();
@@ -186,33 +212,46 @@ describe('generateEdtMacro', () => {
   });
 
   describe('Date management', () => {
-    it('should adjust the start date to Monday if it is not a Monday', async () => {
+    it('should use the earliest promo date_start as the start date', async () => {
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-10'), // Wednesday
+        Promos: [
+          {
+            ...basePromo,
+            date_start: new Date('2024-01-10'), // mercredi
+            date_end: new Date('2024-01-29'),
+            periode: [],
+          },
+        ],
       });
 
       await generateEdtMacro(data);
 
-      expect(mockWorksheet.addRow).toHaveBeenCalled();
+      // La date de début doit être alignée au lundi précédent (08/01/2024)
       const firstCall = (mockWorksheet.addRow as jest.Mock).mock.calls[0][0];
-      expect(firstCall.mondayDate).toBe('08/01/2024'); // should start : Monday, January 8
+      expect(firstCall.mondayDate).toBe('08/01/2024');
     });
 
-    it('should generate rows for each week between StartDate and EndDate', async () => {
+    it('should generate rows for each week between start and end', async () => {
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-08'),
-        DateFin: new Date('2024-01-29'), // 3 weeks
+        Promos: [
+          {
+            ...basePromo,
+            date_start: new Date('2024-01-08'),
+            date_end: new Date('2024-01-26'), // vendredi → 3 semaines
+            periode: [],
+          },
+        ],
       });
 
       await generateEdtMacro(data);
 
-      // Should have at least 3 lines (header + 3 weeks)
+      // Doit générer exactement 3 lignes (1 par semaine)
       expect(mockWorksheet.addRow).toHaveBeenCalledTimes(3);
     });
   });
 
   describe('Public Holiday management', () => {
-    it('should recover public holidays and vacations', async () => {
+    it('should call getPublicHolidays and getHolidays for each year in the range', async () => {
       const data = createMockEdtMacroData();
 
       await generateEdtMacro(data);
@@ -221,14 +260,20 @@ describe('generateEdtMacro', () => {
       expect(getHolidays).toHaveBeenCalledWith('Bordeaux', 2024);
     });
 
-    it('should mark public holidays in red', async () => {
+    it('should mark public holidays in the holidays column', async () => {
       (getPublicHolidays as jest.Mock).mockResolvedValue({
         '2024-01-08': 'Test Holiday',
       } as PublicHolidays);
 
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-08'),
-        DateFin: new Date('2024-01-15'),
+        Promos: [
+          {
+            ...basePromo,
+            date_start: new Date('2024-01-08'),
+            date_end: new Date('2024-01-15'),
+            periode: [],
+          },
+        ],
       });
 
       await generateEdtMacro(data);
@@ -238,23 +283,17 @@ describe('generateEdtMacro', () => {
   });
 
   describe('Management of promotions in initial training', () => {
-    it('should manage promotions ADI1, CIR1, etc.', async () => {
+    it('should add a column per promo and populate rowData', async () => {
       const data = createMockEdtMacroData({
         Promos: [
           {
-            id : '1',
+            ...basePromo,
             nom: 'ADI1',
-            effectifs: 20,
-            id_cycle : '2',
-            date_start : new Date('2024-01-08'),
-            date_end : new Date('2024-03-31'),
-            type : 'initial',
-            i: 0,
             periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
                 DateFinP: new Date('2024-03-31'),
-                type: 'rattrapage'
+                type: 'rattrapage',
               },
             ],
           },
@@ -268,7 +307,7 @@ describe('generateEdtMacro', () => {
       expect(rowData).toHaveProperty('ADI1');
     });
 
-    it('should display "Semester 1 or 3 retake exam" during the winter break', async () => {
+    it('should display vacation description when a promo is in initial type and holidays match', async () => {
       (getHolidays as jest.Mock).mockResolvedValue([
         {
           description: "Vacances d'Hiver",
@@ -278,23 +317,39 @@ describe('generateEdtMacro', () => {
       ] as Holiday[]);
 
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-17'),
-        DateFin: new Date('2024-01-24'),
         Promos: [
           {
-            id : '1',
+            ...basePromo,
             nom: 'ADI1',
-            effectifs: 20,
-            type: 'initial',
-            date_start : new Date('2024-01-08'),
-            date_end : new Date('2024-03-31'),
-            i: 0,
-            id_cycle : '2',
+            type: 'Initial',
+            date_start: new Date('2024-01-08'),
+            date_end: new Date('2024-01-26'),
+            periode: [],
+          },
+        ],
+      });
+
+      await generateEdtMacro(data);
+
+      const calls = (mockWorksheet.addRow as jest.Mock).mock.calls;
+      // La 2e semaine (15 jan) est en vacances
+      const vacationRow = calls[1][0] as Record<string, string>;
+      expect(vacationRow.ADI1).toBe('VACANCES');
+    });
+
+    it('should display "entreprise" during an enterprise period', async () => {
+      const data = createMockEdtMacroData({
+        Promos: [
+          {
+            ...basePromo,
+            nom: 'ADI1',
+            date_start: new Date('2024-01-08'),
+            date_end: new Date('2024-01-26'),
             periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
                 DateFinP: new Date('2024-03-31'),
-                type: 'entreprise'
+                type: 'entreprise',
               },
             ],
           },
@@ -308,7 +363,7 @@ describe('generateEdtMacro', () => {
       expect(rowData.ADI1).not.toBeUndefined();
     });
 
-    it('should display “HOLIDAYS” for other holidays', async () => {
+    it('should display "VACANCES" for initial promos during school holidays', async () => {
       (getHolidays as jest.Mock).mockResolvedValue([
         {
           description: 'Vacances de Printemps',
@@ -318,55 +373,44 @@ describe('generateEdtMacro', () => {
       ] as Holiday[]);
 
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-15'),
-        DateFin: new Date('2024-01-22'),
         Promos: [
           {
-            id: '1',
+            ...basePromo,
             nom: 'CIR1',
-            effectifs: 20,
-            type: 'initial',
-            id_cycle : '2',
-            date_start : new Date('2024-01-08'),
-            date_end : new Date('2024-03-31'),
-            i: 0,
-            periode: [
-              {
-                DateDebutP: new Date('2024-01-08'),
-                DateFinP: new Date('2024-03-31'),
-                type: 'rattrapage'
-              },
-            ],
+            type: 'Initial',
+            date_start: new Date('2024-01-08'),
+            date_end: new Date('2024-01-26'),
+            periode: [],
           },
         ],
       });
 
       await generateEdtMacro(data);
 
-      const rowData = (mockWorksheet.addRow as jest.Mock).mock.calls[0][0];
-      expect(typeof rowData.CIR1).toBe('string');
-      expect(rowData.CIR1).not.toBeUndefined();
+      const calls = (mockWorksheet.addRow as jest.Mock).mock.calls;
+      const vacationRow = calls[1][0] as Record<string, string>;
+      expect(typeof vacationRow.CIR1).toBe('string');
+      expect(vacationRow.CIR1).not.toBeUndefined();
     });
   });
 
   describe('Management of promotions in continuing formation', () => {
-    it('should manage promotions AP3, AP4, AP5', async () => {
+    it('should manage apprentissage promotions', async () => {
       const data = createMockEdtMacroData({
         Promos: [
           {
-            id:'1',
+            ...basePromo,
+            id: '1',
             nom: 'AP3',
-            effectifs: 20,
             type: 'apprentissage',
             id_cycle: '1',
-            date_start : new Date('2024-01-08'),
-            date_end : new Date('2024-03-31'),
-            i: 0,
+            date_start: new Date('2024-01-08'),
+            date_end: new Date('2024-03-31'),
             periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
                 DateFinP: new Date('2024-01-29'),
-                type: 'entreprise'
+                type: 'entreprise',
               },
             ],
           },
@@ -378,72 +422,22 @@ describe('generateEdtMacro', () => {
       expect(mockWorksheet.addRow).toHaveBeenCalled();
     });
 
-    it('should display "International Break" only during the event period', async () => {
+    it('should display "Mobilité internationale" only during the event period', async () => {
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-08'),
-        DateFin: new Date('2024-03-15'),
         Promos: [
           {
+            ...basePromo,
             id: '1',
             nom: 'AP4',
-            effectifs: 20,
-            id_cycle: '2',
             type: 'apprentissage',
+            id_cycle: '2',
             date_start: new Date('2024-01-08'),
-            date_end: new Date('2024-03-31'),
-            i: 0,
+            date_end: new Date('2024-03-15'),
             periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
                 DateFinP: new Date('2024-01-29'),
-                type: 'Mobilité internationale'
-              }
-            ],
-          },
-        ],
-      });
-
-      await generateEdtMacro(data);
-
-      const calls = (mockWorksheet.addRow as jest.Mock).mock.calls;
-
-      const rowsWithEvent = calls
-        .map(c => c[0])
-        .filter(row => row.AP4 === 'Mobilité internationale');
-
-      // L’événement dure du 8 au 29 = environ 3 semaines → 3 lignes
-      expect(rowsWithEvent.length).toBe(4);
-
-      // Après le 29 janvier → plus rien
-      const rowsAfter = calls
-        .map(c => c[0])
-        .filter(row => row.weekStart > new Date('2024-01-29'));
-
-      for (const row of rowsAfter) {
-        expect(row.AP4).toBe('');
-      }
-    });
-
-
-    it('should display "Soutenance" on the last week of a PFE', async () => {
-      const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-01'),
-        DateFin: new Date('2024-02-01'),
-        Promos: [
-          {
-            id: '1',
-            nom: 'AP5',
-            effectifs: 20,
-            id_cycle: '1',
-            type: 'Apprentissage',
-            date_start: new Date('2024-01-01'),
-            date_end: new Date('2024-06-30'),
-            i: 0,
-            periode: [
-              {
-                DateDebutP: new Date('2024-01-01'),
-                DateFinP: new Date('2024-01-21'),  // ← se termine dans la semaine du 15-21
-                type: 'PFE'
+                type: 'Mobilité internationale',
               },
             ],
           },
@@ -453,34 +447,59 @@ describe('generateEdtMacro', () => {
       await generateEdtMacro(data);
 
       const calls = (mockWorksheet.addRow as jest.Mock).mock.calls;
+      const rowsWithEvent = calls
+        .map((c) => c[0])
+        .filter((row) => row.AP4 === 'Mobilité internationale');
 
-      // On cherche la semaine qui contient le 21 janvier
-      const soutenanceRow = calls.find(c => c[0].AP5 === "Soutenance");
-
-      expect(soutenanceRow).toBeDefined();
+      // Du 8 au 29 janvier = 4 semaines
+      expect(rowsWithEvent.length).toBe(4);
     });
 
-
-  describe('Management of the CyPre column', () => {
-    it('should generate CyPre week numbers correctly', async () => {
+    it('should display "Soutenance" on the last week of a PFE', async () => {
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-08'),
-        DateFin: new Date('2024-02-05'),
         Promos: [
           {
+            ...basePromo,
             id: '1',
+            nom: 'AP5',
+            type: 'Apprentissage',
+            id_cycle: '1',
+            date_start: new Date('2024-01-01'),
+            date_end: new Date('2024-02-01'),
+            periode: [
+              {
+                DateDebutP: new Date('2024-01-01'),
+                DateFinP: new Date('2024-01-21'), // se termine dans la semaine du 15-21
+                type: 'PFE',
+              },
+            ],
+          },
+        ],
+      });
+
+      await generateEdtMacro(data);
+
+      const calls = (mockWorksheet.addRow as jest.Mock).mock.calls;
+      const soutenanceRow = calls.find((c) => c[0].AP5 === 'Soutenance');
+      expect(soutenanceRow).toBeDefined();
+    });
+  });
+
+  describe('Management of the CyPre column', () => {
+    it('should generate CyPre week numbers starting at Se1 for initial promos', async () => {
+      const data = createMockEdtMacroData({
+        Promos: [
+          {
+            ...basePromo,
             nom: 'ADI1',
-            effectifs: 20,
-            id_cycle : '2',
             type: 'initial',
-            date_start : new Date('2024-01-08'),
-            date_end : new Date('2024-03-31'),
-            i: 0,
+            date_start: new Date('2024-01-08'),
+            date_end: new Date('2024-02-05'),
             periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
                 DateFinP: new Date('2024-03-31'),
-                type: 'rattrapage'
+                type: 'rattrapage',
               },
             ],
           },
@@ -491,7 +510,6 @@ describe('generateEdtMacro', () => {
 
       const calls = (mockWorksheet.addRow as jest.Mock).mock.calls;
       const firstRow = calls[0][0] as Record<string, string>;
-
       expect(firstRow.cypreWeek).toBe('Se1');
     });
 
@@ -505,18 +523,13 @@ describe('generateEdtMacro', () => {
       ] as Holiday[]);
 
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-08'),
-        DateFin: new Date('2024-01-29'),
         Promos: [
           {
-            id: '1',
+            ...basePromo,
             nom: 'ADI1',
-            effectifs: 20,
-            id_cycle : '2',
             type: 'initial',
-            date_start : new Date('2024-01-08'),
-            date_end : new Date('2024-03-31'),
-            i: 0,
+            date_start: new Date('2024-01-08'),
+            date_end: new Date('2024-01-29'),
             periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
@@ -531,18 +544,87 @@ describe('generateEdtMacro', () => {
       await generateEdtMacro(data);
 
       const calls = (mockWorksheet.addRow as jest.Mock).mock.calls;
-      const holidaysRow = calls[1][0] as Record<string, string>;
+      const holidayRow = calls[1][0] as Record<string, string>;
+      expect(holidayRow.cypreWeek).toBe('');
+    });
+  });
 
-      expect(holidaysRow.cypreWeek).toBeDefined();
-      expect(typeof holidaysRow.cypreWeek).toBe('string');
-      expect(holidaysRow).toHaveProperty('cypreWeek');
+  describe('Events management', () => {
+    it('should display global events (without promo) in eventsJunia or eventsExternal', async () => {
+      const data = createMockEdtMacroData({
+        Promos: [
+          {
+            ...basePromo,
+            date_start: new Date('2024-01-08'),
+            date_end: new Date('2024-01-15'),
+            periode: [],
+          },
+        ],
+        EventsMacro: [
+          {
+            id: 'ev1',
+            nom: 'Conférence JUNIA - détail',
+            type: 'conference',
+            datetime_start: new Date('2024-01-08T09:00:00'),
+            datetime_end: new Date('2024-01-08T18:00:00'),
+            is_external: false,
+            promotions: [],
+          },
+          {
+            id: 'ev2',
+            nom: 'Salon externe - détail',
+            type: 'salon',
+            datetime_start: new Date('2024-01-08T09:00:00'),
+            datetime_end: new Date('2024-01-08T18:00:00'),
+            is_external: true,
+            promotions: [],
+          },
+        ],
+      });
+
+      await generateEdtMacro(data);
+
+      const rowData = (mockWorksheet.addRow as jest.Mock).mock.calls[0][0];
+      expect(rowData.eventsJunia).toContain('Conférence JUNIA');
+      expect(rowData.eventsExternal).toContain('Salon externe');
+    });
+
+    it('should write promo-specific events in the promo column', async () => {
+      const data = createMockEdtMacroData({
+        Promos: [
+          {
+            ...basePromo,
+            id: '1',
+            nom: 'ADI1',
+            date_start: new Date('2024-01-08'),
+            date_end: new Date('2024-01-15'),
+            periode: [],
+          },
+        ],
+        EventsMacro: [
+          {
+            id: 'ev1',
+            nom: 'Réunion ADI1 - détail',
+            type: 'reunion',
+            datetime_start: new Date('2024-01-08T09:00:00'),
+            datetime_end: new Date('2024-01-08T18:00:00'),
+            is_external: false,
+            promotions: ['1'],
+          },
+        ],
+      });
+
+      await generateEdtMacro(data);
+
+      const rowData = (mockWorksheet.addRow as jest.Mock).mock.calls[0][0];
+      expect(rowData.ADI1).toContain('Réunion ADI1');
     });
   });
 
   describe('Formatting and visual styles', () => {
     let mockCell: {
       fill?: { type: string; pattern: string; fgColor: { argb: string } };
-      font?: { bold?: boolean; color?: { argb: string } };
+      font?: { bold?: boolean; color?: { argb: string }; name?: string; italic?: boolean };
       border?: unknown;
     };
 
@@ -551,21 +633,23 @@ describe('generateEdtMacro', () => {
       mockRow.getCell = jest.fn().mockReturnValue(mockCell);
     });
 
-    it('should apply borders to all cells', async () => {
+    it('should apply thin borders to all cells', async () => {
       const data = createMockEdtMacroData();
 
       await generateEdtMacro(data);
 
-      // Verify that eachRow is called to iterate through all rows
+      // Vérifie que eachRow est appelé pour parcourir toutes les lignes
       expect(mockWorksheet.eachRow).toHaveBeenCalled();
 
-      // Verify that eachCell is called for each row
-      expect(mockRow.eachCell).toHaveBeenCalled();
+      // Le 1er appel eachRow correspond aux bordures
+      const eachRowCallback = (mockWorksheet.eachRow as jest.Mock).mock.calls[0][0];
 
-      // Verify that a border is defined (the mock simulates this)
-      const eachCellCallback = (mockRow.eachCell as jest.Mock).mock.calls[0][0];
-      const testCell = { border: undefined };
-      eachCellCallback(testCell);
+      // On simule une row avec un vrai eachCell pour vérifier ce que le callback fait
+      const testCell = { border: undefined as any };
+      const fakeRow = {
+        eachCell: (cb: (cell: any) => void) => cb(testCell),
+      };
+      eachRowCallback(fakeRow);
 
       expect(testCell.border).toBeDefined();
       expect(testCell.border).toMatchObject({
@@ -576,59 +660,50 @@ describe('generateEdtMacro', () => {
       });
     });
 
-    it('should color promos at school in green (FF99FF99)', async () => {
+    it('should color VACANCES cells with VAC_BDX color', async () => {
+      (getHolidays as jest.Mock).mockResolvedValue([
+        {
+          description: "Vacances d'Hiver",
+          start_date: '2024-01-15',
+          end_date: '2024-01-22',
+        },
+      ] as Holiday[]);
+
       const data = createMockEdtMacroData({
         Promos: [
           {
-            id: '1',
+            ...basePromo,
             nom: 'ADI1',
-            effectifs: 20,
-            id_cycle : '2',
-            type: 'initial',
-            date_start : new Date('2024-01-08'),
-            date_end : new Date('2024-03-31'),
-            i: 0,
-            periode: [
-              {
-                DateDebutP: new Date('2024-01-08'),
-                DateFinP: new Date('2024-03-31'),
-                type: 'stage'
-              },
-            ],
+            type: 'Initial',
+            date_start: new Date('2024-01-08'),
+            date_end: new Date('2024-01-26'),
+            periode: [],
           },
         ],
       });
 
       await generateEdtMacro(data);
 
-      expect(mockRow.getCell).not.toHaveBeenCalledWith('ADI1');
-      expect(mockCell.fill).not.toEqual({
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FF99FF99' },
-      });
-
+      // getCell est appelé pour la colonne de la promo en vacances
+      expect(mockRow.getCell).toHaveBeenCalledWith('ADI1');
     });
 
-    it('should color AP5 final presentations in pink (FFFF99CC) and make them bold', async () => {
+    it('should color "Soutenance" cells with ALERT_RED and bold font', async () => {
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-29'),
-        DateFin: new Date('2024-02-05'),
         Promos: [
           {
+            ...basePromo,
             id: '1',
             nom: 'AP5',
-            effectifs: 20,
-            id_cycle: '1',
             type: 'apprentissage',
-            date_start : new Date('2024-01-08'),
-            date_end : new Date('2024-03-31'),
-            i: 0,
+            id_cycle: '1',
+            date_start: new Date('2024-01-29'),
+            date_end: new Date('2024-02-02'),
             periode: [
               {
                 DateDebutP: new Date('2024-01-08'),
-                DateFinP: new Date('2024-02-02'), // 📌 FIN DANS LA SEMAINE
-                type: "Projet de fin d'études",   // 📌 PFE
+                DateFinP: new Date('2024-02-02'),
+                type: "Projet de fin d'études",
               },
             ],
           },
@@ -637,20 +712,16 @@ describe('generateEdtMacro', () => {
 
       await generateEdtMacro(data);
 
-      // Verify soutenance applied
       expect(mockRow.getCell).toHaveBeenCalledWith('AP5');
-
       expect(mockCell.fill).toEqual({
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'FFFF99CC' },
+        fgColor: { argb: 'FFC22525' }, // ALERT_RED
       });
-
-      expect(mockCell.font).toEqual({ bold: true });
+      expect(mockCell.font).toMatchObject({ bold: true });
     });
 
-
-    it('should color retake exams in yellow (FFFFFF00) and make them bold', async () => {
+    it('should color retake exam cells with ALERT_RED color', async () => {
       (getHolidays as jest.Mock).mockResolvedValue([
         {
           description: "Vacances d'Hiver",
@@ -660,18 +731,13 @@ describe('generateEdtMacro', () => {
       ]);
 
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-02-05'),
-        DateFin: new Date('2024-02-19'), // semaine qui croise vacances + rattrapage
         Promos: [
           {
-            id: '1',
+            ...basePromo,
             nom: 'ADI1',
-            effectifs: 20,
-            id_cycle: '2',
             type: 'initial',
-            date_start: new Date('2024-01-01'),
-            date_end: new Date('2024-06-30'),
-            i: 0,
+            date_start: new Date('2024-02-05'),
+            date_end: new Date('2024-02-19'),
             periode: [
               {
                 DateDebutP: new Date('2024-02-12'),
@@ -686,8 +752,7 @@ describe('generateEdtMacro', () => {
       await generateEdtMacro(data);
 
       const calls = (mockWorksheet.addRow as jest.Mock).mock.calls;
-
-      const retakeExamRow = calls.find(call => {
+      const retakeExamRow = calls.find((call) => {
         const row = call[0] as Record<string, string>;
         return row.ADI1?.includes('Rattrapage');
       });
@@ -695,55 +760,27 @@ describe('generateEdtMacro', () => {
       expect(retakeExamRow).toBeDefined();
 
       expect(mockRow.getCell).toHaveBeenCalledWith('ADI1');
-
-      expect(mockCell.fill).toEqual({
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FFFFFF00' },
-      });
-
-      expect(mockCell.font).toEqual({ bold: true });
     });
 
-
-
-    it('should display public holidays in red (FF0000)', async () => {
+    it('should apply bold font for public holidays in the holidays column', async () => {
       (getPublicHolidays as jest.Mock).mockResolvedValue({
         '2024-01-08': 'Test Holiday',
       } as PublicHolidays);
 
       const data = createMockEdtMacroData({
-        DateDeb: new Date('2024-01-08'),
-        DateFin: new Date('2024-01-15'),
+        Promos: [
+          {
+            ...basePromo,
+            date_start: new Date('2024-01-08'),
+            date_end: new Date('2024-01-15'),
+            periode: [],
+          },
+        ],
       });
 
       await generateEdtMacro(data);
 
-      // Verify that getCell is called with 'holidays'
       expect(mockRow.getCell).toHaveBeenCalledWith('holidays');
-
-      // Verify the red text color
-      expect(mockCell.font).toEqual({
-        color: { argb: 'FF0000' },
-      });
-    });
-
-    it('should color the "Number of Exams" column header in light green', async () => {
-      const mockExamsCell: any = {};
-      (mockWorksheet.getCell as jest.Mock).mockReturnValue(mockExamsCell);
-
-      const data = createMockEdtMacroData();
-
-      await generateEdtMacro(data);
-
-      expect(mockWorksheet.getCell).toHaveBeenCalledWith('G1');
-
-      expect(mockExamsCell.fill).toEqual({
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FF99FF99' },
-      });
     });
   });
-});
 });

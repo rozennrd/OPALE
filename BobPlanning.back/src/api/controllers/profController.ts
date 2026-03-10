@@ -7,8 +7,9 @@ function validateProfDto(req: Request, res: Response) {
         prenom,
         email,
         email_perso,
+        telephone,
         type,
-        distanciel,
+        modalite_enseignement,
         campus_origin
     } = req.body;
 
@@ -32,8 +33,9 @@ function validateProfDto(req: Request, res: Response) {
         prenom,
         email: email || null,
         email_perso: email_perso || null,
+        telephone: telephone || null,
         type,
-        distanciel: distanciel || false,
+        modalite_enseignement: modalite_enseignement || 'Présentiel',
         campus_origin: campus_origin || null,
     };
 }
@@ -102,8 +104,9 @@ export const profController = {
                 prenom: dto.prenom,
                 email: dto.email,
                 email_perso: dto.email_perso,
+                telephone: dto.telephone,
                 type: dto.type,
-                distanciel: dto.distanciel,
+                modalite_enseignement: dto.modalite_enseignement,
                 campus_origin: dto.campus_origin,
             });
 

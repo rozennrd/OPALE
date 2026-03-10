@@ -5,7 +5,16 @@
     .page-toolbar {
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        --toolbar-item-gap: 0.75rem;
+        --toolbar-row-gap: var(--toolbar-item-gap);
+        --toolbar-filter-min: 220px;
+        --toolbar-filter-basis: 260px;
+        --toolbar-filter-max: none;
+        --toolbar-filter-flex: 1 1 var(--toolbar-filter-basis);
+        --toolbar-chips-min: 260px;
+        --toolbar-chips-width: 100%;
+        --toolbar-chips-justify: space-between;
+        row-gap: var(--toolbar-row-gap);
         padding: 0.75rem;
         border-radius: 1rem;
         background: var(--panel, #ffffff);
@@ -15,12 +24,38 @@
     .page-toolbar-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.75rem;
+        column-gap: var(--toolbar-item-gap);
+        row-gap: var(--toolbar-item-gap);
         align-items: center;
     }
 
+    .page-toolbar-row--primary {
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .page-toolbar-row--primary .toolbar-selection-toggle {
+        flex: 0 0 auto;
+    }
+
     .page-toolbar-row--filters {
-        justify-content: space-between;
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: var(--toolbar-item-gap);
+        row-gap: var(--toolbar-item-gap);
+        align-items: end;
+        width: 100%;
+    }
+
+    .page-toolbar-row--filters .toolbar-reset-button {
+        align-self: flex-end;
+        justify-self: start;
+    }
+
+    .page-toolbar-row--filters .toolbar-filter {
+        flex: var(--toolbar-filter-flex);
+        min-width: var(--toolbar-filter-min);
+        max-width: var(--toolbar-filter-max);
     }
 
     /* ============================
@@ -29,7 +64,7 @@
 
     .toolbar-search {
         flex: 1;
-        min-width: 220px;
+        min-width: 200px;
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -68,7 +103,12 @@
         display: flex;
         flex-direction: column;
         gap: 0.35rem;
-        min-width: 180px;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .toolbar-filter--chips {
+        min-width: var(--toolbar-chips-min);
     }
 
     .toolbar-filter-label {
@@ -81,6 +121,7 @@
     }
 
     .toolbar-filter-date {
+        width: 100%;
         padding: 0.3rem 0.5rem;
         border-radius: 0.5rem;
         border: 1px solid var(--border);
@@ -90,6 +131,7 @@
     }
 
     .toolbar-filter-select {
+        width: 100%;
         padding: 0.3rem 0.6rem;
         border-radius: 0.5rem;
         border: 1px solid var(--border);
@@ -106,21 +148,26 @@
         display: inline-flex;
         border-radius: 999px;
         background: var(--panel-soft);
-        padding: 0.12rem;
+        padding: 0.2rem;
         border: 1px solid var(--border-subtle, var(--border));
-        gap: 0.12rem;
-        width: fit-content;
+        gap: 0.25rem;
+        width: var(--toolbar-chips-width);
+        max-width: 100%;
+        justify-content: var(--toolbar-chips-justify);
+        flex-wrap: wrap;
+        row-gap: 0.35rem;
     }
 
     .toolbar-toggle-chip {
         border: none;
         background: transparent;
-        padding: 0.25rem 0.7rem;
+        padding: 0.3rem 0.85rem;
         border-radius: 999px;
         font-size: 0.8rem;
         cursor: pointer;
         color: var(--muted);
         white-space: nowrap;
+        line-height: 1.1;
     }
 
     .toolbar-toggle-chip--active {
@@ -159,9 +206,103 @@
         transform: translateY(1px);
     }
 
+    .toolbar-filter-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .toolbar-reset-button {
+        min-height: 2.2rem;
+        font-weight: 600;
+        justify-self: end;
+        white-space: nowrap;
+    }
+
     .toolbar-filter-button-chevron {
         font-size: 0.75rem;
         opacity: 0.7;
+    }
+
+    .toolbar-selection-toggle {
+        min-height: 2.2rem;
+        min-width: 150px;
+        justify-content: center;
+        font-weight: 600;
+    }
+
+    .toolbar-selection-toggle.is-active {
+        background: var(--primary-soft, rgba(46, 133, 255, 0.12));
+        border-color: var(--primary-soft, var(--primary));
+        color: var(--primary, var(--brand));
+    }
+
+    .toolbar-selection-count-pill {
+        min-width: 1.45rem;
+        height: 1.45rem;
+        border-radius: 999px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.78rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+    }
+
+    /* ============================
+       Bouton d'ajout (toolbar)
+       ============================ */
+
+    .toolbar-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0.95rem;
+        border-radius: 999px;
+        border: 1px solid var(--primary);
+        background: var(--primary);
+        color: var(--text-on-primary);
+        font-size: 0.9rem;
+        font-weight: 700;
+        min-height: 2.2rem;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+        transition:
+            background-color 150ms ease,
+            border-color 150ms ease,
+            box-shadow 150ms ease,
+            transform 80ms ease;
+    }
+
+    .toolbar-add-btn:hover {
+        background: var(--primary-hover);
+        border-color: var(--primary-hover);
+        box-shadow: var(--shadow-md);
+    }
+
+    .toolbar-add-btn:active {
+        transform: translateY(1px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .toolbar-add-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .toolbar-add-icon {
+        width: 18px;
+        height: 18px;
+        display: block;
+        pointer-events: none;
+        filter: brightness(0) invert(1);
+    }
+
+    .toolbar-add-label {
+        white-space: nowrap;
     }
 
     /* ============================
@@ -169,18 +310,38 @@
        ============================ */
 
     @media (max-width: 900px) {
-        .page-toolbar-row--filters {
+        .page-toolbar-row--primary {
             flex-direction: column;
             align-items: stretch;
         }
 
-        .toolbar-filter {
+        .page-toolbar-row--primary .toolbar-selection-toggle {
             width: 100%;
+            margin-left: 0;
         }
 
-        .toolbar-toggle-chips {
+        .page-toolbar-row--filters .toolbar-reset-button {
             width: 100%;
-            justify-content: space-between;
+            justify-content: center;
+            justify-self: stretch;
+        }
+    }
+
+    @media (max-width: 1300px) {
+        .toolbar-add-btn {
+            padding: 0.45rem 0.6rem;
+            gap: 0;
+        }
+
+        .toolbar-add-label {
+            display: none;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .toolbar-toggle-chips {
+            width: var(--toolbar-chips-width);
+            justify-content: var(--toolbar-chips-justify);
         }
 
         .toolbar-toggle-chip {
@@ -188,4 +349,5 @@
             text-align: center;
         }
     }
+
 }

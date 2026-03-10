@@ -10,6 +10,7 @@ interface EntityBadgeProps {
     variant?: BadgeVariant
     title?: string
     subtitle?: string
+    centerLabel?: string
 }
 
 export default function EntityBadge({
@@ -19,6 +20,7 @@ export default function EntityBadge({
                                         variant = 'card',
                                         title,
                                         subtitle,
+                                        centerLabel,
                                     }: EntityBadgeProps) {
     const rootClassName = [
         'entity-badge',
@@ -38,11 +40,17 @@ export default function EntityBadge({
                     )}
                 </div>
 
+                {centerLabel && (
+                    <div className="entity-badge__header-center">
+                        <span className="entity-badge__center-label">{centerLabel}</span>
+                    </div>
+                )}
+
                 <div className="entity-badge__header-right">
+                    <span className="entity-badge__label">{label}</span>
                     <div className="entity-badge__icon" aria-hidden="true">
                         <img src={iconSrc} alt="" />
                     </div>
-                    <span className="entity-badge__label">{label}</span>
                 </div>
             </div>
         )

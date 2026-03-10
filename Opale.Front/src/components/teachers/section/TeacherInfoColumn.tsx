@@ -1,13 +1,12 @@
 // src/components/teachers/section/TeacherInfoColumn.tsx
-import React from 'react'
-import { Teacher } from '../../models/Teacher'
+import { Teacher } from '../../../models/Teachers'
 
 interface TeacherInfoColumnProps {
     teacher: Teacher
     onInfoChange: (field: keyof Teacher, value: string) => void
 }
 
-const TeacherInfoColumn: React.FC<TeacherInfoColumnProps> = ({ teacher, onInfoChange }) => {
+const TeacherInfoColumn = ({ teacher, onInfoChange }: TeacherInfoColumnProps) => {
     return (
         <div className="teacher-detail-col">
             <h4>Informations</h4>
@@ -45,7 +44,18 @@ const TeacherInfoColumn: React.FC<TeacherInfoColumnProps> = ({ teacher, onInfoCh
                     </dd>
                 </div>
                 <div className="teacher-detail-item">
-                    <dt>Email</dt>
+                    <dt>Email Junia</dt>
+                    <dd>
+                        <input
+                            className="teacher-detail-input"
+                            type="email"
+                            value={teacher.emailJunia || ''}
+                            onChange={(e) => onInfoChange('emailJunia', e.target.value)}
+                        />
+                    </dd>
+                </div>
+                <div className="teacher-detail-item">
+                    <dt>Email perso</dt>
                     <dd>
                         <input
                             className="teacher-detail-input"
@@ -65,12 +75,44 @@ const TeacherInfoColumn: React.FC<TeacherInfoColumnProps> = ({ teacher, onInfoCh
                                 onInfoChange('mode', e.target.value as Teacher['mode'])
                             }
                         >
-                            <option value="PRESENTIEL">Présentiel</option>
-                            <option value="DISTANCIEL">Distanciel</option>
-                            <option value="HYBRIDE">Hybride</option>
+                            <option value="Présentiel">Présentiel</option>
+                            <option value="Distanciel">Distanciel</option>
+                            <option value="Hybride">Hybride</option>
                         </select>
                     </dd>
                 </div>
+                <div className="teacher-detail-item">
+                    <dt>Rattachement</dt>
+                    <dd>
+                        <select
+                            className="teacher-detail-select"
+                            value={teacher.category || 'Permanent'}
+                            onChange={(e) =>
+                                onInfoChange('category', e.target.value as Teacher['category'])
+                            }
+                        >
+                            <option value="Permanent">Interne</option>
+                            <option value="Intervenant">Vacataire</option>
+                            <option value="Invite">Invité</option>
+                        </select>
+                    </dd>
+                </div>
+                {teacher.category !== 'Intervenant' && (
+                    <div className="teacher-detail-item">
+                        <dt>Campus d&apos;origine</dt>
+                        <dd>
+                            <select
+                                className="teacher-detail-select"
+                                value={teacher.campus || 'Bordeaux'}
+                                onChange={(e) => onInfoChange('campus', e.target.value)}
+                            >
+                                <option value="Bordeaux">Bordeaux</option>
+                                <option value="Lille">Lille</option>
+                                <option value="Châteauroux">Châteauroux</option>
+                            </select>
+                        </dd>
+                    </div>
+                )}
             </dl>
         </div>
     )

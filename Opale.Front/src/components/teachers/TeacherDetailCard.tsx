@@ -1,6 +1,5 @@
-// src/components/teachers/TeacherDetailCard.tsx
-import React, { useState } from 'react'
-import { Teacher } from '../../models/Teacher'
+﻿// src/components/teachers/TeacherDetailCard.tsx
+import { Teacher } from '../../models/Teachers'
 import ActionButtonsWithConfirm from '../common/ActionButtonsWithConfirm'
 import TeacherInfoColumn from './section/TeacherInfoColumn'
 import TeacherSubjectsColumn from './section/TeacherSubjectsColumn'
@@ -15,12 +14,17 @@ import { useDetailDirtyClose } from '../../hooks/common/useDetailDirtyClose'
 interface TeacherDetailCardProps {
     teacher: Teacher
     onClose: () => void
+    onDelete?: () => void
+    onTeacherUpdated?: (teacher: Teacher) => void
 }
 
 export default function TeacherDetailCard({
-                                              teacher,
-                                              onClose,
-                                          }: TeacherDetailCardProps) {
+    teacher,
+    onClose,
+    onDelete,
+    onTeacherUpdated,
+}: TeacherDetailCardProps) {
+    const isCreate = teacher.id === 'new-teacher'
     const {
         teacherDraft,
         periods,
@@ -36,7 +40,9 @@ export default function TeacherDetailCard({
         handlePeriodDateChange,
         handleSave,
         hasChanges,
-    } = useTeacherDetail(teacher)
+    } = useTeacherDetail(teacher, {
+        onTeacherSaved: onTeacherUpdated,
+    })
 
     const {
         handleRequestClose,
@@ -48,11 +54,50 @@ export default function TeacherDetailCard({
         hasChanges,
         onClose,
         onSaveAndClose: () => {
-            handleSave()
-            onClose()
+            void (async () => {
+                const saved = await handleSave()
+                if (saved) onClose()
+            })()
         },
         ignoreWhenSelectorExists: '.modal-overlay',
     })
+
+    const getCampusLabel = (value?: string) => {
+        if (!value) return 'Bordeaux'
+        const lower = value.toLowerCase()
+        if (lower.includes('bordeaux')) return 'Bordeaux'
+        if (lower.includes('lille')) return 'Lille'
+        if (lower.includes('châteauroux') || lower.includes('chateauroux')) {
+            return 'Châteauroux'
+        }
+        return value
+    }
+
+    const sectionLabel =
+        teacherDraft.category === 'Intervenant'
+            ? 'Vacataire'
+            : getCampusLabel(teacherDraft.campus)
+
+    const teacherDisplayName = `${teacherDraft.firstName || 'Prénom'} ${teacherDraft.lastName || 'Nom'}`.trim()
+
+    const cancelCreateTitle = 'Création non enregistrée'
+    const cancelCreateMessage = (
+        <>
+            <p>
+                Vous êtes en train de créer l&apos;enseignant{' '}
+                <strong>{teacherDisplayName}</strong>.
+            </p>
+            <p>Souhaitez-vous créer avant de fermer ?</p>
+        </>
+    )
+
+    const cancelEditTitle = 'Modifications non enregistrées'
+    const cancelEditMessage = (
+        <>
+            <p>Vous avez modifié cette fiche d&apos;enseignant.</p>
+            <p>Souhaitez-vous enregistrer les changements avant de fermer ?</p>
+        </>
+    )
 
     return (
         <div className="teacher-detail-overlay" role="dialog" aria-modal="true">
@@ -66,9 +111,10 @@ export default function TeacherDetailCard({
                     <TeacherModeBadge
                         mode={teacherDraft.mode}
                         variant="header"
-                        title="Détail enseignant"
+                        title="Détail de l'enseignant"
                         subtitle={`${teacherDraft.lastName.toUpperCase()} ${teacherDraft.firstName}`}
                         className="teacher-detail-header-badge"
+                        sectionLabel={sectionLabel}
                     />
                 </DetailCardHeader>
 
@@ -79,6 +125,7 @@ export default function TeacherDetailCard({
                     />
 
                     <TeacherSubjectsColumn
+                        teacherId={teacherDraft.id}
                         subjects={teacherDraft.subjects}
                         onSubjectChange={handleSubjectChange}
                         onAddSubject={handleAddSubject}
@@ -98,13 +145,20 @@ export default function TeacherDetailCard({
 
                 <div className="teacher-detail-footer">
                     <ActionButtonsWithConfirm
-                        onCancel={onClose}
-                        onSave={handleSave}
-                        hasChanges={hasChanges}
-                        confirmMessage={
+                        onCancel={handleRequestClose}
+                        onSave={() => {
+                            void handleSave()
+                        }}
+                        onAfterSaveConfirm={onClose}
+                        hideCancel
+                        onDelete={
+                            teacher.id === 'new-teacher' ? undefined : onDelete
+                        }
+                        deleteLabel="Supprimer"
+                        deleteTitle="Supprimer cet enseignant"
+                        deleteMessage={
                             <>
-                                Vous êtes sur le point d’enregistrer les
-                                modifications pour{' '}
+                                Vous allez supprimer{' '}
                                 <strong>
                                     {teacherDraft.firstName}{' '}
                                     {teacherDraft.lastName}
@@ -114,27 +168,60 @@ export default function TeacherDetailCard({
                                 Confirmer ?
                             </>
                         }
-                        confirmLabel="Enregistrer"
+                        deleteConfirmLabel="Supprimer"
+                        hasChanges={hasChanges}
+                        confirmTitle={
+                            isCreate
+                                ? 'Créer cet enseignant'
+                                : 'Confirmer les modifications'
+                        }
+                        confirmMessage={
+                            isCreate ? (
+                                <>
+                                    Vous êtes sur le point de créer l&apos;enseignant{' '}
+                                    <strong>{teacherDisplayName}</strong>.
+                                    <br />
+                                    Confirmer ?
+                                </>
+                            ) : (
+                                <>
+                                    Vous êtes sur le point d&apos;enregistrer les
+                                    modifications pour{' '}
+                                    <strong>
+                                        {teacherDraft.firstName}{' '}
+                                        {teacherDraft.lastName}
+                                    </strong>
+                                    .
+                                    <br />
+                                    Confirmer ?
+                                </>
+                            )
+                        }
+                        confirmLabel={isCreate ? 'Créer' : 'Enregistrer'}
                         cancelLabel="Annuler"
+                        saveLabel={isCreate ? 'Créer' : 'Enregistrer'}
+                        cancelDirtyTitle={isCreate ? cancelCreateTitle : cancelEditTitle}
+                        cancelDirtyMessage={isCreate ? cancelCreateMessage : cancelEditMessage}
+                        cancelDirtyConfirmLabel={
+                            isCreate ? 'Fermer et créer' : 'Enregistrer et fermer'
+                        }
+                        cancelDirtyDiscardLabel={
+                            isCreate ? 'Fermer sans créer' : 'Fermer sans enregistrer'
+                        }
                     />
                 </div>
             </DetailCardBody>
 
-            {/* Popup spécifique ESC / croix */}
             <ConfirmDialog
                 open={isConfirmOpen}
-                title="Modifications non enregistrées"
-                message={
-                    <>
-                        <p>Vous avez modifié cette fiche enseignant.</p>
-                        <p>
-                            Souhaitez-vous enregistrer les changements avant de
-                            fermer&nbsp;?
-                        </p>
-                    </>
+                title={isCreate ? cancelCreateTitle : cancelEditTitle}
+                message={isCreate ? cancelCreateMessage : cancelEditMessage}
+                confirmLabel={
+                    isCreate ? 'Fermer et créer' : 'Enregistrer et fermer'
                 }
-                confirmLabel="Enregistrer et fermer"
-                cancelLabel="Fermer sans enregistrer"
+                cancelLabel={
+                    isCreate ? 'Fermer sans créer' : 'Fermer sans enregistrer'
+                }
                 confirmClassName="btn-primary"
                 cancelClassName="btn-danger"
                 onConfirm={handleConfirmSaveAndClose}
@@ -144,3 +231,6 @@ export default function TeacherDetailCard({
         </div>
     )
 }
+
+
+

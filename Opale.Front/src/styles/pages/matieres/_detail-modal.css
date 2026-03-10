@@ -1,9 +1,75 @@
 /* src/styles/pages/matieres/_detail-modal.css */
 
 @layer pages {
+    .detail-card-header .matiere-badge.matiere-badge-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-left {
+        grid-column: 1;
+        justify-self: start;
+        min-width: 0;
+    }
+
+    .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-center {
+        grid-column: 2;
+        justify-self: center;
+    }
+
+    .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-right {
+        grid-column: 3;
+        justify-self: end;
+    }
+
+    .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__center-label {
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        background: var(--panel);
+        border: 1px solid var(--border-subtle);
+        box-shadow: var(--shadow-sm, var(--shadow-md));
+        white-space: nowrap;
+        max-width: 240px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     .matiere-detail-card .detail-layout {
-        grid-template-columns: 0.95fr 420px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
         gap: 4rem;
+    }
+
+    @media (max-width: 900px) {
+        .matiere-detail-card .detail-layout {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .detail-card-header .matiere-badge.matiere-badge-header {
+            grid-template-columns: 1fr;
+            justify-items: start;
+            gap: 0.75rem;
+        }
+
+        .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-left,
+        .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-center,
+        .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-right {
+            grid-column: 1;
+        }
+
+        .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__header-right {
+            justify-self: start;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .detail-card-header .matiere-badge.matiere-badge-header .entity-badge__center-label {
+            max-width: 100%;
+        }
     }
 
     .matiere-detail-overlay {
@@ -21,7 +87,118 @@
         max-height: min(720px, 96vh);
         display: flex;
         flex-direction: column;
+        overflow-y: auto;
     }
+
+    .matiere-detail-footer {
+        flex-shrink: 0;
+    }
+    .volume-warning {
+        margin-top: 12px;
+        padding: 10px 14px;
+
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+
+        background: linear-gradient(
+                135deg,
+                rgba(251, 146, 60, 0.18),
+                rgba(251, 146, 60, 0.10)
+        );
+
+        border: 1px solid rgba(251, 146, 60, 0.45);
+        border-radius: 10px;
+
+        color: #fbbf24;
+        font-size: 0.85rem;
+        font-weight: 500;
+
+        backdrop-filter: blur(4px);
+
+        animation: volumeFadeIn 180ms ease-out;
+    }
+
+    .matiere-evaluations-summary {
+        margin-top: 0.6rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        align-items: flex-start;
+        padding: 0.6rem 0.8rem;
+        border: 1px solid var(--border-subtle);
+        border-radius: 0.8rem;
+        background: var(--panel-soft);
+    }
+
+    .matiere-evaluations-main {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .matiere-evaluations-label {
+        color: var(--muted);
+        font-weight: 600;
+    }
+
+    .matiere-evaluations-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    .matiere-evaluations-breakdown {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        color: var(--muted);
+    }
+
+    .matiere-evaluations-item {
+        display: flex;
+        align-items: baseline;
+        gap: 0.4rem;
+    }
+
+    .matiere-unassigned-warning {
+        margin-top: 10px;
+    }
+
+    .matiere-unassigned-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .matiere-unassigned-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem 0.6rem;
+    }
+
+    .matiere-unassigned-item strong {
+        font-weight: 700;
+    }
+
+    .matiere-evaluations-breakdown strong {
+        color: var(--text);
+        font-weight: 600;
+    }
+
+    @keyframes volumeFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
 
     /* ============================
        Colonne enseignants (UI spécifique)
@@ -84,6 +261,24 @@
         min-width: 0;
     }
 
+    .matiere-hours-input.is-readonly {
+        cursor: pointer;
+        opacity: 0.7;
+        background: var(--panel);
+    }
+
+    input[type='number'] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+
+    input[type='number']::-webkit-outer-spin-button,
+    input[type='number']::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+
     .matiere-kind-chip {
         border: 1px solid var(--border);
         background: var(--panel);
@@ -96,8 +291,153 @@
         transition: 140ms ease;
     }
 
+    /* Centre le contenu (chiffres) dans tous les inputs */
+    .room-detail-input,
+    .matiere-hours-input {
+        text-align: center;
+        max-width: 260px;   /* ajuste à ton goût */
+    }
+
+    /* Optionnel : si tu veux aussi centrer le texte du placeholder */
+    .room-detail-input::placeholder {
+        text-align: center;
+    }
+
+    @layer pages {
+        /* La card ne doit pas scroller globalement */
+        .matiere-detail-card {
+            overflow: hidden; /* important */
+        }
+
+        /* Le contenu (entre header et footer) scrolle */
+        .matiere-detail-card .detail-layout {
+            overflow-y: auto;
+            min-height: 0;          /* IMPORTANT pour autoriser le scroll en flex */
+            padding-right: 6px;     /* optionnel: évite que la scrollbar colle */
+        }
+
+        /* Si ton DetailCardBody a un wrapper interne, tu peux cibler direct la section centrale :
+           (laisse si tu n'en as pas besoin)
+        */
+        .matiere-detail-card .detail-main-column,
+        .matiere-detail-card .detail-aside-column {
+            min-height: 0;
+        }
+
+        @layer pages {
+            /* Footer sticky, mais “glass” et compact */
+            .detail-card-footer,
+            .matiere-detail-card footer {
+                position: sticky;
+                bottom: 0;
+                z-index: 10;
+
+                /* compact */
+                padding: 12px 16px;
+
+                /* esthétique */
+                background: rgba(15, 23, 42, 0.55); /* translucide */
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+
+                border-top: 1px solid rgba(148, 163, 184, 0.14); /* subtil */
+            }
+
+            /* Optionnel mais très UX: un petit fade au-dessus du footer
+               pour indiquer la fin scrollable, sans “ruban” */
+            .detail-card-footer::before,
+            .matiere-detail-card footer::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: -18px;
+                height: 18px;
+                pointer-events: none;
+                background: linear-gradient(
+                        to top,
+                        rgba(15, 23, 42, 0.55),
+                        rgba(15, 23, 42, 0)
+                );
+            }
+        }
+
+        /* Footer toujours visible en bas */
+        .matiere-detail-card .detail-card-footer,
+        .matiere-detail-card footer {
+            position: sticky;
+            bottom: 0;
+            z-index: 5;
+            background: var(--panel); /* ou var(--panel-soft) selon ton design */
+            border-top: 1px solid var(--border-subtle);
+        }
+    }
+
     .matiere-kind-chip:hover {
         border-color: var(--primary);
+    }
+
+    @layer pages {
+        /* Colonne droite en "layout colonne" */
+        .matiere-aside {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        /* Le contenu prend la place, le dock reste en bas */
+        .matiere-aside-content {
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Dock sticky en bas de la colonne droite */
+        .matiere-footer-dock {
+            position: sticky;
+            display: flex;
+            justify-content: center; /* ✅ centré dans la colonne */
+            padding-top: 10px;
+            z-index: 5;
+        }
+
+        /* IMPORTANT:
+           Si ton DetailCardFooter a un fond (ruban), on le neutralise ici.
+           Ajuste le sélecteur selon son markup réel si besoin. */
+        .matiere-footer-pill .detail-card-footer,
+        .matiere-footer-pill footer {
+            background: transparent !important;
+            border: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+    }
+
+    @layer pages {
+        /* La pill centre son contenu */
+        .matiere-footer-pill {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Force le layout interne du footer à être centré (peu importe sa structure) */
+        .matiere-footer-pill .detail-card-footer,
+        .matiere-footer-pill footer {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+
+
+        /* Si ton footer a un padding / largeur bizarre */
+        .matiere-footer-pill .detail-card-footer,
+        .matiere-footer-pill footer {
+            padding: 0 !important;
+            margin: 0 !important;
+            background: transparent !important;
+            border: 0 !important;
+        }
     }
 
     .matiere-kind-chip.is-active {

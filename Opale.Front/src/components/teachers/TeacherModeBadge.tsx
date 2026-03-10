@@ -1,6 +1,5 @@
 // src/components/teachers/TeacherModeBadge.tsx
-import React from 'react'
-import { TeachingMode } from '../../models/Teacher'
+import { TeachingMode } from '../../models/Teachers'
 
 import icDistanciel from '../../assets/mode/ic-mode-distanciel.png'
 import icPresentiel from '../../assets/mode/ic-mode-presentiel.png'
@@ -13,6 +12,7 @@ interface TeacherModeBadgeProps {
     variant?: BadgeVariant // 'card' | 'header'
     title?: string
     subtitle?: string
+    sectionLabel?: string
 }
 
 export default function TeacherModeBadge({
@@ -21,23 +21,24 @@ export default function TeacherModeBadge({
                                              variant = 'card',
                                              title,
                                              subtitle,
+                                             sectionLabel,
                                          }: TeacherModeBadgeProps) {
     let label: string
     let iconSrc: string
     let modeClass: string
 
     switch (mode) {
-        case 'DISTANCIEL':
+        case 'Distanciel':
             label = 'Distanciel'
             iconSrc = icDistanciel
             modeClass = 'distanciel'
             break
-        case 'HYBRIDE':
+        case 'Hybride':
             label = 'Hybride'
             iconSrc = icHybride
             modeClass = 'hybride'
             break
-        case 'PRESENTIEL':
+        case 'Présentiel':
         default:
             label = 'Présentiel'
             iconSrc = icPresentiel
@@ -54,10 +55,12 @@ export default function TeacherModeBadge({
         .filter(Boolean)
         .join(' ')
 
+    const displayLabel = sectionLabel ? `${sectionLabel} - ${label}` : label
+
     return (
         <EntityBadge
             iconSrc={iconSrc}
-            label={label}
+            label={displayLabel}
             className={rootClassName}
             variant={variant}
             title={title}

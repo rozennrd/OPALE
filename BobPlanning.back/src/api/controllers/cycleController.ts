@@ -60,7 +60,8 @@ export const cycleController = {
       return;
     } catch (err: any) {
       console.error("Error addCycle:", err);
-      res.status(500).json({ error: err.message });
+      const status = err.statusCode ?? 500;
+      res.status(status).json({ error: err.message });
       return;
     }
   },
@@ -79,7 +80,7 @@ export const cycleController = {
       return;
     } catch (err: any) {
       console.error("Error updateCycle:", err);
-      const status = err.statusCode === 404 ? 404 : 500;
+      const status = err.statusCode ?? 500;
       res.status(status).json({ error: err.message });
       return;
     }

@@ -1,8 +1,9 @@
 // src/components/promotions/PromoEditDialog.tsx
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { Constraints } from '../../models'
-import { EditingPromotion } from '../../hooks/promotions/usePromotionEditing'
+import { EditingPromotion } from '../../hooks/promotions'
 import { computePromoTotals } from '../../utils/promoUtils'
+import { getOutOfPeriodConstraintTypes } from '../../hooks/promotions/usePromotionConstraints'
 
 import PromoMainInfo from './sections/PromoMainInfo'
 import PromoGroups from './sections/PromoGroups'
@@ -15,7 +16,7 @@ import ConfirmDialog from '../common/ConfirmDialog'
 interface PromoEditDialogProps {
     editingPromo: EditingPromotion
     hasChanges: boolean
-    onSubmit: () => void
+    onSubmit: () => Promise<EditingPromotion>
     onClose: () => void
     onFieldChange: (field: string, value: string | number) => void
     onStudentsBlur?: () => void
@@ -31,15 +32,47 @@ interface PromoEditDialogProps {
     onUpdateConstraintRange: (
         type: string,
         id: string,
-        field: string,
+        field: 'start' | 'end',
         value: string
     ) => void
+    onAddEvent?: (type: string, startDate: string, endDate: string) => Promise<void>
+    onUpdateEvent?: (eventId: string, type: string, startDate: string, endDate: string) => Promise<void>
+    onDeleteEvent?: (eventId: string) => Promise<void>
+}
+
+// Helper to format date as dd/mm/yyyy
+const formatDateLabel = (iso: string): string => {
+    const datePart = iso.split('T')[0] // supprime l'heure si présente
+    const [y, m, d] = datePart.split('-')
+    if (!iso) return 'jj/mm/aaaa'
+    if (!y || !m || !d) return 'jj/mm/aaaa'
+    return `${d}/${m}/${y}`
 }
 
 const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
     const { editingPromo, hasChanges, onClose } = props
 
     const [openCloseConfirm, setOpenCloseConfirm] = useState(false)
+
+    // Validate constraints against promotion period
+    const constraintValidation = useMemo(() => {
+        if (!editingPromo?.startDate || !editingPromo?.endDate) {
+            return { isValid: true, outOfPeriodTypes: [] as string[] }
+        }
+        
+        const outOfPeriodTypes = getOutOfPeriodConstraintTypes(
+            editingPromo.constraints,
+            editingPromo.startDate,
+            editingPromo.endDate
+        )
+        
+        return {
+            isValid: outOfPeriodTypes.length === 0,
+            outOfPeriodTypes
+        }
+    }, [editingPromo?.constraints, editingPromo?.startDate, editingPromo?.endDate])
+
+    const isSaveDisabled = !constraintValidation.isValid
 
     // Fermeture demandée par la croix / ESC (au niveau de la card)
     const handleRequestClose = useCallback(() => {
@@ -50,7 +83,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
         setOpenCloseConfirm(true)
     }, [hasChanges, onClose])
 
-    // ESC au niveau de la card : ne ferme la card QUE si aucun popup de confirmation n’est ouvert
+    // ESC au niveau de la card : ne ferme la card QUE si aucun popup de confirmation n'est ouvert
     useEffect(() => {
         if (!editingPromo) return
 
@@ -77,19 +110,28 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
         students: editingPromo.students,
         startDate: '',
         endDate: '',
+        isApprentissage: editingPromo.isApprentissage,
         groups: editingPromo.groups,
         specialties: editingPromo.specialties,
         constraints: editingPromo.constraints,
     })
 
-    const handleSave = () => {
-        props.onSubmit()
+    const handleSave = async (): Promise<boolean> => {
+        try {
+            await props.onSubmit()
+            return true
+        } catch (error) {
+            console.error('Failed to save promotion:', error)
+            return false
+        }
     }
 
-    const handleConfirmSaveAndClose = () => {
+    const handleConfirmSaveAndClose = async () => {
         setOpenCloseConfirm(false)
-        handleSave()
-        props.onClose()
+        const saved = await handleSave()
+        if (saved) {
+            props.onClose()
+        }
     }
 
     const handleDiscardAndClose = () => {
@@ -129,6 +171,7 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                     <div className="promo-edit-side">
                         <PromoGroups
                             groups={editingPromo.groups}
+                            idPromo={editingPromo.promoId}
                             onAddGroup={props.onAddGroup}
                             onGroupChange={props.onGroupChange}
                             onRemoveGroup={props.onRemoveGroup}
@@ -141,30 +184,50 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                             onRemoveSpecialty={props.onRemoveSpecialty}
                         />
                     </div>
-
                     <ConstraintsSection
-                        promoName={editingPromo.name}
+                        promoIsApprentissage={props.editingPromo.isApprentissage}
                         constraints={props.constraints}
                         onAddConstraint={props.onAddConstraint}
                         onRemoveConstraint={props.onRemoveConstraint}
                         onUpdateConstraintRange={props.onUpdateConstraintRange}
+                        onUpdateEvent={props.onUpdateEvent}
+                        onDeleteEvent={props.onDeleteEvent}
+                        promoId={editingPromo.promoId}
                     />
                 </div>
 
                 {(totals.groupsMismatch || totals.specialtiesMismatch) && (
-                    <div className="promo-mismatch-block">
-                        {totals.groupsMismatch && (
-                            <p className="promo-mismatch">
-                                Le total des groupes est {totals.groupsTotal} pour{' '}
-                                {totals.totalStudents}.
+                    <div className="promo-warning promo-warning--danger" role="status" aria-live="polite">
+                        <span className="promo-warning-icon" aria-hidden="true">&#9888;</span>
+                        <div className="promo-warning-content">
+                            {totals.groupsMismatch && (
+                                <p>
+                                    Le total des groupes est {totals.groupsTotal} pour {totals.totalStudents}.
+                                </p>
+                            )}
+                            {totals.specialtiesMismatch && (
+                                <p>
+                                    Le total des spécialités est {totals.specialtiesTotal} pour {totals.totalStudents}.
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Constraint validation error */}
+                {!constraintValidation.isValid && (
+                    <div className="promo-warning promo-warning--warning" role="status" aria-live="polite">
+                        <span className="promo-warning-icon" aria-hidden="true">&#9888;</span>
+                        <div className="promo-warning-content">
+                            <p>
+                                <strong>Attention :</strong> Les contraintes suivantes sont en dehors de la période de la promotion 
+                                ({formatDateLabel(editingPromo.startDate)} - {formatDateLabel(editingPromo.endDate)}) :{' '}
+                                <strong>{constraintValidation.outOfPeriodTypes.join(', ')}</strong>
                             </p>
-                        )}
-                        {totals.specialtiesMismatch && (
-                            <p className="promo-mismatch">
-                                Le total des spécialités est {totals.specialtiesTotal} pour{' '}
-                                {totals.totalStudents}.
+                            <p className="promo-warning-sub">
+                                Veuillez corriger les dates ou supprimer ces contraintes avant d&apos;enregistrer.
                             </p>
-                        )}
+                        </div>
                     </div>
                 )}
 
@@ -172,10 +235,12 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
                     <ActionButtonsWithConfirm
                         onCancel={props.onClose}
                         onSave={handleSave}
-                        hasChanges={props.hasChanges}
+                        onAfterSaveConfirm={props.onClose}
+                        hasChanges={props.hasChanges && !isSaveDisabled}
+                        disabled={isSaveDisabled}
                         confirmMessage={
                             <>
-                                Vous êtes sur le point d’enregistrer les modifications
+                                Vous êtes sur le point d&apos;enregistrer les modifications
                                 apportées à la promotion{' '}
                                 <strong>{editingPromo.name}</strong>.
                                 <br />
@@ -224,3 +289,4 @@ const PromoEditDialog: React.FC<PromoEditDialogProps> = (props) => {
 }
 
 export default PromoEditDialog
+

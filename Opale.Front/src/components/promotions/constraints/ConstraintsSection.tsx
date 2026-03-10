@@ -1,5 +1,5 @@
 // src/components/promotions/constraints/ConstraintsSection.tsx
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ConstraintCard from './ConstraintCard'
 import { Constraints } from '../../../models'
 
@@ -11,26 +11,31 @@ interface EditingRange {
 type ConstraintType = keyof Constraints
 
 interface ConstraintsSectionProps {
-    promoName: string
+    promoIsApprentissage: Boolean
     constraints: Constraints
     onAddConstraint: (type: string) => void
     onRemoveConstraint: (type: string, id: string) => void
     onUpdateConstraintRange: (type: string, id: string, field: 'start' | 'end', value: string) => void
+    onAddEvent?: (type: string, startDate: string, endDate: string) => Promise<void>
+    onUpdateEvent?: (eventId: string, type: string, startDate: string, endDate: string) => Promise<void>
+    onDeleteEvent?: (eventId: string) => Promise<void>
+    promoId?: string
 }
 
-const isApPromo = (name: string): boolean => /^AP/i.test(name || '')
 
 const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
-    promoName,
+    promoIsApprentissage,
     constraints,
     onAddConstraint,
     onRemoveConstraint,
     onUpdateConstraintRange,
+    promoId,
 }) => {
+    const sectionRef = useRef<HTMLElement | null>(null)
     const [editingRange, setEditingRange] = useState<EditingRange | null>(null)
 
     const safeConstraints = constraints || {}
-    const getRanges = (type: string) => safeConstraints[type] || []
+    const getRanges = (type: string) => safeConstraints[type as ConstraintType] || []
 
     const handleRangeClick = (type: string, id: string): void => {
         setEditingRange({ type, id })
@@ -51,19 +56,53 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
         }
     }
 
-    const useEntreprise = isApPromo(promoName)
-    const firstType = useEntreprise ? 'entreprise' : 'vacances'
-    const firstLabel = useEntreprise ? 'Entreprise' : 'Vacances'
+    useEffect(() => {
+        if (!editingRange) return
+
+        const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+            const target = event.target as HTMLElement | null
+            if (!target) return
+
+            if (target.closest('.calendar-popover')) return
+
+            const isInsideSection = sectionRef.current?.contains(target) ?? false
+            const isInsideEditingPill =
+                isInsideSection && !!target.closest('.date-range-pill--editing')
+
+            if (isInsideEditingPill) return
+            setEditingRange(null)
+        }
+
+        document.addEventListener('mousedown', handlePointerDown)
+        document.addEventListener('touchstart', handlePointerDown)
+
+        return () => {
+            document.removeEventListener('mousedown', handlePointerDown)
+            document.removeEventListener('touchstart', handlePointerDown)
+        }
+    }, [editingRange])
+
+    const firstType = promoIsApprentissage ? 'entreprise' : 'vacances'
+    const firstLabel = promoIsApprentissage ? 'Entreprise' : 'Vacances'
     const firstCardClass = `constraint-card ${
-        useEntreprise ? 'constraint-entreprise' : 'constraint-vacances'
+        promoIsApprentissage ? 'constraint-entreprise' : 'constraint-vacances'
     }`
-    const firstPillClass = useEntreprise
+    const firstPillClass = promoIsApprentissage
         ? 'constraint-pill-entreprise'
         : 'constraint-pill-vacances'
 
     return (
-        <section className="promo-section promo-section-constraints">
+        <section className="promo-section promo-section-constraints" ref={sectionRef}>
             <h4 className="promo-section-title">Contraintes académiques</h4>
+
+            {!promoIsApprentissage && (
+                <div className="promo-info" role="status" aria-live="polite">
+                    <p>
+                        <strong>Info :</strong> Les vacances scolaires sont déjà récupérées via l&apos;API.
+                        Inutile de les ajouter manuellement.
+                    </p>
+                </div>
+            )}
 
             <div className="constraints-grid">
                 {/* Vacances / Entreprise */}
@@ -79,6 +118,7 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
                     onRangeDateChange={handleRangeDateChange}
                     onRemoveRange={handleRemoveRange}
                     onAddConstraint={onAddConstraint}
+                    promoId={promoId}
                 />
 
                 {/* Stages */}
@@ -94,6 +134,8 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
                     onRangeDateChange={handleRangeDateChange}
                     onRemoveRange={handleRemoveRange}
                     onAddConstraint={onAddConstraint}
+
+                    promoId={promoId}
                 />
 
                 {/* International */}
@@ -109,6 +151,7 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
                     onRangeDateChange={handleRangeDateChange}
                     onRemoveRange={handleRemoveRange}
                     onAddConstraint={onAddConstraint}
+                    promoId={promoId}
                 />
 
                 {/* Partiels */}
@@ -124,6 +167,7 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
                     onRangeDateChange={handleRangeDateChange}
                     onRemoveRange={handleRemoveRange}
                     onAddConstraint={onAddConstraint}
+                    promoId={promoId}
                 />
 
                 {/* Rattrapages */}
@@ -139,6 +183,7 @@ const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({
                     onRangeDateChange={handleRangeDateChange}
                     onRemoveRange={handleRemoveRange}
                     onAddConstraint={onAddConstraint}
+                    promoId={promoId}
                 />
             </div>
         </section>

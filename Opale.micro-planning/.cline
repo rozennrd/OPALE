@@ -1,0 +1,69 @@
+{
+  "project": {
+    "name": "OPALE Micro-Planning Service",
+    "description": "Academic planning microservice for managing courses, professors, rooms, and schedules",
+    "version": "0.0.1-SNAPSHOT",
+    "tech_stack": [
+      "Spring Boot 3.4.0",
+      "Java 21 LTS",
+      "PostgreSQL 15",
+      "Docker",
+      "Spring Data JPA",
+      "Lombok",
+      "Jakarta Validation"
+    ],
+    "architecture": "Clean Architecture with domain/infra separation",
+    "database": {
+      "name": "opale",
+      "schema_source": "../../BobPlanning.database/init-scripts/opale-init.sql",
+      "tables": [
+        "professeur", "salle", "event", "cycle", "promotion", "groupe",
+        "specialite", "matiere", "cours", "disponibilite", "localisation",
+        "concerner", "enseignement", "utilisateurs"
+      ],
+      "enums": [
+        "type_professeur", "type_salle", "type_event", "type_cours", "type_cycle"
+      ]
+    }
+  },
+  "coding_standards": {
+    "dependency_injection": "Constructor injection only (no @Autowired)",
+    "validation": "Jakarta Bean Validation with custom constraints",
+    "repositories": "Spring Data JPA with custom query methods",
+    "entities": "Lombok with JPA annotations, proper relationships, and UUID primary keys",
+    "error_handling": "Spring Boot exception handling with @ControllerAdvice",
+    "dto_pattern": "Use DTOs for API responses, separate from entities",
+    "naming": "CamelCase for classes/methods, snake_case for database columns"
+  },
+  "package_structure": {
+    "com.opale.micro_planning": "Root package",
+    "com.opale.micro_planning.api": "REST controllers and DTOs",
+    "com.opale.micro_planning.domain": "Business logic and domain models",
+    "com.opale.micro_planning.infra": "Infrastructure layer (JPA entities, repositories, configs)"
+  },
+  "spring_configuration": {
+    "database": {
+      "url": "jdbc:postgresql://db:5432/${POSTGRES_DB}",
+      "dialect": "PostgreSQL",
+      "ddl_mode": "validate"
+    },
+    "jpa": {
+      "show_sql": false,
+      "format_sql": true,
+      "open_in_view": false
+    }
+  },
+  "docker_setup": {
+    "base_image": "eclipse-temurin:21-jdk-alpine",
+    "port": 8080,
+    "depends_on": ["db"],
+    "networks": ["app-network", "api-network"]
+  },
+  "development_notes": {
+    "database_connection": "Connects to PostgreSQL container 'db' in docker-compose",
+    "entity_validation": "Entities validate against existing schema (ddl-auto: validate)",
+    "repositories": "All entities have corresponding Spring Data JPA repositories",
+    "enums": "PostgreSQL enums mapped to Java enums",
+    "uuid_keys": "All primary keys are UUID type with auto-generation"
+  }
+}

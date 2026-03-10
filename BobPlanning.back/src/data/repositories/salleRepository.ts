@@ -10,24 +10,46 @@ export const salleRepository = {
     return result.rows as SalleDAO[];
   },
 
+  async getByNom(nom: string, excludeId?: string): Promise<SalleDAO | null> {
+    const baseSql = 'SELECT * FROM salle WHERE lower(trim(nom)) = lower(trim($1))';
+    const sql = excludeId ? `${baseSql} AND id <> $2` : baseSql;
+    const params = excludeId ? [nom, excludeId] : [nom];
+    const result = await pool.query(sql, params);
+    return result.rows[0] ?? null;
+  },
+
+  async getByNomComplet(nomComplet: string, excludeId?: string): Promise<SalleDAO | null> {
+    const baseSql = 'SELECT * FROM salle WHERE lower(trim(nom_complet)) = lower(trim($1))';
+    const sql = excludeId ? `${baseSql} AND id <> $2` : baseSql;
+    const params = excludeId ? [nomComplet, excludeId] : [nomComplet];
+    const result = await pool.query(sql, params);
+    return result.rows[0] ?? null;
+  },
+
   // Insère une nouvelle salle
   async insert(
     nom: string,
-    type: string,
-    capacite: number,
+    nom_complet: string | null,
+    type_principal: string,
+    types_secondaires: string[] | null,
     etage: number,
-    description: string,
+    capacite: number,
+    utilisable: boolean,
+    description: string | null,
   ): Promise<string> {
     const sql = `
-            INSERT INTO salle (nom, type, capacite, etage, description)
-            VALUES ($1, $2, $3, $4, $5) RETURNING id
+            INSERT INTO salle (nom, nom_complet, type_principal, types_secondaires, etage, capacite, utilisable, description)
+            VALUES ($1, $2, $3, $4::type_salle[], $5, $6, $7, $8) RETURNING id
         `;
 
     const result = await pool.query(sql, [
       nom,
-      type,
-      capacite,
+      nom_complet,
+      type_principal,
+      types_secondaires,
       etage,
+      capacite,
+      utilisable,
       description,
     ]);
 
@@ -38,29 +60,39 @@ export const salleRepository = {
   async update(dto: {
     id: string;
     nom: string;
-    type: string;
-    capacite: number;
+    nom_complet?: string | null;
+    type_principal: string;
+    types_secondaires?: string[] | null;
     etage: number;
-    description: string;
+    capacite: number;
+    utilisable: boolean;
+    description?: string | null;
   }): Promise<boolean> {
     const sql = `
             UPDATE salle
             SET nom         = $1,
-                capacite    = $2,
-                type        = $3,
-                etage       = $4,
-                description = $5
-            WHERE id = $6
+                nom_complet = $2,
+                type_principal = $3,
+                types_secondaires = $4::type_salle[],
+                etage       = $5,
+                capacite    = $6,
+                utilisable  = $7,
+                description = $8
+            WHERE id = $9
         `;
 
     const result = await pool.query(sql, [
       dto.nom,
-      dto.capacite,
-      dto.type,
+      dto.nom_complet ?? null,
+      dto.type_principal,
+      dto.types_secondaires ?? null,
       dto.etage,
-      dto.description,
+      dto.capacite,
+      dto.utilisable,
+      dto.description ?? null,
       dto.id,
     ]);
+
 
     return (result.rowCount ?? 0) > 0; // true si une ligne a été modifiée
   },

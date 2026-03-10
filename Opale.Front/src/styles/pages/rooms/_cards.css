@@ -52,6 +52,13 @@
         }
     }
 
+    @media (max-width: 420px) {
+        .room-card-type {
+            flex: 0 0 72px;
+            max-width: 72px;
+        }
+    }
+
     /* ============================
        Couleurs par type
        (layout = .entity-badge)

@@ -13,7 +13,7 @@ export const promotionController = {
 
   async getPromotionById(req: Request, res: Response): Promise<void> {
     try {
-      res.json(await promotionService.getPromotionById(String(req.body?.id)));
+      res.json(await promotionService.getPromotionById(String(req.query?.id)));
     } catch (err: any) {
       res.status(err.statusCode ?? 500).json({ error: err.message });
     }
@@ -59,7 +59,14 @@ export const promotionController = {
 
   async deletePromotion(req: Request, res: Response): Promise<void> {
     try {
-      await promotionService.deletePromotion(String(req.body?.id));
+      const promotionId = String(req.query?.id ?? req.body?.id ?? '').trim();
+
+      if (!promotionId) {
+        res.status(400).json({ message: "L'id de la promotion est obligatoire." });
+        return;
+      }
+
+      await promotionService.deletePromotion(promotionId);
       res.json({ message: "Promotion supprimée avec succès" });
     } catch (err: any) {
       res.status(err.statusCode ?? 500).json({ error: err.message });

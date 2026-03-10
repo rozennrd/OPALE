@@ -9,7 +9,7 @@ router.get("/getCycles", authJwt.verifyToken, cycleController.getCycles);
 router.get("/getCycleTypes", authJwt.verifyToken, cycleController.getCycleTypes);
 router.get("/getCycleById", authJwt.verifyToken, cycleController.getCycleById);
 
-router.post("/setCycle", authJwt.verifyToken, cycleController.addCycle);
+router.post("/addCycle", authJwt.verifyToken, cycleController.addCycle);
 router.put("/updateCycle", authJwt.verifyToken, cycleController.updateCycle);
 router.delete("/deleteCycle", authJwt.verifyToken, cycleController.deleteCycle);
 

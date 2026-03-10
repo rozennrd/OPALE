@@ -5,14 +5,12 @@ import { MaquetteData } from './types/MaquetteData';
 import { EdtMacroData } from './types/EdtMacroData';
 import { generateEdtSquelette } from './micro/generateEdtSquelette';
 import express, { Request, Response } from 'express';
-import getDBConfig from './database/getDBConfig';
 import path from 'path';
 import { EdtMicro } from './types/EdtMicroData';
 import { generateEdtMicro } from './micro/generateEdtMicro';
 import { getLogin } from './database/getLogin';
 import authJwt from './middleware/authJwt';
 import { pool } from './database/pool';
-
 import { Periode, Promos } from "./types/EdtMacroData";
 import salleRoutes from './api/routes/salleRoutes';
 import cycleRoutes from "./api/routes/cycleRoutes";
@@ -21,6 +19,11 @@ import promotionRoutes from './api/routes/promotionRoutes';
 import matiereRoutes from "./api/routes/matiereRoutes";
 import profRoutes from "./api/routes/profRoutes";
 import specialiteRoutes from "./api/routes/specialiteRoutes";
+import enseignementRoutes from "./api/routes/enseignementRoutes";
+import disponibiliteRoutes from './api/routes/disponibiliteRoutes';
+import maquetteRoutes from './api/routes/maquetteRoutes';
+import eventRoutes from "./api/routes/eventRoutes";
+import localisationRoutes from "./api/routes/localisationRoutes";
 
 require('dotenv').config();
 
@@ -28,16 +31,8 @@ const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const multer = require('multer');
 const swaggerJsdoc = require('swagger-jsdoc');
-
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
-
-import dotenv from "dotenv";
-import eventRoutes from "./api/routes/eventRoutes";
-dotenv.config();
-
-const dbConfig = getDBConfig();
-
 const app = express();
 const PORT = 3000;
 app.use(express.json({ limit: '50mb' }));
@@ -70,10 +65,14 @@ app.use('/', salleRoutes);
 app.use('/', cycleRoutes);
 app.use('/', groupeRoutes);
 app.use('/', promotionRoutes);
-app.use("/", matiereRoutes);
+app.use('/', matiereRoutes);
 app.use('/', profRoutes);
 app.use('/', specialiteRoutes);
 app.use('/', eventRoutes);
+app.use('/', enseignementRoutes);
+app.use('/', disponibiliteRoutes);
+app.use('/', localisationRoutes);
+app.use('/', maquetteRoutes);
 
 // Swagger options
 const swaggerOptions = {
@@ -113,74 +112,6 @@ app.get('/verify-auth', authJwt.verifyToken, (req: Request, res: Response) => {
   res.json({ authenticated: true, userId: (req as any).userId });
 });
 
-/**
- * @swagger
- * /login:
- *   post:
- *     summary: Authentifie un utilisateur et renvoie un cookie JWT
- *     description: Vérifie les identifiants et génère un token JWT stocké dans un cookie sécurisé.
- *     tags:
- *       - Authentification
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 description: L'adresse email de l'utilisateur
- *                 example: "test@example.com"
- *               password:
- *                 type: string
- *                 description: Le mot de passe hashé de l'utilisateur
- *                 example: "$2b$10$1234567890abcdef"
- *     responses:
- *       200:
- *         description: Connexion réussie, cookie envoyé
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Connexion réussie"
- *                 userId:
- *                   type: string
- *                   example: "123"
- *       400:
- *         description: Email ou mot de passe manquant
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Email et mot de passe requis"
- *       401:
- *         description: Identifiants incorrects
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Identifiants incorrects"
- *       500:
- *         description: Erreur serveur
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Erreur serveur"
- */
 app.post('/login', async (req: Request, res: Response) => {
   try {
     pool.connect(async (err: any, connection: any) => {
@@ -196,64 +127,6 @@ app.post('/login', async (req: Request, res: Response) => {
   }
 });
 
-/**
- * @swagger
- * /generateEdtMacro:
- *   post:
- *     summary: Generate an Excel file based on provided data
- *     tags:
- *       - Macro
- *     description: Returns an Excel file for the provided date range and promotions data.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               DateDeb:
- *                 type: string
- *                 format: date
- *                 description: The start date for the data
- *                 example: "2024-08-19"
- *               DateFin:
- *                 type: string
- *                 format: date
- *                 description: The end date for the data
- *                 example: "2025-08-27"
- *               Promos:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     Name:
- *                       type: string
- *                       description: The name of the promo
- *                     Nombre:
- *                       type: integer
- *                       description: The number associated with the promo
- *                     Periode:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           DateDebutP:
- *                             type: string
- *                             format: date
- *                             description: Start date of the period
- *                           DateFinP:
- *                             type: string
- *                             format: date
- *                             description: End date of the period
- *     responses:
- *       200:
- *         description: The Excel file was generated successfully
- *       400:
- *         description: Missing or invalid data
- *       500:
- *         description: Internal server error
- */
-
 
 app.post(
     "/generateEdtMacro",
@@ -261,11 +134,13 @@ app.post(
     async (req: Request, res: Response) => {
       // Type definitions
       type RawMacroEvent = {
-        id_promotion: string;
+        id: string;
+        id_promotion: string | null;   // null = event global (pas de promo liée)
         datetime_start: string;
         datetime_end: string;
         type: string;
         nom: string;
+        is_external: boolean;
       };
 
       try {
@@ -301,95 +176,106 @@ app.post(
           });
         });
 
-        console.log("Promotions récupérées :", promotions);
-
         // ========================================
         // 2. Fetch Macro Events
         // ========================================
-        const eventsMacro = await new Promise<RawMacroEvent[]>((resolve, reject) => {
+        const eventsMacroRaw = await new Promise<RawMacroEvent[]>((resolve, reject) => {
           pool.connect((err: any, connection: any) => {
             if (err) {
               return reject(err);
             }
 
             const sql = `
-            SELECT 
-              p.id as id_promotion, 
-              e.datetime_start, 
-              e.datetime_end, 
-              e.type, 
-              e.nom
-            FROM event e
-            INNER JOIN concerner c ON e.id = c.id_event
-            INNER JOIN promotion p ON p.id = c.id_promo
-            WHERE e.show_macro = TRUE
-              AND e.type IN ('stage', 'mobilite', 'PFE', 'rattrapage', 'entreprise')
-            ORDER BY e.nom ASC
-          `;
+              SELECT
+                e.id,
+                c.id_promo as id_promotion,
+                e.datetime_start,
+                e.datetime_end,
+                e.type,
+                e.nom,
+                e.is_external
+              FROM event e
+              LEFT JOIN concerner c ON e.id = c.id_event AND c.id_promo IS NOT NULL
+              WHERE e.show_macro = TRUE
+                AND e.type IN (
+                  'Cours', 'Entreprise', 'Examen', 'Reunion', 'Fermeture', 'Soutenance',
+                  'JPO', 'Stage', 'Mobilite', 'PFE', 'Rattrapage', 'Conference',
+                  'Rentrée', 'Réunion parents', 'Journée Immersion', 'Concours',
+                  'Salon', 'Fin des cours', 'Autre'
+                )
+              ORDER BY e.nom ASC
+            `;
 
             connection.query(sql, (error: any, results: any) => {
               connection.release();
-
-              if (error) {
-                return reject(error);
-              }
-
-              // Normalize results for different drivers
-              const normalized = Array.isArray(results)
-                  ? results
-                  : results?.rows || [];
-
+              if (error) return reject(error);
+              const normalized = Array.isArray(results) ? results : results?.rows || [];
               resolve(normalized);
             });
           });
         });
 
-        console.log("Événements récupérés :", eventsMacro);
 
         // ========================================
         // 3. Build Promotions with Periods
         // ========================================
         const promotionsWithPeriods: Promos[] = promotions.map((promo) => {
-          // Filter events for this promotion
-          const promoEvents = eventsMacro.filter(
-              (ev) => ev.id_promotion === promo.id
-          );
+          const promoEvents = eventsMacroRaw.filter(ev => ev.id_promotion === promo.id);
 
           // Transform to Periode objects and sort
           const promoPeriods: Periode[] = promoEvents
               .map((ev): Periode => ({
                 DateDebutP: new Date(ev.datetime_start),
                 DateFinP: new Date(ev.datetime_end),
-                type: ev.nom,
+                type: ev.type,   // type de l'event pour la colorisation
               }))
               .sort((a, b) => a.DateDebutP.getTime() - b.DateDebutP.getTime());
 
-          return {
-            ...promo,
-            periode: promoPeriods,
-            i: 0,
-          };
+          return { ...promo, periode: promoPeriods, i: 0 };
         });
 
-        console.log("Promotions enrichies :", promotionsWithPeriods);
+        // ========================================
+        // 4. Build EventsMacro (events show_macro = true)
+        // Un Map pour regrouper les promos multiples sur un même event
+        // ========================================
+        const eventMacroMap = new Map<string, { id: string; type: string; nom: string; datetime_start: Date; datetime_end: Date; is_external: boolean; promotions: string[] }>();
+
+        eventsMacroRaw.forEach(ev => {
+          if (!eventMacroMap.has(ev.id)) {
+            eventMacroMap.set(ev.id, {
+              id:             ev.id,
+              type:           ev.type,
+              nom:            ev.nom,
+              datetime_start: new Date(ev.datetime_start),
+              datetime_end:   new Date(ev.datetime_end),
+              is_external:    ev.is_external,
+              promotions:     ev.id_promotion ? [ev.id_promotion] : [],
+            });
+          } else if (ev.id_promotion) {
+            eventMacroMap.get(ev.id)!.promotions.push(ev.id_promotion);
+          }
+        });
+
+        const eventsMacroList = Array.from(eventMacroMap.values());
 
         // ========================================
-        // 4. Define Date Range
+        // 5. Define Date Range
         // ========================================
         const start = new Date("2025-09-01");
         const end = new Date("2026-08-31");
 
         // ========================================
-        // 5. Generate Excel
+        // 6. Generate Excel
         // ========================================
         await generateEdtMacro({
-          DateDeb: start,
-          DateFin: end,
-          Promos: promotionsWithPeriods,
+          DateDeb:     start,
+          DateFin:     end,
+          Promos:      promotionsWithPeriods,
+          EventsMacro: eventsMacroList,
         });
 
         // ========================================
-        // 6. Send Success Response
+        // 7. Send Success Response
         // ========================================
         res.status(200).json({
           message: "Excel généré avec succès",
@@ -407,14 +293,6 @@ app.post(
 );
 
 
-/**
- * @swagger
- * /download/EdtMacro:
- *  get:
- *     summary: Download excel macro file
- *     tags:
- *       - Macro
- */
 app.get('/download/EdtMacro', authJwt.verifyToken, (req, res) => {
   const filePath = path.join(__dirname, '..', 'files', 'EdtMacro.xlsx');
   res.download(filePath, 'EdtMacro.xlsx', (err) => {
@@ -426,85 +304,6 @@ app.get('/download/EdtMacro', authJwt.verifyToken, (req, res) => {
 });
 
 /*========== GENERATION MICRO ==========*/
-
-/**
- * @swagger
- * /readMaquette:
- *   post:
- *     summary: Read an Excel file and return UE and course data
- *     tags:
- *       - Maquette
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               file:
- *                 type: string
- *                 format: binary
- *     responses:
- *       200:
- *         description: Successfully read the Excel file and returned UE and course data
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 UE:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       name:
- *                         type: string
- *                 cours:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       name:
- *                         type: string
- *                       UE:
- *                         type: string
- *                       semestrePeriode:
- *                         type: string
- *                       heure:
- *                           type: object
- *                           properties:
- *                             total:
- *                               type: number
- *                             coursMagistral:
- *                               type: number
- *                             coursInteractif:
- *                               type: number
- *                             td:
- *                               type: number
- *                             tp:
- *                               type: number
- *                             autre:
- *                               type: number
- *       400:
- *         description: No file was uploaded
- *         content:
- *           text/plain:
- *             schema:
- *               type: string
- *               example: Aucun fichier n'a été téléchargé
- *       500:
- *         description: Internal server error while reading the file
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Erreur lors de la lecture du fichier Excel
- *                 error:
- *                   type: string
- */
 app.post(
     '/readMaquette',
     authJwt.verifyToken,
@@ -526,16 +325,6 @@ app.post(
     },
 );
 
-/**
- * @swagger
- * /generateEdtMicro:
- *  post:
- *     summary: Generate excel micro file
- *     tags:
- *       - Micro
- *     requestBody:
- *       required: true
- */
 app.post(
     '/generateEdtMicro',
     authJwt.verifyToken,
@@ -559,14 +348,6 @@ app.post(
     },
 );
 
-/**
- * @swagger
- * /download/EdtMicro:
- *  get:
- *     summary: Download excel micro file
- *     tags:
- *       - Micro
- */
 app.get('/download/EdtMicro', authJwt.verifyToken, (req, res) => {
   const filePath = path.join(__dirname, '..', 'files', 'EdtMicro.xlsx');
   res.download(filePath, 'EdtMicro.xlsx', (err) => {
@@ -577,109 +358,6 @@ app.get('/download/EdtMicro', authJwt.verifyToken, (req, res) => {
   });
 });
 
-/**
- * @swagger
- * /generateEdtSquelette:
- *   post:
- *     summary: Generate an Excel timetable skeleton based on provided data
- *     description: Returns an Excel file representing the structure of a timetable, using the provided classes and their respective courses.
- *     tags:
- *       - Test
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: array
- *             items:
- *               type: object
- *               properties:
- *                 dateDebut:
- *                   type: string
- *                   format: date-time
- *                   description: Start date of the timetable
- *                   example: "2024-01-01T00:00:00.000Z"
- *                 promos:
- *                   type: array
- *                   description: Array of classes with schedules
- *                   items:
- *                     type: object
- *                     properties:
- *                       name:
- *                         type: string
- *                         description: Name of the class
- *                         example: "ADI 1"
- *                       semaine:
- *                         type: array
- *                         description: Weekly schedule with courses
- *                         items:
- *                           type: object
- *                           properties:
- *                             jour:
- *                               type: string
- *                               description: Day
- *                               example: "Lundi"
- *                             enCours:
- *                               type: boolean
- *                               description: Indicates if courses are scheduled on this day
- *                             message:
- *                               type: string
- *                               description: Additional message or note for the day
- *                             cours:
- *                               type: array
- *                               description: List of courses scheduled for the day
- *                               items:
- *                                 type: object
- *                                 properties:
- *                                   matiere:
- *                                     type: string
- *                                     description: Subject of the course
- *                                     example: "Mathématiques"
- *                                   heureDebut:
- *                                     type: string
- *                                     description: Start time of the course
- *                                     example: "09h"
- *                                   heureFin:
- *                                     type: string
- *                                     description: End time of the course
- *                                     example: "11h30"
- *                                   professeur:
- *                                     type: string
- *                                     description: Teacher of the course
- *                                     example: "Mme Dupont"
- *                                   salleDeCours:
- *                                     type: string
- *                                     description: Room where the course is held
- *                                     example: "Salle 101"
- *     responses:
- *       200:
- *         description: The Excel file was generated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Excel file generated and saved on the server"
- *                 filePath:
- *                   type: string
- *                   example: "../files/EdtSquelette.xlsx"
- *       400:
- *         description: Missing or invalid data
- *         content:
- *           application/json:
- *             schema:
- *               type: string
- *               example: "Missing classes"
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: string
- *               example: "Internal server error"
- */
 app.post(
     '/generateEdtSquelette',
     authJwt.verifyToken,
@@ -744,124 +422,6 @@ app.post(
     },
 );
 
-/**
- * @swagger
- * /generateDataEdtMicro:
- *   post:
- *     summary: Génère les données EdtMicro basées sur les données macro et maquette
- *     description: Retourne un tableau d'objets EdtMicro contenant les informations de promotion et de semaine.
- *     tags:
- *       - Test
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               macro:
- *                 $ref: '#/components/schemas/EdtMacroData'
- *     responses:
- *       200:
- *         description: Données EdtMicro générées avec succès
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/EdtMicro'
- *       500:
- *         description: Erreur lors de la génération des données EdtMicro
- *
- * components:
- *   schemas:
- *     EdtMacroData:
- *       type: object
- *       properties:
- *         DateDeb:
- *           type: string
- *           format: date
- *           example: "2024-01-01"
- *         DateFin:
- *           type: string
- *           format: date
- *           example: "2024-12-31"
- *         Promos:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Promos'
- *
- *     Promos:
- *       type: object
- *       properties:
- *         Name:
- *           type: string
- *           example: "Promo 2024"
- *         i:
- *           type: number
- *           example: 1
- *         Nombre:
- *           type: number
- *           example: 30
- *         Periode:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Periode'
- *
- *     Periode:
- *       type: object
- *       properties:
- *         DateDebutP:
- *           type: string
- *           format: date
- *           example: "2024-09-01"
- *         DateFinP:
- *           type: string
- *           format: date
- *           example: "2024-12-15"
- *         nbSemaineP:
- *           type: number
- *           example: 15
- *
- *     EdtMicro:
- *       type: object
- *       properties:
- *         dateDebut:
- *           type: string
- *           format: date-time
- *           example: "2024-01-01T00:00:00.000Z"
- *         promos:
- *           type: array
- *           items:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: "Promo 2024"
- *               semaine:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     date:
- *                       type: string
- *                       format: date-time
- *                       example: "2024-01-01T00:00:00.000Z"
- *                     cours:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           name:
- *                             type: string
- *                             example: "Algèbre Linéaire"
- *                           type:
- *                             type: string
- *                             example: "Cours Magistral"
- *                           heure:
- *                             type: number
- *                             example: 2
- */
 app.post(
     '/generateDataEdtMicro',
     authJwt.verifyToken,
@@ -882,90 +442,81 @@ app.post(
 
 /*========== COURS ==========*/
 
-app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
+app.post('/setAllCourses', authJwt.verifyToken, async (req, res) => {
+  pool.connect(async (err: any, connection: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
 
-    connection.beginTransaction((err: any) => {
-      if (err) {
-        connection.release();
-        return res.status(500).json({ error: err.message });
-      }
+    try {
+      // Start transaction
+      await connection.query('BEGIN');
 
       // Extraire la promo unique des cours
       const promo =
           req.body.courses.length > 0 ? req.body.courses[0].promo : null;
 
       if (!promo) {
+        await connection.query('ROLLBACK');
         connection.release();
         return res.status(400).json({ error: 'Aucune promotion fournie' });
       }
 
       // Supprimer les matières associées à cette promo
-      const deleteSql = `DELETE
-                               FROM concerner
-                               WHERE id_promo = ?`;
+      const deleteSql = `DELETE FROM concerner WHERE id_promo = $1`;
 
-      connection.query(deleteSql, [promo], (deleteErr: any) => {
-        if (deleteErr) {
-          return connection.rollback(() => {
-            connection.release();
-            res.status(500).json({ error: deleteErr.message });
-          });
-        }
+      await connection.query(deleteSql, [promo]);
 
-        // Insérer les nouvelles matières
-        const insertPromises = req.body.courses.map(
-            (cours: {
-              promo: string;
-              name: string;
-              UE: string;
-              Semestre: string;
-              Periode: string;
-              Prof: string;
-              typeSalle: string;
-              heure: string;
-            }) => {
-              return new Promise<void>((resolve, reject) => {
-                // Ancienne requête permettant l'update d'une matière si elle existe déjà ou l'insert
-                // TODO : À garder jusqu'à ce que la fonction soit fonctionnelle avec la nouvelle base de données
-                // const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
-                //               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                //               ON DUPLICATE KEY UPDATE
-                //               UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode),
-                //               Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
+      // Insérer les nouvelles matières
+      const insertPromises = req.body.courses.map(
+          (cours: {
+            promo: string;
+            name: string;
+            UE: string;
+            Semestre: string;
+            Periode: string;
+            Prof: string;
+            typeSalle: string;
+            heure: string;
+          }) => {
+            return new Promise<void>((resolve, reject) => {
+              // Ancienne requête permettant l'update d'une matière si elle existe déjà ou l'insert
+              // TODO : À garder jusqu'à ce que la fonction soit fonctionnelle avec la nouvelle base de données
+              // const sql = `INSERT INTO Cours (promo, name, UE, Semestre, Periode, Prof, typeSalle, heure)
+              //               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+              //               ON DUPLICATE KEY UPDATE
+              //               UE = VALUES(UE), Semestre = VALUES(Semestre), Periode = VALUES(Periode),
+              //               Prof = VALUES(Prof), typeSalle = VALUES(typeSalle), heure = VALUES(heure)`;
 
-                const sql = `INSERT INTO matiere (id_promo, nom, semestre, volume_horaire)
-                                         VALUES (?, ?, ?, ?) ON CONFLICT (id_promo, nom) 
-                            DO
-                            UPDATE SET
-                                semestre = EXCLUDED.semestre,
-                                volume_horaire = EXCLUDED.volume_horaire`;
-                connection.query(
-                    sql,
-                    [
-                      cours.promo,
-                      cours.name,
-                      cours.UE,
-                      cours.Semestre,
-                      cours.Periode,
-                      cours.Prof,
-                      cours.typeSalle,
-                      cours.heure,
-                    ],
-                    (error: any) => {
-                      if (error) {
-                        console.error(
-                            "Erreur lors de l'insertion/mise à jour :",
-                            error,
-                        );
-                        return reject(error);
-                      }
-                      resolve();
-                    },
-                );
+              const sql = `INSERT INTO matiere (id_promo, nom, semestre, volume_horaire)
+                                        VALUES (?, ?, ?, ?) ON CONFLICT (id_promo, nom) 
+                          DO
+                          UPDATE SET
+                              semestre = EXCLUDED.semestre,
+                              volume_horaire = EXCLUDED.volume_horaire`;
+              connection.query(
+                  sql,
+                  [
+                    cours.promo,
+                    cours.name,
+                    cours.UE,
+                    cours.Semestre,
+                    cours.Periode,
+                    cours.Prof,
+                    cours.typeSalle,
+                    cours.heure,
+                  ],
+                  (error: any) => {
+                    if (error) {
+                      console.error(
+                          "Erreur lors de l'insertion/mise à jour :",
+                          error,
+                      );
+                      return reject(error);
+                    }
+                    resolve();
+                  },
+              );
               });
             },
         );
@@ -993,59 +544,11 @@ app.post('/setAllCourses', authJwt.verifyToken, (req, res) => {
             .finally(() => {
               connection.release();
             });
-      });
-    });
+      } catch (e) { console.log (e)}
+   
   });
 });
 
-app.post('/updateCourseProfessor', authJwt.verifyToken, (req, res) => {
-  pool.connect((err: any, connection: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    const updatePromises = req.body.courses.map(
-        (cours: {
-          promo: string;
-          name: string;
-          UE: string;
-          Semestre: string;
-          Periode: string;
-          Prof: string;
-          typeSalle: string;
-          heure: string;
-        }) => {
-          return new Promise<void>((resolve, reject) => {
-            const sql = `UPDATE Cours
-                                 SET id_prof = ?
-                                 WHERE id_event = ?`;
-
-            connection.query(sql, [cours.Prof, cours.name], (error: any) => {
-              if (error) {
-                console.error(
-                    'Erreur lors de la mise à jour du professeur :',
-                    error,
-                );
-                return reject(error);
-              }
-              resolve();
-            });
-          });
-        },
-    );
-
-    Promise.all(updatePromises)
-        .then(() => {
-          res.json({ message: 'Professeurs mis à jour avec succès.' });
-        })
-        .catch((error) => {
-          res.status(500).json({ error: error.message });
-        })
-        .finally(() => {
-          connection.release(); // Libérer la connexion après exécution
-        });
-  });
-});
 
 app.get('/getCours', authJwt.verifyToken, (req, res) => {
   pool.connect((err: any, connection: any) => {
@@ -1053,7 +556,7 @@ app.get('/getCours', authJwt.verifyToken, (req, res) => {
       return res.status(500).json({ error: err.message });
     }
 
-    const sql = 'SELECT * FROM Cours'; // Remplace `Cours` par le nom de ta table en base de données
+    const sql = 'SELECT * FROM Cours';
 
     connection.query(sql, (error: any, results: any) => {
       if (error) {

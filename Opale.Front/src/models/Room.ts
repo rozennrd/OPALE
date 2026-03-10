@@ -1,6 +1,15 @@
 // src/models/Room.ts
 
-export type RoomType = 'TD' | 'TP_ELECTRONIQUE' | 'TP_NUMERIQUE' | 'PROJET' | 'AUTRE'
+export type RoomType =
+    | 'Cours'
+    | 'Informatique'
+    | 'Projet'
+    | 'Rassemblement'
+    | 'Reunion'
+    | 'Associatif'
+    | 'Electronique'
+    | 'Fablab'
+    | 'Reseau'
 
 export interface Room {
     id: string
@@ -11,14 +20,20 @@ export interface Room {
     /** Nom complet optionnel, ex : "J109_ClassLab" */
     fullName?: string
 
-    /** Étages 0, 1, 2 */
-    floor: 0 | 1 | 2
-
     /** Type principal pour l’icône / badge */
     mainType: RoomType
 
     /** Types disponibles pour la salle */
     types: RoomType[]
+
+    /** Étage de la salle */
+    floor: number
+
+    /** Nombre de places */
+    capacity: number
+
+    /** Disponibilite globale de la salle */
+    isAvailable: boolean
 
     /** Commentaires libres */
     description?: string

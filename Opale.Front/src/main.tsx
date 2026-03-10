@@ -1,13 +1,13 @@
-// @ts-ignore
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import App from './App.tsx'
+import App from './App'
 
 import './styles/tokens.css'
 import './styles/base.css'
 import './styles/layout.css'
 import './styles/components.css'
+import './styles/pages/planning/index.css'
 import './styles/pages/promotions/index.css'
 import './styles/pages/teachers/index.css'
 import './styles/utilities.css'
@@ -15,6 +15,15 @@ import './styles/themes/dark.css'
 import './styles/pages/rooms/index.css'
 import './styles/pages/events/index.css'
 import './styles/pages/matieres/index.css'
+import './styles/pages/settings/index.css'
+import './styles/pages/documentation/index.css'
+import './styles/themes/spock.css'
+import './styles/themes/cvd-common.css'
+import './styles/themes/cvd-protan-deutan.css'
+import './styles/themes/cvd-tritan.css'
+import './styles/themes/cvd-achromatopsia.css'
+import './styles/themes/reading-dyslexia.css'
+import './styles/themes/vision-low.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

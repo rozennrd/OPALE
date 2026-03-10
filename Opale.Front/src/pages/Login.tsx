@@ -3,6 +3,8 @@ import '../styles/pages/login/login-page.css';
 import { useNavigate } from 'react-router-dom';
 
 import logoFull from '../assets/logo/logo-full.png';
+import logoFullDark from '../assets/logo/logo-full-dark.png';
+import logoFullSpock from '../assets/logo/logo-full-spock.png';
 import ThemeToggle from '../components/ThemeToggle';
 import { LoginCredentials } from '../services/base/types';
 import { authService } from '../services/base/AuthService';
@@ -34,9 +36,6 @@ export default function Login(): React.ReactElement {
                 console.log("Erreur de connexion:", error);
                 setHasError(true);
             }
-
-        } else {
-            console.log("Veuillez entrer un nom d'utilisateur et un mot de passe");
         }
     };
 
@@ -50,7 +49,9 @@ export default function Login(): React.ReactElement {
             </div>
 
             <div className="login-logo">
-                <p>OPALE LOGIN</p>
+                <img className="login-logo-light" src={logoFull} alt="OPALE" />
+                <img className="login-logo-dark" src={logoFullDark} alt="OPALE" />
+                <img className="login-logo-spock" src={logoFullSpock} alt="OPALE" />
             </div>
 
             <form onSubmit={handleSubmit} className="login-form">
@@ -79,7 +80,7 @@ export default function Login(): React.ReactElement {
                 <button type="submit" className="login-btn">
                     Se connecter
                 </button>
-                {hasError && <span className="error-message">Login ou mot de passe non reconnu</span>}
+                {hasError && <span className="error-message">Identifiant ou mot de passe non reconnu.</span>}
             </form>
         </div>
     );
