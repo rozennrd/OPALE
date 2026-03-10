@@ -1,4 +1,4 @@
-/* src/styles/pages/rooms/_detail-modal.css */
+﻿/* src/styles/pages/rooms/_detail-modal.css */
 
 @layer pages {
     /* ============================
@@ -16,12 +16,12 @@
     }
 
     /* ============================
-       Card layout spécifique Rooms
+       Card layout spÃ©cifique Rooms
        (le shell .detail-card est commun)
        ============================ */
 
     .room-detail-card {
-        /* On garde la largeur plus généreuse pour les salles */
+        /* On garde la largeur plus gÃ©nÃ©reuse pour les salles */
         width: min(1080px, 96vw);
         max-height: min(720px, 96vh);
         display: flex;
@@ -74,7 +74,7 @@
     }
 
     /* ============================
-       Identité de la salle
+       IdentitÃ© de la salle
        ============================ */
 
     .room-detail-identity-grid {
@@ -332,7 +332,7 @@
         border-color: var(--primary);
     }
 
-    /* Focus accentué uniquement sur Nom + Surnom de la salle */
+    /* Focus accentuÃ© uniquement sur Nom + Surnom de la salle */
 
     #room-name-input,
     #room-fullname-input,
@@ -353,11 +353,11 @@
         background: var(--color-surface, #fff);
     }
 
-    /* Variante dark cohérente avec les events */
+    /* Variante dark cohÃ©rente avec les events */
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) #room-name-input:focus,
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) #room-fullname-input:focus,
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) #room-capacity-input:focus {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) #room-name-input:focus,
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) #room-fullname-input:focus,
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) #room-capacity-input:focus {
         background: #252f42;
     }
 
@@ -424,56 +424,56 @@
     }
 
     /* ============================
-       Thème sombre — spécifiques Rooms
-       (le fond de .detail-card est géré en commun)
+       ThÃ¨me sombre â€” spÃ©cifiques Rooms
+       (le fond de .detail-card est gÃ©rÃ© en commun)
        ============================ */
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-detail-input {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .room-detail-input {
         background: rgba(15, 23, 42, 0.85);
         border-color: var(--border-subtle);
         color: var(--text);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-chip {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .room-type-chip {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.15);
         color: var(--text);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-chip-selected {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .room-type-chip-selected {
         background: rgba(129, 140, 248, 0.25);
         border-color: rgba(129, 140, 248, 0.7);
         color: var(--text);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-detail-textarea {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .room-detail-textarea {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.2);
         color: var(--text);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-detail-availability-row {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .room-detail-availability-row {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.15);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-availability-switch {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .room-availability-switch {
         background: #111827;
         border-color: rgba(255, 255, 255, 0.18);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-availability-switch-track {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .room-availability-switch-track {
         background: rgba(148, 163, 184, 0.2);
         border-color: rgba(255, 255, 255, 0.18);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-chip-dot {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .room-type-chip-dot {
         border-color: color-mix(in srgb, var(--text) 70%, transparent);
     }
 
     /* ============================
        Couleurs de la pill selon le type de salle
-       (déjà présentes dans ton nouveau CSS)
+       (dÃ©jÃ  prÃ©sentes dans ton nouveau CSS)
        ============================ */
 
     .room-type-badge-header.room-type-td {
@@ -506,33 +506,33 @@
         color: #475569;
     }
 
-    /* Dark theme – couleurs de pill uniquement */
+    /* Dark theme â€“ couleurs de pill uniquement */
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-badge-header.room-type-td {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .room-type-badge-header.room-type-td {
         background: rgba(59, 130, 246, 0.22);
         border-color: rgba(59, 130, 246, 0.6);
         color: #bfdbfe;
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-badge-header.room-type-tp_electronique {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .room-type-badge-header.room-type-tp_electronique {
         background: rgba(16, 185, 129, 0.22);
         border-color: rgba(16, 185, 129, 0.6);
         color: #a7f3d0;
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-badge-header.room-type-tp_numerique {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .room-type-badge-header.room-type-tp_numerique {
         background: rgba(14, 165, 233, 0.22);
         border-color: rgba(14, 165, 233, 0.6);
         color: #bae6fd;
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-badge-header.room-type-projet {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .room-type-badge-header.room-type-projet {
         background: rgba(234, 179, 8, 0.24);
         border-color: rgba(234, 179, 8, 0.65);
         color: #fef3c7;
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .room-type-badge-header.room-type-autre {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .room-type-badge-header.room-type-autre {
         background: rgba(148, 163, 184, 0.24);
         border-color: rgba(148, 163, 184, 0.6);
         color: #e5e7eb;

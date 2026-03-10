@@ -255,7 +255,8 @@
   }
 
   :root[data-theme="dark"][data-cvd="achromatopsia"],
-  :root[data-theme="spock"][data-cvd="achromatopsia"] {
+  :root[data-theme="spock"][data-cvd="achromatopsia"],
+  :root[data-theme="medieval-dark"][data-cvd="achromatopsia"] {
     --brand: #d1d5db;
     --brand-hover: #f3f4f6;
 

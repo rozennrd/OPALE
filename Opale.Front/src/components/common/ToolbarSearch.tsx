@@ -10,6 +10,9 @@ interface ToolbarSearchProps {
     className?: string
 }
 
+const isDarkThemeValue = (value: string | null) =>
+    value === 'dark' || value === 'medieval-dark'
+
 const ToolbarSearch: React.FC<ToolbarSearchProps> = ({
     value,
     onChange,

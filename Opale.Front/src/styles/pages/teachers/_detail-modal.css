@@ -1,7 +1,7 @@
 ﻿/* src/styles/pages/teachers/_detail-modal.css */
 
 @layer pages {
-    /* ============ Overlay spécifique teacher ============ */
+    /* ============ Overlay spÃ©cifique teacher ============ */
 
     .teacher-detail-overlay {
         position: fixed;
@@ -13,9 +13,9 @@
         z-index: 2000;
     }
 
-    /* ============ Layout général de la card ============ */
-    /* Le fond / radius / shadow / padding sont gérés par .detail-card (CSS commun).
-       Ici on ne fait que spécialiser le layout interne pour les enseignants. */
+    /* ============ Layout gÃ©nÃ©ral de la card ============ */
+    /* Le fond / radius / shadow / padding sont gÃ©rÃ©s par .detail-card (CSS commun).
+       Ici on ne fait que spÃ©cialiser le layout interne pour les enseignants. */
 
     .teacher-detail-card {
         width: min(1200px, 96vw); /* un peu plus large que la valeur générique si besoin */
@@ -23,12 +23,12 @@
 
     .teacher-detail-columns {
         display: grid;
-        /* Col 1 la plus large, col 2 resserrée, col 3 confortable */
+        /* Col 1 la plus large, col 2 resserrÃ©e, col 3 confortable */
         grid-template-columns: 1.4fr 0.9fr 1.1fr;
         gap: 1.75rem;
         margin-top: 0.75rem;
 
-        /* Quand il y a beaucoup de disponibilités, le contenu central scrolle */
+        /* Quand il y a beaucoup de disponibilitÃ©s, le contenu central scrolle */
         flex: 1 1 auto;
         min-height: 0;
         overflow-y: auto;
@@ -61,7 +61,7 @@
         }
     }
 
-    /* ============ Colonne 1 : informations générales ============ */
+    /* ============ Colonne 1 : informations gÃ©nÃ©rales ============ */
 
     .teacher-detail-list {
         margin: 0;
@@ -112,7 +112,7 @@
         padding-right: 28px;
     }
 
-    /* ============ Colonne 2 : matières ============ */
+    /* ============ Colonne 2 : matiÃ¨res ============ */
 
     .teacher-subjects-edit-list {
         margin: 0.3rem 0 0.4rem;
@@ -224,72 +224,72 @@
         color: var(--muted);
     }
 
-    /* ============ Colonne 3 : dispos (styles principaux dans leurs fichiers dédiés) ============ */
-    /* Ici on ne redéfinit pas toute la grille des dispos, juste les tweaks dark theme plus bas. */
+    /* ============ Colonne 3 : dispos (styles principaux dans leurs fichiers dÃ©diÃ©s) ============ */
+    /* Ici on ne redÃ©finit pas toute la grille des dispos, juste les tweaks dark theme plus bas. */
 
-    /* ============ Thème sombre — corps de la card ============ */
+    /* ============ ThÃ¨me sombre â€” corps de la card ============ */
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-detail-input,
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-detail-select {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .teacher-detail-input,
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .teacher-detail-select {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.15);
         color: var(--text);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-subject-input {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .teacher-subject-input {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.15);
         color: var(--text);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-subject-add-btn,
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-period-add-btn {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .teacher-subject-add-btn,
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .teacher-period-add-btn {
         border-color: rgba(255, 255, 255, 0.2);
         color: var(--muted);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-subject-add-btn:hover,
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-period-add-btn:hover {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .teacher-subject-add-btn:hover,
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .teacher-period-add-btn:hover {
         background: rgba(255, 255, 255, 0.05);
         border-color: rgba(255, 255, 255, 0.3);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .ta-cell.is-available {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .ta-cell.is-available {
         background: rgba(16, 185, 129, 0.35);
         border-color: rgba(16, 185, 129, 0.7);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .ta-cell.is-unavailable {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .ta-cell.is-unavailable {
         background: rgba(239, 68, 68, 0.35);
         border-color: rgba(239, 68, 68, 0.7);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .ta-day {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .ta-day {
         color: var(--text);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .ta-label {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .ta-label {
         color: var(--text);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-availability-legend {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .teacher-availability-legend {
         color: var(--muted);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-period-pill {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .teacher-period-pill {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.15);
         color: var(--text);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-period-pill.is-active {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .teacher-period-pill.is-active {
         background: rgba(129, 140, 248, 0.25);
         border-color: rgba(129, 140, 248, 0.7);
         box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.5);
     }
 
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .constraint-date-input,
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .teacher-period-range-pill input[type='date'] {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .constraint-date-input,
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .teacher-period-range-pill input[type='date'] {
         background: #1f2735;
         border-color: rgba(255, 255, 255, 0.2);
         color: var(--text);

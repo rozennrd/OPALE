@@ -16,7 +16,8 @@
   }
 
   :root[data-theme="dark"][data-vision="low"],
-  :root[data-theme="spock"][data-vision="low"] {
+  :root[data-theme="spock"][data-vision="low"],
+  :root[data-theme="medieval-dark"][data-vision="low"] {
     --text: #ffffff;
     --muted: #e5e7eb;
     --panel: #0a0a0a;
@@ -44,11 +45,13 @@
   }
 
   :root[data-theme="dark"][data-vision="low"] :focus-visible,
-  :root[data-theme="spock"][data-vision="low"] :focus-visible {
+  :root[data-theme="spock"][data-vision="low"] :focus-visible,
+  :root[data-theme="medieval-dark"][data-vision="low"] :focus-visible {
     outline-color: #ffffff;
   }
 
-  :root[data-theme="light"][data-vision="low"] :focus-visible {
+  :root[data-theme="light"][data-vision="low"] :focus-visible,
+  :root[data-theme="medieval-light"][data-vision="low"] :focus-visible {
     outline-color: #000000;
   }
 
