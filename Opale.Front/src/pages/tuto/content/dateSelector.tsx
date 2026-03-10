@@ -24,10 +24,10 @@ export const dateSelectorTutorialContent: TutorialContent = {
                     imageAlt: 'Champ de date avec icône calendrier',
                     imageCaption: "Ouverture du sélecteur de date.",
                     imageHighlight: {
-                        left: '35%',
+                        left: '24.8%',
                         top: '29.1%',
-                        width: '2%',
-                        height: '3.5%',
+                        width: '14%',
+                        height: '5.3%',
                         label: 'Calendrier',
                     },
                 },
@@ -42,10 +42,10 @@ export const dateSelectorTutorialContent: TutorialContent = {
                     imageAlt: 'En-tête du sélecteur avec navigation',
                     imageCaption: 'Navigation entre les mois.',
                     imageHighlight: {
-                        left: '24.3%',
-                        top: '34.1%',
-                        width: '15%',
-                        height: '4.5%',
+                        left: '25.5%',
+                        top: '34.5%',
+                        width: '15.2%',
+                        height: '4.7%',
                         label: 'Mois',
                     },
                 },
@@ -60,10 +60,10 @@ export const dateSelectorTutorialContent: TutorialContent = {
                     imageAlt: 'Grille des jours du mois',
                     imageCaption: "Sélection d'une date.",
                     imageHighlight: {
-                        left: '24.3%',
-                        top: '38%',
-                        width: '16.2%',
-                        height: '20.1%',
+                        left: '25.5%',
+                        top: '38.4%',
+                        width: '15.2%',
+                        height: '26.5%',
                         label: 'Jours',
                     },
                 },
@@ -78,9 +78,9 @@ export const dateSelectorTutorialContent: TutorialContent = {
                     imageAlt: 'Actions du sélecteur de date',
                     imageCaption: 'Actions disponibles en bas du sélecteur.',
                     imageHighlight: {
-                        left: '24.9%',
-                        top: '63.8%',
-                        width: '15%',
+                        left: '25.5%',
+                        top: '64.6%',
+                        width: '16.0%',
                         height: '4.5%',
                         label: 'Actions',
                     },
@@ -100,10 +100,10 @@ export const dateSelectorTutorialContent: TutorialContent = {
                     imageAlt: 'Champ date/heure',
                     imageCaption: "Ouverture du sélecteur date + heure.",
                     imageHighlight: {
-                        left: '31.8%',
-                        top: '39.1%',
-                        width: '17.9%',
-                        height: '3.9%',
+                        left: '31.7%',
+                        top: '39.8%',
+                        width: '20.8%',
+                        height: '5.2%',
                         label: 'Date/heure',
                     },
                 },
@@ -118,28 +118,11 @@ export const dateSelectorTutorialContent: TutorialContent = {
                     imageAlt: 'Sélecteur avec colonnes heure et minutes',
                     imageCaption: 'Sélection de la date et de l’heure.',
                     imageHighlight: {
-                        left: '43.4%',
-                        top: '44.2%',
-                        width: '22%',
-                        height: '26.8%',
+                        left: '46.9%',
+                        top: '45.6%',
+                        width: '13.75%',
+                        height: '32.5%',
                         label: 'Heure / Min',
-                    },
-                },
-                {
-                    text: (
-                        <>
-                            Cliquer sur <strong>Valider</strong> pour fermer le sélecteur et enregistrer.
-                        </>
-                    ),
-                    imageSrc: calendarWithHoursScreenshot,
-                    imageAlt: 'Bouton Valider du sélecteur',
-                    imageCaption: 'Validation de la sélection.',
-                    imageHighlight: {
-                        left: '53.2%',
-                        top: '72.7%',
-                        width: '4.1%',
-                        height: '3.4%',
-                        label: 'Valider',
                     },
                 },
                 {
@@ -153,10 +136,10 @@ export const dateSelectorTutorialContent: TutorialContent = {
                     imageAlt: 'Actions du sélecteur date + heure',
                     imageCaption: 'Actions disponibles en bas du sélecteur.',
                     imageHighlight: {
-                        left: '43.4%',
-                        top: '72.1%',
-                        width: '15%',
-                        height: '3.9%',
+                        left: '32.5%',
+                        top: '77.7%',
+                        width: '28.2%',
+                        height: '3.95%',
                         label: 'Actions',
                     },
                 },
@@ -181,5 +164,3 @@ export const dateSelectorTutorialContent: TutorialContent = {
         </>,
     ],
 }
-
-

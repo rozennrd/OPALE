@@ -65,5 +65,5 @@ export type TutorialContent = {
     expectedResult: string
     steps: TutorialStepEntry[]
     stepSections?: TutorialStepSection[]
-    tips: string[]
+    tips: React.ReactNode[]
 }

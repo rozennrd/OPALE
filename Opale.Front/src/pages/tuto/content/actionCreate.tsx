@@ -20,10 +20,10 @@ export const actionCreateTutorialContent: TutorialContent = {
             imageAlt: "Bouton d'ajout dans la toolbar",
             imageCaption: "Le bouton + ouvre le formulaire de création.",
             imageHighlight: {
-                left: '82%',
-                top: '20.7%',
+                left: '81.3%',
+                top: '21.1%',
                 width: '13.6%',
-                height: '4.5%',
+                height: '5.85%',
                 label: 'Ajouter',
             },
         },

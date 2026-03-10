@@ -20,11 +20,11 @@ export const actionEditTutorialContent: TutorialContent = {
             imageAlt: 'Carte événement dans la liste',
             imageCaption: "Cliquer sur une carte ouvre la fiche de détail.",
             imageHighlight: {
-                left: '23.7%',
-                top: '41.4%',
-                width: '62.2%',
-                height: '7.8%',
-                label: 'Événement',
+                left: '23.85%',
+                top: '41.15%',
+                width: '72.0%',
+                height: '10.0%',
+                label: 'Élément à modifier (ici un événement',
             },
         },
         <>
