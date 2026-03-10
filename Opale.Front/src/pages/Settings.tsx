@@ -491,6 +491,14 @@ export default function Settings() {
 
                     <div className="settings-toggle-list">
                         <ToggleRow
+                            title={'Th\u00e8me Spock'}
+                            description={'Mode visuel alternatif au style LCARS.'}
+                            checked={theme === 'spock'}
+                            onChange={handleSpockToggle}
+                            onLabel={'Activ\u00e9'}
+                            offLabel={'D\u00e9sactiv\u00e9'}
+                        />
+                        <ToggleRow
                             title={'Th\u00e8me Papillon'}
                             description={'Palette jardin lumineux / nocturne avec motif papillon discret.'}
                             checked={isPapillonTheme(theme)}
@@ -499,18 +507,10 @@ export default function Settings() {
                             offLabel={'D\u00e9sactiv\u00e9'}
                         />
                         <ToggleRow
-                            title={'Th\u00e8me m\u00e9di\u00e9val'}
+                            title={'Th\u00e8me M\u00e9di\u00e9val'}
                             description={'Palette inspir\u00e9e des manuscrits et des mat\u00e9riaux anciens.'}
                             checked={isMedievalTheme(theme)}
                             onChange={handleMedievalToggle}
-                            onLabel={'Activ\u00e9'}
-                            offLabel={'D\u00e9sactiv\u00e9'}
-                        />
-                        <ToggleRow
-                            title={'Th\u00e8me Spock'}
-                            description={'Mode visuel alternatif au style LCARS.'}
-                            checked={theme === 'spock'}
-                            onChange={handleSpockToggle}
                             onLabel={'Activ\u00e9'}
                             offLabel={'D\u00e9sactiv\u00e9'}
                         />
