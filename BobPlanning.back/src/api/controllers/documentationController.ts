@@ -20,6 +20,18 @@ export const exportDocumentationPdf = async (req: Request, res: Response): Promi
             return
         }
 
+        console.log('[PDF] Export request received', {
+            title: payload.title,
+            theme: payload.theme,
+            tutorialCount: payload.tutorials.length,
+            tutorials: payload.tutorials.map((tutorial) => ({
+                id: tutorial.id,
+                title: tutorial.title,
+                steps: tutorial.steps?.length ?? 0,
+                sections: tutorial.stepSections?.length ?? 0,
+            })),
+        })
+
         const pdfBuffer = await generateTutorialPdf(payload)
         const filename = 'OPALE-tutoriels.pdf'
 
