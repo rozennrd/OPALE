@@ -10,11 +10,12 @@ import logoFullSpock from '../assets/logo/logo-full-spock.png';
 import logoFullMedievalDark from '../assets/logo/logo-full-medieval-dark.png';
 import logoFullMedievalLight from '../assets/logo/logo-full-medieval-light.png';
 import ThemeToggle from '../components/ThemeToggle';
+import { useTheme } from '../hooks/useTheme';
 import { LoginCredentials } from '../services/base/types';
 import { authService } from '../services/base/AuthService';
 
 export default function Login(): React.ReactElement {
-
+    const { theme } = useTheme();
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const navigate = useNavigate();
@@ -48,9 +49,11 @@ export default function Login(): React.ReactElement {
         <div className="login-container">
 
             {/* Toggle thème spécifique à la page login */}
-            <div className="login-theme-toggle">
-                <ThemeToggle />
-            </div>
+            {theme !== 'spock' && (
+                <div className="login-theme-toggle">
+                    <ThemeToggle />
+                </div>
+            )}
 
             <div className="login-logo">
                 <img className="login-logo-light" src={logoFull} alt="OPALE" />
