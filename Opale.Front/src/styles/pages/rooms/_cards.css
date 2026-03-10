@@ -1,4 +1,4 @@
-/* src/styles/pages/rooms/_cards.css */
+﻿/* src/styles/pages/rooms/_cards.css */
 
 @layer pages {
     /* ============================
@@ -14,7 +14,7 @@
 
     .room-card-meta {
         /* typographie commune via .entity-card-meta */
-        display: inline-flex; /* déjà commun mais on garde pour sécurité */
+        display: inline-flex; /* dÃ©jÃ  commun mais on garde pour sÃ©curitÃ© */
         align-items: center;
         gap: 0.35rem;
 
@@ -90,42 +90,43 @@
     }
 
     /* ============================
-       Thème sombre
+       ThÃ¨me sombre
        ============================ */
 
-    [data-theme="dark"] .room-card {
+    :root:is([data-theme="dark"], [data-theme="medieval-dark"]) .room-card {
         background: #2a3442;
         border-color: rgba(148, 163, 184, 0.35);
         box-shadow: 0 18px 35px rgba(15, 23, 42, 0.65);
     }
 
-    [data-theme="dark"] .room-card:hover {
+    :root:is([data-theme="dark"], [data-theme="medieval-dark"]) .room-card:hover {
         border-color: var(--primary-soft);
         box-shadow: 0 22px 45px rgba(15, 23, 42, 0.8);
     }
 
-    [data-theme="dark"] .room-type-td {
+    :root:is([data-theme="dark"], [data-theme="medieval-dark"]) .room-type-td {
         background: rgba(59, 130, 246, 0.18);
         color: #bfdbfe;
     }
 
-    [data-theme="dark"] .room-type-tp_electronique {
+    :root:is([data-theme="dark"], [data-theme="medieval-dark"]) .room-type-tp_electronique {
         background: rgba(16, 185, 129, 0.18);
         color: #a7f3d0;
     }
 
-    [data-theme="dark"] .room-type-tp_numerique {
+    :root:is([data-theme="dark"], [data-theme="medieval-dark"]) .room-type-tp_numerique {
         background: rgba(14, 165, 233, 0.18);
         color: #bae6fd;
     }
 
-    [data-theme="dark"] .room-type-projet {
+    :root:is([data-theme="dark"], [data-theme="medieval-dark"]) .room-type-projet {
         background: rgba(234, 179, 8, 0.20);
         color: #fef3c7;
     }
 
-    [data-theme="dark"] .room-type-autre {
+    :root:is([data-theme="dark"], [data-theme="medieval-dark"]) .room-type-autre {
         background: rgba(148, 163, 184, 0.20);
         color: #e5e7eb;
     }
 }
+

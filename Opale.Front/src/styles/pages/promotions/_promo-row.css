@@ -1,4 +1,4 @@
-/* Ligne de promotion (nom + warning + boutons) */
+﻿/* Ligne de promotion (nom + warning + boutons) */
 @layer pages {
     .promo-row {
         display: flex;
@@ -12,7 +12,7 @@
         flex-wrap: nowrap;
     }
 
-    /* Conteneur nom + icône warning */
+    /* Conteneur nom + icÃ´ne warning */
     .promo-main {
         display: flex;
         align-items: center;
@@ -51,7 +51,7 @@
         }
     }
 
-    /* Icône warning sur la ligne de promo */
+    /* IcÃ´ne warning sur la ligne de promo */
     .promo-row-warning {
         flex-shrink: 0;
         display: inline-flex;
@@ -91,14 +91,14 @@
                 box-shadow 150ms ease;
     }
 
-    /* Thème clair : fond plus clair et bord plus visible */
-    [data-theme='light'] .cycle-import-dropzone {
+    /* ThÃ¨me clair : fond plus clair et bord plus visible */
+    :root:is([data-theme='light'], [data-theme='medieval-light']) .cycle-import-dropzone {
         background: #f5f7fd;
         border-color: #d2dcf5;
     }
 
     /* Thème sombre : fond légèrement plus clair que la card */
-    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .cycle-import-dropzone {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark'], [data-theme='medieval-dark']) .cycle-import-dropzone {
         background: #1e2836;
         border-color: #3f5170;
     }
@@ -125,7 +125,7 @@
     }
 
     /* ==========================
-       Fichiers importés (pills)
+       Fichiers importÃ©s (pills)
        ========================== */
 
     .cycle-import-dropzone-files {
@@ -168,7 +168,7 @@
         border: 1px solid var(--border-soft);
     }
 
-    /* Icône document */
+    /* IcÃ´ne document */
     .cycle-import-file-pill .file-icon {
         font-size: 14px;
         flex-shrink: 0;
@@ -200,20 +200,20 @@
         transform: scale(1.1);
     }
 
-    /* Texte "+3 fichiers supplémentaires…" */
+    /* Texte "+3 fichiers supplÃ©mentairesâ€¦" */
     .cycle-import-file-pill.extra-count {
         font-style: italic;
         opacity: 0.8;
     }
 
-    /* Thème clair */
-    [data-theme="light"] .cycle-import-file-pill {
+    /* ThÃ¨me clair */
+    :root:is([data-theme="light"], [data-theme="medieval-light"]) .cycle-import-file-pill {
         background: #f0f3fa;
         border-color: #d3d8e4;
     }
 
-    /* Thème sombre */
-    [data-theme="dark"] .cycle-import-file-pill {
+    /* ThÃ¨me sombre */
+    :root:is([data-theme="dark"], [data-theme="medieval-dark"]) .cycle-import-file-pill {
         background: #1c2431;
         border-color: #39485c;
     }
@@ -405,14 +405,14 @@
         white-space: nowrap;
     }
 
-    [data-theme='light'] .maquette-preview-promo-nav-btn {
+    :root:is([data-theme='light'], [data-theme='medieval-light']) .maquette-preview-promo-nav-btn {
         border-color: #8fb1ee;
         background: #dbe8ff;
         color: #102a56;
         font-weight: 700;
     }
 
-    [data-theme='light'] .maquette-preview-promo-nav-btn:hover {
+    :root:is([data-theme='light'], [data-theme='medieval-light']) .maquette-preview-promo-nav-btn:hover {
         border-color: #739ddf;
         background: #cfe0ff;
     }
@@ -484,17 +484,17 @@
         background-clip: padding-box;
     }
 
-    [data-theme='light'] .maquette-preview-grid-wrapper {
+    :root:is([data-theme='light'], [data-theme='medieval-light']) .maquette-preview-grid-wrapper {
         scrollbar-color: #90a0c0 transparent;
     }
 
-    [data-theme='light'] .maquette-preview-grid-wrapper::-webkit-scrollbar-thumb {
+    :root:is([data-theme='light'], [data-theme='medieval-light']) .maquette-preview-grid-wrapper::-webkit-scrollbar-thumb {
         background: #90a0c0;
         border: 2px solid transparent;
         background-clip: padding-box;
     }
 
-    [data-theme='light'] .maquette-preview-grid-wrapper::-webkit-scrollbar-thumb:hover {
+    :root:is([data-theme='light'], [data-theme='medieval-light']) .maquette-preview-grid-wrapper::-webkit-scrollbar-thumb:hover {
         background: #778cb3;
         border: 2px solid transparent;
         background-clip: padding-box;

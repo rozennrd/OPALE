@@ -13,6 +13,10 @@ import {
 const USERNAME_KEY = 'opale-user-name'
 const USER_EMAIL_KEY = 'opale-user-email'
 const STANDARD_THEME_KEY = 'opale-standard-theme'
+const PAPILLON_LIGHT_THEME = 'papillon-light'
+const PAPILLON_DARK_THEME = 'papillon-dark'
+const MEDIEVAL_LIGHT_THEME = 'medieval-light'
+const MEDIEVAL_DARK_THEME = 'medieval-dark'
 
 const readStoredValue = (key: string, fallback = ''): string => {
     if (typeof window === 'undefined') return fallback
@@ -23,6 +27,21 @@ const readStoredStandardTheme = (): 'light' | 'dark' => {
     if (typeof window === 'undefined') return 'light'
     return window.localStorage.getItem(STANDARD_THEME_KEY) === 'dark' ? 'dark' : 'light'
 }
+
+const isStandardTheme = (value: string): value is 'light' | 'dark' =>
+    value === 'light' || value === 'dark'
+
+const isPapillonTheme = (value: string): value is typeof PAPILLON_LIGHT_THEME | typeof PAPILLON_DARK_THEME =>
+    value === PAPILLON_LIGHT_THEME || value === PAPILLON_DARK_THEME
+
+const isMedievalTheme = (value: string): value is typeof MEDIEVAL_LIGHT_THEME | typeof MEDIEVAL_DARK_THEME =>
+    value === MEDIEVAL_LIGHT_THEME || value === MEDIEVAL_DARK_THEME
+
+const toPapillonTheme = (value: 'light' | 'dark') =>
+    value === 'dark' ? PAPILLON_DARK_THEME : PAPILLON_LIGHT_THEME
+
+const toMedievalTheme = (value: 'light' | 'dark') =>
+    value === 'dark' ? MEDIEVAL_DARK_THEME : MEDIEVAL_LIGHT_THEME
 
 type Feedback = {
     kind: 'success' | 'error'
@@ -127,7 +146,7 @@ export default function Settings() {
 
     useEffect(() => {
         if (typeof window === 'undefined') return
-        if (theme === 'light' || theme === 'dark') {
+        if (isStandardTheme(theme)) {
             window.localStorage.setItem(STANDARD_THEME_KEY, theme)
         }
     }, [theme])
@@ -253,7 +272,7 @@ export default function Settings() {
 
     const handleSpockToggle = (isEnabled: boolean) => {
         if (isEnabled) {
-            if (theme === 'light' || theme === 'dark') {
+            if (isStandardTheme(theme)) {
                 if (typeof window !== 'undefined') {
                     window.localStorage.setItem(STANDARD_THEME_KEY, theme)
                 }
@@ -265,23 +284,42 @@ export default function Settings() {
         setTheme(readStoredStandardTheme())
     }
 
-    const isPapillonTheme = theme === 'papillon-light' || theme === 'papillon-dark'
-
     const handlePapillonToggle = (isEnabled: boolean) => {
         if (isEnabled) {
-            const baseTheme =
-                theme === 'light' || theme === 'dark'
-                    ? theme
-                    : readStoredStandardTheme()
-            setTheme(baseTheme === 'dark' ? 'papillon-dark' : 'papillon-light')
+            if (isStandardTheme(theme)) {
+                if (typeof window !== 'undefined') {
+                    window.localStorage.setItem(STANDARD_THEME_KEY, theme)
+                }
+            }
+
+            const standardTheme = isStandardTheme(theme)
+                ? theme
+                : readStoredStandardTheme()
+
+            setTheme(toPapillonTheme(standardTheme))
             return
         }
 
-        const fallbackTheme = theme === 'papillon-dark' ? 'dark' : 'light'
-        if (typeof window !== 'undefined') {
-            window.localStorage.setItem(STANDARD_THEME_KEY, fallbackTheme)
+        setTheme(readStoredStandardTheme())
+    }
+
+    const handleMedievalToggle = (isEnabled: boolean) => {
+        if (isEnabled) {
+            if (isStandardTheme(theme)) {
+                if (typeof window !== 'undefined') {
+                    window.localStorage.setItem(STANDARD_THEME_KEY, theme)
+                }
+            }
+
+            const standardTheme = isStandardTheme(theme)
+                ? theme
+                : readStoredStandardTheme()
+
+            setTheme(toMedievalTheme(standardTheme))
+            return
         }
-        setTheme(fallbackTheme)
+
+        setTheme(readStoredStandardTheme())
     }
 
     const updateIconVisibility = (
@@ -448,17 +486,23 @@ export default function Settings() {
                     wide
                 >
                     <p className="settings-note">
-                        {
-                            'Les th\u00e8mes clair/sombre restent g\u00e9r\u00e9s par le bouton de la barre lat\u00e9rale.'
-                        }
+                        {'Les variantes clair/sombre restent g\u00e9r\u00e9es par le bouton de la barre lat\u00e9rale.'}
                     </p>
 
                     <div className="settings-toggle-list">
                         <ToggleRow
                             title={'Th\u00e8me Papillon'}
                             description={'Palette jardin lumineux / nocturne avec motif papillon discret.'}
-                            checked={isPapillonTheme}
+                            checked={isPapillonTheme(theme)}
                             onChange={handlePapillonToggle}
+                            onLabel={'Activ\u00e9'}
+                            offLabel={'D\u00e9sactiv\u00e9'}
+                        />
+                        <ToggleRow
+                            title={'Th\u00e8me m\u00e9di\u00e9val'}
+                            description={'Palette inspir\u00e9e des manuscrits et des mat\u00e9riaux anciens.'}
+                            checked={isMedievalTheme(theme)}
+                            onChange={handleMedievalToggle}
                             onLabel={'Activ\u00e9'}
                             offLabel={'D\u00e9sactiv\u00e9'}
                         />

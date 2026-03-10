@@ -1,4 +1,4 @@
-/* src/styles/pages/teachers/_cards.css */
+﻿/* src/styles/pages/teachers/_cards.css */
 
 @layer pages {
     /* ============================
@@ -14,7 +14,7 @@
 
     .teacher-card-phone {
         /* typographie commune via .entity-card-meta */
-        /* on garde juste le layout spécifique si besoin */
+        /* on garde juste le layout spÃ©cifique si besoin */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -67,18 +67,19 @@
         color: #047857;
     }
 
-    [data-theme="dark"] .teacher-mode-distanciel {
+    :root:is([data-theme="dark"], [data-theme="medieval-dark"]) .teacher-mode-distanciel {
         background: rgba(59, 130, 246, 0.18);
         color: #bfdbfe;
     }
 
-    [data-theme="dark"] .teacher-mode-hybride {
+    :root:is([data-theme="dark"], [data-theme="medieval-dark"]) .teacher-mode-hybride {
         background: rgba(139, 92, 246, 0.18);
         color: #ddd6fe;
     }
 
-    [data-theme="dark"] .teacher-mode-presentiel {
+    :root:is([data-theme="dark"], [data-theme="medieval-dark"]) .teacher-mode-presentiel {
         background: rgba(16, 185, 129, 0.18);
         color: #a7f3d0;
     }
 }
+
