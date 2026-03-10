@@ -39,7 +39,7 @@ interface ToolbarResetButtonProps {
 export const ToolbarResetButton: React.FC<ToolbarResetButtonProps> = ({
                                                                           onClick,
                                                                           disabled = false,
-                                                                          label = 'Reset filtres',
+                                                                          label = 'Réinitialiser les filtres',
                                                                           className = '',
                                                                       }) => {
     const buttonClassName = ['toolbar-filter-button', 'toolbar-reset-button', className]

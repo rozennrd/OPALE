@@ -35,11 +35,11 @@ const ROOM_TYPE_OPTIONS: { value: RoomTypeFilter; label: string }[] = [
     { value: 'Informatique', label: 'Informatique' },
     { value: 'Projet', label: 'Projet' },
     { value: 'Rassemblement', label: 'Rassemblement' },
-    { value: 'Reunion', label: 'Reunion' },
+    { value: 'Reunion', label: 'Réunion' },
     { value: 'Associatif', label: 'Associatif' },
-    { value: 'Electronique', label: 'Electronique' },
+    { value: 'Electronique', label: 'Électronique' },
     { value: 'Fablab', label: 'Fablab' },
-    { value: 'Reseau', label: 'Reseau' },
+    { value: 'Reseau', label: 'Réseau' },
 ]
 
 export default function RoomsToolbar({

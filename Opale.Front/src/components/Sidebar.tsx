@@ -6,6 +6,7 @@ import logoFull from '../assets/logo/logo-full.png'
 import logoFullDark from '../assets/logo/logo-full-dark.png'
 import logoFullPapillonLight from '../assets/logo/logo-full-papillon-light.png'
 import logoFullPapillonDark from '../assets/logo/logo-full-papillon-dark.png'
+import logoFullSpock from '../assets/logo/logo-full-spock.png'
 import logoCompact from '../assets/logo/logo-compact.png'
 import icPlanning from '../assets/sidebar/ic-planning.png'
 import icPromotions from '../assets/sidebar/ic-promos.png'
@@ -32,7 +33,7 @@ interface NavItem {
 const items: NavItem[] = [
     { to: '/planning', label: 'Planning', ic: icPlanning, code: 'OPS-01' },
     { to: '/promotions', label: 'Promotions', ic: icPromotions, code: 'CELL-03' },
-    { to: '/evenements', label: 'Evenements', ic: icEvenements, code: 'EVENT-12' },
+    { to: '/evenements', label: 'Événements', ic: icEvenements, code: 'EVENT-12' },
     { to: '/teachers', label: 'Enseignants', ic: icEnseignants, code: 'CREW-07' },
     { to: '/salles', label: 'Salles', ic: icSalles, code: 'DECK-04' },
     { to: '/matieres', label: 'Mati\u00e8res', ic: icMatieres, code: 'LAB-22' },
@@ -66,6 +67,7 @@ export default function Sidebar(): JSX.Element | null {
                 <img className="logo-full logo-full-dark" src={logoFullDark} alt="OPALE" />
                 <img className="logo-full logo-full-papillon-light" src={logoFullPapillonLight} alt="OPALE" />
                 <img className="logo-full logo-full-papillon-dark" src={logoFullPapillonDark} alt="OPALE" />
+                <img className="logo-full logo-full-spock" src={logoFullSpock} alt="OPALE" />
                 <img className="logo-compact" src={logoCompact} alt="O" />
             </div>
 

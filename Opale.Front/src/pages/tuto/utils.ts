@@ -50,10 +50,8 @@ export const isTutorialStepObject = (step: TutorialStepEntry): step is TutorialS
 export const getStepText = (step: TutorialStepEntry): React.ReactNode =>
     isTutorialStepObject(step) ? step.text : step
 
-export const getVisibleSubSteps = (step: TutorialStepEntry): React.ReactNode[] =>
-    isTutorialStepObject(step)
-        ? step.subSteps?.filter((subStep) => hasRenderableNode(subStep)) ?? []
-        : []
+export const getVisibleSubSteps = (step: TutorialStepEntry): TutorialStepEntry[] =>
+    isTutorialStepObject(step) ? step.subSteps?.filter((subStep) => isStepVisible(subStep)) ?? [] : []
 
 export const getStepHighlights = (step: TutorialStepEntry): TutorialImageHighlight[] => {
     if (!isTutorialStepObject(step)) {

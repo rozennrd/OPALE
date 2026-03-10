@@ -112,6 +112,12 @@
                 background 140ms ease;
     }
 
+    .room-detail-error {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--danger-800, #b91c1c);
+    }
+
     @media (max-width: 900px) {
         .room-detail-identity-grid {
             grid-template-columns: minmax(0, 1fr);

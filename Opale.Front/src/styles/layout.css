@@ -35,9 +35,14 @@
   .brand .logo-full-dark { display: none; }
   .brand .logo-full-papillon-light { display: none; }
   .brand .logo-full-papillon-dark { display: none; }
+  .brand .logo-full-spock { display: none; }
 
-  :root:is([data-theme='dark'], [data-theme='spock']) .brand .logo-full-light { display: none; }
-  :root:is([data-theme='dark'], [data-theme='spock']) .brand .logo-full-dark { display: block; }
+  :root[data-theme='dark'] .brand .logo-full-light { display: none; }
+  :root[data-theme='dark'] .brand .logo-full-dark { display: block; }
+
+  :root[data-theme='spock'] .brand .logo-full-light { display: none; }
+  :root[data-theme='spock'] .brand .logo-full-dark { display: none; }
+  :root[data-theme='spock'] .brand .logo-full-spock { display: block; }
 
   :root[data-theme='papillon-light'] .brand .logo-full-light,
   :root[data-theme='papillon-light'] .brand .logo-full-dark { display: none; }

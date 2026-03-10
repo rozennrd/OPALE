@@ -15,7 +15,7 @@ jest.mock('fs');
 
 // Convertit les méthodes en mocks Jest
 type MockedWorksheet = jest.Mocked<
-  Pick<ExcelJS.Worksheet, 'addRow' | 'getRow' | 'getCell' | 'eachRow'>
+  Pick<ExcelJS.Worksheet, 'addRow' | 'getRow' | 'getCell' | 'eachRow' | 'lastRow'>
 > & {
   columns: NonNullable<ExcelJS.Worksheet['columns']>;
 };
@@ -114,14 +114,21 @@ describe('generateEdtMacro', () => {
     };
 
     // Mock de la feuille de calcul
+    let internalLastRow: any = undefined;
     mockWorksheet = {
       columns: [],
-      addRow: jest.fn().mockReturnValue(mockRow),
+      addRow: jest.fn().mockImplementation(() => {
+        internalLastRow = mockRow;
+        return mockRow;
+      }),
       getRow: jest.fn().mockReturnValue(mockRow),
       getCell: jest.fn().mockReturnValue(createMockCell()),
       eachRow: jest.fn((callback) => {
         callback(mockRow); // Simule une ligne avec des cellules
       }),
+      get lastRow() {
+        return internalLastRow;
+      },
     } as unknown as MockedWorksheet;
 
     // Mock du classeur

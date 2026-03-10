@@ -1,4 +1,4 @@
-import type { TutorialContent } from '../types'
+﻿import type { TutorialContent } from '../types'
 
 export const settingsTutorialContent: TutorialContent = {
     objective: "Ajuster les préférences utilisateur et d'affichage pour un usage confortable.",
@@ -15,3 +15,4 @@ export const settingsTutorialContent: TutorialContent = {
         'Conserver des réglages simples et stables pour limiter les erreurs de manipulation.',
     ],
 }
+

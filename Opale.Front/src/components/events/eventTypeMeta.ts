@@ -20,7 +20,7 @@ export const LEGACY_TYPE_META: Record<LegacyEventType, { icon: string; label: st
     CONFERENCE: { icon: icEventConference, label: 'Conférence', dbType: 'Conference' },
     FORUM: { icon: icEventForum, label: 'Forum', dbType: 'Forum' },
     SALON: { icon: icEventSalon, label: 'Salon / Expo', dbType: 'Salon' },
-    AUTRE: { icon: icEventOther, label: 'Autre évènement', dbType: 'Autre' },
+    AUTRE: { icon: icEventOther, label: 'Autre événement', dbType: 'Autre' },
 }
 
 /**

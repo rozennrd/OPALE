@@ -20,6 +20,9 @@ interface TeachersToolbarProps {
     onSearchChange: (value: string) => void
     modeFilter: ModeFilter
     onModeChange: (value: ModeFilter) => void
+    promotionFilter: string
+    onPromotionChange: (value: string) => void
+    promotionOptions: string[]
     subjectFilter: string
     onSubjectChange: (value: string) => void
     subjectOptions: string[]
@@ -40,6 +43,9 @@ export default function TeachersToolbar({
     onSearchChange,
     modeFilter,
     onModeChange,
+    promotionFilter,
+    onPromotionChange,
+    promotionOptions,
     subjectFilter,
     onSubjectChange,
     subjectOptions,
@@ -66,7 +72,7 @@ export default function TeachersToolbar({
                 <div className="page-toolbar-row--filters teachers-toolbar-filters">
                     <div className="toolbar-filter teachers-toolbar-date-filter teachers-toolbar-date-filter--from">
                         <label className="toolbar-filter-label">
-                            Dispo à partir de...
+                            Dispo à partir du...
                             <DateInput
                                 value={dateFrom}
                                 onChange={onDateFromChange}
@@ -119,13 +125,24 @@ export default function TeachersToolbar({
                     <div className="teachers-toolbar-line3">
                         <div className="toolbar-filter teachers-toolbar-promotion-filter">
                             <label className="toolbar-filter-label">
-                                Promotion (désactivé)
+                                Promotion
                                 <select
                                     className="toolbar-filter-select"
-                                    value="ALL"
-                                    disabled
+                                    value={promotionFilter || 'ALL'}
+                                    onChange={(e) =>
+                                        onPromotionChange(
+                                            e.target.value === 'ALL'
+                                                ? ''
+                                                : e.target.value,
+                                        )
+                                    }
                                 >
                                     <option value="ALL">Toutes</option>
+                                    {promotionOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
                                 </select>
                             </label>
                         </div>

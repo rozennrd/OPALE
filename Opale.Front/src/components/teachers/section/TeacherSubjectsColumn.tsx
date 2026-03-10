@@ -1,8 +1,8 @@
-// src/components/teachers/section/TeacherSubjectsColumn.tsx
+﻿// src/components/teachers/section/TeacherSubjectsColumn.tsx
 import { useEffect, useMemo, useState } from 'react'
 import { Teacher } from '../../../models/Teachers'
 import { getMatieres } from '../../../services/api/matieresApi'
-import { getEnseignements } from '../../../services/api/enseignementsApi'
+import { BackendEnseignement, getEnseignements } from '../../../services/api/enseignementsApi'
 import { promotionsApi } from '../../../services/api/promotionsApi'
 
 type SubjectField = 'name' | 'promo'
@@ -19,6 +19,7 @@ type PromotionOption = {
 }
 
 interface TeacherSubjectsColumnProps {
+    teacherId: string
     subjects: Teacher['subjects']
     onSubjectChange: (index: number, field: SubjectField, value: string) => void
     onAddSubject: () => void
@@ -26,6 +27,7 @@ interface TeacherSubjectsColumnProps {
 }
 
 const TeacherSubjectsColumn = ({
+    teacherId,
     subjects,
     onSubjectChange,
     onAddSubject,
@@ -33,6 +35,7 @@ const TeacherSubjectsColumn = ({
 }: TeacherSubjectsColumnProps) => {
     const [matieres, setMatieres] = useState<MatiereOption[]>([])
     const [promotions, setPromotions] = useState<PromotionOption[]>([])
+    const [enseignements, setEnseignements] = useState<BackendEnseignement[]>([])
 
     useEffect(() => {
         let mounted = true
@@ -45,9 +48,7 @@ const TeacherSubjectsColumn = ({
                     getEnseignements(),
                 ])
 
-                // on force aussi le chargement de /getEnseignements demandé (même si
-                // la correspondance matière/promo est portée par les matières)
-                void enseignementsRes
+                const backendEnseignements = enseignementsRes.data ?? []
 
                 if (!mounted) return
 
@@ -65,11 +66,13 @@ const TeacherSubjectsColumn = ({
                         nom: (p.nom ?? '').trim(),
                     })),
                 )
+                setEnseignements(backendEnseignements)
             } catch (error) {
                 console.error('[TEACHERS][SUBJECTS] load options failed:', error)
                 if (!mounted) return
                 setMatieres([])
                 setPromotions([])
+                setEnseignements([])
             }
         })()
 
@@ -116,6 +119,24 @@ const TeacherSubjectsColumn = ({
         return map
     }, [matieres])
 
+    const totalHoursByMatiereId = useMemo(() => {
+        const map = new Map<string, number>()
+        for (const enseignement of enseignements) {
+            if (enseignement.id_prof !== teacherId) continue
+            const total =
+                (enseignement.heures_td ?? 0) +
+                (enseignement.heures_tp ?? 0) +
+                (enseignement.heures_projet ?? 0) +
+                (enseignement.heures_elearning ?? 0) +
+                (enseignement.heures_autre ?? 0)
+            map.set(
+                enseignement.id_matiere,
+                (map.get(enseignement.id_matiere) ?? 0) + total,
+            )
+        }
+        return map
+    }, [enseignements, teacherId])
+
     const allMatiereNames = useMemo(
         () => Array.from(new Set(matieres.map((m) => m.nom).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'fr')),
         [matieres],
@@ -136,6 +157,31 @@ const TeacherSubjectsColumn = ({
         }
 
         return undefined
+    }
+
+    const getTotalHoursForSubject = (subject: Teacher['subjects'][number]): number => {
+        const subjectName = (subject.name ?? '').trim().toLowerCase()
+        if (!subjectName) return 0
+
+        const promoId = getPromoIdFromSubject(subject)
+        const matchingMatieres = matieres.filter((matiere) => {
+            if (matiere.nom.trim().toLowerCase() !== subjectName) return false
+            if (!promoId) return true
+            return matiere.promoId === promoId
+        })
+
+        if (matchingMatieres.length === 0) return 0
+
+        return matchingMatieres.reduce(
+            (total, matiere) => total + (totalHoursByMatiereId.get(matiere.id) ?? 0),
+            0,
+        )
+    }
+
+    const formatHours = (totalHours: number) => {
+        if (totalHours <= 0) return 'NA'
+        const display = Number.isInteger(totalHours) ? totalHours.toString() : totalHours.toFixed(1)
+        return `${display} h`
     }
 
     const handleMatiereChange = (index: number, selectedName: string) => {
@@ -212,8 +258,25 @@ const TeacherSubjectsColumn = ({
                                           .sort((a, b) => a.localeCompare(b, 'fr'))
                                     : allMatiereNames
 
+                                const hoursLabel = formatHours(getTotalHoursForSubject(subject))
+
                                 return (
                                     <>
+                                        <select
+                                            className="teacher-subject-input teacher-subject-input-promo"
+                                            value={subject.promo}
+                                            onChange={(e) =>
+                                                handlePromoChange(index, e.target.value)
+                                            }
+                                        >
+                                            <option value="">Sélectionner une promo</option>
+                                            {promoOptions.map((promoLabel) => (
+                                                <option key={promoLabel} value={promoLabel}>
+                                                    {promoLabel}
+                                                </option>
+                                            ))}
+                                        </select>
+
                                         <select
                                             className="teacher-subject-input teacher-subject-input-name"
                                             value={subject.name}
@@ -229,20 +292,9 @@ const TeacherSubjectsColumn = ({
                                             ))}
                                         </select>
 
-                                        <select
-                                            className="teacher-subject-input teacher-subject-input-promo"
-                                            value={subject.promo}
-                                            onChange={(e) =>
-                                                handlePromoChange(index, e.target.value)
-                                            }
-                                        >
-                                            <option value="">Sélectionner une promo</option>
-                                            {promoOptions.map((promoLabel) => (
-                                                <option key={promoLabel} value={promoLabel}>
-                                                    {promoLabel}
-                                                </option>
-                                            ))}
-                                        </select>
+                                        <span className="teacher-subject-hours">
+                                            {hoursLabel}
+                                        </span>
                                     </>
                                 )
                             })()}
@@ -260,7 +312,7 @@ const TeacherSubjectsColumn = ({
                 </ul>
             ) : (
                 <p className="teacher-detail-muted">
-                    Aucune matière associée pour l’instant.
+                    Aucune matière associée pour l&apos;instant.
                 </p>
             )}
 
@@ -276,3 +328,4 @@ const TeacherSubjectsColumn = ({
 }
 
 export default TeacherSubjectsColumn
+

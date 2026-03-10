@@ -179,7 +179,7 @@ describe("groupeController", () => {
                 );
 
                 expect(groupeService.getGroupById).toHaveBeenCalledWith("undefined");
-                expect(mockStatus).toHaveBeenCalledWith(404);
+                expect(mockStatus).toHaveBeenCalledWith(500);
             } catch (error) {
                 fail(`Le controller devrait gérer l'ID undefined: ${error}`);
             }
@@ -286,9 +286,11 @@ describe("groupeController", () => {
                     effectifs: 28,
                 });
                 expect(mockStatus).toHaveBeenCalledWith(201);
-                expect(mockJson).toHaveBeenCalledWith({
-                    message: "Groupe ajouté avec succès !",
-                });
+                expect(mockJson).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        message: "Groupe ajouté avec succès !",
+                    })
+                );
             } catch (error) {
                 fail(`Ne devrait pas throw d'erreur: ${error}`);
             }

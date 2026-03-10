@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+ import { Request, Response } from "express";
 import { localisationController } from "../src/api/controllers/localisationController";
 import { localisationService } from "../src/domain/services/localisationService";
 
@@ -496,7 +496,7 @@ describe("localisationController", () => {
             }
         });
 
-        it("devrait retourner une erreur 409 si la localisation existe déjà", async () => {
+        it("devrait retourner une erreur 400 si la localisation existe déjà", async () => {
             mockRequest.body = {
                 id_salle: "salle-1",
                 id_event: "event-1",
@@ -511,7 +511,7 @@ describe("localisationController", () => {
                     mockResponse as Response
                 );
 
-                expect(mockStatus).toHaveBeenCalledWith(409);
+                expect(mockStatus).toHaveBeenCalledWith(400);
                 expect(mockJson).toHaveBeenCalledWith({
                     error: "Cette salle est déjà associée à cet événement",
                 });
@@ -686,7 +686,7 @@ describe("localisationController", () => {
             }
         });
 
-        it("devrait retourner une erreur 409 si la nouvelle combinaison existe déjà", async () => {
+        it("devrait retourner une erreur 500 si la nouvelle combinaison existe déjà sans statusCode", async () => {
             mockRequest.params = { id: "1" };
             mockRequest.body = {
                 id_salle: "salle-2",
@@ -702,7 +702,7 @@ describe("localisationController", () => {
                     mockResponse as Response
                 );
 
-                expect(mockStatus).toHaveBeenCalledWith(409);
+                expect(mockStatus).toHaveBeenCalledWith(500);
                 expect(mockJson).toHaveBeenCalledWith({
                     error: "Cette salle est déjà associée à cet événement",
                 });

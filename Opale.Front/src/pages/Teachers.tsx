@@ -18,12 +18,14 @@ import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
 const DEFAULT_TEACHERS_FILTERS: {
     searchValue: string
     modeFilter: ModeFilter
+    promotionFilter: string
     subjectFilter: string
     dateFrom: string
     dateTo: string
 } = {
     searchValue: '',
     modeFilter: 'ALL',
+    promotionFilter: '',
     subjectFilter: '',
     dateFrom: '',
     dateTo: '',
@@ -56,9 +58,11 @@ export default function Teachers() {
     const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null)
     const [searchValue, setSearchValue] = useState('')
     const [modeFilter, setModeFilter] = useState<ModeFilter>('ALL')
+    const [promotionFilter, setPromotionFilter] = useState('')
     const [subjectFilter, setSubjectFilter] = useState('')
     const [dateFrom, setDateFrom] = useState('')
     const [dateTo, setDateTo] = useState('')
+    const [promotionOptions, setPromotionOptions] = useState<string[]>([])
 
     useEffect(() => {
         let mounted = true
@@ -90,6 +94,13 @@ export default function Teachers() {
                 for (const p of promotionsRes.data ?? []) {
                     promoLabelById.set(String(p.id), p.nom)
                 }
+                const promotionLabels = (promotionsRes.data ?? [])
+                    .map((promo) => promo.nom ?? '')
+                    .filter((label) => label.trim().length > 0)
+                const uniquePromotionLabels = Array.from(
+                    new Set(promotionLabels),
+                ).sort((a, b) => a.localeCompare(b, 'fr', { numeric: true, sensitivity: 'base' }))
+                setPromotionOptions(uniquePromotionLabels)
 
                 const matiereById = new Map<string, { nom: string; promoLabel: string }>()
                 for (const m of matieres ?? []) {
@@ -254,6 +265,7 @@ export default function Teachers() {
     const filteredTeachers = (list: Teacher[]) => {
         const needle = searchValue.trim().toLowerCase()
         const subjectNeedle = subjectFilter.trim().toLowerCase()
+        const promotionNeedle = promotionFilter.trim().toLowerCase()
         const hasDateFilter = Boolean(dateFrom || dateTo)
         const rangeStart = dateFrom || '0000-01-01'
         const rangeEnd = dateTo || '9999-12-31'
@@ -267,6 +279,11 @@ export default function Teachers() {
                 (teacher.subjects || []).some((subject) =>
                     subject.name.toLowerCase().includes(subjectNeedle),
                 )
+            const matchesPromotion =
+                !promotionNeedle ||
+                (teacher.subjects || []).some(
+                    (subject) => subject.promo?.toLowerCase() === promotionNeedle,
+                )
             const matchesDate = !hasDateFilter
                 ? true
                 : (teacher.availabilityPeriods || []).some((period) => {
@@ -275,7 +292,13 @@ export default function Teachers() {
                       return periodStart <= rangeEnd && periodEnd >= rangeStart
                   })
 
-            return matchesSearch && matchesMode && matchesSubject && matchesDate
+            return (
+                matchesSearch &&
+                matchesMode &&
+                matchesSubject &&
+                matchesPromotion &&
+                matchesDate
+            )
         })
     }
 
@@ -283,16 +306,30 @@ export default function Teachers() {
     const filteredInternalLilleChateauroux = filteredTeachers(internalLilleChateauroux)
     const filteredVacataires = filteredTeachers(intervenants)
     const filteredInvited = filteredTeachers(invites)
+    const hasFilteredTeachers =
+        filteredInternalBordeaux.length +
+            filteredInternalLilleChateauroux.length +
+            filteredVacataires.length +
+            filteredInvited.length >
+        0
 
     const {
         hasActiveFilters,
         resetFilters: handleResetFilters,
     } = useToolbarFilters({
-        values: { searchValue, modeFilter, subjectFilter, dateFrom, dateTo },
+        values: {
+            searchValue,
+            modeFilter,
+            promotionFilter,
+            subjectFilter,
+            dateFrom,
+            dateTo,
+        },
         defaults: DEFAULT_TEACHERS_FILTERS,
         onReset: () => {
             setSearchValue(DEFAULT_TEACHERS_FILTERS.searchValue)
             setModeFilter(DEFAULT_TEACHERS_FILTERS.modeFilter)
+            setPromotionFilter(DEFAULT_TEACHERS_FILTERS.promotionFilter)
             setSubjectFilter(DEFAULT_TEACHERS_FILTERS.subjectFilter)
             setDateFrom(DEFAULT_TEACHERS_FILTERS.dateFrom)
             setDateTo(DEFAULT_TEACHERS_FILTERS.dateTo)
@@ -377,6 +414,9 @@ export default function Teachers() {
                     onSearchChange={setSearchValue}
                     modeFilter={modeFilter}
                     onModeChange={setModeFilter}
+                    promotionFilter={promotionFilter}
+                    onPromotionChange={setPromotionFilter}
+                    promotionOptions={promotionOptions}
                     subjectFilter={subjectFilter}
                     onSubjectChange={setSubjectFilter}
                     subjectOptions={subjectOptions}
@@ -404,45 +444,53 @@ export default function Teachers() {
                 )}
 
                 <div className="teachers-sections">
-                    {filteredInternalBordeaux.length > 0 && (
-                        <TeacherSection
-                            title="Internes Bordeaux"
-                            teachers={filteredInternalBordeaux}
-                            onSelectTeacher={setSelectedTeacher}
-                            selectionMode={selectionMode}
-                            selectedTeacherIds={selectedTeacherIdsSet}
-                            onToggleTeacherSelection={toggleTeacherSelection}
-                        />
-                    )}
-                    {filteredInternalLilleChateauroux.length > 0 && (
-                        <TeacherSection
-                            title="Internes Lille/Châteauroux"
-                            teachers={filteredInternalLilleChateauroux}
-                            onSelectTeacher={setSelectedTeacher}
-                            selectionMode={selectionMode}
-                            selectedTeacherIds={selectedTeacherIdsSet}
-                            onToggleTeacherSelection={toggleTeacherSelection}
-                        />
-                    )}
-                    {filteredVacataires.length > 0 && (
-                        <TeacherSection
-                            title="Vacataires"
-                            teachers={filteredVacataires}
-                            onSelectTeacher={setSelectedTeacher}
-                            selectionMode={selectionMode}
-                            selectedTeacherIds={selectedTeacherIdsSet}
-                            onToggleTeacherSelection={toggleTeacherSelection}
-                        />
-                    )}
-                    {filteredInvited.length > 0 && (
-                        <TeacherSection
-                            title="Invités ponctuels"
-                            teachers={filteredInvited}
-                            onSelectTeacher={setSelectedTeacher}
-                            selectionMode={selectionMode}
-                            selectedTeacherIds={selectedTeacherIdsSet}
-                            onToggleTeacherSelection={toggleTeacherSelection}
-                        />
+                    {hasFilteredTeachers ? (
+                        <>
+                            {filteredInternalBordeaux.length > 0 && (
+                                <TeacherSection
+                                    title="Internes Bordeaux"
+                                    teachers={filteredInternalBordeaux}
+                                    onSelectTeacher={setSelectedTeacher}
+                                    selectionMode={selectionMode}
+                                    selectedTeacherIds={selectedTeacherIdsSet}
+                                    onToggleTeacherSelection={toggleTeacherSelection}
+                                />
+                            )}
+                            {filteredInternalLilleChateauroux.length > 0 && (
+                                <TeacherSection
+                                    title="Internes Lille/Châteauroux"
+                                    teachers={filteredInternalLilleChateauroux}
+                                    onSelectTeacher={setSelectedTeacher}
+                                    selectionMode={selectionMode}
+                                    selectedTeacherIds={selectedTeacherIdsSet}
+                                    onToggleTeacherSelection={toggleTeacherSelection}
+                                />
+                            )}
+                            {filteredVacataires.length > 0 && (
+                                <TeacherSection
+                                    title="Vacataires"
+                                    teachers={filteredVacataires}
+                                    onSelectTeacher={setSelectedTeacher}
+                                    selectionMode={selectionMode}
+                                    selectedTeacherIds={selectedTeacherIdsSet}
+                                    onToggleTeacherSelection={toggleTeacherSelection}
+                                />
+                            )}
+                            {filteredInvited.length > 0 && (
+                                <TeacherSection
+                                    title="Invités ponctuels"
+                                    teachers={filteredInvited}
+                                    onSelectTeacher={setSelectedTeacher}
+                                    selectionMode={selectionMode}
+                                    selectedTeacherIds={selectedTeacherIdsSet}
+                                    onToggleTeacherSelection={toggleTeacherSelection}
+                                />
+                            )}
+                        </>
+                    ) : (
+                        <div className="teacher-empty-state">
+                            Aucun enseignant ne correspond aux filtres sélectionnés.
+                        </div>
                     )}
                 </div>
             </div>

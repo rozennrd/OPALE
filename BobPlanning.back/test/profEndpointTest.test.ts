@@ -1,4 +1,10 @@
 const request = require('supertest');
+const express = require('express');
+
+jest.spyOn(express.application, 'listen').mockImplementation(() => ({
+  timeout: 0,
+  close: jest.fn(),
+}));
 
 // Mocks must be defined before importing the app so the modules used
 // when routes/controllers are registered will use the mocked implementations.
@@ -92,7 +98,7 @@ describe('Prof endpoints', () => {
     it('should create a professor and return 201', async () => {
       mockCreateProf.mockResolvedValue({ id: 42 });
 
-      const body = { nom: 'Famille', prenom: 'Prenom', email: 'elo.bloup@junia.com', email_perso: 'elo.bloup@mail.com', type: 'Permanent', distanciel: true, campus_origin: 'Bordeaux' };
+      const body = { nom: 'Famille', prenom: 'Prenom', email: 'elo.bloup@junia.com', email_perso: 'elo.bloup@mail.com', type: 'Permanent', distanciel: true, campus_origin: 'Bordeaux', modalite_enseignement: 'Présentiel', telephone: null };
       const res = await request(app)
         .post('/addProf')
         .send(body)
@@ -106,8 +112,9 @@ describe('Prof endpoints', () => {
         prenom: body.prenom,
         email: body.email,
         email_perso: body.email_perso,
+        telephone: body.telephone,
         type: body.type,
-        distanciel: body.distanciel,
+        modalite_enseignement: body.modalite_enseignement,
         campus_origin: body.campus_origin,
       });
     });
@@ -143,7 +150,7 @@ describe('Prof endpoints', () => {
   describe('PUT /updateProf/:id', () => {
     it('should update a professor and return success message', async () => {
       mockUpdateProf.mockResolvedValue(undefined);
-      const body = { nom: 'Updated', prenom: 'UpdatedPrenom', type: 'Permanent', email: 'u@junia.com', email_perso: 'u@mail.com', distanciel: false, campus_origin: 'Bordeaux' };
+      const body = { nom: 'Updated', prenom: 'UpdatedPrenom', type: 'Permanent', email: 'u@junia.com', email_perso: 'u@mail.com', distanciel: false, campus_origin: 'Bordeaux', modalite_enseignement: 'Présentiel', telephone: null };
       const res = await request(app)
         .put('/updateProf/1')
         .send(body)
@@ -157,8 +164,9 @@ describe('Prof endpoints', () => {
         prenom: body.prenom,
         email: body.email,
         email_perso: body.email_perso,
+        telephone: body.telephone,
         type: body.type,
-        distanciel: body.distanciel,
+        modalite_enseignement: body.modalite_enseignement,
         campus_origin: body.campus_origin,
       });
     });

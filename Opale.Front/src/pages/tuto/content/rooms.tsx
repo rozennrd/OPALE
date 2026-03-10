@@ -1,9 +1,9 @@
 ﻿import type { TutorialContent } from '../types'
 /* eslint-disable react/no-unescaped-entities */
-import screenPageSalleScreenshot from '../../../assets/tuto/salle/screen-page-salle.png'
-import screenPageSalleSuppressionScreenshot from '../../../assets/tuto/salle/screen-page-salle-suppression.png'
-import screenPopupSalleScreenshot from '../../../assets/tuto/salle/screen-pop-up-salle.png'
-import screenPopupSalleModifScreenshot from '../../../assets/tuto/salle/screen-pop-up-salle-modif.png'
+import screenPageSalleScreenshot from '../../../assets/tuto/salle/page-salle.png'
+import screenPageSalleSuppressionScreenshot from '../../../assets/tuto/salle/page-salle.png'
+import screenPopupSalleScreenshot from '../../../assets/tuto/salle/page-salle-add.png'
+import screenPopupSalleModifScreenshot from '../../../assets/tuto/salle/page-salle-update.png'
 
 export const roomsTutorialContent: TutorialContent = {
     objective:
@@ -25,8 +25,12 @@ export const roomsTutorialContent: TutorialContent = {
                     imageSrc: screenPageSalleScreenshot,
                     imageAlt: 'Vue générale de la page Salles dans OPALE',
                     imageCaption:
-                        'Vue générale avec toolbar de recherche/filtres, catégories par étage et cartes salles.',
+                        "Vue générale avec barre d'outils de recherche/filtres, catégories par étage et cartes salles.",
                 },
+                <>
+                    La barre d'outils en haut centralise la <strong>recherche</strong>, les <strong>filtres</strong>,
+                    la <strong>création</strong> et la <strong>suppression en mode sélection</strong>.
+                </>,
                 <>
                     Les salles sont regroupées en <strong>3 catégories</strong>: <em>Rez-de-chaussée</em>,{' '}
                     <em>1er étage</em> et <em>2ème étage</em> (1 étage = 1 catégorie).
@@ -43,10 +47,6 @@ export const roomsTutorialContent: TutorialContent = {
                     La disponibilité peut être pilotée au niveau de la salle (ex: <strong>travaux</strong>),
                     pour la rendre utilisable ou non dans la planification.
                 </>,
-                <>
-                    La page propose aussi une <strong>zone d'ajout</strong> (carte pointillée avec bouton +)
-                    pour créer une nouvelle salle.
-                </>,
             ],
         },
         {
@@ -55,19 +55,20 @@ export const roomsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Cliquer sur la <u>zone pointillée avec le bouton +</u> pour ouvrir le pop-up de
-                            création d'une salle.
+                            Cliquer sur l'icône <strong>+</strong> dans la barre d'outils pour ouvrir le pop-up{' '}
+                            <u>Détail de la salle</u>.
                         </>
                     ),
                     imageSrc: screenPageSalleScreenshot,
-                    imageAlt: "Zone de création d'une salle sur la page Salles",
-                    imageCaption: "La zone pointillée ouvre le formulaire de création d'une nouvelle salle.",
+                    imageAlt: "Bouton + de création d'une salle",
+                    imageCaption: "Le bouton + ouvre le pop-up de création d'une salle.",
                     imageHighlight: {
-                        left: '36.6%',
-                        top: '52.9%',
-                        width: '13.9%',
-                        height: '8.0%',
-                        label: 'Ajouter une salle',
+                        left: '83.35%',
+                        top: '19.2%',
+                        width: '11.4%',
+                        height: '5.7%',
+                        label: 'Création de salle',
+                        labelLeft: '-4rem',
                     },
                 },
                 {
@@ -81,11 +82,45 @@ export const roomsTutorialContent: TutorialContent = {
                     imageAlt: "Pop-up de création d'une salle",
                     imageCaption:
                         'Le formulaire de création définit identité, types, disponibilité et commentaire.',
+                    imageHighlights: [
+                        {
+                            left: '19.8%',
+                            top: '28.5%',
+                            width: '36.0%',
+                            height: '23.8%',
+                            label: 'Identité',
+                        },
+                        {
+                            left: '55.85%',
+                            top: '28.5%',
+                            width: '25.0%',
+                            height: '20.9%',
+                            label: 'Commentaires',
+                        },
+                        {
+                            left: '19.8%',
+                            top: '53.0%',
+                            width: '16.7%',
+                            height: '24.8%',
+                            label: 'Type principal',
+                            labelLeft: '-6.5rem',
+                            labelTop: '5rem',
+                        },
+                        {
+                            left: '39.4%',
+                            top: '53.0%',
+                            width: '16.0%',
+                            height: '25.8%',
+                            label: 'Types disponibles',
+                            labelLeft: '11.5rem',
+                            labelTop: '5rem',
+                        },
+                    ],
                     subSteps: [
                         <>
                             <strong>Identité de la salle & types</strong>: saisir le{' '}
                             <strong>Nom court (code salle)</strong>, le <strong>Surnom / nom complet</strong>,
-                            l'<strong>Étage</strong> et la <strong>Capacité (places)</strong>.
+                            l'<strong>étage</strong> et la <strong>capacité (places)</strong>.
                         </>,
                         <>
                             <strong>Disponibilité globale</strong>: activer/désactiver le statut réservable de
@@ -103,97 +138,56 @@ export const roomsTutorialContent: TutorialContent = {
                             <strong>Description / commentaires</strong>: ajouter les informations utiles
                             (équipements, contraintes d'usage, remarques).
                         </>,
-                        <>
-                            Le <strong>type principal</strong> reste la référence fonctionnelle de la salle;
-                            les types disponibles servent à étendre les usages possibles.
-                        </>,
                     ],
                 },
                 {
                     text: (
                         <>
-                            Cliquer sur <strong>Annuler</strong> ou <strong>Enregistrer</strong> selon le
-                            résultat souhaité.
+                            Cliquer sur la <strong>croix</strong> en haut à droite ou appuyer sur{' '}
+                            <strong>Escape</strong> pour annuler la création. Cette action ouvre un pop-up de
+                            confirmation.
+                            <br />
+                            <em>Action commune</em> : voir le tuto{' '}
+                            <strong>Annuler, créer ou enregistrer</strong>.
                         </>
                     ),
                     subSteps: [
                         <>
-                            <strong>Annuler</strong>: ferme le pop-up <em>sans sauvegarder</em>.
+                            Cliquer sur la <strong>croix</strong> en haut à droite ou appuyer sur{' '}
+                            <strong>Escape</strong> annule la fermeture et renvoie sur la{' '}
+                            <strong>carte de détail de création</strong> en conservant les informations.
                         </>,
                         <>
-                            <strong>Enregistrer</strong>: crée/valide la salle et la rend visible dans la liste.
+                            Cliquer sur <strong>Fermer sans créer</strong> ferme la carte de détail de création
+                            sans créer la salle.
                         </>,
                         <>
-                            En mode édition, un bouton <strong>Supprimer</strong> peut être affiché selon les
-                            règles de la page.
+                            Cliquer sur <strong>Fermer et créer</strong> ferme la carte de détail de création et
+                            crée la salle.
                         </>,
                     ],
-                },
-            ],
-        },
-        {
-            title: 'Supprimer une salle',
-            steps: [
-                {
-                    text: (
-                        <>
-                            <strong>Étape 1.1</strong>: depuis la toolbar, cliquer sur{' '}
-                            <strong>Sélectionner</strong> pour activer le mode suppression.
-                        </>
-                    ),
-                    imageSrc: screenPageSalleScreenshot,
-                    imageAlt: 'Activation du mode suppression sur la page Salles',
-                    imageCaption: 'Le bouton Sélectionner active les actions de suppression en lot.',
-                    imageHighlight: {
-                        left: '86.1%',
-                        top: '20.7%',
-                        width: '8.5%',
-                        height: '3.8%',
-                        label: 'Mode sélection',
-                    },
                 },
                 {
                     text: (
                         <>
-                            Cocher une ou plusieurs salles, puis cliquer sur <strong>Supprimer (n)</strong>.
+                            Cliquer sur <strong>Créer</strong> pour créer la nouvelle salle. Cette action ouvre
+                            un pop-up de confirmation.
+                            <br />
+                            <em>Action commune</em> : voir le tuto{' '}
+                            <strong>Annuler, créer ou enregistrer</strong>.
                         </>
                     ),
-                    imageSrc: screenPageSalleSuppressionScreenshot,
-                    imageAlt: 'Suppression de salles en mode sélection',
-                    imageCaption:
-                        'Le mode sélection permet une suppression multiple avec compteur des éléments sélectionnés.',
-                    imageHighlights: [
-                        {
-                            left: '85.3%',
-                            top: '20.4%',
-                            width: '9.2%',
-                            height: '4.5%',
-                            label: 'Quitter le mode sélection',
-                            labelLeft: '-2.5rem',
-                        },
-                        {
-                            left: '86.7%',
-                            top: '36.5%',
-                            width: '8.5%',
-                            height: '6.1%',
-                            label: 'Supprimer (n)',
-                            labelLeft: '-0.8rem',
-                        },
-                    ],
                     subSteps: [
                         <>
-                            Le compteur <strong>(n)</strong> indique le nombre de salles sélectionnées.
+                            Cliquer sur <strong>Annuler</strong>, la <strong>croix</strong> en haut à droite ou{' '}
+                            <strong>Escape</strong> renvoie sur le pop-up de création en conservant les
+                            informations saisies.
                         </>,
                         <>
-                            Utiliser <strong>Tout sélectionner</strong> ou <strong>Effacer</strong> pour ajuster
-                            rapidement la sélection avant suppression.
+                            Cliquer sur <strong>Créer</strong> crée la salle et ferme le pop-up de création.
                         </>,
                     ],
                 },
-                <>
-                    <strong>Étape 2 (à venir)</strong>: un pop-up de confirmation apparaîtra pour valider ou
-                    annuler la suppression.
-                </>,
             ],
         },
         {
@@ -210,10 +204,10 @@ export const roomsTutorialContent: TutorialContent = {
                     imageAlt: "Accès à la modification d'une salle",
                     imageCaption: 'La carte salle ouvre le formulaire de modification.',
                     imageHighlight: {
-                        left: '21.5%',
-                        top: '42.7%',
-                        width: '14.5%',
-                        height: '9.6%',
+                        left: '24.0%',
+                        top: '41.3%',
+                        width: '17.8%',
+                        height: '9.4%',
                         label: 'Salle à modifier',
                     },
                 },
@@ -228,10 +222,44 @@ export const roomsTutorialContent: TutorialContent = {
                     imageAlt: "Pop-up de modification d'une salle",
                     imageCaption:
                         "Le pop-up permet d'ajuster identité, types, disponibilité et commentaires.",
+                    imageHighlights: [
+                        {
+                            left: '19.8%',
+                            top: '28.5%',
+                            width: '36.0%',
+                            height: '23.8%',
+                            label: 'Identité',
+                        },
+                        {
+                            left: '55.85%',
+                            top: '28.5%',
+                            width: '25.0%',
+                            height: '20.9%',
+                            label: 'Commentaires',
+                        },
+                        {
+                            left: '19.8%',
+                            top: '53.0%',
+                            width: '16.7%',
+                            height: '24.8%',
+                            label: 'Type principal',
+                            labelLeft: '-6.5rem',
+                            labelTop: '5rem',
+                        },
+                        {
+                            left: '39.4%',
+                            top: '53.0%',
+                            width: '16.0%',
+                            height: '25.8%',
+                            label: 'Types disponibles',
+                            labelLeft: '11.5rem',
+                            labelTop: '5rem',
+                        },
+                    ],
                     subSteps: [
                         <>
                             <strong>Nom court (code salle)</strong>, <strong>Surnom / nom complet</strong>,{' '}
-                            <strong>Étage</strong> et <strong>Capacité (places)</strong>: corriger ces champs
+                            <strong>étage</strong> et <strong>capacité (places)</strong>: corriger ces champs
                             si l'identité ou l'usage de la salle évolue.
                         </>,
                         <>
@@ -247,30 +275,83 @@ export const roomsTutorialContent: TutorialContent = {
                             réels autorisés dans la salle.
                         </>,
                         <>
-                            <strong>Description / commentaires</strong>: mettre à jour les contraintes, les
+                            <strong>Description / commentaires</strong> : mettre à jour les contraintes, les
                             équipements et toute information utile à l'exploitation.
-                        </>,
-                        <>
-                            Le bouton <strong>Supprimer</strong> peut être disponible dans ce pop-up selon les
-                            règles de la page.
                         </>,
                     ],
                 },
                 {
                     text: (
                         <>
-                            Cliquer sur <strong>Annuler</strong> ou <strong>Enregistrer</strong> pour finaliser
-                            la modification.
+                            Cliquer sur <strong>Supprimer</strong> ou <strong>Enregistrer</strong> selon le
+                            résultat souhaité.
                         </>
                     ),
                     subSteps: [
-                        <>
-                            <strong>Annuler</strong>: abandonne les modifications en cours.
-                        </>,
-                        <>
-                            <strong>Enregistrer</strong>: applique les changements sur la salle.
-                        </>,
+                        {
+                            text: (
+                                <>
+                                    <strong>Supprimer</strong>: supprime la salle affichée à l'écran. Cette
+                                    action ouvre un pop-up de confirmation.
+                                    <br />
+                                    <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
+                                </>
+                            ),
+                            subSteps: [
+                                <>
+                                    Cliquer sur <strong>Annuler</strong>, la <strong>croix</strong> en haut à
+                                    droite ou <strong>Escape</strong> annule la suppression et renvoie sur la{' '}
+                                    <strong>carte de détail de modification</strong> en conservant les
+                                    informations saisies.
+                                </>,
+                                <>
+                                    Cliquer sur <strong>Supprimer</strong> supprime définitivement la salle.
+                                </>,
+                            ],
+                        },
+                        {
+                            text: (
+                                <>
+                                    <strong>Enregistrer</strong>: enregistre les modifications. Cette action
+                                    ouvre un pop-up de confirmation.
+                                    <br />
+                                    <em>Action commune</em> : voir le tuto{' '}
+                                    <strong>Annuler, créer ou enregistrer</strong>.
+                                </>
+                            ),
+                            subSteps: [
+                                <>
+                                    Cliquer sur <strong>Annuler</strong>, la <strong>croix</strong> en haut à
+                                    droite ou <strong>Escape</strong> renvoie sur la{' '}
+                                    <strong>carte de détail de modification</strong> en conservant les
+                                    informations saisies.
+                                </>,
+                                <>
+                                    Cliquer sur <strong>Enregistrer</strong> enregistre la salle et ferme le
+                                    pop-up de modification.
+                                </>,
+                            ],
+                        },
                     ],
+                },
+            ],
+        },
+        {
+            title: 'Supprimer une salle',
+            steps: [
+                {
+                    text: (
+                        <>
+                            La suppression des salles se fait en <strong>mode sélection</strong> depuis la
+                            barre d'outils, ou depuis la <strong>carte de détail</strong> d'une salle en modification.
+                            <br />
+                            <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
+                        </>
+                    ),
+                    imageSrc: screenPageSalleSuppressionScreenshot,
+                    imageAlt: 'Suppression de salles en mode sélection',
+                    imageCaption:
+                        'Le mode sélection permet une suppression multiple avec compteur des éléments sélectionnés.',
                 },
             ],
         },
@@ -280,86 +361,38 @@ export const roomsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            La barre d'outils regroupe la <strong>recherche</strong>, les{' '}
-                            <strong>filtres de salles</strong> et les <strong>actions rapides</strong>.
+                            La barre d'outils contient :
+                            <ul>
+                                <li>
+                                    <strong>Recherche</strong> de salle.
+                                </li>
+                                <li>
+                                    <strong>Sélectionner / Quitter sélection</strong> avec compteur des
+                                    éléments sélectionnés.
+                                </li>
+                                <li>
+                                    <strong>Réinitialiser les filtres</strong>.
+                                </li>
+                                <li>
+                                    <strong>Ajouter une salle</strong>.
+                                </li>
+                                <li>
+                                    <strong>Filtre Type</strong> : Tous les types, Cours, Informatique, Projet,
+                                    Rassemblement, Réunion, Associatif, Électronique, Fablab, Réseau.
+                                </li>
+                                <li>
+                                    <strong>Filtre Capacité</strong> : opérateur (Tous, &gt;, &lt;, =) + valeur.
+                                </li>
+                                <li>
+                                    <strong>Filtre Disponibilité</strong> : Tous, Disponible, Non dispo.
+                                </li>
+                            </ul>
+                            <em>Action commune</em> : voir le tuto <strong>Rechercher et filtrer</strong>.
                         </>
                     ),
                     imageSrc: screenPageSalleScreenshot,
                     imageAlt: "Barre d'outils de la page Salles",
-                    imageCaption: 'Toolbar de recherche, filtres, mode sélection et réinitialisation.',
-                    imageHighlights: [
-                        {
-                            left: '22.7%',
-                            top: '20.8%',
-                            width: '62.6%',
-                            height: '3.9%',
-                            label: 'Recherche',
-                        },
-                        {
-                            left: '22.7%',
-                            top: '28.6%',
-                            width: '9.5%',
-                            height: '3.6%',
-                            label: 'Filtre type',
-                            labelLeft: '-0.2rem',
-                            labelTop: '2.4rem',
-                        },
-                        {
-                            left: '41.9%',
-                            top: '28.6%',
-                            width: '14.8%',
-                            height: '3.6%',
-                            label: 'Filtre capacité',
-                            labelTop: '2.4rem',
-                        },
-                        {
-                            left: '66.2%',
-                            top: '28.6%',
-                            width: '13.2%',
-                            height: '3.6%',
-                            label: 'Filtre disponibilité',
-                            labelTop: '2.4rem',
-                        },
-                        {
-                            left: '86.1%',
-                            top: '20.7%',
-                            width: '8.5%',
-                            height: '3.8%',
-                            label: 'Sélection',
-                            labelLeft: '-0.5rem',
-                        },
-                        {
-                            left: '89.0%',
-                            top: '28.0%',
-                            width: '6.1%',
-                            height: '4.4%',
-                            label: 'Reset filtres',
-                            labelLeft: '-0.8rem',
-                            labelTop: '2.4rem',
-                        },
-                    ],
-                    subSteps: [
-                        <>
-                            <strong>Recherche textuelle</strong>: filtrer rapidement une salle par nom/code.
-                        </>,
-                        <>
-                            <strong>Type</strong>: filtrer selon le type de salle (type principal).
-                        </>,
-                        <>
-                            <strong>Capacité</strong>: combiner un comparateur et une valeur (ex: <em>&gt;= 24</em>)
-                            pour cibler les salles adaptées.
-                        </>,
-                        <>
-                            <strong>Disponibilité</strong>: afficher les salles disponibles, non disponibles ou
-                            les deux.
-                        </>,
-                        <>
-                            <strong>Sélectionner</strong>: activer la suppression multiple.
-                        </>,
-                        <>
-                            <strong>Reset filtres</strong>: revenir rapidement à la vue complète.
-                        </>,
-                    ],
+                    imageCaption: "Barre d'outils de recherche, filtres, mode sélection et réinitialisation.",
                 },
             ],
         },
@@ -370,3 +403,8 @@ export const roomsTutorialContent: TutorialContent = {
         'Documenter les contraintes de salle dans les commentaires (équipements, restrictions, travaux).',
     ],
 }
+
+
+
+
+

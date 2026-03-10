@@ -1,5 +1,5 @@
 // src/pages/Promotions.tsx
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import icPlus from '../assets/ic-plus.png'
 
 import PromoEditDialog from '../components/promotions/PromoEditDialog.tsx'
@@ -126,6 +126,7 @@ export default function Promotions() {
                         openEditPromotion={openEditPromotion}
                         removePromotion={removePromotion}
                         addPromotion={addPromotionToCycle}
+                        refreshCycles={refreshCycles}
                     />
                 ))}
                 <button

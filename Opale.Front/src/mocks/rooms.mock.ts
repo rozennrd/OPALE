@@ -169,7 +169,7 @@ export const ROOMS_MOCK: Room[] = [
     {
         id: 'room-j112',
         name: 'J112',
-        fullName: 'J112_Salle de reunion',
+        fullName: 'J112_Salle de réunion',
         floor: 1,
         mainType: 'Reunion',
         types: ['Reunion'],
@@ -221,7 +221,7 @@ export const ROOMS_MOCK: Room[] = [
     {
         id: 'room-j202',
         name: 'J202',
-        fullName: 'J202_Salle de reunion',
+        fullName: 'J202_Salle de réunion',
         floor: 2,
         mainType: 'Reunion',
         types: ['Reunion'],

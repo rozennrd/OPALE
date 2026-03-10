@@ -1,5 +1,6 @@
 // src/components/rooms/RoomDetailCard.tsx
 import { useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import { Room, RoomType } from '../../models/Room'
 import { ROOM_TYPES } from '../../mocks/rooms.mock'
 import RoomTypeBadge from './RoomTypeBadge'
@@ -16,6 +17,10 @@ interface RoomDetailCardProps {
     onChange: (room: Room) => Promise<RoomSaveResult> | RoomSaveResult | boolean | void
     onDelete?: () => void
     isCreate?: boolean
+    validateRoomIdentity?: (roomId: string | undefined, name: string, fullName: string) => {
+        nameError?: string
+        fullNameError?: string
+    }
 }
 
 const ROOM_TYPE_LABELS: Record<RoomType, string> = {
@@ -23,11 +28,11 @@ const ROOM_TYPE_LABELS: Record<RoomType, string> = {
     Informatique: 'Informatique',
     Projet: 'Projet',
     Rassemblement: 'Rassemblement',
-    Reunion: 'Reunion',
+    Reunion: 'Réunion',
     Associatif: 'Associatif',
-    Electronique: 'Electronique',
+    Electronique: 'Électronique',
     Fablab: 'Fablab',
-    Reseau: 'Reseau',
+    Reseau: 'Réseau',
 }
 
 const floorLabel = (floor: number): string => {
@@ -49,6 +54,7 @@ export default function RoomDetailCard({
     onChange,
     onDelete,
     isCreate = false,
+    validateRoomIdentity,
 }: RoomDetailCardProps) {
     const [name, setName] = useState(room.name)
     const [fullName, setFullName] = useState(room.fullName ?? '')
@@ -58,7 +64,7 @@ export default function RoomDetailCard({
     const [mainType, setMainType] = useState<RoomType>(room.mainType)
     const [types, setTypes] = useState<RoomType[]>(room.types)
     const [description, setDescription] = useState(room.description ?? '')
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [errorMessage, setErrorMessage] = useState<ReactNode | null>(null)
 
     useEffect(() => {
         setName(room.name)
@@ -74,6 +80,11 @@ export default function RoomDetailCard({
 
     const headerTitle = (fullName || name).trim() || room.name
     const roomDisplayName = (fullName || name || 'Nom de la salle').trim()
+    const validation = validateRoomIdentity
+        ? validateRoomIdentity(room.id, name, fullName)
+        : { nameError: undefined, fullNameError: undefined }
+    const nameError = validation.nameError
+    const fullNameError = validation.fullNameError
 
     const cancelCreateTitle = 'Création non enregistrée'
     const cancelCreateMessage = (
@@ -135,6 +146,25 @@ export default function RoomDetailCard({
     }
 
     const handleSave = async (): Promise<boolean> => {
+        if (nameError || fullNameError) {
+            const messages = [
+                nameError ? `Nom court : ${nameError}` : null,
+                fullNameError ? `Surnom / nom complet : ${fullNameError}` : null,
+            ].filter(Boolean) as string[]
+
+            setErrorMessage(
+                <div>
+                    <p>Corrige les champs suivants :</p>
+                    <ul>
+                        {messages.map((message) => (
+                            <li key={message}>{message}</li>
+                        ))}
+                    </ul>
+                </div>,
+            )
+            return false
+        }
+
         const nextRoom: Room = {
             ...room,
             name: name.trim() || room.name,
@@ -216,6 +246,9 @@ export default function RoomDetailCard({
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="Ex. J001"
                                     />
+                                    {nameError && (
+                                        <small className="room-detail-error">{nameError}</small>
+                                    )}
                                 </div>
 
                                 <div className="room-detail-field">
@@ -229,6 +262,9 @@ export default function RoomDetailCard({
                                         onChange={(e) => setFullName(e.target.value)}
                                         placeholder="Ex. J001_Projet"
                                     />
+                                    {fullNameError && (
+                                        <small className="room-detail-error">{fullNameError}</small>
+                                    )}
                                 </div>
 
                                 <div className="room-detail-field">

@@ -392,7 +392,7 @@ export default function Events() {
         if (!selectedEvent) {
             return {
                 success: false,
-                error: "Aucun evenement selectionne.",
+                error: "Aucun événement sélectionné.",
             }
         }
 
@@ -522,8 +522,8 @@ export default function Events() {
                             onSelectAll={() => selectAllEvents(visibleEventIds)}
                             onClearSelection={clearEventSelection}
                             onDeleteSelected={handleDeleteSelected}
-                            confirmTitle="Supprimer les evenements selectionnes"
-                            confirmMessage={`Vous allez supprimer ${selectedEventIds.length} evenement${selectedEventIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                            confirmTitle="Supprimer les événements sélectionnés"
+                            confirmMessage={`Vous allez supprimer ${selectedEventIds.length} événement${selectedEventIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
                         />
                     )}
 
@@ -569,8 +569,8 @@ export default function Events() {
                             </div>
                         ) : (
                             <div className="events-empty-state">
-                                Aucun evenement ne correspond aux filtres
-                                selectionnes.
+                                Aucun événement ne correspond aux filtres
+                                sélectionnés.
                             </div>
                         )}
                     </div>
