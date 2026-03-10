@@ -29,6 +29,9 @@
     --medieval-wood-mid: #6a4527;
     --medieval-wood-light: #8b623b;
 
+    --medieval-manuscript-texture:
+            url('../textures/medieval-manuscrit-light.png') center / cover no-repeat;
+
     --medieval-paper-texture:
             radial-gradient(circle at 18% 22%, rgba(255,255,255,0.28) 0, rgba(255,255,255,0) 32%),
             radial-gradient(circle at 78% 64%, rgba(120,82,43,0.08) 0, rgba(120,82,43,0) 34%),
@@ -43,20 +46,15 @@
             );
 
     --medieval-wood-texture:
-            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.16)),
-            radial-gradient(circle at 16% 22%, rgba(255,255,255,0.04), transparent 28%),
-            radial-gradient(circle at 82% 72%, rgba(0,0,0,0.18), transparent 34%),
-            repeating-linear-gradient(
-                    180deg,
-                    rgba(255,255,255,0.02) 0px,
-                    rgba(255,255,255,0.02) 2px,
-                    rgba(0,0,0,0.06) 2px,
-                    rgba(0,0,0,0.06) 6px
-            );
+            url('../textures/medieval-wood-light.png') center / cover no-repeat;
+
+    --medieval-stone-light-texture:
+            url('../textures/medieval-stone-light.png') center / 100% 100% no-repeat;
+    --medieval-stone-light-bg:
+            url('../textures/medieval-stone-light.png') center / cover no-repeat;
 
     --bg:
-            linear-gradient(180deg, rgba(102, 67, 38, 0.92), rgba(66, 41, 22, 0.98)),
-            var(--medieval-wood-texture);
+            var(--medieval-stone-light-bg);
 
     --panel:
             linear-gradient(180deg, rgba(250,244,235,0.96), rgba(240,226,202,0.97)),
@@ -122,6 +120,9 @@
     --medieval-stone-soft: #231d18;
     --medieval-stone-mid: #2f2721;
     --medieval-stone-deep: #100e0c;
+
+    --medieval-manuscript-texture:
+            url('../textures/medieval-manuscrit-light.png') center / cover no-repeat;
 
     --medieval-stone-texture:
             url('../textures/medieval-stone-dark.png') center / 420px 320px repeat;
@@ -258,9 +259,7 @@
   }
 
   :root[data-theme='medieval-light'] .sidebar {
-    background:
-            linear-gradient(180deg, rgba(84,55,28,0.90), rgba(58,36,18,0.96)),
-            var(--medieval-wood-texture);
+    background: var(--medieval-wood-texture);
   }
 
   :root[data-theme='medieval-dark'] .sidebar {
@@ -316,6 +315,10 @@
             inset 0 0 0 1px rgba(255,255,255,0.03),
             inset 0 0 32px rgba(0,0,0,0.30),
             var(--shadow-xl);
+  }
+
+  :root[data-theme='medieval-light'] .main-card {
+    background: transparent;
   }
 
   :root:is([data-theme='medieval-light'], [data-theme='medieval-dark']) .main-card::before {
@@ -507,6 +510,10 @@
     padding-bottom: 1.1rem;
   }
 
+  :root[data-theme='medieval-light'] .page-header {
+    margin-top: 5px;
+  }
+
   :root:is([data-theme='medieval-light'], [data-theme='medieval-dark']) .page-header::after {
     content: '';
     position: absolute;
@@ -530,6 +537,15 @@
             radial-gradient(circle at 50% 50%, rgba(214,168,91,1) 0 16%, transparent 18%);
     opacity: 0.95;
     pointer-events: none;
+  }
+
+  :root[data-theme='medieval-light'] .page-header::after {
+    left: -50%;
+    right: -50%;
+    height: 32px;
+    bottom: -12px;
+    background: url('../textures/ornement-medieval-light.png') center / contain no-repeat;
+    opacity: 0.95;
   }
 
   :root[data-theme='medieval-dark'] .page-header::after {
@@ -828,6 +844,30 @@
     box-shadow: var(--shadow-lg);
   }
 
+  :root[data-theme='medieval-light'] :is(
+    .detail-card,
+    .confirm-dialog-card,
+    .promo-edit-card,
+    .promo-adjust-card,
+    .maquette-preview-dialog
+  ) {
+    background: url('../textures/medieval-manuscrit-light.png') center / 100% 100% no-repeat;
+    border: none;
+    box-shadow: var(--shadow-xl);
+    color: var(--text);
+    padding: clamp(32px, 3.6vw, 48px) clamp(38px, 4.2vw, 60px) clamp(28px, 3.2vw, 44px);
+  }
+
+  :root[data-theme='medieval-light'] :is(
+    .detail-card,
+    .confirm-dialog-card,
+    .promo-edit-card,
+    .promo-adjust-card,
+    .maquette-preview-dialog
+  )::after {
+    content: none;
+  }
+
   :root[data-theme='medieval-dark'] :is(
     .detail-card,
     .confirm-dialog-card,
@@ -889,6 +929,18 @@
   }
 
   :root[data-theme='medieval-dark'] :is(
+    .rooms-page,
+    .events-page,
+    .teachers-page,
+    .matieres-page,
+    .settings-page,
+    .documentation-page
+  ) {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  :root[data-theme='medieval-light'] :is(
     .rooms-page,
     .events-page,
     .teachers-page,

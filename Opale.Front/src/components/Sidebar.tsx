@@ -8,6 +8,7 @@ import logoFullPapillonLight from '../assets/logo/logo-full-papillon-light.png'
 import logoFullPapillonDark from '../assets/logo/logo-full-papillon-dark.png'
 import logoFullSpock from '../assets/logo/logo-full-spock.png'
 import logoFullMedievalDark from '../assets/logo/logo-full-medieval-dark.png'
+import logoFullMedievalLight from '../assets/logo/logo-full-medieval-light.png'
 import logoCompact from '../assets/logo/logo-compact.png'
 import icPlanning from '../assets/sidebar/ic-planning.png'
 import icPromotions from '../assets/sidebar/ic-promos.png'
@@ -69,6 +70,7 @@ export default function Sidebar(): JSX.Element | null {
                 <img className="logo-full logo-full-papillon-light" src={logoFullPapillonLight} alt="OPALE" />
                 <img className="logo-full logo-full-papillon-dark" src={logoFullPapillonDark} alt="OPALE" />
                 <img className="logo-full logo-full-spock" src={logoFullSpock} alt="OPALE" />
+                <img className="logo-full logo-full-medieval-light" src={logoFullMedievalLight} alt="OPALE" />
                 <img className="logo-full logo-full-medieval-dark" src={logoFullMedievalDark} alt="OPALE" />
                 <img className="logo-compact" src={logoCompact} alt="O" />
             </div>

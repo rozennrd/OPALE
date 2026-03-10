@@ -8,6 +8,7 @@ import logoFullPapillonLight from '../assets/logo/logo-full-papillon-light.png';
 import logoFullPapillonDark from '../assets/logo/logo-full-papillon-dark.png';
 import logoFullSpock from '../assets/logo/logo-full-spock.png';
 import logoFullMedievalDark from '../assets/logo/logo-full-medieval-dark.png';
+import logoFullMedievalLight from '../assets/logo/logo-full-medieval-light.png';
 import ThemeToggle from '../components/ThemeToggle';
 import { LoginCredentials } from '../services/base/types';
 import { authService } from '../services/base/AuthService';
@@ -57,6 +58,7 @@ export default function Login(): React.ReactElement {
                 <img className="login-logo-papillon-light" src={logoFullPapillonLight} alt="OPALE" />
                 <img className="login-logo-papillon-dark" src={logoFullPapillonDark} alt="OPALE" />
                 <img className="login-logo-spock" src={logoFullSpock} alt="OPALE" />
+                <img className="login-logo-medieval-light" src={logoFullMedievalLight} alt="OPALE" />
                 <img className="login-logo-medieval-dark" src={logoFullMedievalDark} alt="OPALE" />
             </div>
 

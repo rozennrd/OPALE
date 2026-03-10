@@ -89,7 +89,17 @@
 :root[data-theme='medieval-dark'] .login-logo .login-logo-dark {
     display: none;
 }
+:root[data-theme='medieval-light'] .login-logo .login-logo-dark {
+    display: none;
+}
 
+.login-logo .login-logo-medieval-light {
+    display: none;
+}
+
+:root[data-theme='medieval-light'] .login-logo .login-logo-medieval-light {
+    display: block;
+}
 :root[data-theme='medieval-dark'] .login-logo .login-logo-medieval-dark {
     display: block;
 }
