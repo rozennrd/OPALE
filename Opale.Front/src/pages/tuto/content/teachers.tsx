@@ -30,27 +30,27 @@ export const teachersTutorialContent: TutorialContent = {
                     imageSrc: screenPageProfScreenshot,
                     imageAlt: 'Vue générale de la page Enseignants dans OPALE',
                     imageCaption:
-                        "Vue générale avec catégories d'enseignants, toolbar de recherche/filtres et cartes enseignants.",
+                        "Vue générale avec catégories d'enseignants, barre d'outils de recherche/filtres et cartes enseignants.",
                 },
                 <>
-                    <strong>Internes Bordeaux</strong>: enseignants du campus local, mobilisables sans déplacement
+                    <strong>Internes Bordeaux</strong> : enseignants du campus local, mobilisables sans déplacement
                     inter-campus.
                 </>,
                 <>
-                    <strong>Internes Lille/Châteauroux</strong>: enseignants Junia d'un autre campus; leur venue
+                    <strong>Internes Lille/Châteauroux</strong> : enseignants Junia d'un autre campus; leur venue
                     doit être anticipée dans l'organisation.
                 </>,
                 <>
-                    <strong>Vacataires</strong>: intervenants externes à Junia.
+                    <strong>Vacataires</strong> : intervenants externes à Junia.
                 </>,
                 <>
-                    La toolbar en haut centralise la <strong>recherche</strong>, les <strong>filtres</strong>, la{' '}
+                    La barre d'outils en haut centralise la <strong>recherche</strong>, les <strong>filtres</strong>, la{' '}
                     <strong>création</strong> et la <strong>suppression en mode sélection</strong>.
                 </>,
                 <>
                     Chaque carte enseignant contient les informations clés (<strong>nom</strong>,{' '}
                     <strong>téléphone</strong>, <strong>mode d'intervention</strong>) et sert de point d'accès
-                    pour la consultation/détail.
+                    pour la consultation et le détail.
                 </>,
             ],
         },
@@ -60,7 +60,7 @@ export const teachersTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Cliquer sur l'icône <strong>+</strong> dans la toolbar pour ouvrir le pop-up{' '}
+                            Cliquer sur l'icône <strong>+</strong> dans la barre d'outils pour ouvrir le pop-up{' '}
                             <u>Détail de l'enseignant</u>.
                         </>
                     ),
@@ -113,7 +113,7 @@ export const teachersTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Informations</strong>: remplir <strong>Nom</strong>,{' '}
+                                    <strong>Informations</strong> : remplir <strong>Nom</strong>,{' '}
                                     <strong>Prénom</strong>, <strong>téléphone</strong>,{' '}
                                     <strong>Email Junia</strong> et <strong>Email perso</strong>.
                                 </>
@@ -122,7 +122,7 @@ export const teachersTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Type</strong>: choisir le mode d'intervention de l'enseignant ({' '}
+                                    <strong>Type</strong> : choisir le mode d'intervention de l'enseignant ({' '}
                                     <em>Présentiel</em>, <em>Hybride</em> ou <em>Distanciel</em>).
                                 </>
                             ),
@@ -140,7 +140,7 @@ export const teachersTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Rattachement</strong>: indiquer <em>Interne</em> ou <em>Vacataire</em>.
+                                    <strong>Rattachement</strong> : indiquer <em>Interne</em> ou <em>Vacataire</em>.
                                 </>
                             ),
                             imageSrc: dropdownProfRattachementScreenshot,
@@ -157,7 +157,7 @@ export const teachersTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Campus d'origine</strong>: préciser le campus de référence (ex:
+                                    <strong>Campus d'origine</strong> : préciser le campus de référence (ex:
                                     Bordeaux, Lille, Châteauroux) pour faciliter l'organisation inter-campus.
                                 </>
                             ),
@@ -175,10 +175,10 @@ export const teachersTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Matières enseignées</strong>: ajouter les matières enseignées puis
+                                    <strong>Matières enseignées</strong> : ajouter les matières enseignées puis
                                     associer, si nécessaire, les promotions cibles.
                                     <br />
-                                    <em>Conseil</em>: pour attribuer ou désattribuer une matière, se référer à la
+                                    <em>Conseil</em> : pour attribuer ou désattribuer une matière, se référer à la
                                     section <strong>Attribuer des matières à un enseignant</strong>.
                                     <br />
                                     <em>Note</em> : voir le tuto{' '}
@@ -189,14 +189,14 @@ export const teachersTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Disponibilités</strong>: créer une ou plusieurs périodes, définir la
+                                    <strong>Disponibilités</strong> : créer une ou plusieurs périodes, définir la
                                     plage de dates, puis renseigner la grille <strong>Matin / Après-midi</strong>{' '}
                                     du <strong>Lundi au Vendredi</strong>.
                                     <br />
                                     <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
                                     <br />
                                     <em>Note</em> : voir le tuto{' '}
-                                    <strong>Ajouter des périodes de disponibilités</strong>.
+                                    <strong>Ajouter des périodes de disponibilité</strong>.
                                 </>
                             ),
                         },
@@ -320,7 +320,7 @@ export const teachersTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Informations</strong>: remplir <strong>Nom</strong>,{' '}
+                                    <strong>Informations</strong> : remplir <strong>Nom</strong>,{' '}
                                     <strong>Prénom</strong>, <strong>téléphone</strong>,{' '}
                                     <strong>Email Junia</strong> et <strong>Email perso</strong>.
                                 </>
@@ -329,7 +329,7 @@ export const teachersTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Type</strong>: choisir le mode d'intervention de l'enseignant ({' '}
+                                    <strong>Type</strong> : choisir le mode d'intervention de l'enseignant ({' '}
                                     <em>Présentiel</em>, <em>Hybride</em> ou <em>Distanciel</em>).
                                 </>
                             ),
@@ -337,14 +337,14 @@ export const teachersTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Rattachement</strong>: indiquer <em>Interne</em> ou <em>Vacataire</em>.
+                                    <strong>Rattachement</strong> : indiquer <em>Interne</em> ou <em>Vacataire</em>.
                                 </>
                             ),
                         },
                         {
                             text: (
                                 <>
-                                    <strong>Campus d'origine</strong>: préciser le campus de référence (ex:
+                                    <strong>Campus d'origine</strong> : préciser le campus de référence (ex:
                                     Bordeaux, Lille, Châteauroux) pour faciliter l'organisation inter-campus.
                                 </>
                             ),
@@ -352,10 +352,10 @@ export const teachersTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Matières enseignées</strong>: ajouter les matières enseignées puis
+                                    <strong>Matières enseignées</strong> : ajouter les matières enseignées puis
                                     associer, si nécessaire, les promotions cibles.
                                     <br />
-                                    <em>Conseil</em>: pour attribuer ou désattribuer une matière, se référer à la
+                                    <em>Conseil</em> : pour attribuer ou désattribuer une matière, se référer à la
                                     section <strong>Attribuer des matières à un enseignant</strong>.
                                     <br />
                                     <em>Note</em> : voir le tuto{' '}
@@ -366,14 +366,14 @@ export const teachersTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Disponibilités</strong>: créer une ou plusieurs périodes, définir la
+                                    <strong>Disponibilités</strong> : créer une ou plusieurs périodes, définir la
                                     plage de dates, puis renseigner la grille <strong>Matin / Après-midi</strong>{' '}
                                     du <strong>Lundi au Vendredi</strong>.
                                     <br />
                                     <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
                                     <br />
                                     <em>Note</em> : voir le tuto{' '}
-                                    <strong>Ajouter des périodes de disponibilités</strong>.
+                                    <strong>Ajouter des périodes de disponibilité</strong>.
                                 </>
                             ),
                         },
@@ -398,7 +398,7 @@ export const teachersTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Supprimer</strong>: supprime l'enseignant affiché à l'écran. Cette
+                                    <strong>Supprimer</strong> : supprime l'enseignant affiché à l'écran. Cette
                                     action ouvre un pop-up de confirmation.
                                     <br />
                                     <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
@@ -419,7 +419,7 @@ export const teachersTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Enregistrer</strong>: enregistre les modifications. Cette action
+                                    <strong>Enregistrer</strong> : enregistre les modifications. Cette action
                                     ouvre un pop-up de confirmation.
                                     <br />
                                     <em>Action commune</em> : voir le tuto{' '}
@@ -502,7 +502,7 @@ export const teachersTutorialContent: TutorialContent = {
             ],
         },
         {
-            title: 'Ajouter des périodes de disponibilités',
+            title: 'Ajouter des périodes de disponibilité',
             steps: [
                 {
                     text: (
@@ -561,7 +561,7 @@ export const teachersTutorialContent: TutorialContent = {
                     <strong>Annuler, créer ou enregistrer</strong>.
                 </>,
                 <>
-                    Si on revient sur la carte de détail via la modification, les périodes de disponibilités
+                    Si on revient sur la carte de détail via la modification, les périodes de disponibilité
                     sont découpées en semaines. Il est alors possible de modifier la disponibilité par
                     demi-journée, semaine par semaine.
                 </>,
@@ -574,7 +574,7 @@ export const teachersTutorialContent: TutorialContent = {
                     text: (
                         <>
                             La suppression des enseignants se fait en <strong>mode sélection</strong> depuis la
-                            toolbar, ou depuis la <strong>carte de détail</strong> d'un enseignant en
+                            barre d'outils, ou depuis la <strong>carte de détail</strong> d'un enseignant en
                             modification.
                             <br />
                             <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
@@ -627,7 +627,7 @@ export const teachersTutorialContent: TutorialContent = {
                     ),
                     imageSrc: screenPageProfScreenshot,
                     imageAlt: "Barre d'outils de la page Enseignants",
-                    imageCaption: 'Toolbar de recherche, filtres, sélection et création.',
+                    imageCaption: "Barre d'outils de recherche, filtres, sélection et création.",
                 },
             ],
         },
@@ -638,7 +638,6 @@ export const teachersTutorialContent: TutorialContent = {
         "Vérifier le rattachement et le campus d'origine pour anticiper les contraintes logistiques.",
     ],
 }
-
 
 
 

@@ -27,10 +27,10 @@ export const matieresTutorialContent: TutorialContent = {
                     imageSrc: screenPageMatiereScreenshot,
                     imageAlt: 'Vue générale de la page Matières dans OPALE',
                     imageCaption:
-                        'Vue générale avec toolbar de recherche/filtres et liste des matières par promotion.',
+                        "Vue générale avec barre d'outils de recherche/filtres et liste des matières par promotion.",
                 },
                 <>
-                    La toolbar en haut centralise la <strong>recherche</strong>, les <strong>filtres</strong>, la{' '}
+                    La barre d'outils en haut centralise la <strong>recherche</strong>, les <strong>filtres</strong>, la{' '}
                     <strong>création</strong> et la <strong>suppression en mode sélection</strong>.
                 </>,
                 <>
@@ -43,7 +43,7 @@ export const matieresTutorialContent: TutorialContent = {
                 </>,
                 <>
                     La création d'une matière est <strong>en cours d'implémentation</strong>. Elle se fera via le <strong>bouton de la
-                    toolbar</strong> et permettra de créer une matière si elle n'a pas été détectée lors de
+                    barre d'outils</strong> et permettra de créer une matière si elle n'a pas été détectée lors de
                     l'import de la maquette.
                 </>,
             ],
@@ -52,7 +52,7 @@ export const matieresTutorialContent: TutorialContent = {
             title: 'Créer une matière',
             steps: [
                 <>
-                    Le bouton de création dans la toolbar est <strong>présent</strong> mais{' '}
+                    Le bouton de création dans la barre d'outils est <strong>présent</strong> mais{' '}
                     <strong>non fonctionnel</strong> : la fonctionnalité n'est pas encore développée.
                 </>,
                 <>
@@ -409,7 +409,7 @@ export const matieresTutorialContent: TutorialContent = {
                     text: (
                         <>
                             La suppression des matières se fait en <strong>mode sélection</strong> depuis la
-                            toolbar, ou depuis la <strong>carte de détail</strong> d'une matière en modification.
+                            barre d'outils, ou depuis la <strong>carte de détail</strong> d'une matière en modification.
                             <br />
                             <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
                         </>
@@ -460,7 +460,7 @@ export const matieresTutorialContent: TutorialContent = {
                     ),
                     imageSrc: screenPageMatiereScreenshot,
                     imageAlt: "Barre d'outils de la page Matières",
-                    imageCaption: 'Toolbar de recherche, filtres et actions.',
+                    imageCaption: "Barre d'outils de recherche, filtres et actions.",
                 },
             ],
         },

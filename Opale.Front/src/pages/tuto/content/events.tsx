@@ -12,7 +12,7 @@ export const eventsTutorialContent: TutorialContent = {
     objective:
         "Consulter et administrer les événements exceptionnels qui impactent directement ou indirectement l'école (Junia).",
     expectedResult:
-        'Les événements sont fiables, filtrés facilement, et correctement créés, modifiés ou supprimés.',
+        'Les événements sont fiables, faciles à filtrer, et correctement créés, modifiés ou supprimés.',
     steps: [],
     stepSections: [
         {
@@ -28,15 +28,15 @@ export const eventsTutorialContent: TutorialContent = {
                     imageSrc: pageEventJuniaScreenshot,
                     imageAlt: 'Vue générale de la page Événements dans OPALE',
                     imageCaption:
-                        'Vue générale avec toolbar de recherche/filtrage et liste des événements.',
+                        "Vue générale avec barre d'outils de recherche/filtrage et liste des événements.",
                 },
                 <>
-                    La toolbar en haut centralise les actions: <strong>recherche</strong>,{' '}
+                    La barre d'outils en haut centralise les actions : <strong>recherche</strong>,{' '}
                     <strong>filtres</strong>, <strong>création</strong> et{' '}
                     <strong>suppression en mode sélection</strong>.
                 </>,
                 <>
-                    Chaque ligne d'événement contient les <strong>informations principales</strong>: nom,
+                    Chaque ligne d'événement contient les <strong>informations principales</strong> : nom,
                     date, lieu et type d'événement.
                 </>,
                 <>
@@ -50,7 +50,7 @@ export const eventsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Cliquer sur l'icône <strong>+</strong> dans la toolbar pour ouvrir le pop-up de{' '}
+                            Cliquer sur l'icône <strong>+</strong> dans la barre d'outils pour ouvrir le pop-up de{' '}
                             <u>création d'un événement</u>.
                         </>
                     ),
@@ -79,11 +79,11 @@ export const eventsTutorialContent: TutorialContent = {
                     imagePlacement: 'beforeSubSteps',
                     subSteps: [
                         <>
-                            <strong>Nom</strong>: saisir un intitulé clair et reconnaissable (ex: Journée
+                            <strong>Nom</strong> : saisir un intitulé clair et reconnaissable (ex: Journée
                             Portes Ouvertes, Forum Entreprises).
                         </>,
                         <>
-                            <strong>Date de début</strong> et <strong>Date de fin</strong>: définir la plage
+                            <strong>Date de début</strong> et <strong>Date de fin</strong> : définir la plage
                             réelle de l'événement. Vérifier la cohérence chronologique (
                             <em>fin &gt;= début</em>).
                             <br />
@@ -92,7 +92,7 @@ export const eventsTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Salle / Lieu</strong>: préciser le lieu principal (campus, salle,
+                                    <strong>Salle / Lieu</strong> : préciser le lieu principal (campus, salle,
                                     adresse ou site externe) pour faciliter l'organisation.
                                 </>
                             ),
@@ -103,7 +103,7 @@ export const eventsTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Type</strong>: choisir la catégorie de l'événement (ex: salon/expo,
+                                    <strong>Type</strong> : choisir la catégorie de l'événement (ex: salon/expo,
                                     journée portes ouvertes, forum, autre événement).
                                 </>
                             ),
@@ -114,7 +114,7 @@ export const eventsTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Cible</strong>: sélectionner <em>Junia</em> et/ou <em>Externe</em>{' '}
+                                    <strong>Cible</strong> : sélectionner <em>Junia</em> et/ou <em>Externe</em>{' '}
                                     selon le public concerné.
                                     <br />
                                     Si la cible est <strong>Junia</strong>, l'en-tête de la carte est{' '}
@@ -129,7 +129,7 @@ export const eventsTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Promotions</strong>: rattacher les promotions impactées. Si
+                                    <strong>Promotions</strong> : rattacher les promotions impactées. Si
                                     l'événement est global, ce champ n'est pas affiché.
                                 </>
                             ),
@@ -138,11 +138,11 @@ export const eventsTutorialContent: TutorialContent = {
                             imageCaption: "Liste déroulante des promotions impactées.",
                         },
                         <>
-                            <strong>Macro planning</strong> / <strong>Micro planning</strong>: activer selon
+                            <strong>Macro planning</strong> / <strong>Micro planning</strong> : activer selon
                             l'impact attendu dans les plannings.
                         </>,
                         <>
-                            <strong>Description / commentaires</strong>: documenter le contexte, les objectifs
+                            <strong>Description / commentaires</strong> : documenter le contexte, les objectifs
                             et les contraintes utiles pour l'équipe.
                         </>,
                     ],
@@ -230,36 +230,36 @@ export const eventsTutorialContent: TutorialContent = {
                     imagePlacement: 'beforeSubSteps',
                     subSteps: [
                         <>
-                            <strong>Nom</strong>: ajuster l'intitulé si l'événement change de format ou de
+                            <strong>Nom</strong> : ajuster l'intitulé si l'événement change de format ou de
                             périmètre.
                         </>,
                         <>
-                        <strong>Date de début</strong> et <strong>Date de fin</strong>: corriger les dates en
+                        <strong>Date de début</strong> et <strong>Date de fin</strong> : corriger les dates en
                         cas de décalage ou d'extension de période.
                         <br />
                         <em>Action commune</em> : voir le tuto <strong>Sélecteur de date</strong>.
                     </>,
                         <>
-                            <strong>Salle / Lieu</strong>: actualiser la localisation si besoin logistique.
+                            <strong>Salle / Lieu</strong> : actualiser la localisation si besoin logistique.
                         </>,
                         <>
-                            <strong>Type</strong>: vérifier que la catégorie reste conforme à la nature de
+                            <strong>Type</strong> : vérifier que la catégorie reste conforme à la nature de
                             l'événement.
                         </>,
                         <>
-                            <strong>Cible</strong>: revalider <em>Junia</em> / <em>Externe</em> selon les publics
+                            <strong>Cible</strong> : revalider <em>Junia</em> / <em>Externe</em> selon les publics
                             impactés.
                         </>,
                         <>
-                            <strong>Promotions</strong>: ajouter/retirer les promotions concernées pour garder un
+                            <strong>Promotions</strong> : ajouter/retirer les promotions concernées pour garder un
                             impact planning fiable.
                         </>,
                         <>
-                            <strong>Macro planning</strong> / <strong>Micro planning</strong>: confirmer que les
+                            <strong>Macro planning</strong> / <strong>Micro planning</strong> : confirmer que les
                             activations correspondent toujours au besoin réel.
                         </>,
                         <>
-                            <strong>Description / commentaires</strong>: mettre à jour les informations
+                            <strong>Description / commentaires</strong> : mettre à jour les informations
                             opérationnelles (objectifs, contraintes, contexte).
                         </>,
                     ],
@@ -275,7 +275,7 @@ export const eventsTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Supprimer</strong>: supprime l'événement affiché à l'écran. Cette
+                                    <strong>Supprimer</strong> : supprime l'événement affiché à l'écran. Cette
                                     action ouvre un pop-up de confirmation.
                                     <br />
                                     <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
@@ -296,7 +296,7 @@ export const eventsTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    <strong>Enregistrer</strong>: enregistre les modifications. Cette action
+                                    <strong>Enregistrer</strong> : enregistre les modifications. Cette action
                                     ouvre un pop-up de confirmation.
                                     <br />
                                     <em>Action commune</em> : voir le tuto{' '}
@@ -327,7 +327,7 @@ export const eventsTutorialContent: TutorialContent = {
                     text: (
                         <>
                             La suppression des événements se fait en <strong>mode sélection</strong> depuis la
-                            toolbar, ou depuis la <strong>carte de détail</strong> d'un événement en
+                            barre d'outils, ou depuis la <strong>carte de détail</strong> d'un événement en
                             modification.
                             <br />
                             <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
@@ -377,7 +377,7 @@ export const eventsTutorialContent: TutorialContent = {
                     ),
                     imageSrc: pageEventJuniaScreenshot,
                     imageAlt: "Barre d'outils de la page Événements",
-                    imageCaption: 'Toolbar de recherche, filtres et actions.',
+                    imageCaption: "Barre d'outils de recherche, filtres et actions.",
                 },
             ],
         },
@@ -388,4 +388,5 @@ export const eventsTutorialContent: TutorialContent = {
         'Les réglages Macro/Micro planning influencent directement la qualité des plannings générés.',
     ],
 }
+
 

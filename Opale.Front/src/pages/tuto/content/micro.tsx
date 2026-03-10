@@ -147,9 +147,9 @@ export const microTutorialContent: TutorialContent = {
         {
             text: (
                 <>
-                    Si un point de vérification salle n'est pas valide, faire les modifications nécessaires.
-                </>
-            ),
+                            Si un point de vérification de salle n'est pas valide, faire les modifications nécessaires.
+                        </>
+                    ),
             imageSrc: popupSalleModifScreenshot,
             imageAlt: "Pop-up de modification d'une salle",
             imageCaption: 'Correction des salles avant génération micro.',

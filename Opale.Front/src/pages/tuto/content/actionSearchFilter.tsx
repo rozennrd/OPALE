@@ -11,31 +11,31 @@ export const actionSearchFilterTutorialContent: TutorialContent = {
         {
             text: (
                 <>
-                    Sur la première ligne de la toolbar (plein écran), on trouve toujours la{' '}
+                    Sur la première ligne de la barre d'outils (en plein écran), on trouve toujours la{' '}
                     <strong>barre de recherche</strong>, le <strong>mode sélection</strong>,{' '}
                     <strong>réinitialiser les filtres</strong> et <strong>ajouter un élément</strong>.
                 </>
             ),
             imageSrc: eventPageScreenshot,
-            imageAlt: 'Première ligne de la toolbar',
+            imageAlt: "Première ligne de la barre d'outils",
             imageCaption: 'Recherche, sélection, réinitialisation et ajout.',
             imageHighlight: {
                 left: '24.8%',
                 top: '21.2%',
                 width: '70.0%',
                 height: '6.1%',
-                label: 'Toolbar',
+                label: "Barre d'outils",
             },
         },
         {
             text: (
                 <>
-                    Sur la seconde ligne (plein écran), on retrouve des <strong>filtres adaptés</strong> à la
-                    page (droplist, chips, date, champ...).
+                    Sur la seconde ligne (en plein écran), on retrouve des <strong>filtres adaptés</strong> à la
+                    page (liste déroulante, chips, date, champ...).
                 </>
             ),
             imageSrc: eventPageScreenshot,
-            imageAlt: 'Seconde ligne de la toolbar',
+            imageAlt: "Seconde ligne de la barre d'outils",
             imageCaption: 'Filtres adaptés à la page.',
             imageHighlight: {
                 left: '24.8%',
@@ -51,4 +51,3 @@ export const actionSearchFilterTutorialContent: TutorialContent = {
         "La recherche et les filtres s'appliquent en temps réel.",
     ],
 }
-

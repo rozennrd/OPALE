@@ -1,9 +1,9 @@
 ﻿import type { TutorialItem, TutorialTab } from './types'
 
 export const TAB_ITEMS: Array<{ key: TutorialTab; label: string }> = [
-    { key: 'planning', label: 'Étape planning' },
+    { key: 'planning', label: 'Flux planning' },
     { key: 'pages', label: 'Par page' },
-    { key: 'actions', label: 'Action commune' },
+    { key: 'actions', label: 'Actions communes' },
 ]
 
 export const TUTORIAL_ITEMS: TutorialItem[] = [
@@ -40,7 +40,7 @@ export const TUTORIAL_ITEMS: TutorialItem[] = [
     {
         id: 'action-cancel-save',
         title: 'Annuler, créer ou enregistrer',
-        summary: 'Gérer les actions Annuler / Enregistrer.',
+        summary: 'Gérer les actions Annuler / Créer / Enregistrer.',
         tab: 'actions',
     },
     {

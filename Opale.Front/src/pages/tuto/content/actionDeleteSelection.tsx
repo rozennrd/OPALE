@@ -18,11 +18,11 @@ export const actionDeleteSelectionTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Dans la toolbar, cliquer sur <strong>Sélectionner</strong>.
+                            Dans la barre d'outils, cliquer sur <strong>Sélectionner</strong>.
                         </>
                     ),
                     imageSrc: eventPageScreenshot,
-                    imageAlt: 'Bouton Sélectionner dans la toolbar',
+                    imageAlt: "Bouton Sélectionner dans la barre d'outils",
                     imageCaption: 'Activation du mode sélection.',
                     imageHighlight: {
                         left: '61.0%',
@@ -42,7 +42,7 @@ export const actionDeleteSelectionTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    Le bouton <strong>Sélectionner</strong> dans la toolbar est remplacé par le
+                                    Le bouton <strong>Sélectionner</strong> dans la barre d'outils est remplacé par le
                                     bouton <strong>Quitter sélection</strong>. Cliquer dessus permet de sortir du
                                     mode sélection. Même si des éléments sont encore sélectionnés, on quitte bien
                                     la sélection.
@@ -80,7 +80,7 @@ export const actionDeleteSelectionTutorialContent: TutorialContent = {
                         {
                             text: (
                                 <>
-                                    Le bouton <strong>Effacer</strong> permet de déselectionner les éléments.
+                                    Le bouton <strong>Effacer</strong> permet de désélectionner les éléments.
                                 </>
                             ),
                             imageSrc: multiDeleteScreenshot,

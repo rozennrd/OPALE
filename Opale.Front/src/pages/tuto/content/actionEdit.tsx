@@ -6,7 +6,7 @@ export const actionEditTutorialContent: TutorialContent = {
     objective:
         'Modifier un élément existant depuis la liste.',
     expectedResult:
-        "La fiche détail est ouverte en mode édition.",
+        "La fiche de détail est ouverte en mode édition.",
     steps: [
         {
             text: (
@@ -24,16 +24,15 @@ export const actionEditTutorialContent: TutorialContent = {
                 top: '41.15%',
                 width: '72.0%',
                 height: '10.0%',
-                label: 'Élément à modifier (ici un événement',
+                label: 'Élément à modifier (ici un événement)',
             },
         },
         <>
-            La fiche détail s'ouvre et permet de modifier les informations.
+            La fiche de détail s'ouvre et permet de modifier les informations.
         </>,
     ],
     tips: [
-        "Si le mode Sélectionner est actif, cliquer sur l'élément sélectionné au lieu d'ouvrir la fiche.",
+        "Si le mode Sélectionner est actif, cliquer sur l'élément le sélectionne au lieu d'ouvrir la fiche.",
         "Désactiver le mode Sélectionner pour éditer.",
     ],
 }
-

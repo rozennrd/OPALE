@@ -107,7 +107,7 @@ export const promotionsTutorialContent: TutorialContent = {
                         <>
                             Champ <strong>Nom du cycle</strong>: saisir un nom clair (ex: ADI, CIR).
                             <br />
-                            On ne peut pas donner un nom de cycle existant.
+                            Il n'est pas possible de donner un nom de cycle déjà existant.
                         </>,
                         <>
                             Champ <strong>Type de formation</strong>: choisir via la liste déroulante
@@ -126,7 +126,7 @@ export const promotionsTutorialContent: TutorialContent = {
                     text: (
                         <>
                             Cliquer sur la <strong>croix</strong> en haut à droite ou sur la touche
-                            <strong> Escape</strong> du clavier ferme le pop-up de création.
+                            <strong>Escape</strong> du clavier ferme le pop-up de création.
                             Attention, pas de message de confirmation d'action.
                         </>
                     ),
@@ -482,7 +482,7 @@ export const promotionsTutorialContent: TutorialContent = {
                                 top: '51.0%',
                                 width: '19.8%',
                                 height: '10.4%',
-                                label: "Zone de drag and drop ou de clique pour ouvrir l'explorateur de fichier",
+                                label: "Zone de drag and drop ou de clic pour ouvrir l'explorateur de fichiers",
                                 labelLeft: '-1rem',
                             },
                             subSteps: [
@@ -525,7 +525,7 @@ export const promotionsTutorialContent: TutorialContent = {
                                     top: '2.5%',
                                     width: '59.8%',
                                     height: '8.7%',
-                                    label: "En-têtes du pop",
+                                    label: "En-tête du pop-up",
                                     labelLeft: '-7rem',
                                     labelTop: '3rem',
                                     labelWidth: '6.5rem',
@@ -598,7 +598,7 @@ export const promotionsTutorialContent: TutorialContent = {
                                     <strong>Escape</strong>) ou sur <strong>Valider</strong>.
                                     <br />
                                     <em>Action commune</em> : voir le tuto
-                                    <strong>Annuler, créer ou enregistrer</strong>.
+                                    <strong> Annuler, créer ou enregistrer</strong>.
                                 </>
                             ),
                             imageSrc: promoPrevisualiserMaquetteScreenshot,
@@ -624,7 +624,7 @@ export const promotionsTutorialContent: TutorialContent = {
                                 top: '62.2%',
                                 width: '19.8%',
                                 height: '5.1%',
-                                label: "Liste des fichiers sélectionné et validé",
+                                label: "Liste des fichiers sélectionnés et validés",
                                 labelLeft: '-1rem',
                             },
                         },
@@ -679,7 +679,7 @@ export const promotionsTutorialContent: TutorialContent = {
                                         top: '43.8%',
                                         width: '7.5%',
                                         height: '16.9%',
-                                        label: "Liste des spécialités annoncés",
+                                        label: "Liste des spécialités déclarées",
                                         labelLeft: '-1.8rem',
                                     },
                                 },
@@ -708,7 +708,7 @@ export const promotionsTutorialContent: TutorialContent = {
                                             top: '49.2%',
                                             width: '2.5%',
                                             height: '12.0%',
-                                            label: "Bouton supprimer une spécialité",
+                                            label: "Bouton Supprimer une spécialité",
                                             labelLeft: '1.8rem',
                                             labelTop: '1.8rem',
                                         },
@@ -766,7 +766,7 @@ export const promotionsTutorialContent: TutorialContent = {
                         width: '3.5%',
                         height: '7.0%',
                         label: "Bouton Supprimer un cycle",
-                        labelLeft: '-1re,m'
+                        labelLeft: '-1rem'
                     },
                 },
                 <>

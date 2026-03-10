@@ -6,7 +6,7 @@ import screenPagePlanningDownloadDoScreenshot from '../../../assets/tuto/plannin
 
 export const planningTutorialContent: TutorialContent = {
     objective: "Accompagner l'utilisateur avec une checklist et guider la génération du planning demandé.",
-    expectedResult: 'Planning demandé généré (macro et/ou micro).',
+    expectedResult: 'Le planning demandé est généré (macro et/ou micro).',
     steps: [],
     stepSections: [
         {
@@ -89,7 +89,7 @@ export const planningTutorialContent: TutorialContent = {
                         top: '89.0%',
                         width: '39.7%',
                         height: '6.75%',
-                        label: 'Télécharger le planning au format Excelt',
+                        label: 'Télécharger le planning au format Excel',
                         labelTop: '-0.5rem',
                     },
                 },
@@ -108,7 +108,7 @@ export const planningTutorialContent: TutorialContent = {
                         top: '8.25%',
                         width: '23.0%',
                         height: '11.0%',
-                        label: 'Fichier Excel télécharger',
+                        label: 'Fichier Excel téléchargé',
                         labelTop: '-0.5rem',
                     },
                 },

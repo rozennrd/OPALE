@@ -17,7 +17,7 @@ export const actionCreateTutorialContent: TutorialContent = {
                 </>
             ),
             imageSrc: eventPageScreenshot,
-            imageAlt: "Bouton d'ajout dans la toolbar",
+            imageAlt: "Bouton d'ajout dans la barre d'outils",
             imageCaption: "Le bouton + ouvre le formulaire de création.",
             imageHighlight: {
                 left: '81.3%',
@@ -39,4 +39,3 @@ export const actionCreateTutorialContent: TutorialContent = {
         "Le remplissage détaillé est décrit dans les tutos de page.",
     ],
 }
-

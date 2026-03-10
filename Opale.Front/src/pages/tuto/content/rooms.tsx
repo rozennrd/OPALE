@@ -25,10 +25,10 @@ export const roomsTutorialContent: TutorialContent = {
                     imageSrc: screenPageSalleScreenshot,
                     imageAlt: 'Vue générale de la page Salles dans OPALE',
                     imageCaption:
-                        'Vue générale avec toolbar de recherche/filtres, catégories par étage et cartes salles.',
+                        "Vue générale avec barre d'outils de recherche/filtres, catégories par étage et cartes salles.",
                 },
                 <>
-                    La toolbar en haut centralise la <strong>recherche</strong>, les <strong>filtres</strong>,
+                    La barre d'outils en haut centralise la <strong>recherche</strong>, les <strong>filtres</strong>,
                     la <strong>création</strong> et la <strong>suppression en mode sélection</strong>.
                 </>,
                 <>
@@ -55,7 +55,7 @@ export const roomsTutorialContent: TutorialContent = {
                 {
                     text: (
                         <>
-                            Cliquer sur l'icône <strong>+</strong> dans la toolbar pour ouvrir le pop-up{' '}
+                            Cliquer sur l'icône <strong>+</strong> dans la barre d'outils pour ouvrir le pop-up{' '}
                             <u>Détail de la salle</u>.
                         </>
                     ),
@@ -275,7 +275,7 @@ export const roomsTutorialContent: TutorialContent = {
                             réels autorisés dans la salle.
                         </>,
                         <>
-                            <strong>Description / commentaires</strong>: Mettre à jour les contraintes, les
+                            <strong>Description / commentaires</strong> : mettre à jour les contraintes, les
                             équipements et toute information utile à l'exploitation.
                         </>,
                     ],
@@ -343,7 +343,7 @@ export const roomsTutorialContent: TutorialContent = {
                     text: (
                         <>
                             La suppression des salles se fait en <strong>mode sélection</strong> depuis la
-                            toolbar, ou depuis la <strong>carte de détail</strong> d'une salle en modification.
+                            barre d'outils, ou depuis la <strong>carte de détail</strong> d'une salle en modification.
                             <br />
                             <em>Action commune</em> : voir le tuto <strong>Supprimer</strong>.
                         </>
@@ -392,7 +392,7 @@ export const roomsTutorialContent: TutorialContent = {
                     ),
                     imageSrc: screenPageSalleScreenshot,
                     imageAlt: "Barre d'outils de la page Salles",
-                    imageCaption: 'Toolbar de recherche, filtres, mode sélection et réinitialisation.',
+                    imageCaption: "Barre d'outils de recherche, filtres, mode sélection et réinitialisation.",
                 },
             ],
         },
