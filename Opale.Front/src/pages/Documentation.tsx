@@ -299,7 +299,6 @@ export default function Documentation() {
             cache.set(url, dataUrl)
             return dataUrl
         } catch (error) {
-            console.warn('[PDF] Image fetch failed', url, error)
             cache.set(url, '')
             return undefined
         }
@@ -469,6 +468,7 @@ export default function Documentation() {
                 onSuccess()
             }
         } catch (error) {
+            // Conservé: utile pour diagnostiquer un échec d'export PDF côté interface.
             console.error(error)
             setExportError(
                 error instanceof Error ? error.message : "Une erreur est survenue lors de l'export.",

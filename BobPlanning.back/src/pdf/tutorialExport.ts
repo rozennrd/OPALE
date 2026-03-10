@@ -252,10 +252,7 @@ const buildImageUrlCandidates = (url: string): string[] => {
             })
         }
     } catch (error) {
-        console.warn('[PDF] Invalid image URL', {
-            url,
-            message: error instanceof Error ? error.message : String(error),
-        })
+        return candidates
     }
 
     return Array.from(new Set(candidates))
@@ -295,10 +292,7 @@ const resolveLocalAssetPath = (url: string): string | null => {
             return path.join(FRONTEND_ROOT, 'dist', assetPath.slice(distAssetsIndex + 1))
         }
     } catch (error) {
-        console.warn('[PDF] Local asset path resolution failed', {
-            url,
-            message: error instanceof Error ? error.message : String(error),
-        })
+        return null
     }
 
     return null
@@ -306,24 +300,11 @@ const resolveLocalAssetPath = (url: string): string | null => {
 
 const fetchImageBuffer = async (url: string, timeoutMs = 10000): Promise<Buffer> => {
     const localAssetPath = resolveLocalAssetPath(url)
-    console.log('[PDF] Resolving image', {
-        url,
-        localAssetPath,
-        localAssetExists: localAssetPath ? fs.existsSync(localAssetPath) : false,
-    })
     if (localAssetPath && fs.existsSync(localAssetPath)) {
-        console.log('[PDF] Loading image from filesystem', {
-            url,
-            localAssetPath,
-        })
         return fs.readFileSync(localAssetPath)
     }
 
     const candidates = buildImageUrlCandidates(url)
-    console.log('[PDF] Falling back to HTTP image fetch', {
-        url,
-        candidates,
-    })
     let lastError: unknown
 
     for (const candidate of candidates) {
@@ -341,19 +322,8 @@ const fetchImageBuffer = async (url: string, timeoutMs = 10000): Promise<Buffer>
                 throw new Error(`Unexpected content-type: ${contentType ?? 'unknown'}`)
             }
 
-            console.log('[PDF] Image fetched over HTTP', {
-                candidate,
-                contentType,
-                size: response.data.byteLength,
-            })
             return Buffer.from(response.data)
         } catch (error) {
-            const status = axios.isAxiosError(error) ? error.response?.status : undefined
-            console.warn('[PDF] Image fetch failed', {
-                candidate,
-                status,
-                message: error instanceof Error ? error.message : String(error),
-            })
             lastError = error
         }
     }
@@ -370,9 +340,6 @@ const getImageSize = (
             doc as unknown as { openImage: (data: Buffer) => { width: number; height: number } }
         ).openImage(imageBuffer)
     } catch (error) {
-        console.warn('[PDF] Invalid image buffer', {
-            message: error instanceof Error ? error.message : String(error),
-        })
         return null
     }
 }
@@ -654,11 +621,7 @@ const renderCover = async (
         try {
             doc.image(logoBuffer, logoX, doc.page.margins.top, { width: logoWidth })
             doc.moveDown(6)
-        } catch (error) {
-            console.warn('[PDF] Logo rendering failed', {
-                message: error instanceof Error ? error.message : String(error),
-            })
-        }
+        } catch {}
     }
 
     doc
@@ -872,31 +835,14 @@ const renderSteps = async (
         }
 
         if (step.imageUrl || step.imageData) {
-            console.log('[PDF] Rendering step image', {
-                imageUrl: step.imageUrl,
-                hasImageData: Boolean(step.imageData),
-                imageCaption: step.imageCaption,
-            })
             const imageBuffer =
                 decodeDataUrl(step.imageData) ??
                 (step.imageUrl ? await getImage(step.imageUrl) : null)
             if (imageBuffer) {
-                console.log('[PDF] Step image buffer loaded', {
-                    imageUrl: step.imageUrl,
-                    size: imageBuffer.length,
-                })
                 const imageSize = getImageSize(doc, imageBuffer)
                 if (!imageSize) {
-                    console.warn('[PDF] Step image skipped: invalid image size', {
-                        imageUrl: step.imageUrl,
-                    })
                     continue
                 }
-                console.log('[PDF] Step image dimensions', {
-                    imageUrl: step.imageUrl,
-                    width: imageSize.width,
-                    height: imageSize.height,
-                })
                 const maxHeight = 380
                 const scale = Math.min(maxImageWidth / imageSize.width, maxHeight / imageSize.height, 1)
                 const renderedWidth = imageSize.width * scale
@@ -923,13 +869,6 @@ const renderSteps = async (
                 doc.image(imageBuffer, imageX, imageY, {
                     width: renderedWidth,
                 })
-                console.log('[PDF] Step image rendered', {
-                    imageUrl: step.imageUrl,
-                    imageX,
-                    imageY,
-                    renderedWidth,
-                    renderedHeight,
-                })
 
                 if (step.imageHighlights && step.imageHighlights.length > 0) {
                     drawImageHighlights(
@@ -944,10 +883,6 @@ const renderSteps = async (
                     )
                 }
                 doc.y = imageCardY + imageCardHeight + SPACING.sm
-            } else {
-                console.warn('[PDF] Step image skipped: no buffer available', {
-                    imageUrl: step.imageUrl,
-                })
             }
 
             if (step.imageCaption) {
@@ -1031,21 +966,14 @@ export const generateTutorialPdf = async (payload: ExportPayload): Promise<Buffe
     const imageCache = new Map<string, Buffer | null>()
     const getImage = async (url: string): Promise<Buffer | null> => {
         if (imageCache.has(url)) {
-            console.log('[PDF] Image cache hit', {
-                url,
-                cached: imageCache.get(url) !== null,
-            })
             return imageCache.get(url) ?? null
         }
         try {
             const buffer = await fetchImageBuffer(url)
             imageCache.set(url, buffer)
-            console.log('[PDF] Image ready for rendering', {
-                url,
-                size: buffer.length,
-            })
             return buffer
         } catch (error) {
+            // Conservé: utile pour identifier une image introuvable ou invalide dans le PDF exporté.
             console.error('Image fetch failed', url, error)
             imageCache.set(url, null)
             return null

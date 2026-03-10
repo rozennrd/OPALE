@@ -20,18 +20,6 @@ export const exportDocumentationPdf = async (req: Request, res: Response): Promi
             return
         }
 
-        console.log('[PDF] Export request received', {
-            title: payload.title,
-            theme: payload.theme,
-            tutorialCount: payload.tutorials.length,
-            tutorials: payload.tutorials.map((tutorial) => ({
-                id: tutorial.id,
-                title: tutorial.title,
-                steps: tutorial.steps?.length ?? 0,
-                sections: tutorial.stepSections?.length ?? 0,
-            })),
-        })
-
         const pdfBuffer = await generateTutorialPdf(payload)
         const filename = 'OPALE-tutoriels.pdf'
 
@@ -40,6 +28,7 @@ export const exportDocumentationPdf = async (req: Request, res: Response): Promi
         res.status(200).send(pdfBuffer)
         return
     } catch (error) {
+        // Conservé: utile pour diagnostiquer un échec serveur lors de la génération du PDF.
         console.error('[PDF] Export failed', error)
         res.status(500).json({
             error: 'Erreur lors de la generation du PDF.',
