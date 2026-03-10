@@ -18,6 +18,7 @@ import { useSelectionState } from '../hooks/common/useSelectionState'
 import { useToolbarFilters } from '../hooks/common/useToolbarFilters'
 import { usePromotionCycles } from '../hooks/promotions/usePromotionCycles'
 import {EventType} from "../models/EventTypes.ts";
+import PageHeader from '../components/common/PageHeader'
 
 interface MonthGroup {
     key: string
@@ -488,10 +489,10 @@ export default function Events() {
 
     return (
         <>
-            <h1 className="page-title">Événements</h1>
-            <p className="page-sub">
-                Vue consolidée des événements Junia et externes.
-            </p>
+            <PageHeader
+                title="Evenements"
+                subtitle="Vue consolidee des evenements Junia et externes."
+            />
 
             <div className="events-page">
                 <div className="events-page-body">

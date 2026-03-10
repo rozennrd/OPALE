@@ -4,6 +4,8 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 
 import logoFull from '../assets/logo/logo-full.png'
 import logoFullDark from '../assets/logo/logo-full-dark.png'
+import logoFullPapillonLight from '../assets/logo/logo-full-papillon-light.png'
+import logoFullPapillonDark from '../assets/logo/logo-full-papillon-dark.png'
 import logoFullSpock from '../assets/logo/logo-full-spock.png'
 import logoCompact from '../assets/logo/logo-compact.png'
 import icPlanning from '../assets/sidebar/ic-planning.png'
@@ -63,6 +65,8 @@ export default function Sidebar(): JSX.Element | null {
             <div className="brand">
                 <img className="logo-full logo-full-light" src={logoFull} alt="OPALE" />
                 <img className="logo-full logo-full-dark" src={logoFullDark} alt="OPALE" />
+                <img className="logo-full logo-full-papillon-light" src={logoFullPapillonLight} alt="OPALE" />
+                <img className="logo-full logo-full-papillon-dark" src={logoFullPapillonDark} alt="OPALE" />
                 <img className="logo-full logo-full-spock" src={logoFullSpock} alt="OPALE" />
                 <img className="logo-compact" src={logoCompact} alt="O" />
             </div>

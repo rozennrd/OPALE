@@ -93,13 +93,14 @@
         color: #1d4ed8;
     }
 
-    [data-theme='dark'] .event-badge-type--junia {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .event-badge-type--junia {
         background: rgba(139, 92, 246, 0.18);
         color: #ddd6fe;
     }
 
-    [data-theme='dark'] .event-badge-type--external {
+    :root:is([data-theme='dark'], [data-theme='papillon-dark']) .event-badge-type--external {
         background: rgba(59, 130, 246, 0.18);
         color: #bfdbfe;
     }
 }
+

@@ -265,6 +265,25 @@ export default function Settings() {
         setTheme(readStoredStandardTheme())
     }
 
+    const isPapillonTheme = theme === 'papillon-light' || theme === 'papillon-dark'
+
+    const handlePapillonToggle = (isEnabled: boolean) => {
+        if (isEnabled) {
+            const baseTheme =
+                theme === 'light' || theme === 'dark'
+                    ? theme
+                    : readStoredStandardTheme()
+            setTheme(baseTheme === 'dark' ? 'papillon-dark' : 'papillon-light')
+            return
+        }
+
+        const fallbackTheme = theme === 'papillon-dark' ? 'dark' : 'light'
+        if (typeof window !== 'undefined') {
+            window.localStorage.setItem(STANDARD_THEME_KEY, fallbackTheme)
+        }
+        setTheme(fallbackTheme)
+    }
+
     const updateIconVisibility = (
         zone: keyof IconVisibilityPreferences,
         isVisible: boolean,
@@ -429,10 +448,20 @@ export default function Settings() {
                     wide
                 >
                     <p className="settings-note">
-                        {'Les th\u00e8mes clair/sombre restent g\u00e9r\u00e9s par le bouton de la barre lat\u00e9rale.'}
+                        {
+                            'Les th\u00e8mes clair/sombre restent g\u00e9r\u00e9s par le bouton de la barre lat\u00e9rale.'
+                        }
                     </p>
 
                     <div className="settings-toggle-list">
+                        <ToggleRow
+                            title={'Th\u00e8me Papillon'}
+                            description={'Palette jardin lumineux / nocturne avec motif papillon discret.'}
+                            checked={isPapillonTheme}
+                            onChange={handlePapillonToggle}
+                            onLabel={'Activ\u00e9'}
+                            offLabel={'D\u00e9sactiv\u00e9'}
+                        />
                         <ToggleRow
                             title={'Th\u00e8me Spock'}
                             description={'Mode visuel alternatif au style LCARS.'}

@@ -51,6 +51,29 @@
     display: block;
 }
 
+.login-logo .login-logo-papillon-light,
+.login-logo .login-logo-papillon-dark {
+    display: none;
+}
+
+:root[data-theme='papillon-light'] .login-logo .login-logo-light,
+:root[data-theme='papillon-light'] .login-logo .login-logo-dark {
+    display: none;
+}
+
+:root[data-theme='papillon-light'] .login-logo .login-logo-papillon-light {
+    display: block;
+}
+
+:root[data-theme='papillon-dark'] .login-logo .login-logo-light,
+:root[data-theme='papillon-dark'] .login-logo .login-logo-dark {
+    display: none;
+}
+
+:root[data-theme='papillon-dark'] .login-logo .login-logo-papillon-dark {
+    display: block;
+}
+
 .login-container h2 {
     margin-bottom: 20px;
 }
@@ -120,16 +143,16 @@
     font-size: 14px;
 }
 
-:root:is([data-theme='dark'], [data-theme='spock']) .login-theme-toggle .theme-toggle-btn {
+:root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .login-theme-toggle .theme-toggle-btn {
     color: var(--text);
 }
 
-:root:is([data-theme='dark'], [data-theme='spock']) .login-theme-toggle .theme-toggle-icon-inner,
-:root:is([data-theme='dark'], [data-theme='spock']) .login-theme-toggle .theme-toggle-toggle-thumb {
+:root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .login-theme-toggle .theme-toggle-icon-inner,
+:root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .login-theme-toggle .theme-toggle-toggle-thumb {
     background-color: var(--text);
 }
 
-:root:is([data-theme='dark'], [data-theme='spock']) .login-theme-toggle .theme-toggle-text {
+:root:is([data-theme='dark'], [data-theme='spock'], [data-theme='papillon-dark']) .login-theme-toggle .theme-toggle-text {
     color: var(--text);
 }
 

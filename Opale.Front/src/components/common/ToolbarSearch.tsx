@@ -16,9 +16,12 @@ const ToolbarSearch: React.FC<ToolbarSearchProps> = ({
     placeholder = 'Rechercher...',
     className = '',
 }) => {
+    const isDarkThemeValue = (value: string | null): boolean =>
+        value === 'dark' || value === 'spock' || value?.endsWith('-dark') === true
+
     const [isDarkTheme, setIsDarkTheme] = useState<boolean>(() => {
         if (typeof document === 'undefined') return false
-        return document.documentElement.getAttribute('data-theme') === 'dark'
+        return isDarkThemeValue(document.documentElement.getAttribute('data-theme'))
     })
 
     useEffect(() => {
@@ -26,7 +29,7 @@ const ToolbarSearch: React.FC<ToolbarSearchProps> = ({
 
         const root = document.documentElement
         const syncTheme = () =>
-            setIsDarkTheme(root.getAttribute('data-theme') === 'dark')
+            setIsDarkTheme(isDarkThemeValue(root.getAttribute('data-theme')))
 
         syncTheme()
 

@@ -4,7 +4,10 @@ import { useTheme } from '../hooks/useTheme'
 
 const ThemeToggle: React.FC = () => {
     const { theme, toggleTheme } = useTheme()
-    const isDark = theme !== 'light'
+    const isDark =
+        theme === 'dark' ||
+        theme === 'spock' ||
+        theme.endsWith('-dark')
 
     const label = isDark ? 'Mode clair' : 'Mode sombre'
 
