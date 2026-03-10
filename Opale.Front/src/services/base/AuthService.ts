@@ -84,15 +84,6 @@ class AuthService {
     }
 
     async getCurrentUser(): Promise<User | null> {
-        if (this.user) return this.user
-
-        if (typeof window !== 'undefined') {
-            const token = getTokenFromLocalStorage()
-            if (token && !this.isTokenExpired(token)) {
-                this.ensureUserFromToken(token)
-            }
-        }
-
         return this.user
     }
 
@@ -101,10 +92,8 @@ class AuthService {
 
         const token = getTokenFromLocalStorage()
         if (!token) return false
-        if (this.isTokenExpired(token)) return false
 
-        this.ensureUserFromToken(token)
-        return true
+        return !this.isTokenExpired(token) && this.user !== null
     }
 
     isTokenExpired(token: string): boolean {
