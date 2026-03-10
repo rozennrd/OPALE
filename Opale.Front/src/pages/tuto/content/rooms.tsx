@@ -63,12 +63,12 @@ export const roomsTutorialContent: TutorialContent = {
                     imageAlt: "Bouton + de création d'une salle",
                     imageCaption: "Le bouton + ouvre le pop-up de création d'une salle.",
                     imageHighlight: {
-                        left: '83.8%',
-                        top: '20.2%',
-                        width: '10.2%',
-                        height: '3.9%',
+                        left: '82.8%',
+                        top: '18.9%',
+                        width: '12.7%',
+                        height: '4.8%',
                         label: 'Création de salle',
-                        labelLeft: '-3.5rem',
+                        labelLeft: '-4rem',
                     },
                 },
                 {
@@ -82,6 +82,36 @@ export const roomsTutorialContent: TutorialContent = {
                     imageAlt: "Pop-up de création d'une salle",
                     imageCaption:
                         'Le formulaire de création définit identité, types, disponibilité et commentaire.',
+                    imageHighlights: [
+                        {
+                            left: '20.3%',
+                            top: '29.4%',
+                            width: '34.3%',
+                            height: '22.7%',
+                            label: 'Identité',
+                        },
+                        {
+                            left: '56.4%',
+                            top: '30.0%',
+                            width: '23.0%',
+                            height: '18.9%',
+                            label: 'Commentaires',
+                        },
+                        {
+                            left: '20.3%',
+                            top: '56.0%',
+                            width: '15.6%',
+                            height: '24.8%',
+                            label: 'Type principal',
+                        },
+                        {
+                            left: '39.4%',
+                            top: '56.0%',
+                            width: '15.0%',
+                            height: '24.8%',
+                            label: 'Types disponibles',
+                        },
+                    ],
                     subSteps: [
                         <>
                             <strong>Identité de la salle & types</strong>: saisir le{' '}
@@ -170,11 +200,11 @@ export const roomsTutorialContent: TutorialContent = {
                     imageAlt: "Accès à la modification d'une salle",
                     imageCaption: 'La carte salle ouvre le formulaire de modification.',
                     imageHighlight: {
-                        left: '25.0%',
-                        top: '36.0%',
-                        width: '20.0%',
-                        height: '10.0%',
-                        label: 'salle à modifier',
+                        left: '24.3%',
+                        top: '43.6%',
+                        width: '16.4%',
+                        height: '8.7%',
+                        label: 'Salle à modifier',
                     },
                 },
                 {
@@ -188,6 +218,36 @@ export const roomsTutorialContent: TutorialContent = {
                     imageAlt: "Pop-up de modification d'une salle",
                     imageCaption:
                         "Le pop-up permet d'ajuster identité, types, disponibilité et commentaires.",
+                    imageHighlights: [
+                        {
+                            left: '20.3%',
+                            top: '29.5%',
+                            width: '34.3%',
+                            height: '22.7%',
+                            label: 'Identité',
+                        },
+                        {
+                            left: '56.4%',
+                            top: '30.0%',
+                            width: '23.0%',
+                            height: '18.9%',
+                            label: 'Commentaires',
+                        },
+                        {
+                            left: '20.3%',
+                            top: '56.1%',
+                            width: '15.6%',
+                            height: '24.8%',
+                            label: 'Type principal',
+                        },
+                        {
+                            left: '39.4%',
+                            top: '56.1%',
+                            width: '15.0%',
+                            height: '24.8%',
+                            label: 'Types disponibles',
+                        },
+                    ],
                     subSteps: [
                         <>
                             <strong>Nom court (code salle)</strong>, <strong>Surnom / nom complet</strong>,{' '}

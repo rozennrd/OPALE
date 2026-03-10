@@ -87,6 +87,22 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageSrc: popupCreateCycleScreenshot,
                     imageAlt: "Pop-up de création d'un cycle dans OPALE",
                     imageCaption: "Le pop-up de création contient les champs obligatoires du cycle.",
+                    imageHighlights: [
+                        {
+                            left: '79.45%',
+                            top: '28.25%',
+                            width: '1.66%',
+                            height: '3.5%',
+                            label: "Annuler l'action",
+                        },
+                        {
+                            left: '73.6%',
+                            top: '65.5%',
+                            width: '7.7%',
+                            height: '6.7%',
+                            label: "Enregistrer l'action",
+                        },
+                    ],
                     subSteps: [
                         <>
                             Champ <strong>Nom du cycle</strong>: saisir un nom clair (ex: ADI, CIR).
@@ -110,7 +126,7 @@ export const promotionsTutorialContent: TutorialContent = {
                     text: (
                         <>
                             Cliquer sur la <strong>croix</strong> en haut à droite ou sur la touche
-                            <strong>Escape</strong> du clavier ferme le pop-up de création.
+                            <strong> Escape</strong> du clavier ferme le pop-up de création.
                             Attention, pas de message de confirmation d'action.
                         </>
                     ),
@@ -151,10 +167,10 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageCaption:
                         "Le bouton Ajouter une promotion ouvre le pop-up d'ajout pour le cycle sélectionné.",
                     imageHighlight: {
-                        left: '22.0%',
-                        top: '46.2%',
-                        width: '28.0%',
-                        height: '9.0%',
+                        left: '19.6%',
+                        top: '45.2%',
+                        width: '20.7%',
+                        height: '6.0%',
                         label: 'Bouton Ajouter une promotion',
                     },
                 },
@@ -168,6 +184,31 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageSrc: popupAddPromotionScreenshot,
                     imageAlt: "Pop-up Ajouter une promotion dans OPALE",
                     imageCaption: "Le pop-up demande uniquement le nom de la promotion.",
+                    imageHighlights: [
+                        {
+                            left: '61.57%',
+                            top: '40.4%',
+                            width: '1.66%',
+                            height: '3.5%',
+                            label: "Annuler l'action",
+                        },
+                        {
+                            left: '57.85%',
+                            top: '52.55%',
+                            width: '5.8%',
+                            height: '6.7%',
+                            label: "Ajouter la promotion",
+                            labelLeft: '1.2rem',
+                        },
+                        {
+                            left: '52.8%',
+                            top: '52.5%',
+                            width: '5.4%',
+                            height: '6.7%',
+                            label: "Annuler l'action",
+                            labelLeft: '-2.8rem',
+                        },
+                    ],
                     subSteps: [
                         <>
                             Renseigner le <strong>nom de la promotion</strong> avec la convention choisie.
@@ -216,10 +257,10 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageAlt: "Bouton stylo pour modifier une promotion",
                     imageCaption: "Le stylo de la ligne promotion ouvre le pop-up de modification.",
                     imageHighlight: {
-                        left: '41.9%',
-                        top: '24.2%',
-                        width: '3.0%',
-                        height: '3.0%',
+                        left: '33.3%',
+                        top: '22.2%',
+                        width: '3.3%',
+                        height: '6.1%',
                         label: 'Bouton Modifier',
                     },
                 },
@@ -233,6 +274,37 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageSrc: popupEditPromotionScreenshot,
                     imageAlt: "Pop-up Modifier une promotion dans OPALE",
                     imageCaption: "Le pop-up de modification est organisé en 4 parties.",
+                    imageHighlights: [
+                        {
+                            left: '19.2%',
+                            top: '31.0%',
+                            width: '18.65%',
+                            height: '37.0%',
+                            label: 'Partie 1',
+                        },
+                        {
+                            left: '37.9%',
+                            top: '31.0%',
+                            width: '18.55%',
+                            height: '15.0%',
+                            label: 'Partie 2',
+                        },
+                        {
+                            left: '37.9%',
+                            top: '46.05%',
+                            width: '18.55%',
+                            height: '15.0%',
+                            label: 'Partie 3',
+                        },
+                        {
+                            left: '56.5%',
+                            top: '31.0%',
+                            width: '23.65%',
+                            height: '37.0%',
+                            label: 'Partie 4',
+                        },
+                    ],
+
                     imagePlacement: 'beforeSubSteps',
                     imageAfterSrc: popupEditPromotionFullScreenshot,
                     imageAfterAlt: "Pop-up Modifier une promotion avec toutes les informations",
@@ -388,15 +460,11 @@ export const promotionsTutorialContent: TutorialContent = {
                             suivantes.
                         </>
                     ),
-                    imageSrc: promoPageScreenshot,
-                    imageAlt: "Zone d'import des maquettes",
-                    imageCaption: "La zone d'import permet d'ajouter une maquette Excel.",
-                    imagePlacement: 'beforeSubSteps',
                     subSteps: [
                         <>
                             Méthode 1 : faire un <strong>drag and drop</strong> d'une ou plusieurs maquettes
                             Excel dans la zone dédiée du cycle cible. Les fichiers acceptés sont
-                            <strong>uniquement</strong> des fichiers Excel.
+                            <strong> uniquement</strong> des fichiers Excel.
                         </>,
                         {
                             text: (
@@ -408,12 +476,21 @@ export const promotionsTutorialContent: TutorialContent = {
                             imageSrc: promoPageScreenshot,
                             imageAlt: "Zone de drag and drop pour importer une maquette",
                             imageCaption: "Cliquer sur la zone ouvre l'explorateur de fichiers.",
+                            imagePlacement: 'beforeSubSteps',
+                            imageHighlight: {
+                                left: '20.3%',
+                                top: '51.0%',
+                                width: '19.8%',
+                                height: '10.4%',
+                                label: "Zone de drag and drop ou de clique pour ouvrir l'explorateur de fichier",
+                                labelLeft: '-1rem',
+                            },
                             subSteps: [
                                 {
                                     text: (
                                         <>
                                             Sélectionner un ou plusieurs fichiers Excel, puis cliquer sur
-                                            <strong>Ouvrir</strong>.
+                                            <strong> Ouvrir</strong>.
                                             <br />
                                             L'explorateur affiche uniquement les fichiers Excel et les dossiers.
                                         </>
@@ -442,6 +519,48 @@ export const promotionsTutorialContent: TutorialContent = {
                             imageSrc: promoPrevisualiserMaquetteScreenshot,
                             imageAlt: "Prévisualisation de la maquette Excel",
                             imageCaption: "La prévisualisation détaille les données extraites de la maquette.",
+                            imageHighlights: [
+                                {
+                                    left: '20.3%',
+                                    top: '2.5%',
+                                    width: '59.8%',
+                                    height: '8.7%',
+                                    label: "En-têtes du pop",
+                                    labelLeft: '-7rem',
+                                    labelTop: '3rem',
+                                    labelWidth: '6.5rem',
+                                },
+                                {
+                                    left: '20.3%',
+                                    top: '11.4%',
+                                    width: '59.8%',
+                                    height: '20.9%',
+                                    label: "Tableau affichant les informations principales",
+                                    labelLeft: '-7rem',
+                                    labelTop: '5rem',
+                                    labelWidth: '6.5rem',
+                                },
+                                {
+                                    left: '20.3%',
+                                    top: '32.5%',
+                                    width: '59.8%',
+                                    height: '6.4%',
+                                    label: "Navigation entre les promotions",
+                                    labelLeft: '-7rem',
+                                    labelTop: '3rem',
+                                    labelWidth: '6.5rem',
+                                },
+                                {
+                                    left: '20.3%',
+                                    top: '39.1%',
+                                    width: '59.8%',
+                                    height: '51.2%',
+                                    label: "Tableau affichant la liste des matières et quelques informations",
+                                    labelLeft: '-7rem',
+                                    labelTop: '10rem',
+                                    labelWidth: '6.5rem',
+                                },
+                            ],
                             subSteps: [
                                 <>
                                     Vérifier dans le premier tableau : <strong>Année scolaire</strong>,
@@ -500,6 +619,14 @@ export const promotionsTutorialContent: TutorialContent = {
                             imageSrc: promoMaquetterSelectionnerScreenshot,
                             imageAlt: "Fichiers de maquette sélectionnés",
                             imageCaption: "Les fichiers validés apparaissent dans la zone de sélection.",
+                            imageHighlight: {
+                                left: '20.3%',
+                                top: '62.2%',
+                                width: '19.8%',
+                                height: '4.5%',
+                                label: "Liste des fichiers sélectionné et validé",
+                                labelLeft: '-1rem',
+                            },
                         },
                     ],
                 },
@@ -513,6 +640,12 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageSrc: promoMaquetterSelectionnerScreenshot,
                     imageAlt: "Bouton Importer la maquette",
                     imageCaption: "Le bouton Importer la maquette lance l'import des fichiers sélectionnés.",
+                    imageHighlight: {
+                        left: '29.4%',
+                        top: '68.5%',
+                        width: '11.6%',
+                        height: '5.6%',
+                    },
                     subSteps: [
                         {
                             text: (
@@ -540,6 +673,12 @@ export const promotionsTutorialContent: TutorialContent = {
                                     imageSrc: promoLierSpeDroplistScreenshot,
                                     imageAlt: "Listes déroulantes de liaison des spécialités",
                                     imageCaption: "Chaque spécialité détectée doit être associée via la liste.",
+                                    imageHighlight: {
+                                        left: '42.1%',
+                                        top: '44.0%',
+                                        width: '7.2%',
+                                        height: '18.7%',
+                                    },
                                 },
                                 {
                                     text: (
@@ -552,6 +691,12 @@ export const promotionsTutorialContent: TutorialContent = {
                                     imageSrc: promoLierSpeScreenshot,
                                     imageAlt: "Actions disponibles dans le pop-up de liaison",
                                     imageCaption: "Les actions permettent d'ajuster les spécialités déclarées.",
+                                    imageHighlight: {
+                                        left: '49.1%',
+                                        top: '44.1%',
+                                        width: '23.5%',
+                                        height: '18.1%',
+                                    },
                                 },
                                 <>
                                     Si une spécialité détectée n'est pas liée, ses matières sont importées en
@@ -591,6 +736,12 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageSrc: promoPageScreenshot,
                     imageAlt: "Bouton de suppression d'un cycle",
                     imageCaption: "La corbeille du cycle supprime le cycle complet et son contenu associé.",
+                    imageHighlight: {
+                        left: '36.6%',
+                        top: '13.0%',
+                        width: '4.0%',
+                        height: '7.3%',
+                    },
                 },
                 <>
                     <strong>Corbeille du cycle</strong> (en haut de la carte): supprime le cycle complet et
@@ -616,6 +767,12 @@ export const promotionsTutorialContent: TutorialContent = {
                     imageSrc: promoPageScreenshot,
                     imageAlt: "Bouton de suppression d'une promotion",
                     imageCaption: "La corbeille de la promotion supprime uniquement la promotion cible.",
+                    imageHighlight: {
+                        left: '35.7%',
+                        top: '24.1%',
+                        width: '3.7%',
+                        height: '7.2%',
+                    },
                 },
                 <>
                     <strong>Corbeille d'une promotion</strong> (sur la ligne promotion): supprime uniquement

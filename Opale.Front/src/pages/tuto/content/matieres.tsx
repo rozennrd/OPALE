@@ -75,10 +75,10 @@ export const matieresTutorialContent: TutorialContent = {
                     imageAlt: "Accès à la modification d'une matière",
                     imageCaption: 'La carte matière ouvre le formulaire de modification.',
                     imageHighlight: {
-                        left: '25.0%',
-                        top: '38.0%',
-                        width: '14.9%',
-                        height: '9.9%',
+                        left: '24.3%',
+                        top: '42.7%',
+                        width: '16.6%',
+                        height: '7.2%',
                         label: 'Matière à modifier',
                         labelLeft: '-0.1rem',
                     },
@@ -103,6 +103,13 @@ export const matieresTutorialContent: TutorialContent = {
                     imageCaption:
                         "Le pop-up permet d'ajuster les volumes et les affectations d'enseignants.",
                     imagePlacement: 'beforeSubSteps',
+                    imageHighlight: {
+                        left: '20.2%',
+                        top: '28.9%',
+                        width: '30.8%',
+                        height: '33.8%',
+                        label: 'Informations',
+                    },
                     subSteps: [
                         <>
                             <strong>Champs modifiables</strong> (colonne information, à gauche) :
@@ -145,6 +152,13 @@ export const matieresTutorialContent: TutorialContent = {
                             imageSrc: popupMatiereUpdateNoAlertScreenshot,
                             imageAlt: "Attribution des heures dans le détail d'une matière",
                             imageCaption: "Attribution des heures aux enseignants depuis la carte de détail.",
+                            imageHighlight: {
+                                left: '53.8%',
+                                top: '27.5%',
+                                width: '25.6%',
+                                height: '32.5%',
+                                label: 'Enseignants',
+                            },
                         },
                         <>
                             Un <strong>warning</strong> indique le nombre d'heures <strong>restantes</strong> à
@@ -260,6 +274,13 @@ export const matieresTutorialContent: TutorialContent = {
                     imageSrc: popupMatiereUpdateAlertScreenshot,
                     imageAlt: "Carte de détail d'une matière",
                     imageCaption: "Accès à l'attribution des heures par enseignant.",
+                    imageHighlight: {
+                        left: '53.8%',
+                        top: '27.5%',
+                        width: '25.6%',
+                        height: '32.5%',
+                        label: 'Enseignants',
+                    },
                 },
                 {
                     text: (
@@ -271,10 +292,10 @@ export const matieresTutorialContent: TutorialContent = {
                     imageAlt: "Bouton d'ajout d'un enseignant",
                     imageCaption: "Le bouton + Ajouter permet d'ajouter un enseignant.",
                     imageHighlight: {
-                        left: '53.2%',
-                        top: '31.9%',
-                        width: '8.7%',
-                        height: '5.0%',
+                        left: '54.5%',
+                        top: '33.3%',
+                        width: '5.2%',
+                        height: '4.2%',
                         label: 'Ajouter',
                     },
                 },
@@ -287,6 +308,13 @@ export const matieresTutorialContent: TutorialContent = {
                     imageSrc: dropdownMatiereProfScreenshot,
                     imageAlt: "Liste déroulante des enseignants",
                     imageCaption: "Sélection d'un enseignant.",
+                    imageHighlight: {
+                        left: '55.6%',
+                        top: '44.4%',
+                        width: '15.7%',
+                        height: '14.1%',
+                        label: 'Enseignant',
+                    },
                 },
                 {
                     text: (
@@ -300,10 +328,10 @@ export const matieresTutorialContent: TutorialContent = {
                     imageAlt: "Attribution des heures par type de cours",
                     imageCaption: "Les labels passent en vert quand des heures sont attribuées.",
                     imageHighlight: {
-                        left: '54.4%',
-                        top: '47.0%',
-                        width: '9.3%',
-                        height: '10.1%',
+                        left: '54.5%',
+                        top: '45.0%',
+                        width: '4.8%',
+                        height: '7.4%',
                         label: 'Labels verts',
                     },
                 },
@@ -327,10 +355,10 @@ export const matieresTutorialContent: TutorialContent = {
                     imageAlt: "Suppression d'un enseignant",
                     imageCaption: "Bouton de suppression d'un enseignant.",
                     imageHighlight: {
-                        left: '71.2%',
-                        top: '43.1%',
-                        width: '4.1%',
-                        height: '7.8%',
+                        left: '70.4%',
+                        top: '40.6%',
+                        width: '2.3%',
+                        height: '4.4%',
                         label: 'Supprimer',
                     },
                 },
@@ -347,10 +375,10 @@ export const matieresTutorialContent: TutorialContent = {
                     imageAlt: "Warning d'heures restantes",
                     imageCaption: "Warning indiquant les heures restantes à attribuer.",
                     imageHighlight: {
-                        left: '27.5%',
-                        top: '66.7%',
-                        width: '28.9%',
-                        height: '12.3%',
+                        left: '19.8%',
+                        top: '68.9%',
+                        width: '30.4%',
+                        height: '6.8%',
                         label: 'Warning',
                     },
                 },

@@ -34,6 +34,7 @@ export type TutorialImageHighlight = {
     label?: string
     labelLeft?: string
     labelTop?: string
+    labelWidth?: string
 }
 
 export type TutorialStep = {

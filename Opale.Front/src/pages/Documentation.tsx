@@ -4,7 +4,7 @@ import PageHeader from '../components/common/PageHeader'
 import SectionCard from '../components/common/SectionCard'
 import { TUTORIAL_CONTENT } from './tuto/content'
 import { TAB_ITEMS, TUTORIAL_ITEMS } from './tuto/items'
-import type { TutorialId, TutorialTab } from './tuto/types'
+import type { TutorialId, TutorialImageHighlight, TutorialTab } from './tuto/types'
 import {
     firstTutorialForTab,
     getStepHighlights,
@@ -17,6 +17,28 @@ import {
 } from './tuto/utils'
 
 type DocumentationSectionKey = 'selector' | 'viewer'
+
+const getHighlightLabelStyle = (
+    highlight: TutorialImageHighlight,
+): React.CSSProperties | undefined => {
+    if (!highlight.labelLeft && !highlight.labelTop && !highlight.labelWidth) {
+        return undefined
+    }
+
+    return {
+        ...(highlight.labelLeft ? { left: highlight.labelLeft } : {}),
+        ...(highlight.labelTop ? { top: highlight.labelTop } : {}),
+        ...(highlight.labelWidth
+            ? {
+                  width: highlight.labelWidth,
+                  display: 'block',
+                  whiteSpace: 'normal',
+                  lineHeight: 1.2,
+                  overflowWrap: 'break-word',
+              }
+            : {}),
+    }
+}
 
 export default function Documentation() {
     const [searchParams] = useSearchParams()
@@ -367,23 +389,7 @@ export default function Documentation() {
                                                                                                             {highlight.label && (
                                                                                                                 <span
                                                                                                                     className="documentation-step-highlight-label"
-                                                                                                                    style={
-                                                                                                                        highlight.labelLeft ||
-                                                                                                                        highlight.labelTop
-                                                                                                                            ? {
-                                                                                                                                  ...(highlight.labelLeft
-                                                                                                                                      ? {
-                                                                                                                                            left: highlight.labelLeft,
-                                                                                                                                        }
-                                                                                                                                      : {}),
-                                                                                                                                  ...(highlight.labelTop
-                                                                                                                                      ? {
-                                                                                                                                            top: highlight.labelTop,
-                                                                                                                                        }
-                                                                                                                                      : {}),
-                                                                                                                              }
-                                                                                                                            : undefined
-                                                                                                                    }
+                                                                                                                    style={getHighlightLabelStyle(highlight)}
                                                                                                                 >
                                                                                                                     {highlight.label}
                                                                                                                 </span>
@@ -429,6 +435,9 @@ export default function Documentation() {
                                                                                                     getStepHighlights(
                                                                                                         subStep,
                                                                                                     )
+                                                                                                const subStepImagePlacement =
+                                                                                                    subStepDetails?.imagePlacement ??
+                                                                                                    'afterSubSteps'
                                                                                                 const subStepHighlightMaskId = `${tutorialId}-section-${sectionIndex}-step-${stepIndex}-substep-${subStepIndex}-highlight-mask`
 
                                                                                                 return (
@@ -438,7 +447,86 @@ export default function Documentation() {
                                                                                                     >
                                                                                                         {hasSubStepText &&
                                                                                                             subStepText}
-                                                                                                                                                                                                                {nestedSubSteps.length > 0 && (
+                                                                                                        {subStepDetails?.imageSrc &&
+                                                                                                            subStepImagePlacement ===
+                                                                                                                'beforeSubSteps' && (
+                                                                                                                <figure className="documentation-step-figure">
+                                                                                                                    <div className="documentation-step-image-wrapper">
+                                                                                                                        <img
+                                                                                                                            src={subStepDetails.imageSrc}
+                                                                                                                            alt={subStepDetails.imageAlt ?? "Capture d'écran du tutoriel"}
+                                                                                                                            className="documentation-step-image"
+                                                                                                                        />
+                                                                                                                        {subStepHighlights.length > 0 && (
+                                                                                                                            <svg
+                                                                                                                                className="documentation-step-dim-overlay"
+                                                                                                                                viewBox="0 0 100 100"
+                                                                                                                                preserveAspectRatio="none"
+                                                                                                                                aria-hidden="true"
+                                                                                                                            >
+                                                                                                                                <defs>
+                                                                                                                                    <mask id={subStepHighlightMaskId}>
+                                                                                                                                        <rect
+                                                                                                                                            x="0"
+                                                                                                                                            y="0"
+                                                                                                                                            width="100%"
+                                                                                                                                            height="100%"
+                                                                                                                                            fill="white"
+                                                                                                                                        />
+                                                                                                                                        {subStepHighlights.map((highlight, highlightIndex) => (
+                                                                                                                                            <rect
+                                                                                                                                                key={`${subStepHighlightMaskId}-cutout-${highlightIndex}`}
+                                                                                                                                                x={highlight.left}
+                                                                                                                                                y={highlight.top}
+                                                                                                                                                width={highlight.width}
+                                                                                                                                                height={highlight.height}
+                                                                                                                                                rx="1.2"
+                                                                                                                                                ry="1.2"
+                                                                                                                                                fill="black"
+                                                                                                                                            />
+                                                                                                                                        ))}
+                                                                                                                                    </mask>
+                                                                                                                                </defs>
+                                                                                                                                <rect
+                                                                                                                                    x="0"
+                                                                                                                                    y="0"
+                                                                                                                                    width="100%"
+                                                                                                                                    height="100%"
+                                                                                                                                    fill="rgba(9, 17, 31, 0.42)"
+                                                                                                                                    mask={`url(#${subStepHighlightMaskId})`}
+                                                                                                                                />
+                                                                                                                            </svg>
+                                                                                                                        )}
+                                                                                                                        {subStepHighlights.map((highlight, highlightIndex) => (
+                                                                                                                            <div
+                                                                                                                                key={`${tutorialId}-section-${sectionIndex}-step-${stepIndex}-substep-${subStepIndex}-highlight-${highlightIndex}`}
+                                                                                                                                className="documentation-step-highlight"
+                                                                                                                                style={{
+                                                                                                                                    left: highlight.left,
+                                                                                                                                    top: highlight.top,
+                                                                                                                                    width: highlight.width,
+                                                                                                                                    height: highlight.height,
+                                                                                                                                }}
+                                                                                                                            >
+                                                                                                                                {highlight.label && (
+                                                                                                                                    <span
+                                                                                                                                        className="documentation-step-highlight-label"
+                                                                                                                                        style={getHighlightLabelStyle(highlight)}
+                                                                                                                                    >
+                                                                                                                                        {highlight.label}
+                                                                                                                                    </span>
+                                                                                                                                )}
+                                                                                                                            </div>
+                                                                                                                        ))}
+                                                                                                                    </div>
+                                                                                                                    {subStepDetails.imageCaption && (
+                                                                                                                        <figcaption className="documentation-step-caption">
+                                                                                                                            {subStepDetails.imageCaption}
+                                                                                                                        </figcaption>
+                                                                                                                    )}
+                                                                                                                </figure>
+                                                                                                            )}
+                                                                                                                                                                                                                 {nestedSubSteps.length > 0 && (
                                                                                                             <ol className="documentation-substep-list documentation-subsubstep-list">
                                                                                                                 {nestedSubSteps.map(
                                                                                                                     (nestedSubStep, nestedSubStepIndex) => {
@@ -523,18 +611,7 @@ export default function Documentation() {
                                                                                                                                                     {highlight.label && (
                                                                                                                                                         <span
                                                                                                                                                             className="documentation-step-highlight-label"
-                                                                                                                                                            style={
-                                                                                                                                                                highlight.labelLeft || highlight.labelTop
-                                                                                                                                                                    ? {
-                                                                                                                                                                          ...(highlight.labelLeft
-                                                                                                                                                                              ? { left: highlight.labelLeft }
-                                                                                                                                                                              : {}),
-                                                                                                                                                                          ...(highlight.labelTop
-                                                                                                                                                                              ? { top: highlight.labelTop }
-                                                                                                                                                                              : {}),
-                                                                                                                                                                      }
-                                                                                                                                                                    : undefined
-                                                                                                                                                            }
+                                                                                                                                                            style={getHighlightLabelStyle(highlight)}
                                                                                                                                                         >
                                                                                                                                                             {highlight.label}
                                                                                                                                                         </span>
@@ -555,7 +632,9 @@ export default function Documentation() {
                                                                                                                 )}
                                                                                                             </ol>
                                                                                                         )}
-                                                                                                        {subStepDetails?.imageSrc && (
+                                                                                                        {subStepDetails?.imageSrc &&
+                                                                                                            subStepImagePlacement !==
+                                                                                                                'beforeSubSteps' && (
                                                                                                             <figure className="documentation-step-figure">
                                                                                                                 <div className="documentation-step-image-wrapper">
                                                                                                                     <img
@@ -617,18 +696,7 @@ export default function Documentation() {
                                                                                                                             {highlight.label && (
                                                                                                                                 <span
                                                                                                                                     className="documentation-step-highlight-label"
-                                                                                                                                    style={
-                                                                                                                                        highlight.labelLeft || highlight.labelTop
-                                                                                                                                            ? {
-                                                                                                                                                  ...(highlight.labelLeft
-                                                                                                                                                      ? { left: highlight.labelLeft }
-                                                                                                                                                      : {}),
-                                                                                                                                                  ...(highlight.labelTop
-                                                                                                                                                      ? { top: highlight.labelTop }
-                                                                                                                                                      : {}),
-                                                                                                                                              }
-                                                                                                                                            : undefined
-                                                                                                                                    }
+                                                                                                                                    style={getHighlightLabelStyle(highlight)}
                                                                                                                                 >
                                                                                                                                     {highlight.label}
                                                                                                                                 </span>
@@ -733,23 +801,7 @@ export default function Documentation() {
                                                                                                             {highlight.label && (
                                                                                                                 <span
                                                                                                                     className="documentation-step-highlight-label"
-                                                                                                                    style={
-                                                                                                                        highlight.labelLeft ||
-                                                                                                                        highlight.labelTop
-                                                                                                                            ? {
-                                                                                                                                  ...(highlight.labelLeft
-                                                                                                                                      ? {
-                                                                                                                                            left: highlight.labelLeft,
-                                                                                                                                        }
-                                                                                                                                      : {}),
-                                                                                                                                  ...(highlight.labelTop
-                                                                                                                                      ? {
-                                                                                                                                            top: highlight.labelTop,
-                                                                                                                                        }
-                                                                                                                                      : {}),
-                                                                                                                              }
-                                                                                                                            : undefined
-                                                                                                                    }
+                                                                                                                    style={getHighlightLabelStyle(highlight)}
                                                                                                                 >
                                                                                                                     {highlight.label}
                                                                                                                 </span>
@@ -837,23 +889,7 @@ export default function Documentation() {
                                                                                                         {highlight.label && (
                                                                                                             <span
                                                                                                                 className="documentation-step-highlight-label"
-                                                                                                                style={
-                                                                                                                    highlight.labelLeft ||
-                                                                                                                    highlight.labelTop
-                                                                                                                        ? {
-                                                                                                                              ...(highlight.labelLeft
-                                                                                                                                  ? {
-                                                                                                                                        left: highlight.labelLeft,
-                                                                                                                                    }
-                                                                                                                                  : {}),
-                                                                                                                              ...(highlight.labelTop
-                                                                                                                                  ? {
-                                                                                                                                        top: highlight.labelTop,
-                                                                                                                                    }
-                                                                                                                                  : {}),
-                                                                                                                          }
-                                                                                                                        : undefined
-                                                                                                                }
+                                                                                                                style={getHighlightLabelStyle(highlight)}
                                                                                                             >
                                                                                                                 {highlight.label}
                                                                                                             </span>
@@ -984,23 +1020,7 @@ export default function Documentation() {
                                                                                         {highlight.label && (
                                                                                             <span
                                                                                                 className="documentation-step-highlight-label"
-                                                                                                style={
-                                                                                                    highlight.labelLeft ||
-                                                                                                    highlight.labelTop
-                                                                                                        ? {
-                                                                                                              ...(highlight.labelLeft
-                                                                                                                  ? {
-                                                                                                                        left: highlight.labelLeft,
-                                                                                                                    }
-                                                                                                                  : {}),
-                                                                                                              ...(highlight.labelTop
-                                                                                                                  ? {
-                                                                                                                        top: highlight.labelTop,
-                                                                                                                    }
-                                                                                                                  : {}),
-                                                                                                          }
-                                                                                                        : undefined
-                                                                                                }
+                                                                                                style={getHighlightLabelStyle(highlight)}
                                                                                             >
                                                                                                 {highlight.label}
                                                                                             </span>
@@ -1027,13 +1047,16 @@ export default function Documentation() {
                                                                                 hasRenderableNode(subStepText)
                                                                             const nestedSubSteps =
                                                                                 getVisibleSubSteps(subStep)
-                                                                            const subStepDetails =
-                                                                                isTutorialStepObject(subStep)
-                                                                                    ? subStep
-                                                                                    : null
-                                                                            const subStepHighlights =
-                                                                                getStepHighlights(subStep)
-                                                                            const subStepHighlightMaskId = `${selectedTutorial.id}-step-${index}-substep-${subStepIndex}-highlight-mask`
+                                                                             const subStepDetails =
+                                                                                 isTutorialStepObject(subStep)
+                                                                                     ? subStep
+                                                                                     : null
+                                                                             const subStepHighlights =
+                                                                                 getStepHighlights(subStep)
+                                                                             const subStepImagePlacement =
+                                                                                 subStepDetails?.imagePlacement ??
+                                                                                 'afterSubSteps'
+                                                                             const subStepHighlightMaskId = `${selectedTutorial.id}-step-${index}-substep-${subStepIndex}-highlight-mask`
 
                                                                             return (
                                                                                 <li
@@ -1041,6 +1064,98 @@ export default function Documentation() {
                                                                                     className="documentation-substep-item"
                                                                                 >
                                                                                     {hasSubStepText && subStepText}
+                                                                                    {subStepDetails?.imageSrc &&
+                                                                                        subStepImagePlacement ===
+                                                                                            'beforeSubSteps' && (
+                                                                                            <figure className="documentation-step-figure">
+                                                                                                <div className="documentation-step-image-wrapper">
+                                                                                                    <img
+                                                                                                        src={subStepDetails.imageSrc}
+                                                                                                        alt={
+                                                                                                            subStepDetails.imageAlt ??
+                                                                                                            "Capture d'écran du tutoriel"
+                                                                                                        }
+                                                                                                        className="documentation-step-image"
+                                                                                                    />
+                                                                                                    {subStepHighlights.length > 0 && (
+                                                                                                        <svg
+                                                                                                            className="documentation-step-dim-overlay"
+                                                                                                            viewBox="0 0 100 100"
+                                                                                                            preserveAspectRatio="none"
+                                                                                                            aria-hidden="true"
+                                                                                                        >
+                                                                                                            <defs>
+                                                                                                                <mask id={subStepHighlightMaskId}>
+                                                                                                                    <rect
+                                                                                                                        x="0"
+                                                                                                                        y="0"
+                                                                                                                        width="100%"
+                                                                                                                        height="100%"
+                                                                                                                        fill="white"
+                                                                                                                    />
+                                                                                                                    {subStepHighlights.map(
+                                                                                                                        (
+                                                                                                                            highlight,
+                                                                                                                            highlightIndex,
+                                                                                                                        ) => (
+                                                                                                                            <rect
+                                                                                                                                key={`${subStepHighlightMaskId}-cutout-${highlightIndex}`}
+                                                                                                                                x={highlight.left}
+                                                                                                                                y={highlight.top}
+                                                                                                                                width={highlight.width}
+                                                                                                                                height={highlight.height}
+                                                                                                                                rx="1.2"
+                                                                                                                                ry="1.2"
+                                                                                                                                fill="black"
+                                                                                                                            />
+                                                                                                                        ),
+                                                                                                                    )}
+                                                                                                                </mask>
+                                                                                                            </defs>
+                                                                                                            <rect
+                                                                                                                x="0"
+                                                                                                                y="0"
+                                                                                                                width="100%"
+                                                                                                                height="100%"
+                                                                                                                fill="rgba(9, 17, 31, 0.42)"
+                                                                                                                mask={`url(#${subStepHighlightMaskId})`}
+                                                                                                            />
+                                                                                                        </svg>
+                                                                                                    )}
+                                                                                                    {subStepHighlights.map(
+                                                                                                        (
+                                                                                                            highlight,
+                                                                                                            highlightIndex,
+                                                                                                        ) => (
+                                                                                                            <div
+                                                                                                                key={`${selectedTutorial.id}-step-${index}-substep-${subStepIndex}-highlight-${highlightIndex}`}
+                                                                                                                className="documentation-step-highlight"
+                                                                                                                style={{
+                                                                                                                    left: highlight.left,
+                                                                                                                    top: highlight.top,
+                                                                                                                    width: highlight.width,
+                                                                                                                    height: highlight.height,
+                                                                                                                }}
+                                                                                                            >
+                                                                                                                {highlight.label && (
+                                                                                                                    <span
+                                                                                                                        className="documentation-step-highlight-label"
+                                                                                                                        style={getHighlightLabelStyle(highlight)}
+                                                                                                                    >
+                                                                                                                        {highlight.label}
+                                                                                                                    </span>
+                                                                                                                )}
+                                                                                                            </div>
+                                                                                                        ),
+                                                                                                    )}
+                                                                                                </div>
+                                                                                                {subStepDetails.imageCaption && (
+                                                                                                    <figcaption className="documentation-step-caption">
+                                                                                                        {subStepDetails.imageCaption}
+                                                                                                    </figcaption>
+                                                                                                )}
+                                                                                            </figure>
+                                                                                        )}
                                                                                                                         {nestedSubSteps.length > 0 && (
                                         <ol className="documentation-substep-list documentation-subsubstep-list">
                                             {nestedSubSteps.map((nestedSubStep, nestedSubStepIndex) => {
@@ -1125,18 +1240,7 @@ export default function Documentation() {
                                                                             {highlight.label && (
                                                                                 <span
                                                                                     className="documentation-step-highlight-label"
-                                                                                    style={
-                                                                                        highlight.labelLeft || highlight.labelTop
-                                                                                            ? {
-                                                                                                  ...(highlight.labelLeft
-                                                                                                      ? { left: highlight.labelLeft }
-                                                                                                      : {}),
-                                                                                                  ...(highlight.labelTop
-                                                                                                      ? { top: highlight.labelTop }
-                                                                                                      : {}),
-                                                                                              }
-                                                                                            : undefined
-                                                                                    }
+                                                                                    style={getHighlightLabelStyle(highlight)}
                                                                                 >
                                                                                     {highlight.label}
                                                                                 </span>
@@ -1156,7 +1260,9 @@ export default function Documentation() {
                                             })}
                                         </ol>
                                     )}
-                                                                                    {subStepDetails?.imageSrc && (
+                                                                                    {subStepDetails?.imageSrc &&
+                                                                                        subStepImagePlacement !==
+                                                                                            'beforeSubSteps' && (
                                                                                         <figure className="documentation-step-figure">
                                                                                             <div className="documentation-step-image-wrapper">
                                                                                                 <img
@@ -1230,23 +1336,7 @@ export default function Documentation() {
                                                                                                             {highlight.label && (
                                                                                                                 <span
                                                                                                                     className="documentation-step-highlight-label"
-                                                                                                                    style={
-                                                                                                                        highlight.labelLeft ||
-                                                                                                                        highlight.labelTop
-                                                                                                                            ? {
-                                                                                                                                  ...(highlight.labelLeft
-                                                                                                                                      ? {
-                                                                                                                                            left: highlight.labelLeft,
-                                                                                                                                        }
-                                                                                                                                      : {}),
-                                                                                                                                  ...(highlight.labelTop
-                                                                                                                                      ? {
-                                                                                                                                            top: highlight.labelTop,
-                                                                                                                                        }
-                                                                                                                                      : {}),
-                                                                                                                              }
-                                                                                                                            : undefined
-                                                                                                                    }
+                                                                                                                    style={getHighlightLabelStyle(highlight)}
                                                                                                                 >
                                                                                                                     {highlight.label}
                                                                                                                 </span>
@@ -1349,23 +1439,7 @@ export default function Documentation() {
                                                                                         {highlight.label && (
                                                                                             <span
                                                                                                 className="documentation-step-highlight-label"
-                                                                                                style={
-                                                                                                    highlight.labelLeft ||
-                                                                                                    highlight.labelTop
-                                                                                                        ? {
-                                                                                                              ...(highlight.labelLeft
-                                                                                                                  ? {
-                                                                                                                        left: highlight.labelLeft,
-                                                                                                                    }
-                                                                                                                  : {}),
-                                                                                                              ...(highlight.labelTop
-                                                                                                                  ? {
-                                                                                                                        top: highlight.labelTop,
-                                                                                                                    }
-                                                                                                                  : {}),
-                                                                                                          }
-                                                                                                        : undefined
-                                                                                                }
+                                                                                                style={getHighlightLabelStyle(highlight)}
                                                                                             >
                                                                                                 {highlight.label}
                                                                                             </span>
@@ -1450,23 +1524,7 @@ export default function Documentation() {
                                                                                     {highlight.label && (
                                                                                         <span
                                                                                             className="documentation-step-highlight-label"
-                                                                                            style={
-                                                                                                highlight.labelLeft ||
-                                                                                                highlight.labelTop
-                                                                                                    ? {
-                                                                                                          ...(highlight.labelLeft
-                                                                                                              ? {
-                                                                                                                    left: highlight.labelLeft,
-                                                                                                                }
-                                                                                                              : {}),
-                                                                                                          ...(highlight.labelTop
-                                                                                                              ? {
-                                                                                                                    top: highlight.labelTop,
-                                                                                                                }
-                                                                                                              : {}),
-                                                                                                      }
-                                                                                                    : undefined
-                                                                                            }
+                                                                                            style={getHighlightLabelStyle(highlight)}
                                                                                         >
                                                                                             {highlight.label}
                                                                                         </span>
@@ -1500,4 +1558,5 @@ export default function Documentation() {
         </>
     )
 }
+
 

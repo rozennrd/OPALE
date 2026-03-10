@@ -68,12 +68,12 @@ export const teachersTutorialContent: TutorialContent = {
                     imageAlt: "Bouton + de création d'un enseignant",
                     imageCaption: "Le bouton + ouvre le pop-up de création d'un enseignant.",
                     imageHighlight: {
-                        left: '82.3%',
-                        top: '19.2%',
-                        width: '12.6%',
-                        height: '6.0%',
+                        left: '82.6%',
+                        top: '17.9%',
+                        width: '15.0%',
+                        height: '4.3%',
                         label: "Création d'enseignant",
-                        labelLeft: '-4rem',
+                        labelLeft: '-4.2rem',
                     },
                 },
                 {
@@ -86,6 +86,29 @@ export const teachersTutorialContent: TutorialContent = {
                     imageAlt: "Pop-up de création d'un enseignant",
                     imageCaption: 'Le pop-up permet de définir le profil, les matières et les disponibilités.',
                     imagePlacement: 'beforeSubSteps',
+                    imageHighlights: [
+                        {
+                            left: '21.9%',
+                            top: '35.7%',
+                            width: '23.6%',
+                            height: '38.5%',
+                            label: 'Informations',
+                        },
+                        {
+                            left: '46.1%',
+                            top: '35.6%',
+                            width: '16.8%',
+                            height: '17.8%',
+                            label: 'Matières',
+                        },
+                        {
+                            left: '62.7%',
+                            top: '35.6%',
+                            width: '16.6%',
+                            height: '39.0%',
+                            label: 'Disponibilités',
+                        },
+                    ],
                     subSteps: [
                         {
                             text: (
@@ -106,6 +129,13 @@ export const teachersTutorialContent: TutorialContent = {
                             imageSrc: dropdownProfTypeScreenshot,
                             imageAlt: "Liste déroulante du type d'enseignant",
                             imageCaption: "Sélection du type d'enseignant.",
+                            imageHighlight: {
+                                left: '26.9%',
+                                top: '47.7%',
+                                width: '17.5%',
+                                height: '26.0%',
+                                label: 'Type',
+                            },
                         },
                         {
                             text: (
@@ -116,6 +146,13 @@ export const teachersTutorialContent: TutorialContent = {
                             imageSrc: dropdownProfRattachementScreenshot,
                             imageAlt: "Liste déroulante du rattachement de l'enseignant",
                             imageCaption: "Sélection du rattachement.",
+                            imageHighlight: {
+                                left: '28.0%',
+                                top: '52.2%',
+                                width: '16.1%',
+                                height: '18.5%',
+                                label: 'Rattachement',
+                            },
                         },
                         {
                             text: (
@@ -127,6 +164,13 @@ export const teachersTutorialContent: TutorialContent = {
                             imageSrc: dropdownProfCampusScreenshot,
                             imageAlt: "Liste déroulante du campus d'origine",
                             imageCaption: "Sélection du campus d'origine.",
+                            imageHighlight: {
+                                left: '29.1%',
+                                top: '56.8%',
+                                width: '15.0%',
+                                height: '19.0%',
+                                label: 'Campus',
+                            },
                         },
                         {
                             text: (
@@ -230,11 +274,11 @@ export const teachersTutorialContent: TutorialContent = {
                     imageAlt: "Accès à la modification d'un enseignant",
                     imageCaption: 'La carte enseignant ouvre le formulaire de modification.',
                     imageHighlight: {
-                        left: '25.0%',
-                        top: '38.5%',
-                        width: '14.7%',
-                        height: '7.2%',
-                        label: 'enseignant à modifier',
+                        left: '20.8%',
+                        top: '39.6%',
+                        width: '12.0%',
+                        height: '7.4%',
+                        label: 'Enseignant à modifier',
                     },
                 },
                 {
@@ -249,6 +293,29 @@ export const teachersTutorialContent: TutorialContent = {
                     imageCaption:
                         'En modification, les informations existantes peuvent être corrigées et complétées.',
                     imagePlacement: 'beforeSubSteps',
+                    imageHighlights: [
+                        {
+                            left: '21.9%',
+                            top: '35.8%',
+                            width: '18.1%',
+                            height: '39.0%',
+                            label: 'Informations',
+                        },
+                        {
+                            left: '40.6%',
+                            top: '35.7%',
+                            width: '24.8%',
+                            height: '18.1%',
+                            label: 'Matières',
+                        },
+                        {
+                            left: '66.0%',
+                            top: '35.6%',
+                            width: '14.0%',
+                            height: '38.8%',
+                            label: 'Disponibilités',
+                        },
+                    ],
                     subSteps: [
                         {
                             text: (
@@ -392,6 +459,13 @@ export const teachersTutorialContent: TutorialContent = {
                     imageSrc: dropdownProfPromoScreenshot,
                     imageAlt: 'Liste déroulante des promotions',
                     imageCaption: 'Sélection de la promotion.',
+                    imageHighlight: {
+                        left: '41.8%',
+                        top: '40.2%',
+                        width: '11.1%',
+                        height: '39.1%',
+                        label: 'Promotion',
+                    },
                 },
                 {
                     text: (
@@ -417,6 +491,13 @@ export const teachersTutorialContent: TutorialContent = {
                     imageSrc: dropdownProfMatieresScreenshot,
                     imageAlt: 'Liste déroulante des matières',
                     imageCaption: 'Sélection de la matière.',
+                    imageHighlight: {
+                        left: '45.8%',
+                        top: '40.1%',
+                        width: '17.1%',
+                        height: '62.0%',
+                        label: 'Matière',
+                    },
                 },
             ],
         },
@@ -433,6 +514,13 @@ export const teachersTutorialContent: TutorialContent = {
                     imageSrc: screenPopupProfModifScreenshot,
                     imageAlt: "Carte de détail d'un enseignant",
                     imageCaption: "Ajout d'une période de disponibilité depuis la carte de détail.",
+                    imageHighlight: {
+                        left: '61.8%',
+                        top: '44.8%',
+                        width: '16.0%',
+                        height: '3.4%',
+                        label: 'Ajouter une période',
+                    },
                 },
                 <>
                     Renseigner la <strong>date de début</strong> et la <strong>date de fin</strong> de la

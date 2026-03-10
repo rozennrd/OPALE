@@ -45,6 +45,14 @@ export const planningTutorialContent: TutorialContent = {
                     imageSrc: screenPagePlanningScreenshot,
                     imageAlt: 'Checklist macro de la page Planning',
                     imageCaption: 'Checklist macro pour valider les prérequis.',
+                    imageHighlight: {
+                        left: '18.7%',
+                        top: '12.8%',
+                        width: '39.0%',
+                        height: '53.0%',
+                        label: 'Checklist macro',
+                        labelTop: '-0.5rem',
+                    },
                 },
                 {
                     text: (
@@ -55,6 +63,14 @@ export const planningTutorialContent: TutorialContent = {
                     imageSrc: screenPagePlanningScreenshot,
                     imageAlt: 'Bouton Générer le planning macro',
                     imageCaption: 'Le bouton lance la génération macro.',
+                    imageHighlight: {
+                        left: '46.7%',
+                        top: '85.7%',
+                        width: '11.1%',
+                        height: '9.4%',
+                        label: 'Générer la macro',
+                        labelTop: '-0.5rem',
+                    },
                 },
                 <>
                     Attendre quelques instants pendant la génération.
@@ -68,6 +84,14 @@ export const planningTutorialContent: TutorialContent = {
                     imageSrc: screenPagePlanningDownloadScreenshot,
                     imageAlt: 'Bouton Télécharger le fichier',
                     imageCaption: 'Le bouton de téléchargement apparaît après la génération.',
+                    imageHighlight: {
+                        left: '18.5%',
+                        top: '89.0%',
+                        width: '39.7%',
+                        height: '6.75%',
+                        label: 'Télécharger le planning au format Excelt',
+                        labelTop: '-0.5rem',
+                    },
                 },
                 {
                     text: (
@@ -79,6 +103,14 @@ export const planningTutorialContent: TutorialContent = {
                     imageSrc: screenPagePlanningDownloadDoScreenshot,
                     imageAlt: 'Téléchargement du fichier macro',
                     imageCaption: 'Le fichier généré est disponible dans les téléchargements.',
+                    imageHighlight: {
+                        left: '73.1%',
+                        top: '8.25%',
+                        width: '23.0%',
+                        height: '11.0%',
+                        label: 'Fichier Excel télécharger',
+                        labelTop: '-0.5rem',
+                    },
                 },
             ],
         },
