@@ -474,7 +474,7 @@ export default function Documentation() {
     const exportDialogContent = (
         <div className="documentation-export-dialog">
             <p className="documentation-export-dialog-intro">
-                Choisissez les tutoriels Ã  exporter. Un sommaire sera ajoutÃ© automatiquement.
+                Choisissez les tutoriels à exporter. Un sommaire sera ajouté automatiquement.
             </p>
             <label className="documentation-export-filename">
                 <span className="documentation-export-filename-label">Nom du PDF</span>
@@ -487,7 +487,7 @@ export default function Documentation() {
                 />
             </label>
             <div className="documentation-export-theme">
-                <span className="documentation-export-theme-label">ThÃ¨me du PDF</span>
+                <span className="documentation-export-theme-label">Thème du PDF</span>
                 <div className="documentation-export-theme-options">
                     <label className="documentation-export-theme-option">
                         <input
@@ -513,10 +513,10 @@ export default function Documentation() {
             </div>
             <div className="documentation-export-dialog-actions">
                 <button type="button" className="btn-tertiary" onClick={selectAllTutorials}>
-                    Tout sÃ©lectionner
+                    Tout sélectionner
                 </button>
                 <button type="button" className="btn-tertiary" onClick={clearExportSelection}>
-                    Tout dÃ©sÃ©lectionner
+                    Tout désélectionner
                 </button>
             </div>
             <div className="documentation-export-dialog-groups">
