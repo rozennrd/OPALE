@@ -82,6 +82,18 @@
     display: block;
 }
 
+.login-logo .login-logo-medieval-dark {
+    display: none;
+}
+
+:root[data-theme='medieval-dark'] .login-logo .login-logo-dark {
+    display: none;
+}
+
+:root[data-theme='medieval-dark'] .login-logo .login-logo-medieval-dark {
+    display: block;
+}
+
 .login-container h2 {
     margin-bottom: 20px;
 }
