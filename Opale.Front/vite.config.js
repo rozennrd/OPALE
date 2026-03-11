@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // Required for Docker HMR
     port: 5173,
+    allowedHosts: ['localhost', '127.0.0.1', 'opale-new-frontend', 'host.docker.internal'],
     /* proxy: {
       '^/(?!((@vite|@react|@emotion|node_modules|src|components?|assets?|styles?|hooks?|models?|pages?|services?|utils?|pages?|types?|utils?|assets|/index\.html))/)': {
         target: 'http://node-app:3000', // Use Docker service name from docker-compose.yml

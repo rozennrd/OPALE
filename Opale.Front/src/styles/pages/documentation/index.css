@@ -16,6 +16,18 @@
         width: fit-content;
     }
 
+    .documentation-tabs-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .documentation-export-trigger {
+        white-space: nowrap;
+    }
+
     .documentation-tab-btn {
         border: none;
         border-radius: 999px;
@@ -49,6 +61,13 @@
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.75rem;
+    }
+
+    .documentation-export-error {
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--danger-700, #b91c1c);
+        font-weight: 600;
     }
 
     .documentation-topic-card {
@@ -108,6 +127,168 @@
 
     .documentation-warning strong {
         font-weight: 700;
+    }
+
+    .documentation-export-dialog-card {
+        width: min(880px, 92vw);
+    }
+
+    .documentation-export-dialog {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .documentation-export-dialog-intro {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--muted);
+    }
+
+    .documentation-export-filename {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        padding: 0.6rem 0.7rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--border-subtle, var(--border));
+        background: var(--panel-soft, #f6f7fb);
+    }
+
+    .documentation-export-filename-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted-strong, var(--muted));
+    }
+
+    .documentation-export-filename-input {
+        width: 100%;
+        padding: 0.65rem 0.85rem;
+        border-radius: 0.7rem;
+        border: 2px solid color-mix(in srgb, var(--primary) 35%, var(--border));
+        background: var(--panel);
+        color: var(--text);
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .documentation-export-filename-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 25%, transparent);
+    }
+
+    .documentation-export-theme {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .documentation-export-theme-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted-strong, var(--muted));
+    }
+
+    .documentation-export-theme-options {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+    }
+
+    .documentation-export-theme-option {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.6rem;
+        border-radius: 0.65rem;
+        border: 1px solid var(--border-subtle, var(--border));
+        background: var(--panel);
+        font-size: 0.85rem;
+        color: var(--text);
+    }
+
+    .documentation-export-theme-option input {
+        accent-color: var(--primary);
+    }
+
+    .documentation-export-dialog-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .documentation-export-dialog-groups {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+        max-height: min(50vh, 420px);
+        overflow: auto;
+        padding-right: 0.3rem;
+    }
+
+    .documentation-export-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .documentation-export-group-title {
+        margin: 0;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted-strong, var(--muted));
+    }
+
+    .documentation-export-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .documentation-export-item {
+        display: grid;
+        grid-template-columns: 18px 1fr;
+        gap: 0.55rem;
+        align-items: flex-start;
+        cursor: pointer;
+        padding: 0.4rem 0.5rem;
+        border-radius: 0.6rem;
+        border: 1px solid transparent;
+        transition: border-color 140ms ease, background-color 140ms ease;
+    }
+
+    .documentation-export-item:hover {
+        border-color: var(--border-subtle, var(--border));
+        background: var(--panel-soft);
+    }
+
+    .documentation-export-checkbox {
+        width: 16px;
+        height: 16px;
+        margin: 0.15rem 0 0 0;
+        accent-color: var(--primary);
+    }
+
+    .documentation-export-item-text {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .documentation-export-item-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .documentation-export-item-summary {
+        font-size: 0.8rem;
+        color: var(--muted);
     }
 
     .documentation-viewer {
@@ -463,6 +644,10 @@
     }
 
     @media (max-width: 640px) {
+        .documentation-tabs-row {
+            width: 100%;
+        }
+
         .documentation-tabs {
             width: 100%;
             justify-content: space-between;
@@ -472,6 +657,11 @@
         .documentation-tab-btn {
             flex: 1;
             text-align: center;
+        }
+
+        .documentation-export-trigger {
+            width: 100%;
+            justify-content: center;
         }
 
     }
