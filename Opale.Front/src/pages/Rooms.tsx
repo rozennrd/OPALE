@@ -135,7 +135,7 @@ export default function Rooms() {
                         onClearSelection={handleClearSelection}
                         onDeleteSelected={handleDeleteSelected}
                         confirmTitle="Supprimer les salles sélectionnées"
-                        confirmMessage={`Vous allez supprimer ${selectedRoomIds.length} salle${selectedRoomIds.length > 1 ? 's' : ''}.`}
+                        confirmMessage={`Vous allez supprimer ${selectedRoomIds.length} salle${selectedRoomIds.length > 1 ? 's' : ''}. Cette action est définitive.`}
                     />
                 )}
 
