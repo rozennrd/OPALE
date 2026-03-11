@@ -397,7 +397,7 @@ export default function Matieres() {
                         onClearSelection={clearMatiereSelection}
                         onDeleteSelected={handleDeleteSelected}
                         confirmTitle="Supprimer les matières sélectionnées"
-                        confirmMessage={`Vous allez supprimer ${selectedMatiereIds.length} matière${selectedMatiereIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                        confirmMessage={`Vous allez supprimer ${selectedMatiereIds.length} matière${selectedMatiereIds.length > 1 ? 's' : ''}. Cette action est définitive.`}
                     />
                 )}
 

@@ -523,7 +523,7 @@ export default function Events() {
                             onClearSelection={clearEventSelection}
                             onDeleteSelected={handleDeleteSelected}
                             confirmTitle="Supprimer les événements sélectionnés"
-                            confirmMessage={`Vous allez supprimer ${selectedEventIds.length} événement${selectedEventIds.length > 1 ? 's' : ''}. Cette action est locale (front).`}
+                            confirmMessage={`Vous allez supprimer ${selectedEventIds.length} événement${selectedEventIds.length > 1 ? 's' : ''}. Cette action est définitive.`}
                         />
                     )}
 
